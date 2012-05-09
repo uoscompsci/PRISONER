@@ -8,10 +8,12 @@ If its various bits work, it's a good indication you've set it up right.
 
 import SocialObjects
 from gateway import LastfmServiceGateway
-
+from workflow import SocialObjectGateway
 
 if __name__ == "__main__":
-	lfm = LastfmServiceGateway()
-	img = SocialObjects.Image()
-	img.author = "Me"
-	print img.author
+	session = SocialObjectGateway.SocialObjectsGateway() 
+	session.provide_privacy_policy("/home/lhutton/svn/progress2/lhutton/projects/sns_arch/spec/privacy_policy_validation_test.xml")
+	
+	me = SocialObjects.Person()
+	me.id = "lukeweb"
+	session.GetObject("Lastfm","Image",me)

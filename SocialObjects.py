@@ -16,8 +16,8 @@ class SocialObject(object):
 		self._summary = None
 		self._updated = None
 		self._url = None
-		self.location = None
-		self.tags = None
+		self._location = None
+		self._tags = None
 
 	@property
 	def author(self):
@@ -34,13 +34,29 @@ class SocialObject(object):
 	@content.setter
 	def content(self, value):
 		self._content = value
-	
-	
 
-			
 
 class Image(SocialObject):
 	def __init__(self):
 		pass
 
+	@property
+	def fullImage(self):
+		return self._fullImage
+	
+	@fullImage.setter
+	def fullImage(self, value):
+		self._fullImage = value
+
+class Person(SocialObject):
+	def __init__(self):
+		self._image = None
+	
+	@property
+	def image(self):
+		return self._image
+	
+	@image.setter
+	def image(self,value):
+		self._image = value
 

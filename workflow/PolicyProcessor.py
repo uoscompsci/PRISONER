@@ -26,6 +26,7 @@ class PolicyProcessor(object):
 		validation = schema.validate(policy)		
 		if validation:
 			print "Privacy policy validates!"
+			return policy
 		else:
 			print "Privacy policy failed validation."
 			
