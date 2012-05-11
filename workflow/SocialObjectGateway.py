@@ -73,21 +73,18 @@ class SocialObjectsGateway(object):
 			" making requests.")
 		try:
 			provider_gateway = globals()["%sServiceGateway" %			
-provider]()
+			provider]()
 		except:
 			raise ServiceGatewayNotFound(provider)
-			
 		
-		# TODO: validate request against policy
 		processor = PolicyProcessor(self.privacy_policy)
 		request_valid = processor.validate_object_request("GET",provider,object_type,payload)
 			
-
 		# TODO: reconcile with session
 
 		gateway_attr = getattr(provider_gateway,object_type)
 		response = gateway_attr("GET",payload)		
-		print response
 
 		# TODO: sanitise response against policy	
 
+		print response

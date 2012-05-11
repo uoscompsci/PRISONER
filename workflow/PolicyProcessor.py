@@ -33,7 +33,15 @@ class PolicyProcessor(object):
 			return policy
 		else:
 			print "Privacy policy failed validation."
-		
+	
+	""" Tests whether the request is allowed by the privacy policy for this
+	object. If there is no privacy policy, or the policy has no criteria,
+	the request is denied.
+
+	To allow the request, we only look for a relevant 'allow=retrieve' rule.
+	Subsequently, when the data is returned from the relevant provider, it
+	is fully sanitised in accordance with the policy
+	"""
 	def validate_object_request(self, operation, provider, object_type, payload):
 		if not self.privacy_policy:
 			raise Exception("Privacy policy required before any \
@@ -63,6 +71,10 @@ class PolicyProcessor(object):
 			raise Exception("At least an attribute-policy or" + \
 			"object-policy with an allow='retrieve' attribute" + \
 			"needed to make requests on this object")
+
+	def sanitise_object_request(self, operation, provider,
+	request_object_type, request_payload, response):
+		pass
 
 parser = OptionParser()
 parser.add_option("-p","--policy", type="string",dest="policy",
