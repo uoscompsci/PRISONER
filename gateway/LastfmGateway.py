@@ -40,6 +40,11 @@ class LastfmServiceGateway(ServiceGateway):
 			
 			img_object = SocialObjects.Image()
 			img_object.fullImage = user_image
+
+			author_obj = SocialObjects.Person()
+			author_obj.id = user.name
+
+			img_object.author = author_obj
 			return img_object
 		else:
 			raise NotImplementedException("Operation not supported")

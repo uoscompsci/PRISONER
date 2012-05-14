@@ -68,6 +68,8 @@ class SocialObjectsGateway(object):
 	object is returned (reproducibility cannot be guaranteed)
 	"""
 	def GetObject(self, provider, object_type, payload, allow_many=False):
+		headers = SARHeaders("GET", provider, object_type, payload)
+		
 		if not self.privacy_policy:
 			raise Exception("Provide a privacy policy before"\
 			" making requests.")
@@ -78,13 +80,18 @@ class SocialObjectsGateway(object):
 			raise ServiceGatewayNotFound(provider)
 		
 		processor = PolicyProcessor(self.privacy_policy)
-		request_valid = processor.validate_object_request("GET",provider,object_type,payload)
+		request_valid = processor._validate_object_request("GET",
+		provider, object_type, payload)
 			
 		# TODO: reconcile with session
-
+		
 		gateway_attr = getattr(provider_gateway,object_type)
 		response = gateway_attr("GET",payload)		
+		# produce a full response object
+		response_obj = SocialActivityResponse(response, headers)
+	
 
 		# TODO: sanitise response against policy	
+		sanitised_response = processor._sanitise_object_request(response_obj)
 
-		print response
+		print sanitised_response

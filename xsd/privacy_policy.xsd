@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+targetNamespace="http://pvnets.cs.st-andrews.ac.uk/prisoner/privacy-policy"
+xmlns:tns="http://pvnets.cs.st-andrews.ac.uk/prisoner/privacy-policy"
+elementFormDefault="unqualified">
+
+<xs:complexType name="attribute-match">
+	<xs:annotation>
+		<xs:documentation>
+			Test if an attribute ("match") equates another object ("on_object")
+			If true, this policy is passed.
+		</xs:documentation>
+	</xs:annotation>
+	<xs:attribute name="match" use="required" type="xs:string" />
+	<xs:attribute name="on_object" use="required" type="xs:string" />
+</xs:complexType>
+
+<xs:complexType name="expression-match">
+	<xs:annotation>
+		<xs:documentation>
+			Test if an expression ("on_expression") returns a certain result ("match").
+			Complex expressions are allowed, but may only refer to objects in the PRISONER namespaces.
+			Other packages may not be imported and unsafe functions not called.
+			Note that expressions are interpreted literally. For example, a value for "match" of "True" will
+			be interpreted as the boolean primitive.
+
+			If the expression matches, the policy is passed.
+		</xs:documentation>
+	</xs:annotation>
+	<xs:attribute name="match" use="required" type="xs:string" />
+	<xs:attribute name="on_expression" use="required" type="xs:string" />
+</xs:complexType>
+
+<xs:complexType name="abstract-logical-match" abstract="true">
+	<xs:annotation>
+		<xs:documentation>
+			Abstract base type for a logical match container (and/or/not).
+			Any logical match can contain any number of other logical matches, and attribute/expression matches.
+		</xs:documentation>
+	</xs:annotation>
+	<xs:sequence>
+		<xs:choice maxOccurs="unbounded">
+			<xs:element name="attribute-match" type="tns:attribute-match" minOccurs="0" maxOccurs="unbounded" />	
+			<xs:element name="expression-match" type="tns:expression-match" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="or-match" type="tns:or-match" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="and-match" type="tns:and-match" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="not-match" type="tns:not-match" minOccurs="0" maxOccurs="unbounded" />
+		</xs:choice>
+	</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="or-match">
+	<xs:annotation>
+		<xs:documentation>
+			Each child of the or-match is evaluated independently. If any child returns a True result, the policy passes.
+			Can contain any combination of logical matches or attribute/expression matches.
+		</xs:documentation>
+	</xs:annotation>
+	<xs:complexContent>
+		<xs:extension base="tns:abstract-logical-match" />
+	</xs:complexContent>
+</xs:complexType>
+
+<xs:complexType name="and-match">
+	<xs:annotation>
+		<xs:documentation>
+			Each child of the and-match is evaluated independently. If any child returns a False result, the policy fails.
+			Only if all children return True does it pass.
+			Can contain any combination of logical matches or attribute/expression matches.
+		</xs:documentation>
+	</xs:annotation>
+	<xs:complexContent>
+		<xs:extension base="tns:abstract-logical-match" />
+	</xs:complexContent>
+</xs:complexType>
+
+<xs:complexType name="not-match">
+	<xs:annotation>
+		<xs:documentation>
+			Each child of the not-match is evaluated independently. If any child returns a True result, the policy fails.
+			This works identically to the and-match except the test is negated.
+			Can contain any combination of logical matches or attribute/expression matches.
+		</xs:documentation>
+	</xs:annotation>
+	<xs:complexContent>
+		<xs:extension base="tns:abstract-logical-match" />
+	</xs:complexContent>
+</xs:complexType>
+
+<xs:complexType name="attribute-criteria">
+	<xs:annotation>
+		<xs:documentation>
+			Attribute criteria contains a set of conditions under which this attribute may be collected, stored etc. (as per the parent's
+			"allow" attribute)
+		</xs:documentation>
+	</xs:annotation>
+	<xs:complexContent>
+		<xs:extension base="tns:abstract-logical-match" />
+	</xs:complexContent>
+</xs:complexType>
+
+<xs:complexType name="object-criteria">
+	<xs:annotation>
+		<xs:documentation>
+			Object criteria contains a set of conditions under which
+			this object may be collected, stored etc. (as per the parent's
+			"allow" attribute).
+			This provides the highest level of criteria for this
+			object. More nuanced attribute-criteria may also be provided.
+		</xs:documentation>
+	</xs:annotation>
+	<xs:complexContent>
+		<xs:extension base="tns:abstract-logical-match" />
+	</xs:complexContent>
+</xs:complexType>
+
+
+<xs:complexType name="transform">
+	<xs:annotation>
+		<xs:documentation>
+			Represents a single data sanitising transform.
+			Must specify the "type" of transformation, and to what "level" the transformation is applied.
+			See the full Transformations documentation for appropriate transformations for each object type
+			and service gateway.
+		</xs:documentation>
+	</xs:annotation>
+	<xs:attribute name="type" use="required">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="reduce" />
+				<xs:enumeration value="obfuscate" />
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:attribute>
+	<xs:attribute name="level" type="xs:string" use="required" />
+</xs:complexType>
+
+<xs:complexType name="transformations">
+	<xs:annotation>
+		<xs:documentation>
+			Contains a set of transformations that must be applied to the parent object/attribute to sanitise the data.
+		</xs:documentation>
+	</xs:annotation>
+	<xs:sequence minOccurs="1" maxOccurs="unbounded">
+		<xs:element name="transform" type="tns:transform" />
+	</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="abstract-policy-sequence">
+	<xs:sequence>
+		<xs:element name="transformations" type="tns:transformations" minOccurs="0" maxOccurs="1" />
+	</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="abstract-policy-allow">
+	<xs:attribute name="allow" use="required">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="retrieve" />
+				<xs:enumeration value="store" />
+				<xs:enumeration value="evaluate" />
+				<xs:enumeration value="publish" />
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:attribute>
+</xs:complexType>
+
+<xs:complexType name="abstract-policy" abstract="true">
+	<xs:annotation>
+		<xs:documentation>
+			Abstract base type for a policy (eg. subtypes
+			include object-policy and attribute-policy)
+		</xs:documentation>
+	</xs:annotation>
+	<xs:attribute name="allow" use="required">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="retrieve" />
+				<xs:enumeration value="store" />
+				<xs:enumeration value="evaluate" />
+				<xs:enumeration value="publish" />
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:attribute>
+</xs:complexType>
+
+<xs:complexType name="object-policy">
+	<xs:annotation>
+		<xs:documentation>
+			An object policy contains an object criteria,
+			and any transformations applied to this
+			object.
+		</xs:documentation>
+	</xs:annotation>
+	<xs:sequence>
+		<xs:element name="object-criteria"
+		type="tns:object-criteria" minOccurs="0" maxOccurs="1" />
+		<xs:element name="transformations" type="tns:transformations" minOccurs="0" maxOccurs="1" />
+	</xs:sequence>
+	<xs:attribute name="allow" use="required">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="retrieve" />
+				<xs:enumeration value="store" />
+				<xs:enumeration value="evaluate" />
+				<xs:enumeration value="publish" />
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:attribute>
+</xs:complexType>
+
+<xs:complexType name="attribute-policy">
+	<xs:annotation>
+		<xs:documentation>
+			An attribute policy contains an attribute criteria,
+			and any transformations to be applied to this attribute.
+		</xs:documentation>
+	</xs:annotation>
+	<xs:sequence>
+		<xs:element name="attribute-criteria"
+		type="tns:attribute-criteria" minOccurs="0"
+		maxOccurs="1" />
+		<xs:element name="transformations" type="tns:transformations" minOccurs="0" maxOccurs="1" />
+	</xs:sequence>
+	<xs:attribute name="allow" use="required">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="retrieve" />
+				<xs:enumeration value="store" />
+				<xs:enumeration value="evaluate" />
+				<xs:enumeration value="publish" />
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:attribute>	
+</xs:complexType>
+
+<xs:complexType name="attribute">
+	<xs:annotation>
+		<xs:documentation>
+			Refers to an attribute of the Social Object to which this policy applies.
+			Each attribute contains a number of attribute policies, which determine the criteria for retrieving and storing the attribute
+		</xs:documentation>
+	</xs:annotation>
+	<xs:sequence minOccurs="1" maxOccurs="unbounded">
+		<xs:element name="attribute-policy" type="tns:attribute-policy" />
+	</xs:sequence>
+	<xs:attribute name="type" use="required" type="xs:string" />
+	</xs:complexType>
+
+<xs:complexType name="attributes">
+	<xs:annotation>
+		<xs:documentation>
+			The set of attributes that need to be handled for the parent policy object.
+			Each attribute set consists of a number of attribute elements, defining which attributes may be collected.
+		</xs:documentation>
+	</xs:annotation>
+	<xs:sequence minOccurs="1" maxOccurs="unbounded">
+		<xs:element name="attribute" type="tns:attribute" />
+	</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="policy">
+	<xs:annotation>
+		<xs:documentation>
+			Policy elements are defined "for" each Social Object needed.
+			Each policy contains an attributes set, defining which attributes may be collected.
+		</xs:documentation>
+	</xs:annotation>
+	<xs:sequence>
+		<xs:element name="attributes" type="tns:attributes"
+		minOccurs="0" maxOccurs="1" />
+		<xs:element name="object-policy" type="tns:object-policy"
+		minOccurs="0" maxOccurs="1" />
+	</xs:sequence>
+	<xs:attribute name="for" type="xs:string" use="required"/>
+</xs:complexType>
+
+<xs:element name="privacy-policy">
+	<xs:annotation>
+		<xs:documentation>
+			Root element of any privacy policy. The policy for an experiment is contained within this element,
+		</xs:documentation>
+	</xs:annotation>
+	<xs:complexType>
+		<xs:sequence minOccurs="1" maxOccurs="unbounded">
+			<xs:element name="policy" type="tns:policy"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:element>	
+
+
+</xs:schema>
