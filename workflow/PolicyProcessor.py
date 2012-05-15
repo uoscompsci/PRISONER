@@ -7,23 +7,37 @@ runtime scope validation.
 """
 import lxml.etree as etree
 from optparse import OptionParser
+
+from Exceptions import *
 from gateway import *  	# import all known service gateways
 
-PRIVACY_POLICY_XSD = "../xsd/privacy_policy.xsd"
+PRIVACY_POLICY_XSD = "/home/lhutton/svn/progress2/lhutton/projects/sns_arch/src/xsd/privacy_policy.xsd"
 
 class PolicyProcessor(object):
 
 	def __init__(self, policy=None):
-		self.privacy_policy = policy
+		self._privacy_policy = None
+		if policy:
+			self.privacy_policy = policy
 		self.namespaces = {"p":
 		"http://pvnets.cs.st-andrews.ac.uk/prisoner/privacy-policy"}
 
-	def validate_policy(self, policy_path):
-		print "Validating policy at %s" % policy_path
+	@property
+	def privacy_policy(self):
+		return self._privacy_policy
+	
+	@privacy_policy.setter
+	def privacy_policy(self, value):
+		self._privacy_policy = self.validate_policy(value)
+
+	def validate_policy(self, policy):
+		if not policy:
+			raise IOError("Privacy policy not found at path")
+		print "Validating policy at %s" % policy
 		xsd_file = open(PRIVACY_POLICY_XSD)
 		schema = etree.XMLSchema(etree.parse(xsd_file))
 
-		policy_file = open(policy_path)
+		policy_file = open(policy)
 		policy = etree.parse(policy_file)
 
 		validation = schema.assertValid(policy)		
@@ -47,11 +61,13 @@ class PolicyProcessor(object):
 	"""
 	def _validate_object_request(self, operation, provider, object_type, payload):
 		if not self.privacy_policy:
-			raise Exception("Privacy policy required before any \
-			objects can be requested")
+			raise NoPrivacyPolicyProvidedError()
 
 		query_path = ("//policy[@for='%s']"%
 		object_type)
+
+		if operation not in ["GET"]:
+			raise OperationNotImplementedError(operation)
 
 		# is there a <policy for="object"> element?
 		attrs = self.privacy_policy.xpath(query_path, namespaces=self.namespaces)
@@ -59,7 +75,7 @@ class PolicyProcessor(object):
 			exp = "This privacy policy contains no policy" + \
 			" element for this object - no requests will be" +  \
 			" allowed."
-			raise Exception(exp)
+			raise DisallowedByPrivacyPolicyError(exp)
 		
 		# is there an object or attribute criteria with an
 		# allow=retrieve attribute?
@@ -71,9 +87,12 @@ class PolicyProcessor(object):
 		attrs_obj = self.privacy_policy.xpath(att_path)
 		obj_obj = self.privacy_policy.xpath(obj_path)
 		if(not attrs_obj and not obj_obj):
-			raise Exception("At least an attribute-policy or " + \
+			exp =("At least an attribute-policy or " + \
 			"object-policy with an allow='retrieve' attribute " + \
 			"needed to make requests on this object")
+			raise DisallowedByPrivacyPolicyError(exp)
+
+		return True # you made it this far
 	
 	"""
 	PRISONER exposes a namespace-heavy interface to allow complex, abstract
@@ -97,14 +116,12 @@ class PolicyProcessor(object):
 				provider_gateway = globals()["%sServiceGateway" %			
 				ns]()
 			except:
-				raise Exception("Namespace %s can not be " % ns + \
-				"resolved to a service gateway")	
+				raise ServiceGatewayNotFoundError(ns)	
 			try:
 				ns_object = hasattr(
 				provider_gateway, obj_components[1])
 			except:
-				raise Exception("Service gateway %s " % ns + \
-				"does not implement object %s" % obj_components[1])
+				raise SocialObjectNotSupportedError(ns,obj_components[1])
 			return ns_object.obj_components[1]
 		elif ns == "literal":
 			return obj_components[1]
@@ -115,8 +132,7 @@ class PolicyProcessor(object):
 			try:
 				ns_obj = globals()[obj_components[1]]()
 			except:
-				raise Exception("%s is not a base social object" %
-				obj_components[1])
+				raise SocialObjectNotSupportedError("base",obj_components[1])
 			return ns_obj
 	
 	"""

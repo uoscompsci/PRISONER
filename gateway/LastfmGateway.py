@@ -35,16 +35,18 @@ class LastfmServiceGateway(ServiceGateway):
 	"""
 	def Image(self, operation, payload):
 		if (operation == "GET"):
-			user = self.network.get_user(payload.id)
-			user_image = user.get_image()
-			
-			img_object = SocialObjects.Image()
-			img_object.fullImage = user_image
+			try:
+				user = self.network.get_user(payload.id)
+				user_image = user.get_image()
+				img_object = SocialObjects.Image()
+				img_object.fullImage = user_image
 
-			author_obj = SocialObjects.Person()
-			author_obj.id = user.name
+				author_obj = SocialObjects.Person()
+				author_obj.id = user.name
 
-			img_object.author = author_obj
-			return img_object
+				img_object.author = author_obj
+				return img_object
+			except:
+				return SocialObjects.Image()
 		else:
 			raise NotImplementedException("Operation not supported")

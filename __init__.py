@@ -3,3 +3,4 @@ from SocialObjects import *
 import workflow
 import gateway
 import participation
+import tests

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<p:privacy-policy
+	xmlns:p="http://pvnets.cs.st-andrews.ac.uk/prisoner/privacy-policy"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pvnets.cs.st-andrews.ac.uk/prisoner/privacy-policy privacy_policy.xsd">
+	
+	<policy for="Image">
+		<attributes>
+		<attribute type="test_attribute">
+			<attribute-policy allow="evaluate">
+				<attribute-criteria>
+					<or-match>
+						<attribute-match match="test_match" on_object="test_object" />
+						<and-match>
+							<attribute-match match="test_match_2" on_object="test_object_2"/>
+							<expression-match match="text_match_exp" on_expression="test_expression == 0"/>
+						</and-match>
+					</or-match>
+				</attribute-criteria>
+				<transformations>		
+					<transform type="reduce" level="test_level" />
+				</transformations>
+			</attribute-policy>
+		</attribute>
+		</attributes>
+		<object-policy allow="evaluate">
+			<object-criteria>
+				<and-match>
+					<attribute-match match="author.id"
+					on_object="literal:lukewfeb" />
+					<or-match>
+						<and-match>
+							<attribute-match match="author.id"
+							on_object="literal:lukeweb" />
+							<attribute-match match="author.id"
+							on_object="literal:lukeweb" />
+						</and-match>
+						<attribute-match match="author.id"
+						on_object="literal:lukefweb" />
+						<attribute-match match="author.id"
+						on_object="literal:lukgeweb" />
+					</or-match>
+				</and-match>
+			</object-criteria>	
+		</object-policy>
+	</policy>
+</p:privacy-policy>

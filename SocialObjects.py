@@ -38,7 +38,8 @@ class SocialObject(object):
 
 class Image(SocialObject):
 	def __init__(self):
-		pass
+		super(Image,self).__init__()
+		self._fullImage = None
 
 	@property
 	def fullImage(self):
@@ -50,6 +51,7 @@ class Image(SocialObject):
 
 class Person(SocialObject):
 	def __init__(self):
+		super(Person,self).__init__()
 		self._image = None
 	
 	@property
