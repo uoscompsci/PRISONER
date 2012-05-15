@@ -88,7 +88,7 @@ class PolicyProcessor(object):
 	This is an internal function.
 	"""
 	def _infer_object(self, object_name):
-		base_namespaces = ["literal","session","base","pickle"]
+		base_namespaces = ["literal","session","base"]
 
 		obj_components = object_name.split(":")
 		ns = obj_components[0]
@@ -118,9 +118,6 @@ class PolicyProcessor(object):
 				raise Exception("%s is not a base social object" %
 				obj_components[1])
 			return ns_obj
-		elif ns == "pickle":
-			# TODO: pickle support
-			pass	
 	
 	"""
 	Use to map a string representation of an object.attrs back to a source
@@ -134,7 +131,6 @@ class PolicyProcessor(object):
 		for meth in parsed_object:
 			if not parse_rec:
 				parse_rec = getattr(source, meth)
-				print source
 			else:
 				parse_rec = getattr(parse_rec,meth)
 		return parse_rec
@@ -156,20 +152,82 @@ class PolicyProcessor(object):
 		% response.headers.object_type
 
 		xpath_res = self.privacy_policy.xpath(xpath)
-		for element in xpath_res[0]:
-			if element.tag == "attribute-match":
-				to_match = element.get("match")
-				on_object = element.get("on_object")
-			
-				on_object_obj = self._infer_object(on_object)
-				to_match_obj =	self._infer_attributes(to_match,
-				response.content)
-				print on_object_obj
-				if to_match_obj == on_object_obj:
-					return response
-				else:
-					return None
-				
+		"""
+		Criteria can contain infinitely nested logical statements and
+		actual criteria. Maintain a stack of each element so operations are combined
+		correctly
+		"""
+		logical_elements = ["and-match","or-match"]
+		criteria_stack = []
+		last_element = None
+		last_parent = None
+
+		criteria_walk = etree.iterwalk(xpath_res[0][0],
+		events=("start","end"))
+
+		for action, element in criteria_walk:
+			if action == "start":
+				criteria_stack.append(element)	
+			elif action == "end" and element.tag in logical_elements:
+				# pop from stack until reach logical operator or
+				# empty stack. add match elements to
+				# working_stack_set so they can be evaluated as
+				# a logical group
+				print("reached end of %s - " % element.tag + \
+				"evaluate everything earlier on the stack")
+				working_stack_set = []
+				while len(criteria_stack) > 0:
+					top_element = criteria_stack.pop()
+					if top_element in [True,False]:
+						working_stack_set.append(top_element)
+					elif top_element.tag not in logical_elements: 
+						# evaluate element and add
+						# result to working set
+						working_stack_set.append(self.__test_criteria(top_element,response))
+					else:
+						print("evaluating %s for %s" % 
+						(working_stack_set,
+						top_element.tag))
+						# evaluate everything in set
+						# according to this operator,
+						# then push the result back and
+						# stop
+						if(top_element.tag ==
+						"and-match"):
+							if(False in
+							working_stack_set):
+								criteria_stack.append(False)
+							else:
+								criteria_stack.append(True)
+						elif(top_element.tag ==
+						"or-match"):
+							if(True in
+							working_stack_set):
+								criteria_stack.append(True)
+							else:
+								criteria_stack.append(False)
+						break
+			else:
+				print action, element
+			print criteria_stack		
+							
+ 
+						
+					
+		"""
+		if element.tag == "attribute-match":
+			to_match = element.get("match")
+			on_object = element.get("on_object")
+		
+			on_object_obj = self._infer_object(on_object)
+			to_match_obj =	self._infer_attributes(to_match,
+			response.content)
+			print on_object_obj
+			if to_match_obj == on_object_obj:
+				return response
+			else:
+				return None
+		"""	
 				
 		# if so, what transformations do we need to make?
 
@@ -178,7 +236,24 @@ class PolicyProcessor(object):
 
 
 		# return response
+	"""
+	Takes an single policy element (eg. attribute-match) and tests if this
+	object passes it - use as part of more complex logical operations
+
+	This is an internal function.
+	"""
+	def __test_criteria(self, element, response):
+		if element.tag == "attribute-match":
+			to_match = element.get("match")
+			on_object = element.get("on_object")
 		
+			on_object_obj = self._infer_object(on_object)
+			to_match_obj =	self._infer_attributes(to_match,
+			response.content)
+			if to_match_obj == on_object_obj:
+				return True
+			else:
+				return False
 
 
 
