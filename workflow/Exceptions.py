@@ -42,6 +42,7 @@ class SocialObjectNotSupportedError(Exception):
 		return("%s does not implement the Social Object %s" %
 		(self.gateway, self.object))
 
+""" Raised if a service gateway does not implement a request operation """
 class OperationNotImplementedError(Exception):
 	def __init__(self, operation):
 		self.operation = operation
@@ -49,3 +50,13 @@ class OperationNotImplementedError(Exception):
 	def __str__(self):
 		return("This service gateway does not implement the operation %s"
 		% self.operation)
+
+""" Raised if at runtime, a privacy policy fails to pass more complex
+validation - eg. does not resolve to a specified object type, or a value is
+malformed """
+class RuntimePrivacyPolicyParserError(Exception):
+	def __init__(self, error):
+		self.error = error
+
+	def __str__(self):
+		return self.error

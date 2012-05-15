@@ -10,6 +10,7 @@ from optparse import OptionParser
 
 from Exceptions import *
 from gateway import *  	# import all known service gateways
+import SocialObjects
 
 PRIVACY_POLICY_XSD = "/home/lhutton/svn/progress2/lhutton/projects/sns_arch/src/xsd/privacy_policy.xsd"
 
@@ -109,8 +110,16 @@ class PolicyProcessor(object):
 	def _infer_object(self, object_name):
 		base_namespaces = ["literal","session","base"]
 
-		obj_components = object_name.split(":")
+		try:
+			obj_components = object_name.split(":")
+		except ValueError:
+			raise RuntimePrivacyPolicyParserError("%s " % object_name + \
+			"is not a valid object definition")
+		
 		ns = obj_components[0]
+		if len(obj_components[1]) < 1:
+			raise RuntimePrivacyPolicyParserError("No object \
+			reference supplied")
 		if ns not in base_namespaces:
 			try:
 				provider_gateway = globals()["%sServiceGateway" %			
@@ -118,22 +127,29 @@ class PolicyProcessor(object):
 			except:
 				raise ServiceGatewayNotFoundError(ns)	
 			try:
-				ns_object = hasattr(
+				ns_object = getattr(
 				provider_gateway, obj_components[1])
 			except:
 				raise SocialObjectNotSupportedError(ns,obj_components[1])
-			return ns_object.obj_components[1]
+			return ns_object#.obj_components[1]
 		elif ns == "literal":
-			return obj_components[1]
+			if len(obj_components[1]) > 0:
+				return obj_components[1]
+			else:
+				raise RuntimePrivacyPolicyParserError("Empty \
+				string literal")
 		elif ns == "session":
 			# TODO: SESSION LAYER
 			pass
 		elif ns == "base":
 			try:
-				ns_obj = globals()[obj_components[1]]()
+				ns_obj = getattr(SocialObjects, obj_components[1])()
 			except:
 				raise SocialObjectNotSupportedError("base",obj_components[1])
 			return ns_obj
+		else:
+			raise RuntimePrivacyPolicyParserError("%s " % object_name + \
+			"is not a valid object definition")
 	
 	"""
 	Use to map a string representation of an object.attrs back to a source
