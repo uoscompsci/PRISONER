@@ -7,7 +7,7 @@
 	
 	<policy for="Image">
 		<attributes>
-		<attribute type="test_attribute">
+		<attribute type="author">
 			<attribute-policy allow="retrieve">
 				<attribute-criteria>
 					<or-match>
@@ -27,6 +27,9 @@
 		<object-policy allow="retrieve">
 			<object-criteria>
 				<and-match>
+					<attribute-match
+					match="provider"
+					on_object="providers:Lastfm" />
 					<attribute-match match="author.id"
 					on_object="literal:lukeweb" />
 					<or-match>

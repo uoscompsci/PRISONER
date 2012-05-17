@@ -54,9 +54,10 @@ class PolicyProcessor(object):
 	object. If there is no privacy policy, or the policy has no criteria,
 	the request is denied.
 
-	To allow the request, we only look for a relevant 'allow=retrieve' rule.
-	Subsequently, when the data is returned from the relevant provider, it
-	is fully sanitised in accordance with the policy
+	Most criteria is onl considered when the object is returned (we only
+	know about many aspects of the object once it comes back.
+	Up-front however, we make sure we have an allow="retrieve" policy for
+	the object, and that the provider is allowed.
 
 	This is an internal function.
 	"""
@@ -93,6 +94,11 @@ class PolicyProcessor(object):
 			"needed to make requests on this object")
 			raise DisallowedByPrivacyPolicyError(exp)
 
+		# TODO: explicitly validate the provider is allowed
+		# this might get abstracted out to a higher-level (eg. set
+		# providers on an experiment-policy to avoid repetition for each
+		# object - so hold off until those primitives exist
+
 		return True # you made it this far
 	
 	"""
@@ -117,9 +123,9 @@ class PolicyProcessor(object):
 			"is not a valid object definition")
 		
 		ns = obj_components[0]
-		if len(obj_components[1]) < 1:
-			raise RuntimePrivacyPolicyParserError("No object \
-			reference supplied")
+		if len(obj_components) == 1 or len(obj_components[1]) < 1:
+			raise RuntimePrivacyPolicyParserError("No valid object "+ \
+			"reference supplied in %s" % obj_components)
 		if ns not in base_namespaces:
 			try:
 				provider_gateway = globals()["%sServiceGateway" %			
@@ -167,6 +173,90 @@ class PolicyProcessor(object):
 				parse_rec = getattr(parse_rec,meth)
 		return parse_rec
 
+	"""
+	Takes a ElementTree (must be a validated privacy policy) and walks its
+	logical structure, validating the criteria.
+	The root of the incoming tree should be an x-criteria element - its
+	immediate children must be the criteria. An invalid structure will
+	prevent requests being sanctioned.
+
+	This is an internal function.
+	"""
+	def __validate_criteria(self, response, tree):
+		logical_elements = ["and-match","or-match"]
+		criteria_stack = []
+		last_element = None
+		last_parent = None
+
+		criteria_type = None
+		if tree.tag == "attribute-criteria":
+			criteria_type = "attribute"
+		elif tree.tag == "object-criteria":
+			criteria_type = "object"
+		else:
+			raise RuntimePrivacyPolicyParserError("Unexpected criteria")
+
+		criteria_walk = etree.iterwalk(tree,
+		events=("start","end"))
+
+		for action, element in criteria_walk:
+			if action == "start":
+				criteria_stack.append(element)	
+			elif action == "end" and element.tag in logical_elements:
+				# pop from stack until reach logical operator or
+				# empty stack. add match elements to
+				# working_stack_set so they can be evaluated as
+				# a logical group
+				
+				#print("reached end of %s - " % element.tag + \
+				#"evaluate everything earlier on the stack")
+				working_stack_set = []
+				while len(criteria_stack) > 0:
+					top_element = criteria_stack.pop()
+					if top_element in [True,False]:
+						working_stack_set.append(top_element)
+					elif top_element.tag not in logical_elements: 
+						# evaluate element and add
+						# result to working set
+						working_stack_set.append(self.__test_criteria(top_element,response))
+					else:
+						#print("evaluating %s for %s" % 
+						#(working_stack_set,
+						#top_element.tag))
+						
+						# evaluate everything in set
+						# according to this operator,
+						# then push the result back and
+						# stop
+						if(top_element.tag ==
+						"and-match"):
+							if(False in
+							working_stack_set):
+								criteria_stack.append(False)
+							else:
+								criteria_stack.append(True)
+						elif(top_element.tag ==
+						"or-match"):
+							if(True in
+							working_stack_set):
+								criteria_stack.append(True)
+							else:
+								criteria_stack.append(False)
+						break
+			else:
+				#print action, element
+				pass
+			#print criteria_stack		
+		
+		if len(criteria_stack) > 1:
+			raise RuntimePrivacyPolicyParserError("Criteria "+\
+			"produced an unexpected result - is it well-formed?")
+		elif criteria_stack[0] == False:
+			return None
+		else:
+			return True
+
+
 	""" 
 	Takes a SocialActivityResponse and applies the appropriate sanitisation,
 	based on the experimental privacy policy, and the headers embedded in
@@ -182,12 +272,20 @@ class PolicyProcessor(object):
 		# did the object policy allow us to collect this?
 		xpath = "//policy[@for='%s']//object-policy[@allow='retrieve']//object-criteria" \
 		% response.headers.object_type
-
 		xpath_res = self.privacy_policy.xpath(xpath)
-		"""
-		Criteria can contain infinitely nested logical statements and
-		actual criteria. Maintain a stack of each element so operations are combined
-		correctly
+		valid_object_policy = self.__validate_criteria(response,
+		xpath_res[0][0])
+
+		# same again, for each attribute policy
+		xpath = "//policy[@for='%s']//attributes" % response.headers.object_type
+		attributes_collection = self.privacy_policy.xpath(xpath)
+		for attribute in attributes_collection[0]:
+			curr_attribute = attribute.get("type")
+			xpath = "//attribute-policy[@allow='retrieve']//attribute-criteria"
+			att_path = attribute.xpath(xpath)
+		valid_object_policy = self.__validate_criteria(response,
+		xpath_res[0][0])
+		
 		"""
 		logical_elements = ["and-match","or-match"]
 		criteria_stack = []
@@ -242,29 +340,18 @@ class PolicyProcessor(object):
 			else:
 				print action, element
 			print criteria_stack		
-							
- 
-						
-					
-		"""
-		if element.tag == "attribute-match":
-			to_match = element.get("match")
-			on_object = element.get("on_object")
 		
-			on_object_obj = self._infer_object(on_object)
-			to_match_obj =	self._infer_attributes(to_match,
-			response.content)
-			print on_object_obj
-			if to_match_obj == on_object_obj:
-				return response
-			else:
-				return None
-		"""	
-				
-		# if so, what transformations do we need to make?
-
+		if len(criteria_stack) > 1:
+			raise RuntimePrivacyPolicyParserError("Object criteria
+			produced an unexpected result - is it well-formed?")
+		elif criteria_stack[0] == False:
+			return None
+		"""
+ 
+			
 		# TODO: for each attribute policy, what do we need to do to this
 		# object
+		# same as above for object-policy so abstract out that logic
 
 
 		# return response

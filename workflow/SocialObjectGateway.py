@@ -41,9 +41,9 @@ class SocialObjectsGateway(object):
 		if self.privacy_policy:
 			raise Exception("Privacy policy already defined. If \
 			you need to change it, start a new instance of PRISONER")
-		processor = PolicyProcessor()
-		policy = processor.validate_policy(privacy_policy)
-		self.privacy_policy = policy	
+	#	processor = PolicyProcessor()
+	#	policy = processor.validate_policy(privacy_policy)
+		self.privacy_policy = privacy_policy	
 
 		
 
