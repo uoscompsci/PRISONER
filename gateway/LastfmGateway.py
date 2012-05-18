@@ -18,6 +18,26 @@ class LastfmServiceGateway(ServiceGateway):
 		API_KEY = "e88606453074ed34ca84904d9ef195d4"	
 	
 		self.network = pylast.LastFMNetwork(api_key = API_KEY)
+
+	""" Last.fm Shout interface
+	Shout is  a subclass of base Social Object Comment
+	Common interface:
+	Providing a Person keyed on user will return the set of shouts for that
+	user
+
+	Extended interfaces:
+	Possible payload keys:
+		user - Who the shout is intended for
+		content - The text of the shout
+	PUT operation requires an access key or it will die of death.
+	The content key is only required on a PUT operation
+	"""	
+	def Shout(self, operation, payload):
+		if(operation == "GET"):
+			pass
+		else:
+			raise OperationNotImplementedError(operation)
+
 	""" Last.fm Image interface
 	Read-only interface to images of albums, artists, events, and people
 	
@@ -51,3 +71,8 @@ class LastfmServiceGateway(ServiceGateway):
 				return SocialObjects.Image()
 		else:
 			raise NotImplementedException("Operation not supported")
+
+	"""
+	Return a URL used for end-users to confirm authentication for this
+	provider 
+	def request_authentication(self, authent_id=False)

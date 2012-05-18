@@ -13,7 +13,14 @@ from workflow import SocialObjectGateway
 if __name__ == "__main__":
 	session = SocialObjectGateway.SocialObjectsGateway() 
 	session.provide_privacy_policy("/home/lhutton/svn/progress2/lhutton/projects/sns_arch/spec/privacy_policy_validation_test.xml")
+
+	# acquire auth for service for user (via web)
+	
 	
 	me = SocialObjects.Person()
 	me.id = "lukeweb"
+
+	put_payload = {"user":me}
 	session.GetObject("Lastfm","Image",me)
+	
+	session.PutObject("Lastfm","Shout",put_payload)

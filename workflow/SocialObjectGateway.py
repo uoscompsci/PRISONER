@@ -29,6 +29,29 @@ class SocialObjectsGateway(object):
 	def __init__(self):
 		self.privacy_policy = None
 		self.exp_design = None
+		# dict keyed on provider names, with values access tokens
+		self.keychain = {}		
+	
+	def request_authentication(self, provider):
+		if provider in self.keychain:
+			exp = "This provider is already authenticated. " + \
+			"Explicitly revoke(provider)"
+			raise Exception(exp)
+		
+		# attempt to find this gateway
+		gateway = __getServiceGateway(provider)
+		authent_url = gateway.request_authentication()
+		return authent_url
+		# what url do i need to authetnicate?
+		# let the user consume the authent url and come back in their
+		# own time
+
+	def provide_authentication(self, provider, access_token):
+		if provider in self.keychain:
+			exp = "This provider is already authenticated. " + \
+			"Explicitly call revoke(provider)."
+			raise Exception(exp)
+		self.keychain[provider] = access_token	
 
 	"""
 	Supply the privacy policy used by this experiment.
@@ -95,3 +118,15 @@ class SocialObjectsGateway(object):
 		sanitised_response = processor._sanitise_object_request(response_obj)
 
 		print sanitised_response
+	
+	def __getServiceGateway(self, provider):
+		try:	
+			provider_gateway = globals()["%sServiceGateway" %
+			provider]()
+		except:
+			raise ServiceGatewayNotFoundError(provider)
+		return provider_gateway
+
+	def PutObject(self, provider, object_type, payload):
+		headers = SARHeaders("PUT", provider, object_type, payload)
+		
