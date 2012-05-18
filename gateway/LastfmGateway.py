@@ -43,6 +43,7 @@ class LastfmServiceGateway(ServiceGateway):
 
 				author_obj = SocialObjects.Person()
 				author_obj.id = user.name
+				author_obj.displayName = user.name
 
 				img_object.author = author_obj
 				return img_object

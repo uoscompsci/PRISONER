@@ -195,7 +195,7 @@ class PolicyProcessor(object):
 			criteria_type = "object"
 		else:
 			raise RuntimePrivacyPolicyParserError("Unexpected criteria")
-
+		tree = tree[0]
 		criteria_walk = etree.iterwalk(tree,
 		events=("start","end"))
 
@@ -268,85 +268,42 @@ class PolicyProcessor(object):
 		if response.headers == None:
 			raise Exception("Response has no headers, so cannot " + \
 			"be sanitised. No object will be returned.")
-		
+
 		# did the object policy allow us to collect this?
 		xpath = "//policy[@for='%s']//object-policy[@allow='retrieve']//object-criteria" \
 		% response.headers.object_type
 		xpath_res = self.privacy_policy.xpath(xpath)
 		valid_object_policy = self.__validate_criteria(response,
-		xpath_res[0][0])
+		xpath_res[0])
 
-		# same again, for each attribute policy
+		if not valid_object_policy:
+			print "Object policy failed for request"
+
+		# same again, for each attribute policy - apply transformations
 		xpath = "//policy[@for='%s']//attributes" % response.headers.object_type
 		attributes_collection = self.privacy_policy.xpath(xpath)
 		for attribute in attributes_collection[0]:
 			curr_attribute = attribute.get("type")
 			xpath = "//attribute-policy[@allow='retrieve']//attribute-criteria"
 			att_path = attribute.xpath(xpath)
-		valid_object_policy = self.__validate_criteria(response,
-		xpath_res[0][0])
-		
-		"""
-		logical_elements = ["and-match","or-match"]
-		criteria_stack = []
-		last_element = None
-		last_parent = None
-
-		criteria_walk = etree.iterwalk(xpath_res[0][0],
-		events=("start","end"))
-
-		for action, element in criteria_walk:
-			if action == "start":
-				criteria_stack.append(element)	
-			elif action == "end" and element.tag in logical_elements:
-				# pop from stack until reach logical operator or
-				# empty stack. add match elements to
-				# working_stack_set so they can be evaluated as
-				# a logical group
-				print("reached end of %s - " % element.tag + \
-				"evaluate everything earlier on the stack")
-				working_stack_set = []
-				while len(criteria_stack) > 0:
-					top_element = criteria_stack.pop()
-					if top_element in [True,False]:
-						working_stack_set.append(top_element)
-					elif top_element.tag not in logical_elements: 
-						# evaluate element and add
-						# result to working set
-						working_stack_set.append(self.__test_criteria(top_element,response))
-					else:
-						print("evaluating %s for %s" % 
-						(working_stack_set,
-						top_element.tag))
-						# evaluate everything in set
-						# according to this operator,
-						# then push the result back and
-						# stop
-						if(top_element.tag ==
-						"and-match"):
-							if(False in
-							working_stack_set):
-								criteria_stack.append(False)
-							else:
-								criteria_stack.append(True)
-						elif(top_element.tag ==
-						"or-match"):
-							if(True in
-							working_stack_set):
-								criteria_stack.append(True)
-							else:
-								criteria_stack.append(False)
-						break
+			valid_attr_policy = self.__validate_criteria(response,
+			att_path[0])
+			if not valid_attr_policy:
+				print "Attribute policy %s failed for request" % curr_attribute
 			else:
-				print action, element
-			print criteria_stack		
+				# apply any transforms for this attribute
+				transforms = att_path[0].xpath("//transformations")
+				if transforms:
+					for transform in transforms[0]:
+							#obj_ref = getattr(response.content,curr_attribute)
+							obj_ref = response.content
+							trans_ref = getattr(obj_ref,
+							"transform_%s" % curr_attribute)
+							print trans_ref
+							trans_ref(transform.get("type"),
+							transform.get("level"))
+
 		
-		if len(criteria_stack) > 1:
-			raise RuntimePrivacyPolicyParserError("Object criteria
-			produced an unexpected result - is it well-formed?")
-		elif criteria_stack[0] == False:
-			return None
-		"""
  
 			
 		# TODO: for each attribute policy, what do we need to do to this
