@@ -16,7 +16,9 @@ class ServiceGateway(object):
 		raise NotImplementedError("Service Gateway does not support \
 		Images")
 
-
+	def request_authentication(self, authent_id=None):
+		raise NotImplementedError("Service Gateway does not support "+\
+		"authenticated requests")
 """ 
 The SocialActivityResponse contains two main elements:
 	content - the object, or set of objects returned from a

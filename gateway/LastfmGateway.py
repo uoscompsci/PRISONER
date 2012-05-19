@@ -75,4 +75,5 @@ class LastfmServiceGateway(ServiceGateway):
 	"""
 	Return a URL used for end-users to confirm authentication for this
 	provider 
-	def request_authentication(self, authent_id=False)
+	"""
+	def request_authentication(self, authent_id=False):
