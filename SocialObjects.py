@@ -88,6 +88,18 @@ class SocialObject(object):
 	def displayName(self,value):
 		self._displayName = value
 
+class Comment(SocialObject):
+	def __init__(self):
+		super(Comment,self).__init__()
+		self._inReplyTo = None
+	
+	@property
+	def inReplyTo(self):
+		return self._inReplyTo
+
+	@inReplyTo.setter
+	def inReplyTo(self, value):
+		self._inReplyTo = value
 
 class Image(SocialObject):
 	def __init__(self):

@@ -11,30 +11,36 @@ import pylast # wrapper for last.fm API
 
 class LastfmServiceGateway(ServiceGateway):
 
-	def __init__(self):
+	def __init__(self, access_token=None):
 		self.service_name = "Last.fm"
 		self.service_description = "Music recommendation service"
 		
 		API_KEY = "e88606453074ed34ca84904d9ef195d4"	
-	
-		self.network = pylast.LastFMNetwork(api_key = API_KEY)
+		API_SECRET = "62ae5491416da384b241bff1a5833873"
+
+		self.network = pylast.LastFMNetwork(api_key = API_KEY,
+		api_secret = API_SECRET,
+		session_key=access_token)
 
 	""" Last.fm Shout interface
-	Shout is  a subclass of base Social Object Comment
-	Common interface:
-	Providing a Person keyed on user will return the set of shouts for that
-	user
+	Shouts are an alternative name for Comments
+	Shouts are inReplyTo an instance of Person
+	
+	GET:
+	Providing a Person will return the set of shouts for that user
+	
+	POST:
+	Providing a Shout will post the shout to the inReplyTo target
 
-	Extended interfaces:
-	Possible payload keys:
-		user - Who the shout is intended for
-		content - The text of the shout
-	PUT operation requires an access key or it will die of death.
+	POST operation requires an access key or it will die of death.
 	The content key is only required on a PUT operation
 	"""	
-	def Shout(self, operation, payload):
+	def Comment(self, operation, payload):
 		if(operation == "GET"):
 			pass
+		elif(operation == "POST"):
+			target = self.network.get_user(payload.inReplyTo.id)
+			target.shout(payload.content)
 		else:
 			raise OperationNotImplementedError(operation)
 
@@ -77,3 +83,18 @@ class LastfmServiceGateway(ServiceGateway):
 	provider 
 	"""
 	def request_authentication(self, authent_id=False):
+		self.session_manager = pylast.SessionKeyGenerator(self.network)
+		return self.session_manager.get_web_auth_url()
+
+	"""
+	Call after user completes authentication - do request to get session
+	token
+	"""
+	def complete_authentication(self, access_token=None):
+		print access_token
+		session_key = self.session_manager.get_web_auth_session_key(access_token)
+		self.session_key = session_key
+		self.network.session_key = session_key
+		return session_key
+	
+

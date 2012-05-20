@@ -13,9 +13,11 @@ from gateway import *  	# import all known service gateways
 import SocialObjects
 
 PRIVACY_POLICY_XSD = "/home/lhutton/svn/progress2/lhutton/projects/sns_arch/src/xsd/privacy_policy.xsd"
+op_match = {"GET": "retrieve", "POST": "publish"}
 
 class PolicyProcessor(object):
 
+	
 	def __init__(self, policy=None):
 		self._privacy_policy = None
 		if policy:
@@ -65,33 +67,35 @@ class PolicyProcessor(object):
 		if not self.privacy_policy:
 			raise NoPrivacyPolicyProvidedError()
 
+
 		query_path = ("//policy[@for='%s']"%
 		object_type)
 
-		if operation not in ["GET"]:
+		if operation not in ["GET","POST"]:
 			raise OperationNotImplementedError(operation)
 
 		# is there a <policy for="object"> element?
 		attrs = self.privacy_policy.xpath(query_path, namespaces=self.namespaces)
 		if not attrs:
 			exp = "This privacy policy contains no policy" + \
-			" element for this object - no requests will be" +  \
+			" element for %s - no requests will be" % object_type +  \
 			" allowed."
 			raise DisallowedByPrivacyPolicyError(exp)
 		
 		# is there an object or attribute criteria with an
 		# allow=retrieve attribute?
-		att_path=("//policy[@for='%s']//attribute-policy[@allow='retrieve']"
-		% object_type)
-		obj_path=("//policy[@for='%s']//object-policy[@allow='retrieve']"
-		% object_type) 
+		att_path=("//policy[@for='%s']//attribute-policy[@allow='%s']"
+		% (object_type, op_match[operation]))
+		
+		obj_path=("//policy[@for='%s']//object-policy[@allow='%s']"
+		% (object_type, op_match[operation]))
 
 		attrs_obj = self.privacy_policy.xpath(att_path)
 		obj_obj = self.privacy_policy.xpath(obj_path)
 		if(not attrs_obj and not obj_obj):
 			exp =("At least an attribute-policy or " + \
-			"object-policy with an allow='retrieve' attribute " + \
-			"needed to make requests on this object")
+			"object-policy with an allow='%s' attribute " % op_match[operation]+ \
+			"needed to make %s requests on this object" % operation)
 			raise DisallowedByPrivacyPolicyError(exp)
 
 		# TODO: explicitly validate the provider is allowed
@@ -270,8 +274,10 @@ class PolicyProcessor(object):
 			"be sanitised. No object will be returned.")
 
 		# did the object policy allow us to collect this?
-		xpath = "//policy[@for='%s']//object-policy[@allow='retrieve']//object-criteria" \
-		% response.headers.object_type
+		xpath = "//policy[@for='%s']//object-policy[@allow='%s']//object-criteria" \
+		% (response.headers.object_type,
+		op_match[response.headers.operation])
+		
 		xpath_res = self.privacy_policy.xpath(xpath)
 		valid_object_policy = self.__validate_criteria(response,
 		xpath_res[0])
@@ -284,7 +290,7 @@ class PolicyProcessor(object):
 		attributes_collection = self.privacy_policy.xpath(xpath)
 		for attribute in attributes_collection[0]:
 			curr_attribute = attribute.get("type")
-			xpath = "//attribute-policy[@allow='retrieve']//attribute-criteria"
+			xpath = "//attribute-policy[@allow='%s']//attribute-criteria" % op_match[response.headers.operation]
 			att_path = attribute.xpath(xpath)
 			valid_attr_policy = self.__validate_criteria(response,
 			att_path[0])

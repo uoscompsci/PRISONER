@@ -29,30 +29,30 @@ class SocialObjectsGateway(object):
 	def __init__(self):
 		self.privacy_policy = None
 		self.exp_design = None
-		# dict keyed on provider names, with values access tokens
-		self.keychain = {}		
+		# dict keyed on provider names, with values access tokens. this
+		# should be ethically persisted so auth not needed on each
+		# session for the same participant
+		self.keychain = {'Lastfm':'a78ab9d8a03c60a7e3579fa517dee618'}
+		# dict keyed on provider names, instances of service gateways
+		self.gateways = {}
 	
 	def request_authentication(self, provider):
 		if provider in self.keychain:
-			exp = "This provider is already authenticated. " + \
-			"Explicitly revoke(provider)"
-			raise Exception(exp)
-		
+			return None
 		# attempt to find this gateway
-		gateway = __getServiceGateway(provider)
+		gateway = self.__getServiceGateway(provider)
 		authent_url = gateway.request_authentication()
 		return authent_url
 		# what url do i need to authetnicate?
 		# let the user consume the authent url and come back in their
 		# own time
 
-	def provide_authentication(self, provider, access_token):
+	def complete_authentication(self, provider, access_token=None):
 		if provider in self.keychain:
-			exp = "This provider is already authenticated. " + \
-			"Explicitly call revoke(provider)."
-			raise Exception(exp)
-		self.keychain[provider] = access_token	
-
+			return self.keychain[provider]
+		gateway = self.__getServiceGateway(provider)
+		ret_access_token = gateway.complete_authentication(access_token)
+		self.keychain[provider] = ret_access_token
 	"""
 	Supply the privacy policy used by this experiment.
 	This can only be set once, and must be set before any requests are
@@ -120,13 +120,33 @@ class SocialObjectsGateway(object):
 		print sanitised_response
 	
 	def __getServiceGateway(self, provider):
+		if provider in self.gateways:
+			return self.gateways[provider]
 		try:	
 			provider_gateway = globals()["%sServiceGateway" %
 			provider]()
 		except:
-			raise ServiceGatewayNotFoundError(provider)
+			raise ServiceGatewayNotFound(provider)
+		self.gateways[provider] = provider_gateway
 		return provider_gateway
 
-	def PutObject(self, provider, object_type, payload):
-		headers = SARHeaders("PUT", provider, object_type, payload)
+	def PostObject(self, provider, object_type, payload):
+		headers = SARHeaders("POST", provider, object_type, payload)
+		
+		if not self.privacy_policy:
+			raise Exception("Provide a privacy policy before"\
+			" making requests.")	
+
+		provider_gateway = self.__getServiceGateway(provider)
+		
+		processor = PolicyProcessor(self.privacy_policy)
+		request_valid = processor._validate_object_request("POST",
+		provider, object_type, payload)
+
+		gateway_attr = getattr(provider_gateway, object_type)
+		response = gateway_attr("POST",payload)
+		response_obj = SocialActivityResponse(response, headers)
+		
+		sanitised_response = processor._sanitise_object_request(response_obj)
+		print sanitised_response
 		
