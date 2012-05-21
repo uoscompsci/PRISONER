@@ -9,6 +9,12 @@ import SocialObjects
 
 import pylast # wrapper for last.fm API
 
+class LastfmTrack(SocialObjects.SocialObject):
+	def __init__(self):
+		pass
+
+		
+
 class LastfmServiceGateway(ServiceGateway):
 
 	def __init__(self, access_token=None):
@@ -21,6 +27,23 @@ class LastfmServiceGateway(ServiceGateway):
 		self.network = pylast.LastFMNetwork(api_key = API_KEY,
 		api_secret = API_SECRET,
 		session_key=access_token)
+
+	""" Last.fm Track interface
+	GET:
+	Returns a set of Track objects, depending on the payload:
+	instance of Person - get Loved Tracks
+	"""
+	def Track(self, operation, payload):
+		if(operation == "GET"):
+			user = self.network.get_user(payload.id)
+			tracks = user.get_loved_tracks()
+			track_set = []
+			for track in tracks:
+				this_track = LastfmTrack()
+				this_track.author = track.artist
+				this_track.displayName = track.title
+				track_set.append(this_Track)
+			return track_set	
 
 	""" Last.fm Shout interface
 	Shouts are an alternative name for Comments

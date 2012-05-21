@@ -357,9 +357,4 @@ if __name__ == "__main__":
 	policy = options.policy
 	
 	proc = PolicyProcessor()
-	proc.validate_policy(policy)
-	
-
-	
-		
-
+	proc.validate_policy(policy)	

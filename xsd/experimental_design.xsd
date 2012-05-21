@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+targetNamespace="http://pvnets.cs.st-andrews.ac.uk/prisoner/experimental_design"
+xmlns:tns="http://pvnets.cs.st-andrews.ac.uk/prisoner/experimental_design"
+elementFormDefault="unqualified">
+
+<xs:complexType name="column">
+	<xs:annotation>
+		<xs:documentation>
+			Represents a column in a table of persistent
+			experimental data.
+		</xs:documentation>
+	</xs:annotation>
+	<xs:attribute name="name" use="required" type="xs:string" />
+	<xs:attribute name="type" type="xs:string" />
+	<xs:attribute name="mapTo" type="xs:string" />
+</xs:complexType>
+
+<xs:complexType name="table">
+	<xs:annotation>
+		<xs:documentation>
+			Represents a table of persistent experimental data.
+		</xs:documentation>
+	</xs:annotation>
+	<xs:sequence>
+		<xs:element name="column" type="tns:column" minOccurs="1"
+		maxOccurs="unbounded" />
+	</xs:sequence>
+	<xs:attribute name="name" use="required" type="xs:string" />
+	<xs:attribute name="type" type="xs:string" />
+	<xs:attribute name="mapTo" type="xs:string" />
+</xs:complexType>
+
+<xs:complexType name="tables">
+	<xs:annotation>
+		<xs:documentation>
+			A set of all tables used in the experiment to persist
+			data.
+		</xs:documentation>
+	</xs:annotation>
+	<xs:sequence>
+		<xs:element name="table" type="tns:table" minOccurs="1" maxOccurs="unbounded" />
+	</xs:sequence>
+</xs:complexType>
+
+<xs:element name="experimental-design">
+	<xs:annotation>
+		<xs:documentation>
+			Root element of any experimental design. The tables for
+			this experiment are contained within this element.
+		</xs:documentation>
+	</xs:annotation>
+	<xs:complexType>
+		<xs:sequence minOccurs="1" maxOccurs="1">
+			<xs:element name="tables" type="tns:tables" />
+		</xs:sequence>
+	</xs:complexType>
+</xs:element>
+
+</xs:schema>

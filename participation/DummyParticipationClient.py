@@ -13,6 +13,7 @@ from workflow import SocialObjectGateway
 if __name__ == "__main__":
 	session = SocialObjectGateway.SocialObjectsGateway() 
 	session.provide_privacy_policy("/home/lhutton/svn/progress2/lhutton/projects/sns_arch/spec/privacy_policy_validation_test.xml")
+	session.provide_experimental_design("/home/lhutton/svn/progress2/lhutton/projects/sns_arch/spec/experimental_design_test.xml")
 
 	# acquire auth for service for user (via web)
 	authent_url = session.request_authentication("Lastfm")
@@ -24,9 +25,17 @@ if __name__ == "__main__":
 	me = SocialObjects.Person()
 	me.id = "lukeweb"
 
-	img = session.GetObject("Lastfm","Image",me)
-	print img
-	print img.fullImage
+	#img = session.GetObject("Lastfm","Image",me)
+	#print img
+	#print img.fullImage
+
+	tracks = session.GetObject("Lastfm","Track",me,allow_many=True)
+	print tracks
+
+	response_obj = {}
+	response_obj['track'] = tracks[0]
+	response_obj['answer'] = "Test answer"
+	session.post_response("response",response_obj)
 
 	# Uncomment to test publish
 	"""

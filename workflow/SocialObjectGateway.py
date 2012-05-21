@@ -10,6 +10,7 @@ I sanitise the objects it returns and hand them back to participation clients.
 from gateway import *  	# import all known service gateways
 from PolicyProcessor import PolicyProcessor
 import SocialObjects
+from persistence import PersistenceManager
 
 class ServiceGatewayNotFound(Exception):
 	def __init__(self,gateway):
@@ -35,6 +36,9 @@ class SocialObjectsGateway(object):
 		self.keychain = {'Lastfm':'a78ab9d8a03c60a7e3579fa517dee618'}
 		# dict keyed on provider names, instances of service gateways
 		self.gateways = {}
+
+		# maintains a PersistenceManager for DB interaction
+		self.persistence = None 
 	
 	def request_authentication(self, provider):
 		if provider in self.keychain:
@@ -68,6 +72,39 @@ class SocialObjectsGateway(object):
 	#	policy = processor.validate_policy(privacy_policy)
 		self.privacy_policy = privacy_policy	
 
+	"""
+	Bootstraps the PersistenceManager.
+	This can only be set once, and must be set before any attempts to write
+	are allowed.
+
+	experimental_design - path to XML file containing valid experimental
+	design
+	"""
+	def provide_experimental_design(self, experimental_design):
+		if self.persistence:
+			raise Exception("Experimental design already defined."+\
+			"If you need to change it, start a new instance of PRISONER")
+		self.persistence = PersistenceManager.PersistenceManager(experimental_design)
+
+	"""
+	Attempts to write the response dictionary to the given schema.
+	An experimental design must be supplied, containing a table matching the
+	name schema of type 'response'.
+	
+	The supplied data may be sanitised before persistence and must match the
+	expected types. For example, well-formed instances of social objects
+	must be given where appropriate to allow sanitisation, or the request will fail.
+
+	This interface is only for schemas of response types - not for
+	persisting objects/participant data
+	"""
+	def post_response(self, schema, response):
+		if not self.persistence:
+			raise Exception("No experimental design supplied")
+	
+		# TODO: sanitise against privacy policy
+		# if sanitised:
+		self.persistence.write_response(schema, response)	
 		
 
 	"""
@@ -110,14 +147,16 @@ class SocialObjectsGateway(object):
 		
 		gateway_attr = getattr(provider_gateway,object_type)
 		response = gateway_attr("GET",payload)		
-		# produce a full response object
-		response_obj = SocialActivityResponse(response, headers)
-	
+		if not allow_many:
+			response = [response[0]] or [response]
 
-		# TODO: sanitise response against policy	
-		sanitised_response = processor._sanitise_object_request(response_obj)
+		sanitised_set = []
+		for resp in response:
+			response_obj = SocialActivityResponse(resp, headers)
+			sanitised_response = processor._sanitise_object_request(response_obj)
+			sanitised_set.append(sanitised_response)
 
-		return sanitised_response
+		return sanitised_set
 		
 	def __getServiceGateway(self, provider):
 		if provider in self.gateways:
