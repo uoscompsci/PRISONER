@@ -117,8 +117,8 @@ class SocialObjectsGateway(object):
 		# TODO: sanitise response against policy	
 		sanitised_response = processor._sanitise_object_request(response_obj)
 
-		print sanitised_response
-	
+		return sanitised_response
+		
 	def __getServiceGateway(self, provider):
 		if provider in self.gateways:
 			return self.gateways[provider]

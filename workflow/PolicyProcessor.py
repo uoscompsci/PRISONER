@@ -285,12 +285,15 @@ class PolicyProcessor(object):
 		if not valid_object_policy:
 			print "Object policy failed for request"
 
-		# same again, for each attribute policy - apply transformations
+		# recompose object - only include attributes with an
+		# attribute-policy
+		sanitised_object = response.content.__class__()
+			
 		xpath = "//policy[@for='%s']//attributes" % response.headers.object_type
 		attributes_collection = self.privacy_policy.xpath(xpath)
 		for attribute in attributes_collection[0]:
 			curr_attribute = attribute.get("type")
-			xpath = "//attribute-policy[@allow='%s']//attribute-criteria" % op_match[response.headers.operation]
+			xpath = "attribute-policy[@allow='%s']//attribute-criteria" % op_match[response.headers.operation]
 			att_path = attribute.xpath(xpath)
 			valid_attr_policy = self.__validate_criteria(response,
 			att_path[0])
@@ -298,23 +301,28 @@ class PolicyProcessor(object):
 				print "Attribute policy %s failed for request" % curr_attribute
 			else:
 				# apply any transforms for this attribute
-				transforms = att_path[0].xpath("//transformations")
+				transforms = attribute.xpath("attribute-policy/transformations")
 				if transforms:
 					for transform in transforms[0]:
 							#obj_ref = getattr(response.content,curr_attribute)
 							obj_ref = response.content
 							trans_ref = getattr(obj_ref,
 							"transform_%s" % curr_attribute)
-							print trans_ref
 							trans_ref(transform.get("type"),
 							transform.get("level"))
-
+							transformed = getattr(obj_ref, curr_attribute)
+							setattr(sanitised_object, 
+							curr_attribute,
+							transformed)
+				else:
+					setattr(sanitised_object,
+					curr_attribute,
+					getattr(response.content, curr_attribute))
+		
+		return sanitised_object
 		
  
 			
-		# TODO: for each attribute policy, what do we need to do to this
-		# object
-		# same as above for object-policy so abstract out that logic
 
 
 		# return response

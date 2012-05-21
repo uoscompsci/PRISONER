@@ -24,10 +24,15 @@ if __name__ == "__main__":
 	me = SocialObjects.Person()
 	me.id = "lukeweb"
 
-	session.GetObject("Lastfm","Image",me)
+	img = session.GetObject("Lastfm","Image",me)
+	print img
+	print img.fullImage
 
+	# Uncomment to test publish
+	"""
 	post_shout = SocialObjects.Comment()
 	post_shout.author = me
 	post_shout.inReplyTo= me
 	post_shout.content = "PRISONER post test"
 	session.PostObject("Lastfm","Comment",post_shout)
+	"""
