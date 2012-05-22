@@ -72,18 +72,21 @@ class PolicyProcessor(object):
 		else:
 			print "Privacy policy failed validation."
 	
-	""" Tests whether the request is allowed by the privacy policy for this
-	object. If there is no privacy policy, or the policy has no criteria,
-	the request is denied.
-
-	Most criteria is onl considered when the object is returned (we only
-	know about many aspects of the object once it comes back.
-	Up-front however, we make sure we have an allow="retrieve" policy for
-	the object, and that the provider is allowed.
-
-	This is an internal function.
-	"""
 	def _validate_object_request(self, operation, provider, object_type, payload):
+		""" Validates a request to perform an operation on Social Objects (whether retrieving from a service gateway, publishing back to a service gateway, or putting data to a database).
+
+			A request will only be allowed in the first instance if there is an object-policy for this object, for the appropriate operation.
+
+			:param operation: The type of request. 
+			:type operation: str.
+			:param provider: The name of the provider of this object. There must be a ServiceGateway class corresponding to this provider.
+			:type provider: str.
+			:param object_type: The type of object being processed. This should not be prefixed with a provider namespace. The method will attempt to find an implementation of this object by the Service Gateway, otherwise attempting to find an implementation from the base social objects library.
+			:type object_type: str.
+			:param payload: A dictionary of parameters, or instance of a Social Object, used to determine the query criteria, or object to write. The payload is specific to the request - see the documentation for the appropriate gateway request for the expected format.
+			:type payload: SocialObject or dictionary
+			:returns: str -- a clean object_type for this request (used in later stages of sanitisation process)
+		"""
 		if not self.privacy_policy:
 			raise NoPrivacyPolicyProvidedError()
 		
@@ -135,38 +138,24 @@ class PolicyProcessor(object):
 		return self.__get_clean_object_name(object_type)
 		return True # you made it this far
 
-	"""
-	To disambiguate base, overriden, and gateway-specific types, we use
-	namespace to denote concrete object implementations (eg. Lastfm:Track)
-	
-	This method strips out any namespace components from an object type
-	string so it can be directly accessed from the gateway
-	"""
 	def __get_clean_object_name(self, object_type):
+		""" Return an object's type without a namespace component, if one is provided
+
+		"""
 		if ":" not in object_type:
 			return object_type
 		else:
 			return object_type.split(":")[1]
-	"""
-	Alternative interface to _infer_object
-	Given an optionally qualified object reference, such as Image or
-	Lastfm:Track, infer
-	def __infer_object_name(self, object_name):
-	"""
 
-	"""
-	PRISONER exposes a namespace-heavy interface to allow complex, abstract
-	objects be referenced in an appropriate scope.
-	For example, "fb:Likes" is interpreted as referring to the Likes Social
-	Object provided by the Facebook service gateway, and "literal:me" is
-	interpreted as a literal string.
-	This allows complex object references to be contained within strings.
-	This method is responsbile for relating that back to an appropriate Pythonic
-	object reference.
-
-	This is an internal function.
-	"""
+	
 	def _infer_object(self, object_name):
+		""" Infers object type based on object definition in a privacy policy. 
+
+		:param object_name: Object name with an optional namespace component
+		:type object_name: str.
+		:returns: instance of an object
+		:raises: RuntimePrivacyPolicyParserError, ServiceGatewayNotFoundError
+		"""
 		base_namespaces = ["literal","session","base"]
 
 		try:
@@ -210,13 +199,16 @@ class PolicyProcessor(object):
 			raise RuntimePrivacyPolicyParserError("%s " % object_name + \
 			"is not a valid object definition")
 	
-	"""
-	Use to map a string representation of an object.attrs back to a source
-	object.
-	eg. given (object_attr="Person.id",source=<instance of Person>)
-	verifies that the source object has the attribute
-	""" 
+	
 	def _infer_attributes(self, object_attr, source):
+		""" Maps a string representation of an object and its attributes back to an instance ofa source object, to return its value.
+
+		:param object_attr: object_attributes references (can be many deep) 
+		:type object_attr: str.
+		:param source: the object to search on
+		:type source: object
+		:returns: attribute value searched for
+		"""
 		parsed_object = object_attr.split(".")
 		parse_rec = None
 		for meth in parsed_object:
@@ -236,6 +228,15 @@ class PolicyProcessor(object):
 	This is an internal function.
 	"""
 	def __validate_criteria(self, response, tree):
+		""" Validates an object against the object and attribute criteria in the given policy.
+
+		:param response: The response object to test
+		:type response: SocialObject
+		:param tree: A valid privacy policy subtree
+		:type tree: ElementTree
+		:raises: RuntimePrivacyPolicyParserError
+		:returns: boolean - whether or not object passed criteria
+		""" 
 		logical_elements = ["and-match","or-match"]
 		criteria_stack = []
 		last_element = None
@@ -309,15 +310,14 @@ class PolicyProcessor(object):
 		else:
 			return True
 
-
-	""" 
-	Takes a SocialActivityResponse and applies the appropriate sanitisation,
-	based on the experimental privacy policy, and the headers embedded in
-	the object.
-
-	This is an internal function.
-	"""
 	def _sanitise_object_request(self, response):
+		"""
+		Sanitises a request - this reduces a Social Object to only the fields allowed by the privacy policy, and applies any transformations required by the policy.
+
+		:param response: Object to sanitise
+		:type response: SocialActivityResponse
+		:returns: SocialObject -- sanitised object
+		"""
 		if response.headers == None:
 			raise Exception("Response has no headers, so cannot " + \
 			"be sanitised. No object will be returned.")
@@ -396,13 +396,16 @@ class PolicyProcessor(object):
 
 
 		# return response
-	"""
-	Takes an single policy element (eg. attribute-match) and tests if this
-	object passes it - use as part of more complex logical operations
-
-	This is an internal function.
-	"""
+	
 	def __test_criteria(self, element, response):
+		""" Tests that an object passes a single logical test within object or attribute criteria. Used internally when validating objects
+
+			:param element: XML element with logical criterion
+			:type element: lxml Element
+			:param response: Contains object to test
+			:type response: SocialActivityResponse
+			:returns: bool -- did object pass criteria?
+		"""
 		if element.tag == "attribute-match":
 			to_match = element.get("match")
 			on_object = element.get("on_object")

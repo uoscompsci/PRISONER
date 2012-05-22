@@ -26,7 +26,11 @@ class InvalidPrivacyPolicy(Exception):
 		%s" % self.error
 
 class SocialObjectsGateway(object):
+	"""
+	This is a friendlier interface to PRISONER's internals, which participation clients should access. This coordinates access to other service gateways, and the management of experimental responses. 
 
+	A single instance of this object should be maintained throughout the lifecycle of an experimental application. 
+	"""
 	def __init__(self):
 		self.privacy_policy = None
 		self.exp_design = None
@@ -42,6 +46,14 @@ class SocialObjectsGateway(object):
 		self.policyProcessor = None
 	
 	def request_authentication(self, provider):
+		""" Call this if it is necessary to perform authenticated API calls with a service gateway (usually required to write data as a person or to read sensitive data).
+
+			Each service gateway has its own authentication mechanism. Calling this will return a token needed to proceed with authentication. Authentication is completed by presenting a relevant interface to users, then calling complete_authentication() with its token.
+
+ 			:param provider: Name of provider to authenticate with.
+ 			:type provider: str.
+ 			:returns: Token required to complete authentication (eg. URL for participant to visit)
+ 		"""
 		if provider in self.keychain:
 			return None
 		# attempt to find this gateway
@@ -53,19 +65,27 @@ class SocialObjectsGateway(object):
 		# own time
 
 	def complete_authentication(self, provider, access_token=None):
+		"""
+		Completes the second stage of authentication with a provider - calling this with a user-provided access token will attempt to complete the authentication process.
+
+		:param provider: Name of provider to authenticate with.
+		:type provider: str.
+		:param access_token: Provide if needed from client to complete authentication (omit if authentication is completed entirely serverside)
+		:type access_token: str.
+		"""
 		if provider in self.keychain:
 			return self.keychain[provider]
 		gateway = self.__getServiceGateway(provider)
 		ret_access_token = gateway.complete_authentication(access_token)
 		self.keychain[provider] = ret_access_token
-	"""
-	Supply the privacy policy used by this experiment.
-	This can only be set once, and must be set before any requests are
-	allowed.
-	
-	privacy_policy - path to an XML file containing the privacy policy
-	"""
+
 	def provide_privacy_policy(self, privacy_policy):
+		"""
+		Provide the privacy policy for this experiment. Used to instantiate an instance of PolicyProcessor. This can only be done once for an instance of SocialObjectGateway. This must be called before attempting to read or write Social Objects.
+
+		:param privacy_policy: path to a privacy policy XML file
+		:type privacy_policy: str
+		"""
 		if self.privacy_policy:
 			raise Exception("Privacy policy already defined. If \
 			you need to change it, start a new instance of PRISONER")
@@ -74,15 +94,13 @@ class SocialObjectsGateway(object):
 		self.privacy_policy = privacy_policy	
 		self.policy_processor = PolicyProcessor(self.privacy_policy)
 
-	"""
-	Bootstraps the PersistenceManager.
-	This can only be set once, and must be set before any attempts to write
-	are allowed.
-
-	experimental_design - path to XML file containing valid experimental
-	design
-	"""
 	def provide_experimental_design(self, experimental_design):
+		"""
+		Provide the experimental design for this experiment. Used to instantiate a PersistenceManager. Can only be done once per instance of SocialObjectGateway. This must be called before attemtping to persist any response data.
+
+			:param experimental_design: path to an experimental design XML file
+			:type experimental_design: str
+		"""
 		if self.persistence:
 			raise Exception("Experimental design already defined."+\
 			"If you need to change it, start a new instance of PRISONER")
@@ -102,33 +120,30 @@ class SocialObjectsGateway(object):
 	persisting objects/participant data
 	"""
 	def post_response(self, schema, response):
+		""" Passes the response to the PersistenceManager to write to the internal database. There must be an experimental design bound first.
+
+			:param schema: Name of the response table to write to
+			:type schema: str.
+			:param response: The response dictionary to write to the specified schema
+			:type response: dict
+		"""	
 		if not self.persistence:
 			raise Exception("No experimental design supplied")
 	
 		self.persistence.post_response(schema, response)	
 		
-
-	"""
-	GetObject allows participation clients to request objects from social
-	activity clients.
-
-	provider - name of the provider (sometimes referred to
-	as namespace. Examples include "Facebook" and "Lastfm"
-
-	object_type - class of Social Object to return, whether base
-	types (Person, Image etc.) or provider-specific (eg. Playlist). In the
-	case of the latter, if provider does not recognise the name given, an
-	error is raised
-
-	payload - dictionary of criteria for objects returned. Keys correspond
-	to attributes of the object to be returned, and again may make use of
-	provider-specific extensions
-
-	allow_many - if True, multiple objects may be returned (whether 1 or
-	more, a list will always be returned). If false, only the first matching
-	object is returned (reproducibility cannot be guaranteed)
-	"""
 	def GetObject(self, provider, object_type, payload, allow_many=False):
+		"""
+		Interface for retrieving an object from a service gateway. Requests are verified against the privacy policy, and returned objects are sanitised as appropriate.
+
+		:param provider: name of provider to get object from
+		:type provider: str
+		:param object_type: name of object to get
+		:type object_type: str
+		:param payload: dictionary of criteria of objects to return. The format of this depends on the requirements and format expected by the service gateway.
+		:type payload: dict
+		:returns: SocialObject -- sanitised for consumption by participation client
+		"""
 		headers = SARHeaders("GET", provider, object_type, payload)
 		
 		if not self.privacy_policy:
@@ -168,6 +183,13 @@ class SocialObjectsGateway(object):
 			
 		
 	def __getServiceGateway(self, provider):
+		""" Given the name of a provider, return an instance of the appropriate service gateway
+
+			:param provider: Provider name
+			:type provider: str
+			:raises: ServiceGatewayNotFound
+			:returns: ServiceGateway
+		"""
 		if provider in self.gateways:
 			return self.gateways[provider]
 		try:	
@@ -179,6 +201,16 @@ class SocialObjectsGateway(object):
 		return provider_gateway
 
 	def PostObject(self, provider, object_type, payload):
+		"""
+		Request to write a Social Object to a given provider. Requests are verified against the privacy policy, and outgoing objects are sanitised as necessary.
+
+		:param provider: Provider name
+		:type provider: str
+		:param object_type: Type of object to write
+		:type object_type: str
+		:param payload: Object to post to provider
+		:type payload: Social Object
+		"""
 		headers = SARHeaders("POST", provider, object_type, payload)
 		
 		if not self.privacy_policy:
