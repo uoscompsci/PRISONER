@@ -99,6 +99,11 @@ class PersistenceManager(object):
 		for row in res:
 			print row
 		
+		trackselect = self.object_tables["track"].select()
+		res = trackselect.execute()
+		for row in res:
+			print row
+		
 
 	"""
 	Parses the experimental design and constructs relevant tables, classes,
