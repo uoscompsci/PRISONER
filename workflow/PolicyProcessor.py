@@ -1,12 +1,4 @@
-"""
-PRISONER - Policy Processor
-===========================
-
-The Policy Processor validates XML privacy policies, for schema adherence and
-runtime scope validation.
-"""
 import lxml.etree as etree
-from optparse import OptionParser
 
 from Exceptions import *
 from gateway import *  	# import all known service gateways
@@ -16,9 +8,23 @@ PRIVACY_POLICY_XSD = "/home/lhutton/svn/progress2/lhutton/projects/sns_arch/src/
 op_match = {"GET": "retrieve", "POST": "publish", "PUT": "store"}
 
 class PolicyProcessor(object):
+	""" The Policy Processor is responsible for validating and sanitising all
+	requests to retrieve and publish Social Objects.
 
-	
+	It requires a well-formed privacy policy XML file to be supplied. If
+	this is missing or invalid, all requests will fail.
+
+	The PolicyProcessor is an internal object. Service gateways and
+	participation clients do not need to directly interact with it.
+	See the SocialObjectGateway for a friendly interface to these innards.
+	"""
 	def __init__(self, policy=None):
+		""" Do not instantiate your own PolicyProcessor.
+	
+		However, if you choose to ignore that and instantiate your own
+		anyway, provide the path to an XML file, which will be
+		immediately validated.
+		"""
 		self._privacy_policy = None
 		if policy:
 			self.privacy_policy = policy
@@ -27,13 +33,27 @@ class PolicyProcessor(object):
 
 	@property
 	def privacy_policy(self):
+		""" Get the privacy policy bound to this PolicyProcessor."""
 		return self._privacy_policy
 	
 	@privacy_policy.setter
 	def privacy_policy(self, value):
+		"""Bind a privacy policy to this PolicyProcessor. The privacy
+		policy is validated before bound.
+		
+		:param value: Path to the privacy policy XML file.
+		:type value: str.
+		"""
 		self._privacy_policy = self.validate_policy(value)
 
 	def validate_policy(self, policy):
+		""" Validates a privacy policy against the XML Schema.
+
+		:param policy: Path to privacy policy XML file.
+		:type policy: str.
+		:returns: ElementTree -- policy object
+		:raises: IOError
+		"""
 		if not policy:
 			raise IOError("Privacy policy not found at path")
 		print "Validating policy at %s" % policy
@@ -303,7 +323,6 @@ class PolicyProcessor(object):
 			"be sanitised. No object will be returned.")
 
 		# did the object policy allow us to collect this?
-		print response.headers.object_type
 
 		# try to get a service-specific policy for this object type
 		# otherwise, fall-back on a base object type
@@ -397,7 +416,8 @@ class PolicyProcessor(object):
 				return False
 
 
-
+"""
+DEPRECRATED: CLI not supported
 parser = OptionParser()
 parser.add_option("-p","--policy", type="string",dest="policy",
 help="Path to privacy policy")
@@ -409,3 +429,4 @@ if __name__ == "__main__":
 	
 	proc = PolicyProcessor()
 	proc.validate_policy(policy)	
+"""

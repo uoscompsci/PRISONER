@@ -1,0 +1,286 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>workflow Package &mdash; PRISONER 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="PRISONER 0.1 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">PRISONER 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="workflow-package">
+<h1>workflow Package<a class="headerlink" href="#workflow-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2><tt class="xref py py-mod docutils literal"><span class="pre">workflow</span></tt> Package<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-src.workflow"></span></div>
+<div class="section" id="module-src.workflow.Exceptions">
+<span id="exceptions-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">Exceptions</span></tt> Module<a class="headerlink" href="#module-src.workflow.Exceptions" title="Permalink to this headline">¶</a></h2>
+<p>Raised by an object if it requires a privacy policy to be provided before
+any further interaction can occur.
+PRISONER requires a valid privacy policy XML file to allow interactions between
+social activity clients and participation clients.</p>
+<p>See the Privacy Policy XML Schema documentation for more information.</p>
+<dl class="exception">
+<dt id="src.workflow.Exceptions.DisallowedByPrivacyPolicyError">
+<em class="property">exception </em><tt class="descclassname">src.workflow.Exceptions.</tt><tt class="descname">DisallowedByPrivacyPolicyError</tt><big>(</big><em>error</em><big>)</big><a class="headerlink" href="#src.workflow.Exceptions.DisallowedByPrivacyPolicyError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></tt></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="src.workflow.Exceptions.NoPrivacyPolicyProvidedError">
+<em class="property">exception </em><tt class="descclassname">src.workflow.Exceptions.</tt><tt class="descname">NoPrivacyPolicyProvidedError</tt><a class="headerlink" href="#src.workflow.Exceptions.NoPrivacyPolicyProvidedError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></tt></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="src.workflow.Exceptions.OperationNotImplementedError">
+<em class="property">exception </em><tt class="descclassname">src.workflow.Exceptions.</tt><tt class="descname">OperationNotImplementedError</tt><big>(</big><em>operation</em><big>)</big><a class="headerlink" href="#src.workflow.Exceptions.OperationNotImplementedError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></tt></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="src.workflow.Exceptions.RuntimePrivacyPolicyParserError">
+<em class="property">exception </em><tt class="descclassname">src.workflow.Exceptions.</tt><tt class="descname">RuntimePrivacyPolicyParserError</tt><big>(</big><em>error</em><big>)</big><a class="headerlink" href="#src.workflow.Exceptions.RuntimePrivacyPolicyParserError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></tt></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="src.workflow.Exceptions.ServiceGatewayNotFoundError">
+<em class="property">exception </em><tt class="descclassname">src.workflow.Exceptions.</tt><tt class="descname">ServiceGatewayNotFoundError</tt><big>(</big><em>gateway</em><big>)</big><a class="headerlink" href="#src.workflow.Exceptions.ServiceGatewayNotFoundError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></tt></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="src.workflow.Exceptions.SocialObjectNotSupportedError">
+<em class="property">exception </em><tt class="descclassname">src.workflow.Exceptions.</tt><tt class="descname">SocialObjectNotSupportedError</tt><big>(</big><em>gateway</em>, <em>object</em><big>)</big><a class="headerlink" href="#src.workflow.Exceptions.SocialObjectNotSupportedError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></tt></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.workflow.PolicyProcessor">
+<span id="policyprocessor-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">PolicyProcessor</span></tt> Module<a class="headerlink" href="#module-src.workflow.PolicyProcessor" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="src.workflow.PolicyProcessor.PolicyProcessor">
+<em class="property">class </em><tt class="descclassname">src.workflow.PolicyProcessor.</tt><tt class="descname">PolicyProcessor</tt><big>(</big><em>policy=None</em><big>)</big><a class="headerlink" href="#src.workflow.PolicyProcessor.PolicyProcessor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>The Policy Processor is responsible for validating and sanitising all
+requests to retrieve and publish Social Objects.</p>
+<p>It requires a well-formed privacy policy XML file to be supplied. If
+this is missing or invalid, all requests will fail.</p>
+<p>The PolicyProcessor is an internal object. Service gateways and
+participation clients do not need to directly interact with it.
+See the SocialObjectGateway for a friendly interface to these innards.</p>
+<dl class="attribute">
+<dt id="src.workflow.PolicyProcessor.PolicyProcessor.privacy_policy">
+<tt class="descname">privacy_policy</tt><a class="headerlink" href="#src.workflow.PolicyProcessor.PolicyProcessor.privacy_policy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the privacy policy bound to this PolicyProcessor.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.workflow.PolicyProcessor.PolicyProcessor.validate_policy">
+<tt class="descname">validate_policy</tt><big>(</big><em>policy</em><big>)</big><a class="headerlink" href="#src.workflow.PolicyProcessor.PolicyProcessor.validate_policy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validates a privacy policy against the XML Schema.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>policy</strong> (<em>str.</em>) &#8211; Path to privacy policy XML file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">ElementTree &#8211; policy object</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body">IOError</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.workflow.SessionManager">
+<span id="sessionmanager-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">SessionManager</span></tt> Module<a class="headerlink" href="#module-src.workflow.SessionManager" title="Permalink to this headline">¶</a></h2>
+<p>PRISONER Session Manager
+Maintains a keychain of access tokens for all services authorised by the
+participant.</p>
+<dl class="class">
+<dt id="src.workflow.SessionManager.SessionManager">
+<em class="property">class </em><tt class="descclassname">src.workflow.SessionManager.</tt><tt class="descname">SessionManager</tt><a class="headerlink" href="#src.workflow.SessionManager.SessionManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.workflow.SocialObjectGateway">
+<span id="socialobjectgateway-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">SocialObjectGateway</span></tt> Module<a class="headerlink" href="#module-src.workflow.SocialObjectGateway" title="Permalink to this headline">¶</a></h2>
+<p>PRISONER Social Object Gateway</p>
+<p>Participation clients talk to me to request access to objects, or to publish
+objects back to services.
+I evaluate the request in accordance with the experimental design, and construct
+a request to the appropriate service gateway. 
+I sanitise the objects it returns and hand them back to participation clients.</p>
+<dl class="exception">
+<dt id="src.workflow.SocialObjectGateway.InvalidPrivacyPolicy">
+<em class="property">exception </em><tt class="descclassname">src.workflow.SocialObjectGateway.</tt><tt class="descname">InvalidPrivacyPolicy</tt><big>(</big><em>error</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.InvalidPrivacyPolicy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></tt></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="src.workflow.SocialObjectGateway.ServiceGatewayNotFound">
+<em class="property">exception </em><tt class="descclassname">src.workflow.SocialObjectGateway.</tt><tt class="descname">ServiceGatewayNotFound</tt><big>(</big><em>gateway</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.ServiceGatewayNotFound" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></tt></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="src.workflow.SocialObjectGateway.SocialObjectsGateway">
+<em class="property">class </em><tt class="descclassname">src.workflow.SocialObjectGateway.</tt><tt class="descname">SocialObjectsGateway</tt><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="src.workflow.SocialObjectGateway.SocialObjectsGateway.GetObject">
+<tt class="descname">GetObject</tt><big>(</big><em>provider</em>, <em>object_type</em>, <em>payload</em>, <em>allow_many=False</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway.GetObject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.workflow.SocialObjectGateway.SocialObjectsGateway.PostObject">
+<tt class="descname">PostObject</tt><big>(</big><em>provider</em>, <em>object_type</em>, <em>payload</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway.PostObject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.workflow.SocialObjectGateway.SocialObjectsGateway.complete_authentication">
+<tt class="descname">complete_authentication</tt><big>(</big><em>provider</em>, <em>access_token=None</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway.complete_authentication" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.workflow.SocialObjectGateway.SocialObjectsGateway.post_response">
+<tt class="descname">post_response</tt><big>(</big><em>schema</em>, <em>response</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway.post_response" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.workflow.SocialObjectGateway.SocialObjectsGateway.provide_experimental_design">
+<tt class="descname">provide_experimental_design</tt><big>(</big><em>experimental_design</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway.provide_experimental_design" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.workflow.SocialObjectGateway.SocialObjectsGateway.provide_privacy_policy">
+<tt class="descname">provide_privacy_policy</tt><big>(</big><em>privacy_policy</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway.provide_privacy_policy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.workflow.SocialObjectGateway.SocialObjectsGateway.request_authentication">
+<tt class="descname">request_authentication</tt><big>(</big><em>provider</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway.request_authentication" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="src.workflow.tests.html">tests Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src.workflow.tests.html#id1"><tt class="docutils literal"><span class="pre">tests</span></tt> Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.workflow.tests.html#module-src.workflow.tests.PolicyProcessorTests"><tt class="docutils literal"><span class="pre">PolicyProcessorTests</span></tt> Module</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">workflow Package</a><ul>
+<li><a class="reference internal" href="#id1"><tt class="docutils literal"><span class="pre">workflow</span></tt> Package</a></li>
+<li><a class="reference internal" href="#module-src.workflow.Exceptions"><tt class="docutils literal"><span class="pre">Exceptions</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-src.workflow.PolicyProcessor"><tt class="docutils literal"><span class="pre">PolicyProcessor</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-src.workflow.SessionManager"><tt class="docutils literal"><span class="pre">SessionManager</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-src.workflow.SocialObjectGateway"><tt class="docutils literal"><span class="pre">SocialObjectGateway</span></tt> Module</a></li>
+<li><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/src.workflow.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">PRISONER 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Luke Hutton.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

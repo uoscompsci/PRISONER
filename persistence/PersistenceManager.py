@@ -94,6 +94,7 @@ class PersistenceManager(object):
 		insert = table.insert()
 		insert.execute(response_out)
 
+		"""
 		select = table.select()
 		res = select.execute()
 		for row in res:
@@ -103,7 +104,7 @@ class PersistenceManager(object):
 		res = trackselect.execute()
 		for row in res:
 			print row
-		
+		"""
 
 	"""
 	Parses the experimental design and constructs relevant tables, classes,
