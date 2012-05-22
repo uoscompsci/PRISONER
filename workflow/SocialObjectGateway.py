@@ -39,6 +39,7 @@ class SocialObjectsGateway(object):
 
 		# maintains a PersistenceManager for DB interaction
 		self.persistence = None 
+		self.policyProcessor = None
 	
 	def request_authentication(self, provider):
 		if provider in self.keychain:
@@ -71,6 +72,7 @@ class SocialObjectsGateway(object):
 	#	processor = PolicyProcessor()
 	#	policy = processor.validate_policy(privacy_policy)
 		self.privacy_policy = privacy_policy	
+		self.policy_processor = PolicyProcessor(self.privacy_policy)
 
 	"""
 	Bootstraps the PersistenceManager.
@@ -84,7 +86,8 @@ class SocialObjectsGateway(object):
 		if self.persistence:
 			raise Exception("Experimental design already defined."+\
 			"If you need to change it, start a new instance of PRISONER")
-		self.persistence = PersistenceManager.PersistenceManager(experimental_design)
+		self.persistence = PersistenceManager.PersistenceManager(experimental_design,
+		self.policy_processor)
 
 	"""
 	Attempts to write the response dictionary to the given schema.
@@ -102,9 +105,7 @@ class SocialObjectsGateway(object):
 		if not self.persistence:
 			raise Exception("No experimental design supplied")
 	
-		# TODO: sanitise against privacy policy
-		# if sanitised:
-		self.persistence.write_response(schema, response)	
+		self.persistence.post_response(schema, response)	
 		
 
 	"""
@@ -139,24 +140,32 @@ class SocialObjectsGateway(object):
 		except:
 			raise ServiceGatewayNotFound(provider)
 		
-		processor = PolicyProcessor(self.privacy_policy)
-		request_valid = processor._validate_object_request("GET",
+		#processor = PolicyProcessor(self.privacy_policy)
+		processor = self.policy_processor
+
+		object_type = processor._validate_object_request("GET",
 		provider, object_type, payload)
 			
 		# TODO: reconcile with session
 		
 		gateway_attr = getattr(provider_gateway,object_type)
 		response = gateway_attr("GET",payload)		
-		if not allow_many:
-			response = [response[0]] or [response]
 
 		sanitised_set = []
-		for resp in response:
+		if hasattr(response, "objects"): #is a Collection
+			new_coll = response
+			for resp in response.objects:
+				response_obj = SocialActivityResponse(resp, headers)
+				sanitised_response = processor._sanitise_object_request(response_obj)
+				sanitised_set.append(sanitised_response)
+			new_coll.objects = sanitised_set
+			return new_coll
+		else:
 			response_obj = SocialActivityResponse(resp, headers)
 			sanitised_response = processor._sanitise_object_request(response_obj)
-			sanitised_set.append(sanitised_response)
+			return sanitised_response
 
-		return sanitised_set
+			
 		
 	def __getServiceGateway(self, provider):
 		if provider in self.gateways:

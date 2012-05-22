@@ -7,17 +7,20 @@ privacy policies
 import lxml.etree as etree
 from sqlalchemy import *
 
+from gateway.ServiceGateway import *
 EXPERIMENTAL_DESIGN_XSD = "/home/lhutton/svn/progress2/lhutton/projects/sns_arch/src/xsd/experimental_design.xsd"
 
 class PersistenceManager(object):
-	def __init__(self, exp_design = None):
+	def __init__(self, exp_design = None, policy_processor=None):
 
 		self.response_tables = {}
 		self.object_tables = {}
 		self.participant_tables = {}
 
 		self.engine = create_engine("sqlite:///:memory:")
-		self.metadata = MetaData()
+		self.metadata = MetaData(self.engine)
+
+		self.policy_processor = policy_processor
 
 		self._experimental_design = None
 		if exp_design:	
@@ -51,15 +54,50 @@ class PersistenceManager(object):
 	def post_response(self, schema, response):
 		if not self.experimental_design:
 			raise Exception("No experimental design")
-		
+
+		# does response data correspond to the given schema?
 		if schema not in self.response_tables:
 			raise Exception("Schema not found")
 
+		# walk the response schema for each column
+		xpath = "//table[@name='%s']" % schema
+		columns = self.experimental_design.xpath(xpath)
+		response_out = {}
+		# is column present in response?
+		for column in columns[0]:
+			if column.get("name") not in response:
+				raise Exception("Response object missing value "+\
+				"for %s" % column.get("name"))	
+		# if column has a mapTo attribute, sanitise object
+			mapTo = column.get("mapTo")
+			if mapTo:
+				headers = SARHeaders("PUT",
+				None,
+				type(response[column.get("name")]).__name__, None)
+				response = SocialActivityResponse(response[column.get("name")], headers)
+
+				san_obj = self.policy_processor._sanitise_object_request(response)
+				# insert object to corresponding table
+				mapTable = self.object_tables[mapTo.split(":")[1]]
+				obj_to_insert = {}
+				for mapCol in mapTable.columns:
+					mapCol = mapCol.name
+					obj_to_insert[mapCol] = getattr(san_obj, mapCol)
+				# place id of inserted object in map column
+				mapInsert = mapTable.insert()
+				mapId = mapInsert.execute(obj_to_insert).lastrowid
+				response_out[column.get("name")]  = mapId
+			else:
+				response_out[column.get("name")] = response[column.get("name")]
+		# insert response
 		table = self.response_tables[schema]
 		insert = table.insert()
-		insert.execute(response)
+		insert.execute(response_out)
 
-		print table.select()
+		select = table.select()
+		res = select.execute()
+		for row in res:
+			print row
 		
 
 	"""
@@ -76,10 +114,10 @@ class PersistenceManager(object):
 	"""
 	def __build_schema(self, drop_first=False):
 		tables = self.experimental_design.xpath("//tables")[0]
+		
 		for table in tables:
 			cols = []
-			for column in table[0]:
-				print table
+			for column in table:
 				cols.append(Column(column.get("name"),
 				String(100)))
 			new_table = Table(table.get("name"),self.metadata,
@@ -90,4 +128,6 @@ class PersistenceManager(object):
 				self.response_tables[table.get("name")] = new_table
 			elif table.get("mapTo") != None:
 				self.object_tables[table.get("name")] = new_table
+
+		self.metadata.create_all()
 					

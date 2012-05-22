@@ -29,11 +29,10 @@ if __name__ == "__main__":
 	#print img
 	#print img.fullImage
 
-	tracks = session.GetObject("Lastfm","Track",me,allow_many=True)
-	print tracks
+	tracks = session.GetObject("Lastfm","Track",me)
 
 	response_obj = {}
-	response_obj['track'] = tracks[0]
+	response_obj['track'] = tracks.objects[0]
 	response_obj['answer'] = "Test answer"
 	session.post_response("response",response_obj)
 

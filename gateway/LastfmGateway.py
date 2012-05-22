@@ -9,7 +9,39 @@ import SocialObjects
 
 import pylast # wrapper for last.fm API
 
-class LastfmTrack(SocialObjects.SocialObject):
+class Track(SocialObjects.SocialObject):
+	def __init__(self):
+		super(Track,self).__init__()
+		self._track = None
+		self._artist = None	
+		self._provider = "Lastfm"
+		self._tag = None
+	
+	@property
+	def track(self):
+		return self._track
+
+	@track.setter
+	def track(self, value):
+		self._track = value
+
+	@property
+	def artist(self):
+		return self._artist
+
+	@artist.setter
+	def artist(self, value):
+		self._artist = value
+
+	@property
+	def tag(self):
+		return self._tag
+
+	@tag.setter
+	def tag(self, value):
+		self._tag = value
+
+class Playlist(SocialObjects.Collection):
 	def __init__(self):
 		pass
 
@@ -36,14 +68,20 @@ class LastfmServiceGateway(ServiceGateway):
 	def Track(self, operation, payload):
 		if(operation == "GET"):
 			user = self.network.get_user(payload.id)
-			tracks = user.get_loved_tracks()
+			tracks = user.get_loved_tracks(limit=10)
+			track_coll = SocialObjects.Collection()
+			track_coll.author = user
+
 			track_set = []
 			for track in tracks:
-				this_track = LastfmTrack()
-				this_track.author = track.artist
-				this_track.displayName = track.title
-				track_set.append(this_Track)
-			return track_set	
+				this_track = Track()
+				this_track.author = user
+				this_track.artist = track.track.artist
+				this_track.title = track.track.title
+				this_track.tag = track.track.get_top_tags(limit=1)[0].item.name
+				track_set.append(this_track)
+			track_coll.objects = track_set
+			return track_coll	
 
 	""" Last.fm Shout interface
 	Shouts are an alternative name for Comments

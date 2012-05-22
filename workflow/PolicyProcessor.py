@@ -13,7 +13,7 @@ from gateway import *  	# import all known service gateways
 import SocialObjects
 
 PRIVACY_POLICY_XSD = "/home/lhutton/svn/progress2/lhutton/projects/sns_arch/src/xsd/privacy_policy.xsd"
-op_match = {"GET": "retrieve", "POST": "publish"}
+op_match = {"GET": "retrieve", "POST": "publish", "PUT": "store"}
 
 class PolicyProcessor(object):
 
@@ -66,24 +66,33 @@ class PolicyProcessor(object):
 	def _validate_object_request(self, operation, provider, object_type, payload):
 		if not self.privacy_policy:
 			raise NoPrivacyPolicyProvidedError()
-
-
+		
 		query_path = ("//policy[@for='%s']"%
 		object_type)
 
-		if operation not in ["GET","POST"]:
+		if operation not in ["GET","POST","PUT"]:
 			raise OperationNotImplementedError(operation)
 
 		# is there a <policy for="object"> element?
 		attrs = self.privacy_policy.xpath(query_path, namespaces=self.namespaces)
 		if not attrs:
-			exp = "This privacy policy contains no policy" + \
-			" element for %s - no requests will be" % object_type +  \
-			" allowed."
-			raise DisallowedByPrivacyPolicyError(exp)
+			query_path = ("//policy[@for='%s:%s']"%
+			(provider, object_type))
+			attrs = self.privacy_policy.xpath(query_path)
+			if not attrs:
+				exp = "This privacy policy contains no policy" + \
+				" element for %s - no requests will be" % object_type +  \
+				" allowed."
+				raise DisallowedByPrivacyPolicyError(exp)
+			else:
+				ns = True
+		else:
+			ns = False
 		
 		# is there an object or attribute criteria with an
 		# allow=retrieve attribute?
+		if ns:
+			object_type = "%s:%s" % (provider, object_type)
 		att_path=("//policy[@for='%s']//attribute-policy[@allow='%s']"
 		% (object_type, op_match[operation]))
 		
@@ -103,8 +112,28 @@ class PolicyProcessor(object):
 		# providers on an experiment-policy to avoid repetition for each
 		# object - so hold off until those primitives exist
 
+		return self.__get_clean_object_name(object_type)
 		return True # you made it this far
+
+	"""
+	To disambiguate base, overriden, and gateway-specific types, we use
+	namespace to denote concrete object implementations (eg. Lastfm:Track)
 	
+	This method strips out any namespace components from an object type
+	string so it can be directly accessed from the gateway
+	"""
+	def __get_clean_object_name(self, object_type):
+		if ":" not in object_type:
+			return object_type
+		else:
+			return object_type.split(":")[1]
+	"""
+	Alternative interface to _infer_object
+	Given an optionally qualified object reference, such as Image or
+	Lastfm:Track, infer
+	def __infer_object_name(self, object_name):
+	"""
+
 	"""
 	PRISONER exposes a namespace-heavy interface to allow complex, abstract
 	objects be referenced in an appropriate scope.
@@ -274,11 +303,29 @@ class PolicyProcessor(object):
 			"be sanitised. No object will be returned.")
 
 		# did the object policy allow us to collect this?
-		xpath = "//policy[@for='%s']//object-policy[@allow='%s']//object-criteria" \
-		% (response.headers.object_type,
+		print response.headers.object_type
+
+		# try to get a service-specific policy for this object type
+		# otherwise, fall-back on a base object type
+		xpath = "//policy[@for='%s:%s']//object-policy[@allow='%s']//object-criteria" \
+		% (response.content.provider, response.headers.object_type,
 		op_match[response.headers.operation])
-		
 		xpath_res = self.privacy_policy.xpath(xpath)
+
+		if not xpath_res:
+			xpath = "//policy[@for='%s']//object-policy[@allow='%s']//object-criteria" \
+			% (response.headers.object_type,
+			op_match[response.headers.operation])
+			xpath_res = self.privacy_policy.xpath(xpath)
+			ns = False
+		else:
+			ns = True
+		if ns:
+			object_type = "%s:%s" % (response.content.provider,
+			response.headers.object_type)
+		else:
+			object_type = response.headers.object_type
+
 		valid_object_policy = self.__validate_criteria(response,
 		xpath_res[0])
 
@@ -289,14 +336,18 @@ class PolicyProcessor(object):
 		# attribute-policy
 		sanitised_object = response.content.__class__()
 			
-		xpath = "//policy[@for='%s']//attributes" % response.headers.object_type
+		xpath = "//policy[@for='%s']//attributes" % object_type
 		attributes_collection = self.privacy_policy.xpath(xpath)
 		for attribute in attributes_collection[0]:
 			curr_attribute = attribute.get("type")
 			xpath = "attribute-policy[@allow='%s']//attribute-criteria" % op_match[response.headers.operation]
 			att_path = attribute.xpath(xpath)
-			valid_attr_policy = self.__validate_criteria(response,
-			att_path[0])
+			if att_path:
+				# TODO: block requests without any criteria
+				valid_attr_policy = self.__validate_criteria(response,
+				att_path[0])
+			else:
+				valid_attr_policy = True
 			if not valid_attr_policy:
 				print "Attribute policy %s failed for request" % curr_attribute
 			else:

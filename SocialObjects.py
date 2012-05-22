@@ -24,6 +24,7 @@ class SocialObject(object):
 		self._url = None
 		self._location = None
 		self._tags = None
+		self._provider = None
 
 	"""
 	Transformations apply privacy-preserving logic to attributes of an
@@ -87,6 +88,33 @@ class SocialObject(object):
 	@displayName.setter
 	def displayName(self,value):
 		self._displayName = value
+
+	@property
+	def provider(self):
+		return self._provider
+
+	@provider.setter
+	def provider(self, value):
+		self._provider = value
+
+"""
+Represents a generic collection of Social Objects - can contain any combination
+of types.
+Use to represent playlists, photo albums etc. and subclass to add
+service-specific extensions
+"""
+class Collection(SocialObject):
+	def __init__(self):
+		super(Collection,self).__init__()
+		self._objects = None
+
+	@property
+	def objects(self):
+		return self._objects
+
+	@objects.setter
+	def objects(self, value):
+		self._objects = value
 
 class Comment(SocialObject):
 	def __init__(self):
