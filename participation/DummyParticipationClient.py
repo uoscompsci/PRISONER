@@ -55,10 +55,12 @@ if __name__ == "__main__":
 	expBuilder.provide_experimental_design(exp_design)
 	
 	# TODO: user-facing authentication
-	#expBuilder.authenticate_participant(1)
-	new_participant = {"name": "Bob", "gender": "male", "serviceGroup": "Lastfm"}
-	my_id =	expBuilder.sog.register_participant("participant",new_participant)
-	participant = expBuilder.authenticate_participant("participant",my_id)
+	participant = expBuilder.authenticate_participant("participant",1)
+
+	# uncomment to register new participant
+#	new_participant = {"name": "Bob", "gender": "male", "serviceGroup": "Lastfm"}
+#	my_id =	expBuilder.sog.register_participant("participant",new_participant)
+#	participant = expBuilder.authenticate_participant("participant",my_id[0])
 	print participant
 
 	

@@ -16,7 +16,8 @@ class PersistenceManager(object):
 		self.response_tables = {}
 		self.object_tables = {}
 		self.participant_tables = {}
-
+		self.participant_table = None
+		self.meta_participant_table = None
 		#self.engine = create_engine("sqlite:///prisoner.db")
 		self.engine = None
 		self.metadata = None
@@ -125,9 +126,17 @@ class PersistenceManager(object):
 		table = self.participant_tables[schema]
 		insert = table.insert()
 		result = insert.execute(response_out)
-		return result.lastrowid
+		return self.get_participant(schema, result.lastrowid)
 
-		
+	def register_participant_with_provider(self, participant_id, provider, token):
+		table = self.meta_participant_table
+		insert = table.insert()
+		response = {"participant_id": participant_id, "provider": provider,
+		"access_token": token}
+		insert.execute(response)
+
+		res = table.select().execute()	
+		print res.fetchone()
 		
 	
 	"""
@@ -217,11 +226,21 @@ class PersistenceManager(object):
 					" defined per experiment"
 					raise Exception(exp)
 				self.participant_tables[table.get("name")] = new_table
+				self.participant_table = new_table
+				# make a metaparticipant table for storing
+				# access keys
+				meta_table = Table("meta_%s" %
+				table.get("name"), self.metadata,
+				Column("id",Integer,primary_key=True),
+				Column("participant_id",Integer),
+				Column("provider",String),
+				Column("access_token",String))
+				self.meta_participant_table = meta_table
 			elif table.get("type") == "response":
 				self.response_tables[table.get("name")] = new_table
 			elif table.get("mapTo") != None:
 				self.object_tables[table.get("name")] = new_table
-		
+
 		if drop_first:
 			self.metadata.create_all()
 					

@@ -45,6 +45,8 @@ class SocialObjectsGateway(object):
 		# maintains a PersistenceManager for DB interaction
 		self.persistence = None 
 		self.policyProcessor = None
+
+		self.participant = None
 	
 	def request_authentication(self, provider, callback):
 		""" Call this if it is necessary to perform authenticated API
@@ -73,8 +75,10 @@ class SocialObjectsGateway(object):
 		# own time
 
 	def register_participant(self, schema, participant):
-		return self.persistence.register_participant(schema,
+		participant= self.persistence.register_participant(schema,
 		participant)
+		self.participant = participant
+		return participant
 
 	def complete_authentication(self, provider, request=None):
 		"""
@@ -87,11 +91,10 @@ class SocialObjectsGateway(object):
 		complete authentication 
 		:type request: tornado.httpserver.HTTPRequest
 		"""
-		if provider in self.keychain:
-			return self.keychain[provider]
 		gateway = self.__getServiceGateway(provider)
 		ret_access_token = gateway.complete_authentication(request)
-		self.keychain[provider] = ret_access_token
+		self.persistence.register_participant_with_provider(self.participant[0],
+		provider, ret_access_token)
 
 	def provide_privacy_policy(self, privacy_policy):
 		"""

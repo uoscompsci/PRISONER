@@ -152,9 +152,9 @@ class LastfmServiceGateway(ServiceGateway):
 	token
 	"""
 	def complete_authentication(self, request):
-		access_token = request.arguments['token']
+		access_token = request.arguments['token'][0]
 		print "Last.fm access token: %s" % access_token
-		session_key = self.session_manager.get_web_auth_session_key(access_token)
+		session_key = self.session_manager.get_web_auth_session_key_verbose(access_token)
 		self.session_key = session_key
 		self.network.session_key = session_key
 		return session_key

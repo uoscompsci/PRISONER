@@ -56,6 +56,7 @@ class ExperimentBuilder(object):
 		"""
 		participant = self.sog.persistence.get_participant(schema, participant_id)	
 		self.participant = participant
+		self.sog.participant = participant
 		return self.participant
 
 	def authenticate_providers(self, providers):
@@ -113,6 +114,12 @@ class ExperimentBuilder(object):
 
 class CompleteConsentHandler(tornado.web.RequestHandler):
 	def get(self):
+		builder = self.application.settings["builder"]
+
+		callback_provider = self.get_argument("cbprovider")
+		builder.sog.complete_authentication(callback_provider,
+		self.request)
+
 		self.write("Thanks. Now ready to start the experiment...")
 
 
@@ -136,6 +143,7 @@ class CallbackHandler(tornado.web.RequestHandler):
 	"""
 	def get(self):
 		url = urllib.unquote(self.request.uri)
+		url = url.replace("?token","&token") # this is an insane shim for a bug in LFM
 		self.redirect(url)
 
 class ProviderAuthentHandler(tornado.web.RequestHandler):
@@ -167,10 +175,10 @@ class ProviderAuthentHandler(tornado.web.RequestHandler):
 		try:
 			callback_provider = self.get_argument("cbprovider")
 			builder.sog.complete_authentication(callback_provider,
-			request)
+			self.request)
 		except:
 			pass
 
 		url = builder.sog.request_authentication(current_provider,
-		callback=callback)
+		callback=urllib.quote(callback,safe=":/"))
 		self.redirect(url)
