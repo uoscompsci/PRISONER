@@ -143,16 +143,17 @@ class LastfmServiceGateway(ServiceGateway):
 	Return a URL used for end-users to confirm authentication for this
 	provider 
 	"""
-	def request_authentication(self, authent_id=False):
+	def request_authentication(self, callback):
 		self.session_manager = pylast.SessionKeyGenerator(self.network)
-		return self.session_manager.get_web_auth_url()
+		return self.session_manager.get_web_flow(callback)
 
 	"""
 	Call after user completes authentication - do request to get session
 	token
 	"""
-	def complete_authentication(self, access_token=None):
-		print access_token
+	def complete_authentication(self, request):
+		access_token = request.arguments['token']
+		print "Last.fm access token: %s" % access_token
 		session_key = self.session_manager.get_web_auth_session_key(access_token)
 		self.session_key = session_key
 		self.network.session_key = session_key

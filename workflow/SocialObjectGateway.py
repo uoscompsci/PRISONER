@@ -37,7 +37,8 @@ class SocialObjectsGateway(object):
 		# dict keyed on provider names, with values access tokens. this
 		# should be ethically persisted so auth not needed on each
 		# session for the same participant
-		self.keychain = {'Lastfm':'a78ab9d8a03c60a7e3579fa517dee618'}
+		#self.keychain = {'Lastfm':'a78ab9d8a03c60a7e3579fa517dee618'}
+		self.keychain = {}
 		# dict keyed on provider names, instances of service gateways
 		self.gateways = {}
 
@@ -45,38 +46,51 @@ class SocialObjectsGateway(object):
 		self.persistence = None 
 		self.policyProcessor = None
 	
-	def request_authentication(self, provider):
-		""" Call this if it is necessary to perform authenticated API calls with a service gateway (usually required to write data as a person or to read sensitive data).
+	def request_authentication(self, provider, callback):
+		""" Call this if it is necessary to perform authenticated API
+		calls with a service gateway (usually required to write data as a person or to
+		read sensitive data).
 
-			Each service gateway has its own authentication mechanism. Calling this will return a token needed to proceed with authentication. Authentication is completed by presenting a relevant interface to users, then calling complete_authentication() with its token.
+		Each service gateway has its own authentication
+		mechanism. Calling this will return a token needed to proceed with
+		authentication. Authentication is completed by presenting a relevant interface
+		to users, then calling complete_authentication() with its token.
 
- 			:param provider: Name of provider to authenticate with.
- 			:type provider: str.
- 			:returns: Token required to complete authentication (eg. URL for participant to visit)
- 		"""
+		:param provider: Name of provider to authenticate with.
+		:type provider: str.
+		:param callback: URL to let PRISONER authentication server know
+		user has provided authentication
+		:type callback: str.
+		:returns: URL required to complete authentication"""
 		if provider in self.keychain:
 			return None
 		# attempt to find this gateway
 		gateway = self.__getServiceGateway(provider)
-		authent_url = gateway.request_authentication()
+		authent_url = gateway.request_authentication(callback)
 		return authent_url
 		# what url do i need to authetnicate?
 		# let the user consume the authent url and come back in their
 		# own time
 
-	def complete_authentication(self, provider, access_token=None):
+	def register_participant(self, schema, participant):
+		return self.persistence.register_participant(schema,
+		participant)
+
+	def complete_authentication(self, provider, request=None):
 		"""
-		Completes the second stage of authentication with a provider - calling this with a user-provided access token will attempt to complete the authentication process.
+		Completes the second stage of authentication with a provider.
 
 		:param provider: Name of provider to authenticate with.
 		:type provider: str.
-		:param access_token: Provide if needed from client to complete authentication (omit if authentication is completed entirely serverside)
-		:type access_token: str.
+		:param request: The request received from the provider when it
+		called the PRISONER callback. This should contain any parameters needed to
+		complete authentication 
+		:type request: tornado.httpserver.HTTPRequest
 		"""
 		if provider in self.keychain:
 			return self.keychain[provider]
 		gateway = self.__getServiceGateway(provider)
-		ret_access_token = gateway.complete_authentication(access_token)
+		ret_access_token = gateway.complete_authentication(request)
 		self.keychain[provider] = ret_access_token
 
 	def provide_privacy_policy(self, privacy_policy):
@@ -119,6 +133,7 @@ class SocialObjectsGateway(object):
 	This interface is only for schemas of response types - not for
 	persisting objects/participant data
 	"""
+
 	def post_response(self, schema, response):
 		""" Passes the response to the PersistenceManager to write to the internal database. There must be an experimental design bound first.
 

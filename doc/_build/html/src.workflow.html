@@ -171,40 +171,129 @@ I sanitise the objects it returns and hand them back to participation clients.</
 <dt id="src.workflow.SocialObjectGateway.SocialObjectsGateway">
 <em class="property">class </em><tt class="descclassname">src.workflow.SocialObjectGateway.</tt><tt class="descname">SocialObjectsGateway</tt><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This is a friendlier interface to PRISONER&#8217;s internals, which participation clients should access. This coordinates access to other service gateways, and the management of experimental responses.</p>
+<p>A single instance of this object should be maintained throughout the lifecycle of an experimental application.</p>
 <dl class="method">
 <dt id="src.workflow.SocialObjectGateway.SocialObjectsGateway.GetObject">
 <tt class="descname">GetObject</tt><big>(</big><em>provider</em>, <em>object_type</em>, <em>payload</em>, <em>allow_many=False</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway.GetObject" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Interface for retrieving an object from a service gateway. Requests are verified against the privacy policy, and returned objects are sanitised as appropriate.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>provider</strong> (<em>str</em>) &#8211; name of provider to get object from</li>
+<li><strong>object_type</strong> (<em>str</em>) &#8211; name of object to get</li>
+<li><strong>payload</strong> (<em>dict</em>) &#8211; dictionary of criteria of objects to return. The format of this depends on the requirements and format expected by the service gateway.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">SocialObject &#8211; sanitised for consumption by participation client</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="src.workflow.SocialObjectGateway.SocialObjectsGateway.PostObject">
 <tt class="descname">PostObject</tt><big>(</big><em>provider</em>, <em>object_type</em>, <em>payload</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway.PostObject" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Request to write a Social Object to a given provider. Requests are verified against the privacy policy, and outgoing objects are sanitised as necessary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>provider</strong> (<em>str</em>) &#8211; Provider name</li>
+<li><strong>object_type</strong> (<em>str</em>) &#8211; Type of object to write</li>
+<li><strong>payload</strong> (<em>Social Object</em>) &#8211; Object to post to provider</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="src.workflow.SocialObjectGateway.SocialObjectsGateway.complete_authentication">
 <tt class="descname">complete_authentication</tt><big>(</big><em>provider</em>, <em>access_token=None</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway.complete_authentication" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Completes the second stage of authentication with a provider - calling this with a user-provided access token will attempt to complete the authentication process.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>provider</strong> (<em>str.</em>) &#8211; Name of provider to authenticate with.</li>
+<li><strong>access_token</strong> (<em>str.</em>) &#8211; Provide if needed from client to complete authentication (omit if authentication is completed entirely serverside)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="src.workflow.SocialObjectGateway.SocialObjectsGateway.post_response">
 <tt class="descname">post_response</tt><big>(</big><em>schema</em>, <em>response</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway.post_response" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Passes the response to the PersistenceManager to write to the internal database. There must be an experimental design bound first.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>schema</strong> (<em>str.</em>) &#8211; Name of the response table to write to</li>
+<li><strong>response</strong> (<em>dict</em>) &#8211; The response dictionary to write to the specified schema</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="src.workflow.SocialObjectGateway.SocialObjectsGateway.provide_experimental_design">
 <tt class="descname">provide_experimental_design</tt><big>(</big><em>experimental_design</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway.provide_experimental_design" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Provide the experimental design for this experiment. Used to instantiate a PersistenceManager. Can only be done once per instance of SocialObjectGateway. This must be called before attemtping to persist any response data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>experimental_design</strong> (<em>str</em>) &#8211; path to an experimental design XML file</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="src.workflow.SocialObjectGateway.SocialObjectsGateway.provide_privacy_policy">
 <tt class="descname">provide_privacy_policy</tt><big>(</big><em>privacy_policy</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway.provide_privacy_policy" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Provide the privacy policy for this experiment. Used to instantiate an instance of PolicyProcessor. This can only be done once for an instance of SocialObjectGateway. This must be called before attempting to read or write Social Objects.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>privacy_policy</strong> (<em>str</em>) &#8211; path to a privacy policy XML file</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="src.workflow.SocialObjectGateway.SocialObjectsGateway.request_authentication">
 <tt class="descname">request_authentication</tt><big>(</big><em>provider</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway.request_authentication" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Call this if it is necessary to perform authenticated API calls with a service gateway (usually required to write data as a person or to read sensitive data).</p>
+<p>Each service gateway has its own authentication mechanism. Calling this will return a token needed to proceed with authentication. Authentication is completed by presenting a relevant interface to users, then calling complete_authentication() with its token.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>provider</strong> (<em>str.</em>) &#8211; Name of provider to authenticate with.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Token required to complete authentication (eg. URL for participant to visit)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </dd></dl>
 

@@ -43,6 +43,21 @@ elementFormDefault="unqualified">
 	</xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="experiment">
+	<xs:annotation>
+		<xs:documentation>
+			Root of the experiment. Contains additional metadata
+			about the experiment itself.
+		</xs:documentation>
+	</xs:annotation>
+	<xs:sequence minOccurs="1" maxOccurs="1">
+		<xs:element name="tables" type="tns:tables" />
+	</xs:sequence>
+	<xs:attribute name="name" use="required" type="xs:string" />
+</xs:complexType>
+
+
+
 <xs:element name="experimental-design">
 	<xs:annotation>
 		<xs:documentation>
@@ -52,7 +67,7 @@ elementFormDefault="unqualified">
 	</xs:annotation>
 	<xs:complexType>
 		<xs:sequence minOccurs="1" maxOccurs="1">
-			<xs:element name="tables" type="tns:tables" />
+			<xs:element name="experiment" type="tns:experiment" />
 		</xs:sequence>
 	</xs:complexType>
 </xs:element>

@@ -8,9 +8,11 @@ If its various bits work, it's a good indication you've set it up right.
 
 import SocialObjects
 from gateway import LastfmServiceGateway
-from workflow import SocialObjectGateway
+from workflow import ExperimentBuilder, SocialObjectGateway
 
 if __name__ == "__main__":
+	"""
+	OLD DUMMY CODE	
 	session = SocialObjectGateway.SocialObjectsGateway() 
 	session.provide_privacy_policy("/home/lhutton/svn/progress2/lhutton/projects/sns_arch/spec/privacy_policy_validation_test.xml")
 	session.provide_experimental_design("/home/lhutton/svn/progress2/lhutton/projects/sns_arch/spec/experimental_design_test.xml")
@@ -37,10 +39,31 @@ if __name__ == "__main__":
 	session.post_response("response",response_obj)
 
 	# Uncomment to test publish
-	"""
 	post_shout = SocialObjects.Comment()
 	post_shout.author = me
 	post_shout.inReplyTo= me
 	post_shout.content = "PRISONER post test"
 	session.PostObject("Lastfm","Comment",post_shout)
 	"""
+
+	privacy_policy = "/home/lhutton/svn/progress2/lhutton/projects/sns_arch/spec/privacy_policy_validation_test.xml"
+	exp_design = "/home/lhutton/svn/progress2/lhutton/projects/sns_arch/spec/experimental_design_test.xml"
+	
+	expBuilder = ExperimentBuilder.ExperimentBuilder()
+	
+	expBuilder.provide_privacy_policy(privacy_policy)
+	expBuilder.provide_experimental_design(exp_design)
+	
+	# TODO: user-facing authentication
+	#expBuilder.authenticate_participant(1)
+	new_participant = {"name": "Bob", "gender": "male", "serviceGroup": "Lastfm"}
+	my_id =	expBuilder.sog.register_participant("participant",new_participant)
+	participant = expBuilder.authenticate_participant("participant",my_id)
+	print participant
+
+	
+	expBuilder.authenticate_providers(["Lastfm"])
+	consent_url = expBuilder.build()	
+	print "Visit %s to begin participating in this experiment" % consent_url
+	
+
