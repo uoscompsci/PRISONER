@@ -10,7 +10,7 @@ class InvalidTransformationLevelError(Exception):
 	def __init__(self, value):
 		self.level = value
 	def __str__(self):
-		return "Object can not be transformed to level %s" % self.level
+		return "Object can not be transformed to level: %s" % self.level
 
 class SocialObject(object):
 	def __init__(self):
