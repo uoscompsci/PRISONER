@@ -13,7 +13,7 @@ class Track(SocialObjects.SocialObject):
 	
 	@property
 	def track(self):
-	""" The title of this track. """
+		""" The title of this track. """
 		return self._track
 
 	@track.setter
@@ -22,7 +22,7 @@ class Track(SocialObjects.SocialObject):
 
 	@property
 	def artist(self):
-	""" String identifying artist of this track. """
+		""" String identifying artist of this track. """
 		return self._artist
 
 	@artist.setter
@@ -31,7 +31,7 @@ class Track(SocialObjects.SocialObject):
 
 	@property
 	def tag(self):
-	""" Set of tags associated with this track """
+		""" Set of tags associated with this track """
 		return self._tag
 
 	@tag.setter

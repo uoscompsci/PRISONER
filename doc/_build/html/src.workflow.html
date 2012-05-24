@@ -64,45 +64,56 @@
 <span class="target" id="module-src.workflow"></span></div>
 <div class="section" id="module-src.workflow.Exceptions">
 <span id="exceptions-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">Exceptions</span></tt> Module<a class="headerlink" href="#module-src.workflow.Exceptions" title="Permalink to this headline">¶</a></h2>
-<p>Raised by an object if it requires a privacy policy to be provided before
-any further interaction can occur.
-PRISONER requires a valid privacy policy XML file to allow interactions between
-social activity clients and participation clients.</p>
-<p>See the Privacy Policy XML Schema documentation for more information.</p>
 <dl class="exception">
 <dt id="src.workflow.Exceptions.DisallowedByPrivacyPolicyError">
 <em class="property">exception </em><tt class="descclassname">src.workflow.Exceptions.</tt><tt class="descname">DisallowedByPrivacyPolicyError</tt><big>(</big><em>error</em><big>)</big><a class="headerlink" href="#src.workflow.Exceptions.DisallowedByPrivacyPolicyError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></tt></p>
+<p>Raised if a method attempts to perform an action not allowed by the
+current privacy policy.</p>
 </dd></dl>
 
 <dl class="exception">
 <dt id="src.workflow.Exceptions.NoPrivacyPolicyProvidedError">
 <em class="property">exception </em><tt class="descclassname">src.workflow.Exceptions.</tt><tt class="descname">NoPrivacyPolicyProvidedError</tt><a class="headerlink" href="#src.workflow.Exceptions.NoPrivacyPolicyProvidedError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></tt></p>
+<p>Raised if a privacy policy is required before the operation can be
+completed. See the SocialObjectGateway or ExperimentBuilder to provide a privacy
+policy.</p>
+<p>A Privacy policy is required to read or write data to/from service
+gateways.</p>
 </dd></dl>
 
 <dl class="exception">
 <dt id="src.workflow.Exceptions.OperationNotImplementedError">
 <em class="property">exception </em><tt class="descclassname">src.workflow.Exceptions.</tt><tt class="descname">OperationNotImplementedError</tt><big>(</big><em>operation</em><big>)</big><a class="headerlink" href="#src.workflow.Exceptions.OperationNotImplementedError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></tt></p>
+<p>Raised if a service gateway does not implement a request operation
+(GET, POST, PUT etc.)</p>
 </dd></dl>
 
 <dl class="exception">
 <dt id="src.workflow.Exceptions.RuntimePrivacyPolicyParserError">
 <em class="property">exception </em><tt class="descclassname">src.workflow.Exceptions.</tt><tt class="descname">RuntimePrivacyPolicyParserError</tt><big>(</big><em>error</em><big>)</big><a class="headerlink" href="#src.workflow.Exceptions.RuntimePrivacyPolicyParserError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></tt></p>
+<p>Raised if a privacy policy which passed schema validation fails
+complex validation - eg. an invalid object reference is provided, or logical
+criteria is incorrectly expressed</p>
 </dd></dl>
 
 <dl class="exception">
 <dt id="src.workflow.Exceptions.ServiceGatewayNotFoundError">
 <em class="property">exception </em><tt class="descclassname">src.workflow.Exceptions.</tt><tt class="descname">ServiceGatewayNotFoundError</tt><big>(</big><em>gateway</em><big>)</big><a class="headerlink" href="#src.workflow.Exceptions.ServiceGatewayNotFoundError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></tt></p>
+<p>Raised if a participation client attempts to connect to a service
+without a corresponding ServiceGateway class in the gateway module.</p>
 </dd></dl>
 
 <dl class="exception">
 <dt id="src.workflow.Exceptions.SocialObjectNotSupportedError">
 <em class="property">exception </em><tt class="descclassname">src.workflow.Exceptions.</tt><tt class="descname">SocialObjectNotSupportedError</tt><big>(</big><em>gateway</em>, <em>object</em><big>)</big><a class="headerlink" href="#src.workflow.Exceptions.SocialObjectNotSupportedError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></tt></p>
+<p>Raised if a service gateway doesn&#8217;t know how to handle the given
+social object.</p>
 </dd></dl>
 
 </div>
@@ -125,6 +136,9 @@ that URL (useful for baking nested params in a callback URL)</p>
 <dt id="src.workflow.ExperimentBuilder.CompleteConsentHandler">
 <em class="property">class </em><tt class="descclassname">src.workflow.ExperimentBuilder.</tt><tt class="descname">CompleteConsentHandler</tt><big>(</big><em>application</em>, <em>request</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#src.workflow.ExperimentBuilder.CompleteConsentHandler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">tornado.web.RequestHandler</span></tt></p>
+<p>Called when the user has authenticated themselves with the last
+provider necessary. This completes the authentication flow and allows the
+experimental application to begin.</p>
 <dl class="method">
 <dt id="src.workflow.ExperimentBuilder.CompleteConsentHandler.get">
 <tt class="descname">get</tt><big>(</big><big>)</big><a class="headerlink" href="#src.workflow.ExperimentBuilder.CompleteConsentHandler.get" title="Permalink to this definition">¶</a></dt>
@@ -136,6 +150,9 @@ that URL (useful for baking nested params in a callback URL)</p>
 <dt id="src.workflow.ExperimentBuilder.ConsentFlowHandler">
 <em class="property">class </em><tt class="descclassname">src.workflow.ExperimentBuilder.</tt><tt class="descname">ConsentFlowHandler</tt><big>(</big><em>application</em>, <em>request</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#src.workflow.ExperimentBuilder.ConsentFlowHandler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">tornado.web.RequestHandler</span></tt></p>
+<p>This renders the human-readable representation of the privacy
+policy and ensures the participant understands the data requirements of the
+experimental application before providing consent.</p>
 <dl class="method">
 <dt id="src.workflow.ExperimentBuilder.ConsentFlowHandler.get">
 <tt class="descname">get</tt><big>(</big><big>)</big><a class="headerlink" href="#src.workflow.ExperimentBuilder.ConsentFlowHandler.get" title="Permalink to this definition">¶</a></dt>
@@ -264,6 +281,9 @@ cookie is valid, continue the authentication flow for that participant.</p>
 <dt id="src.workflow.ExperimentBuilder.ProviderAuthentHandler">
 <em class="property">class </em><tt class="descclassname">src.workflow.ExperimentBuilder.</tt><tt class="descname">ProviderAuthentHandler</tt><big>(</big><em>application</em>, <em>request</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#src.workflow.ExperimentBuilder.ProviderAuthentHandler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">tornado.web.RequestHandler</span></tt></p>
+<p>Called during the authentication flow for each provider. Informs the
+participant about the service they are about to authenticate themselves with,
+then redirects to the appropriate URL for that service.</p>
 <dl class="method">
 <dt id="src.workflow.ExperimentBuilder.ProviderAuthentHandler.get">
 <tt class="descname">get</tt><big>(</big><big>)</big><a class="headerlink" href="#src.workflow.ExperimentBuilder.ProviderAuthentHandler.get" title="Permalink to this definition">¶</a></dt>
