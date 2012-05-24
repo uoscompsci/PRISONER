@@ -113,6 +113,9 @@ class ExperimentBuilder(object):
 		pass
 
 class CompleteConsentHandler(tornado.web.RequestHandler):
+	""" Called when the user has authenticated themselves with the last
+	provider necessary. This completes the authentication flow and allows the
+	experimental application to begin. """
 	def get(self):
 		builder = self.application.settings["builder"]
 
@@ -124,6 +127,9 @@ class CompleteConsentHandler(tornado.web.RequestHandler):
 
 
 class ConsentFlowHandler(tornado.web.RequestHandler):
+	""" This renders the human-readable representation of the privacy
+	policy and ensures the participant understands the data requirements of the
+	experimental application before providing consent. """
 	def get(self):
 		builder = self.application.settings["builder"]
 		token = self.get_argument("pctoken")
@@ -147,6 +153,9 @@ class CallbackHandler(tornado.web.RequestHandler):
 		self.redirect(url)
 
 class ProviderAuthentHandler(tornado.web.RequestHandler):
+	""" Called during the authentication flow for each provider. Informs the
+	participant about the service they are about to authenticate themselves with,
+	then redirects to the appropriate URL for that service. """
 	def get(self):
 		builder = self.application.settings["builder"]
 		token = self.get_argument("pctoken")

@@ -1,5 +1,6 @@
 """
 PRISONER Dummy Participation client
+===================================
 
 This is designed to be evokable from the cmdline etc. as a way of testing
 various features of PRISONER.

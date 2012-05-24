@@ -79,17 +79,48 @@ API</p>
 <dl class="method">
 <dt id="src.gateway.LastfmGateway.LastfmServiceGateway.Comment">
 <tt class="descname">Comment</tt><big>(</big><em>operation</em>, <em>payload</em><big>)</big><a class="headerlink" href="#src.gateway.LastfmGateway.LastfmServiceGateway.Comment" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Performs operations on Comment objects. Supports GET and
+POST operations.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>operation</strong> (<em>str</em>) &#8211; The operation to perform (GET, POST)</li>
+<li><strong>payload</strong> (<em>SocialObject</em>) &#8211; Provide a Comment object. Will be posted as a shout to
+the profile of the inReplyTo attribute.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="src.gateway.LastfmGateway.LastfmServiceGateway.Image">
 <tt class="descname">Image</tt><big>(</big><em>operation</em>, <em>payload</em><big>)</big><a class="headerlink" href="#src.gateway.LastfmGateway.LastfmServiceGateway.Image" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Performs operations on Image objects. Only supports GET
+operations.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>operation</strong> (<em>str</em>) &#8211; The operation to perform (GET)</li>
+<li><strong>payload</strong> (<em>SocialObject</em>) &#8211; Provide a Person object, to return that user&#8217;s profile
+image</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>:returns Image &#8211; image of requested object</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="src.gateway.LastfmGateway.LastfmServiceGateway.Track">
 <tt class="descname">Track</tt><big>(</big><em>operation</em>, <em>payload</em><big>)</big><a class="headerlink" href="#src.gateway.LastfmGateway.LastfmServiceGateway.Track" title="Permalink to this definition">¶</a></dt>
-<dd><p>Performs operations of Track objects. Only supports the GET
+<dd><p>Performs operations on Track objects. Only supports the GET
 operation (you can get a user&#8217;s tracks, you can&#8217;t create them).</p>
 <p>Returns a set of Tracks depending on the payload.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -113,12 +144,38 @@ of that user&#8217;s Loved Tracks</li>
 <dl class="method">
 <dt id="src.gateway.LastfmGateway.LastfmServiceGateway.complete_authentication">
 <tt class="descname">complete_authentication</tt><big>(</big><em>request</em><big>)</big><a class="headerlink" href="#src.gateway.LastfmGateway.LastfmServiceGateway.complete_authentication" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Completes authentication. Request passed via authentication flow
+must contain a token argument as returned by Last.fm. We pass this to Last.fm to
+return a session key (lasts indefinitely) for making authenticated calls on this
+user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>request</strong> (<em>HTTPRequest</em>) &#8211; Request from first stage of authentication</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Session key to persist for this user</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="src.gateway.LastfmGateway.LastfmServiceGateway.request_authentication">
 <tt class="descname">request_authentication</tt><big>(</big><em>callback</em><big>)</big><a class="headerlink" href="#src.gateway.LastfmGateway.LastfmServiceGateway.request_authentication" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Instigates first of Last.fm&#8217;s two-stage authentication.
+Returns a URL for the participant to confirm access to their profile by this
+application.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>callback</strong> (<em>str</em>) &#8211; PRISONER&#8217;s authentication flow URL. The
+participant must go here after authenticating with Last.fm to continue the flow</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </dd></dl>
 
