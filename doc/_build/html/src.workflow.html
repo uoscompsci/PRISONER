@@ -95,6 +95,172 @@ social activity clients and participation clients.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-src.workflow.ExperimentBuilder">
+<span id="experimentbuilder-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">ExperimentBuilder</span></tt> Module<a class="headerlink" href="#module-src.workflow.ExperimentBuilder" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="src.workflow.ExperimentBuilder.CallbackHandler">
+<em class="property">class </em><tt class="descclassname">src.workflow.ExperimentBuilder.</tt><tt class="descname">CallbackHandler</tt><big>(</big><em>application</em>, <em>request</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#src.workflow.ExperimentBuilder.CallbackHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">tornado.web.RequestHandler</span></tt></p>
+<p>Takes a parameter (callback), and calls the unescaped version of
+that URL (useful for baking nested params in a callback URL)</p>
+<dl class="method">
+<dt id="src.workflow.ExperimentBuilder.CallbackHandler.get">
+<tt class="descname">get</tt><big>(</big><big>)</big><a class="headerlink" href="#src.workflow.ExperimentBuilder.CallbackHandler.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.workflow.ExperimentBuilder.CompleteConsentHandler">
+<em class="property">class </em><tt class="descclassname">src.workflow.ExperimentBuilder.</tt><tt class="descname">CompleteConsentHandler</tt><big>(</big><em>application</em>, <em>request</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#src.workflow.ExperimentBuilder.CompleteConsentHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">tornado.web.RequestHandler</span></tt></p>
+<dl class="method">
+<dt id="src.workflow.ExperimentBuilder.CompleteConsentHandler.get">
+<tt class="descname">get</tt><big>(</big><big>)</big><a class="headerlink" href="#src.workflow.ExperimentBuilder.CompleteConsentHandler.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.workflow.ExperimentBuilder.ConsentFlowHandler">
+<em class="property">class </em><tt class="descclassname">src.workflow.ExperimentBuilder.</tt><tt class="descname">ConsentFlowHandler</tt><big>(</big><em>application</em>, <em>request</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#src.workflow.ExperimentBuilder.ConsentFlowHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">tornado.web.RequestHandler</span></tt></p>
+<dl class="method">
+<dt id="src.workflow.ExperimentBuilder.ConsentFlowHandler.get">
+<tt class="descname">get</tt><big>(</big><big>)</big><a class="headerlink" href="#src.workflow.ExperimentBuilder.ConsentFlowHandler.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.workflow.ExperimentBuilder.ExperimentBuilder">
+<em class="property">class </em><tt class="descclassname">src.workflow.ExperimentBuilder.</tt><tt class="descname">ExperimentBuilder</tt><a class="headerlink" href="#src.workflow.ExperimentBuilder.ExperimentBuilder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>The ExperimentBuilder is the interface for bootstrapping an
+experiment with PRISONER. After instantiating an ExperimentBuilder,
+complete the following steps:</p>
+<ul class="simple">
+<li>call provide_privacy_policy() with the path to your privacy policy XML
+file</li>
+<li>call provide_experimental_design() with the path to your experimental
+design XML file</li>
+<li>call authenticate_participant() with the id of the participant in this
+session</li>
+<li>call authenticate_providers() with a list of services which the
+participant must authenticate with to participate</li>
+<li>call build() to generate a pre-experiment flow, which allows
+participants to review a human-readable version of your privacy 
+policy, and to authenticate themselves with providers as needed.</li>
+</ul>
+<dl class="method">
+<dt id="src.workflow.ExperimentBuilder.ExperimentBuilder.authenticate_participant">
+<tt class="descname">authenticate_participant</tt><big>(</big><em>schema</em>, <em>participant_id</em><big>)</big><a class="headerlink" href="#src.workflow.ExperimentBuilder.ExperimentBuilder.authenticate_participant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide the ID of the participant in this experiment. This
+participant must exist in the participant table for this
+experiment.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>participant_id</strong> (<em>int</em>) &#8211; ID of participant</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.workflow.ExperimentBuilder.ExperimentBuilder.authenticate_providers">
+<tt class="descname">authenticate_providers</tt><big>(</big><em>providers</em><big>)</big><a class="headerlink" href="#src.workflow.ExperimentBuilder.ExperimentBuilder.authenticate_providers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide a list of provider names this participant needs to
+be authenticated with to participate (eg. if they are only using
+a subset of providers all participants will be using, only include that subset
+in this list). When the experiment is built, each gateway will inject its own
+authentication logic.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>providers</strong> (<em>list[str]</em>) &#8211; List of providers to authenticate with</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.workflow.ExperimentBuilder.ExperimentBuilder.build">
+<tt class="descname">build</tt><big>(</big><big>)</big><a class="headerlink" href="#src.workflow.ExperimentBuilder.ExperimentBuilder.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Using the information provided by the participation client,
+instigate the experiment consent process. This does the
+following:</p>
+<ul class="simple">
+<li>parse the experimental design and privacy policy and generate
+a human-readable document, relevant to the participant, which
+also lists which providers the participant will be asked to authenticate with</li>
+<li>creates a temporary web server - the participation client must
+access the returned URL using the cookie provided when the
+ExperimentBuilder was instantiated</li>
+<li>when the user consents to the policies, each service gateway
+for which authentication is needed provides a URL to
+authenticate with which the participant is asked to visit in</li>
+</ul>
+<p>turn (decorated by additional context from PRISONER for participants&#8217;
+confidence). Note, this URL must contain the entire
+authentication flow, so you may need to host this yourself, particularly if this
+involves two (or more) factor authentication as users are bounced between URLs
+(many authentication flows expect a URL callback). This flow
+must return a token to persist alongside the Participant. We are
+looking towards managing more of this flow within PRISONER</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.workflow.ExperimentBuilder.ExperimentBuilder.consent_confirmed">
+<tt class="descname">consent_confirmed</tt><big>(</big><em>cookie</em><big>)</big><a class="headerlink" href="#src.workflow.ExperimentBuilder.ExperimentBuilder.consent_confirmed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when user with given cookie accepts consent. If
+cookie is valid, continue the authentication flow for that participant.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.workflow.ExperimentBuilder.ExperimentBuilder.provide_experimental_design">
+<tt class="descname">provide_experimental_design</tt><big>(</big><em>exp_design</em><big>)</big><a class="headerlink" href="#src.workflow.ExperimentBuilder.ExperimentBuilder.provide_experimental_design" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide the experimental design for this experiment.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>exp_design</strong> (<em>str</em>) &#8211; Path to experimental design file</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.workflow.ExperimentBuilder.ExperimentBuilder.provide_privacy_policy">
+<tt class="descname">provide_privacy_policy</tt><big>(</big><em>policy</em><big>)</big><a class="headerlink" href="#src.workflow.ExperimentBuilder.ExperimentBuilder.provide_privacy_policy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide the privacy policy for this experiment.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>policy</strong> (<em>str</em>) &#8211; Path to privacy policy file</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.workflow.ExperimentBuilder.ProviderAuthentHandler">
+<em class="property">class </em><tt class="descclassname">src.workflow.ExperimentBuilder.</tt><tt class="descname">ProviderAuthentHandler</tt><big>(</big><em>application</em>, <em>request</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#src.workflow.ExperimentBuilder.ProviderAuthentHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">tornado.web.RequestHandler</span></tt></p>
+<dl class="method">
+<dt id="src.workflow.ExperimentBuilder.ProviderAuthentHandler.get">
+<tt class="descname">get</tt><big>(</big><big>)</big><a class="headerlink" href="#src.workflow.ExperimentBuilder.ProviderAuthentHandler.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-src.workflow.PolicyProcessor">
 <span id="policyprocessor-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">PolicyProcessor</span></tt> Module<a class="headerlink" href="#module-src.workflow.PolicyProcessor" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
@@ -132,18 +298,6 @@ See the SocialObjectGateway for a friendly interface to these innards.</p>
 </table>
 </dd></dl>
 
-</dd></dl>
-
-</div>
-<div class="section" id="module-src.workflow.SessionManager">
-<span id="sessionmanager-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">SessionManager</span></tt> Module<a class="headerlink" href="#module-src.workflow.SessionManager" title="Permalink to this headline">¶</a></h2>
-<p>PRISONER Session Manager
-Maintains a keychain of access tokens for all services authorised by the
-participant.</p>
-<dl class="class">
-<dt id="src.workflow.SessionManager.SessionManager">
-<em class="property">class </em><tt class="descclassname">src.workflow.SessionManager.</tt><tt class="descname">SessionManager</tt><a class="headerlink" href="#src.workflow.SessionManager.SessionManager" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 </dd></dl>
 
 </div>
@@ -216,20 +370,23 @@ I sanitise the objects it returns and hand them back to participation clients.</
 
 <dl class="method">
 <dt id="src.workflow.SocialObjectGateway.SocialObjectsGateway.complete_authentication">
-<tt class="descname">complete_authentication</tt><big>(</big><em>provider</em>, <em>access_token=None</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway.complete_authentication" title="Permalink to this definition">¶</a></dt>
-<dd><p>Completes the second stage of authentication with a provider - calling this with a user-provided access token will attempt to complete the authentication process.</p>
+<tt class="descname">complete_authentication</tt><big>(</big><em>provider</em>, <em>request=None</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway.complete_authentication" title="Permalink to this definition">¶</a></dt>
+<dd><p>Completes the second stage of authentication with a provider.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>provider</strong> (<em>str.</em>) &#8211; Name of provider to authenticate with.</li>
-<li><strong>access_token</strong> (<em>str.</em>) &#8211; Provide if needed from client to complete authentication (omit if authentication is completed entirely serverside)</li>
+<li><strong>request</strong> &#8211; The request received from the provider when it</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
+<p>called the PRISONER callback. This should contain any parameters needed to
+complete authentication 
+:type request: tornado.httpserver.HTTPRequest</p>
 </dd></dl>
 
 <dl class="method">
@@ -279,20 +436,35 @@ I sanitise the objects it returns and hand them back to participation clients.</
 </dd></dl>
 
 <dl class="method">
+<dt id="src.workflow.SocialObjectGateway.SocialObjectsGateway.register_participant">
+<tt class="descname">register_participant</tt><big>(</big><em>schema</em>, <em>participant</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway.register_participant" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="src.workflow.SocialObjectGateway.SocialObjectsGateway.request_authentication">
-<tt class="descname">request_authentication</tt><big>(</big><em>provider</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway.request_authentication" title="Permalink to this definition">¶</a></dt>
-<dd><p>Call this if it is necessary to perform authenticated API calls with a service gateway (usually required to write data as a person or to read sensitive data).</p>
-<p>Each service gateway has its own authentication mechanism. Calling this will return a token needed to proceed with authentication. Authentication is completed by presenting a relevant interface to users, then calling complete_authentication() with its token.</p>
+<tt class="descname">request_authentication</tt><big>(</big><em>provider</em>, <em>callback</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway.request_authentication" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call this if it is necessary to perform authenticated API
+calls with a service gateway (usually required to write data as a person or to
+read sensitive data).</p>
+<p>Each service gateway has its own authentication
+mechanism. Calling this will return a token needed to proceed with
+authentication. Authentication is completed by presenting a relevant interface
+to users, then calling complete_authentication() with its token.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>provider</strong> (<em>str.</em>) &#8211; Name of provider to authenticate with.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Token required to complete authentication (eg. URL for participant to visit)</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>provider</strong> (<em>str.</em>) &#8211; Name of provider to authenticate with.</li>
+<li><strong>callback</strong> &#8211; URL to let PRISONER authentication server know</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
+<p>user has provided authentication
+:type callback: str.
+:returns: URL required to complete authentication</p>
 </dd></dl>
 
 </dd></dl>
@@ -323,8 +495,8 @@ I sanitise the objects it returns and hand them back to participation clients.</
 <li><a class="reference internal" href="#">workflow Package</a><ul>
 <li><a class="reference internal" href="#id1"><tt class="docutils literal"><span class="pre">workflow</span></tt> Package</a></li>
 <li><a class="reference internal" href="#module-src.workflow.Exceptions"><tt class="docutils literal"><span class="pre">Exceptions</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-src.workflow.ExperimentBuilder"><tt class="docutils literal"><span class="pre">ExperimentBuilder</span></tt> Module</a></li>
 <li><a class="reference internal" href="#module-src.workflow.PolicyProcessor"><tt class="docutils literal"><span class="pre">PolicyProcessor</span></tt> Module</a></li>
-<li><a class="reference internal" href="#module-src.workflow.SessionManager"><tt class="docutils literal"><span class="pre">SessionManager</span></tt> Module</a></li>
 <li><a class="reference internal" href="#module-src.workflow.SocialObjectGateway"><tt class="docutils literal"><span class="pre">SocialObjectGateway</span></tt> Module</a></li>
 <li><a class="reference internal" href="#subpackages">Subpackages</a><ul>
 </ul>

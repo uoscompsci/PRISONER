@@ -1,9 +1,3 @@
-"""
-Last.fm Service Gateway for PRISONER
-
-This is a concrete implementation of the Service Gateway interface, for
-reference
-"""
 from ServiceGateway import ServiceGateway
 import SocialObjects
 
@@ -48,8 +42,19 @@ class Playlist(SocialObjects.Collection):
 		
 
 class LastfmServiceGateway(ServiceGateway):
+	""" ServiceGateway for Last.fm. This is a concrete implementation to
+	demonstrate how to build experimental applications which consume data from, and
+	publish data to, Last.fm
 
+	This ServiceGateway supports a number of core Social Objects, and
+	introduces a range of its own to represent site-specific constructs such as
+	Tracks and Playlists, etc.
+
+	This gateway uses a modified version of pylast to interact with Last.fm
+	API
+	"""
 	def __init__(self, access_token=None):
+		""" Initialises pylast session with API_KEY and API_SECRET."""
 		self.service_name = "Last.fm"
 		self.service_description = "Music recommendation service"
 		
@@ -60,12 +65,20 @@ class LastfmServiceGateway(ServiceGateway):
 		api_secret = API_SECRET,
 		session_key=access_token)
 
-	""" Last.fm Track interface
-	GET:
-	Returns a set of Track objects, depending on the payload:
-	instance of Person - get Loved Tracks
-	"""
-	def Track(self, operation, payload):
+	def Track(self, operation, payload):	
+		""" Performs operations on Track objects. Only supports the GET
+		operation (you can get a user's tracks, you can't create them).
+
+		Returns a set of Tracks depending on the payload.
+
+		:param operation: The operation to perform (GET)
+		:type operation: str
+		:param payload:
+			Provide a Person (whose id is username) to return a set
+			of that user's Loved Tracks
+		:type payload: SocialObject
+		:returns: list[track] - set of tracks matching criteria
+		"""
 		if(operation == "GET"):
 			user = self.network.get_user(payload.id)
 			tracks = user.get_loved_tracks(limit=10)
@@ -83,20 +96,17 @@ class LastfmServiceGateway(ServiceGateway):
 			track_coll.objects = track_set
 			return track_coll	
 
-	""" Last.fm Shout interface
-	Shouts are an alternative name for Comments
-	Shouts are inReplyTo an instance of Person
-	
-	GET:
-	Providing a Person will return the set of shouts for that user
-	
-	POST:
-	Providing a Shout will post the shout to the inReplyTo target
-
-	POST operation requires an access key or it will die of death.
-	The content key is only required on a PUT operation
-	"""	
 	def Comment(self, operation, payload):
+		""" Performs operations on Comment objects. Supports GET and
+		POST operations.
+		
+		:param operation: The operation to perform (GET, POST)
+		:type operation: str
+		:param payload:
+			Provide a Comment object. Will be posted as a shout to
+			the profile of the inReplyTo attribute.
+		:type payload: SocialObject
+		"""
 		if(operation == "GET"):
 			pass
 		elif(operation == "POST"):
@@ -105,22 +115,18 @@ class LastfmServiceGateway(ServiceGateway):
 		else:
 			raise OperationNotImplementedError(operation)
 
-	""" Last.fm Image interface
-	Read-only interface to images of albums, artists, events, and people
-	
-	Common interface:
-	Providing an Author will return the user's profile photo if possible
-
-	Extended interface:
-	Possible payload keys:
-		artist - Artist name
-		album - Album name
-		event - ID of event
-		user - username
-	Will return an appropriate image for the keys given (album needs album
-	and artist).
-	"""
 	def Image(self, operation, payload):
+		""" Performs operations on Image objects. Only supports GET
+		operations.
+
+		:param operation: The operation to perform (GET)
+		:type operation: str
+		:param payload:
+			Provide a Person object, to return that user's profile
+			image
+		:type payload: SocialObject
+		:returns Image -- image of requested object
+		"""
 		if (operation == "GET"):
 			try:
 				user = self.network.get_user(payload.id)
@@ -139,21 +145,32 @@ class LastfmServiceGateway(ServiceGateway):
 		else:
 			raise NotImplementedException("Operation not supported")
 
-	"""
-	Return a URL used for end-users to confirm authentication for this
-	provider 
-	"""
 	def request_authentication(self, callback):
+		""" Instigates first of Last.fm's two-stage authentication.
+		Returns a URL for the participant to confirm access to their profile by this
+		application.
+
+		:param callback:
+			PRISONER's authentication flow URL. The
+			participant must go here after authenticating with Last.fm to continue the flow
+		:type callback: str
+		"""
 		self.session_manager = pylast.SessionKeyGenerator(self.network)
 		return self.session_manager.get_web_flow(callback)
 
-	"""
-	Call after user completes authentication - do request to get session
-	token
-	"""
 	def complete_authentication(self, request):
+		"""
+		Completes authentication. Request passed via authentication flow
+		must contain a token argument as returned by Last.fm. We pass this to Last.fm to
+		return a session key (lasts indefinitely) for making authenticated calls on this
+		user.	
+
+		:param request: Request from first stage of authentication
+		:type request: HTTPRequest
+		:returns: Session key to persist for this user
+		"""
 		access_token = request.arguments['token'][0]
-		print "Last.fm access token: %s" % access_token
+	#	print "Last.fm access token: %s" % access_token
 		session_key = self.session_manager.get_web_auth_session_key_verbose(access_token)
 		self.session_key = session_key
 		self.network.session_key = session_key

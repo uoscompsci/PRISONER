@@ -25,7 +25,10 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="PRISONER 0.1 documentation" href="index.html" /> 
+    <link rel="top" title="PRISONER 0.1 documentation" href="index.html" />
+    <link rel="up" title="src Package" href="src.html" />
+    <link rel="next" title="tests Package" href="src.gateway.tests.html" />
+    <link rel="prev" title="src Package" href="src.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,7 +40,15 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="index.html">PRISONER 0.1 documentation</a> &raquo;</li> 
+        <li class="right" >
+          <a href="src.gateway.tests.html" title="tests Package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="src.html" title="src Package"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">PRISONER 0.1 documentation</a> &raquo;</li>
+          <li><a href="modules.html" >&lt;no title&gt;</a> &raquo;</li>
+          <li><a href="src.html" accesskey="U">src Package</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -53,13 +64,18 @@
 <span class="target" id="module-src.gateway"></span></div>
 <div class="section" id="module-src.gateway.LastfmGateway">
 <span id="lastfmgateway-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">LastfmGateway</span></tt> Module<a class="headerlink" href="#module-src.gateway.LastfmGateway" title="Permalink to this headline">¶</a></h2>
-<p>Last.fm Service Gateway for PRISONER</p>
-<p>This is a concrete implementation of the Service Gateway interface, for
-reference</p>
 <dl class="class">
 <dt id="src.gateway.LastfmGateway.LastfmServiceGateway">
 <em class="property">class </em><tt class="descclassname">src.gateway.LastfmGateway.</tt><tt class="descname">LastfmServiceGateway</tt><big>(</big><em>access_token=None</em><big>)</big><a class="headerlink" href="#src.gateway.LastfmGateway.LastfmServiceGateway" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#src.gateway.ServiceGateway.ServiceGateway" title="src.gateway.ServiceGateway.ServiceGateway"><tt class="xref py py-class docutils literal"><span class="pre">src.gateway.ServiceGateway.ServiceGateway</span></tt></a></p>
+<p>ServiceGateway for Last.fm. This is a concrete implementation to
+demonstrate how to build experimental applications which consume data from, and
+publish data to, Last.fm</p>
+<p>This ServiceGateway supports a number of core Social Objects, and
+introduces a range of its own to represent site-specific constructs such as
+Tracks and Playlists, etc.</p>
+<p>This gateway uses a modified version of pylast to interact with Last.fm
+API</p>
 <dl class="method">
 <dt id="src.gateway.LastfmGateway.LastfmServiceGateway.Comment">
 <tt class="descname">Comment</tt><big>(</big><em>operation</em>, <em>payload</em><big>)</big><a class="headerlink" href="#src.gateway.LastfmGateway.LastfmServiceGateway.Comment" title="Permalink to this definition">¶</a></dt>
@@ -73,16 +89,35 @@ reference</p>
 <dl class="method">
 <dt id="src.gateway.LastfmGateway.LastfmServiceGateway.Track">
 <tt class="descname">Track</tt><big>(</big><em>operation</em>, <em>payload</em><big>)</big><a class="headerlink" href="#src.gateway.LastfmGateway.LastfmServiceGateway.Track" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Performs operations of Track objects. Only supports the GET
+operation (you can get a user&#8217;s tracks, you can&#8217;t create them).</p>
+<p>Returns a set of Tracks depending on the payload.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>operation</strong> (<em>str</em>) &#8211; The operation to perform (GET)</li>
+<li><strong>payload</strong> (<em>SocialObject</em>) &#8211; Provide a Person (whose id is username) to return a set
+of that user&#8217;s Loved Tracks</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">list[track] - set of tracks matching criteria</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="src.gateway.LastfmGateway.LastfmServiceGateway.complete_authentication">
-<tt class="descname">complete_authentication</tt><big>(</big><em>access_token=None</em><big>)</big><a class="headerlink" href="#src.gateway.LastfmGateway.LastfmServiceGateway.complete_authentication" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">complete_authentication</tt><big>(</big><em>request</em><big>)</big><a class="headerlink" href="#src.gateway.LastfmGateway.LastfmServiceGateway.complete_authentication" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="src.gateway.LastfmGateway.LastfmServiceGateway.request_authentication">
-<tt class="descname">request_authentication</tt><big>(</big><em>authent_id=False</em><big>)</big><a class="headerlink" href="#src.gateway.LastfmGateway.LastfmServiceGateway.request_authentication" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">request_authentication</tt><big>(</big><em>callback</em><big>)</big><a class="headerlink" href="#src.gateway.LastfmGateway.LastfmServiceGateway.request_authentication" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -117,33 +152,41 @@ reference</p>
 </div>
 <div class="section" id="module-src.gateway.ServiceGateway">
 <span id="servicegateway-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">ServiceGateway</span></tt> Module<a class="headerlink" href="#module-src.gateway.ServiceGateway" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="prisoner-service-gateway">
-<h3>PRISONER Service Gateway<a class="headerlink" href="#prisoner-service-gateway" title="Permalink to this headline">¶</a></h3>
-<p>Abstract interface for PRISONER Service Gateways. Concrete implementations must
-subclass this.</p>
 <dl class="class">
 <dt id="src.gateway.ServiceGateway.SARHeaders">
 <em class="property">class </em><tt class="descclassname">src.gateway.ServiceGateway.</tt><tt class="descname">SARHeaders</tt><big>(</big><em>operation</em>, <em>provider</em>, <em>object_type</em>, <em>payload</em><big>)</big><a class="headerlink" href="#src.gateway.ServiceGateway.SARHeaders" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>SARHeaders contain information about the request for a SocialObject.
+They are used within the validation/sanitisation process as part of a
+SocialActivityResponse. They may also be used to audit the requests made for
+objects.</p>
 <dl class="attribute">
 <dt id="src.gateway.ServiceGateway.SARHeaders.object_type">
 <tt class="descname">object_type</tt><a class="headerlink" href="#src.gateway.ServiceGateway.SARHeaders.object_type" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The name of the SocialObject type to use. This must be a
+core SocialObject or provided by the ServiceGateway indicated in the provider
+attribute.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="src.gateway.ServiceGateway.SARHeaders.operation">
 <tt class="descname">operation</tt><a class="headerlink" href="#src.gateway.ServiceGateway.SARHeaders.operation" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The operation to be performed by this request. These map to
+HTTP methods (GET, POST etc.)</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="src.gateway.ServiceGateway.SARHeaders.payload">
 <tt class="descname">payload</tt><a class="headerlink" href="#src.gateway.ServiceGateway.SARHeaders.payload" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The criteria for a request, or object to publish.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="src.gateway.ServiceGateway.SARHeaders.provider">
 <tt class="descname">provider</tt><a class="headerlink" href="#src.gateway.ServiceGateway.SARHeaders.provider" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The provider this request is intended for. Must map to a
+ServiceGateway</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -151,15 +194,80 @@ subclass this.</p>
 <dt id="src.gateway.ServiceGateway.ServiceGateway">
 <em class="property">class </em><tt class="descclassname">src.gateway.ServiceGateway.</tt><tt class="descname">ServiceGateway</tt><a class="headerlink" href="#src.gateway.ServiceGateway.ServiceGateway" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Service Gateways make external providers of social data accessible to
+the rest of PRISONER. They accept sanitised requests for Social Objects, and
+make the appropriate API calls to return well-formed social objects. They also
+accept requests to publish social objects to services, converting these to the
+representations expected by that API.</p>
+<p>This is an abstract interface - concrete implementations subclass this
+and provide methods corresponding to each Social Object they implement,
+with the signature def ObjectType(self, operation, payload).</p>
+<p>See examples of concrete implementations for examples of this.</p>
+<p>ServiceGateways must adhere to the following conventions:</p>
+<ul class="simple">
+<li>exist as a package &lt;GatewayName&gt;ServiceGateway.py within the gateway
+module</li>
+<li>contain a class called &lt;GatewayName&gt;ServiceGateway which subclasses
+ServiceGateway</li>
+</ul>
 <dl class="method">
 <dt id="src.gateway.ServiceGateway.ServiceGateway.Image">
 <tt class="descname">Image</tt><big>(</big><em>operation</em>, <em>payload</em><big>)</big><a class="headerlink" href="#src.gateway.ServiceGateway.ServiceGateway.Image" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Perform operations on ServiceGateway to publish and retrieve
+Image objects</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>operation</strong> (<em>str</em>) &#8211; The operation to perform (eg. GET, POST)</li>
+<li><strong>payload</strong> (<em>SocialObject</em>) &#8211; Object to perform operation with, eg. GET
+objects matching criteria, or POST this object to service</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.gateway.ServiceGateway.ServiceGateway.complete_authentication">
+<tt class="descname">complete_authentication</tt><big>(</big><em>request</em><big>)</big><a class="headerlink" href="#src.gateway.ServiceGateway.ServiceGateway.complete_authentication" title="Permalink to this definition">¶</a></dt>
+<dd><p>Second stage of authentication. Request contains the
+response from the client-side authentication, which should
+contain access tokens required to complete the authentication process.</p>
+<p>Do not implement this method if the service does not perform
+authenticated requests.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>request</strong> (<em>HTTPRequest</em>) &#8211; Request with clientside authentication tokens</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="src.gateway.ServiceGateway.ServiceGateway.request_authentication">
-<tt class="descname">request_authentication</tt><big>(</big><em>authent_id=None</em><big>)</big><a class="headerlink" href="#src.gateway.ServiceGateway.ServiceGateway.request_authentication" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">request_authentication</tt><big>(</big><em>callback=None</em><big>)</big><a class="headerlink" href="#src.gateway.ServiceGateway.ServiceGateway.request_authentication" title="Permalink to this definition">¶</a></dt>
+<dd><p>First stage of two-stage authentication. Participation
+client has requested that participant is authenticated with this service.</p>
+<p>For most authentication schemes, return a URL the participant can visit to
+authenticate themselves with the service. After completing this stage, the user
+must be redirected to the callback URL.</p>
+<p>Do not implement this method if the service does not perform
+authenticated requests.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>callback</strong> (<em>str</em>) &#8211; URL that PRISONER has determined participant
+must visit after authenticating with service.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </dd></dl>
 
@@ -167,6 +275,10 @@ subclass this.</p>
 <dt id="src.gateway.ServiceGateway.SocialActivityResponse">
 <em class="property">class </em><tt class="descclassname">src.gateway.ServiceGateway.</tt><tt class="descname">SocialActivityResponse</tt><big>(</big><em>content</em>, <em>headers</em><big>)</big><a class="headerlink" href="#src.gateway.ServiceGateway.SocialActivityResponse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>SocialActivityResponse wraps a SocialObject received from a service
+gateway. It provides the original object alongside headers relating to the
+request from the participation clients. These headers are used to validate the
+request, and sanitise the response object.</p>
 <dl class="attribute">
 <dt id="src.gateway.ServiceGateway.SocialActivityResponse.content">
 <tt class="descname">content</tt><a class="headerlink" href="#src.gateway.ServiceGateway.SocialActivityResponse.content" title="Permalink to this definition">¶</a></dt>
@@ -179,7 +291,6 @@ subclass this.</p>
 
 </dd></dl>
 
-</div>
 </div>
 <div class="section" id="subpackages">
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
@@ -207,10 +318,7 @@ subclass this.</p>
 <li><a class="reference internal" href="#">gateway Package</a><ul>
 <li><a class="reference internal" href="#id1"><tt class="docutils literal"><span class="pre">gateway</span></tt> Package</a></li>
 <li><a class="reference internal" href="#module-src.gateway.LastfmGateway"><tt class="docutils literal"><span class="pre">LastfmGateway</span></tt> Module</a></li>
-<li><a class="reference internal" href="#module-src.gateway.ServiceGateway"><tt class="docutils literal"><span class="pre">ServiceGateway</span></tt> Module</a><ul>
-<li><a class="reference internal" href="#prisoner-service-gateway">PRISONER Service Gateway</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#module-src.gateway.ServiceGateway"><tt class="docutils literal"><span class="pre">ServiceGateway</span></tt> Module</a></li>
 <li><a class="reference internal" href="#subpackages">Subpackages</a><ul>
 </ul>
 </li>
@@ -218,6 +326,12 @@ subclass this.</p>
 </li>
 </ul>
 
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="src.html"
+                        title="previous chapter">src Package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="src.gateway.tests.html"
+                        title="next chapter">tests Package</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/src.gateway.txt"
@@ -249,7 +363,15 @@ subclass this.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="index.html">PRISONER 0.1 documentation</a> &raquo;</li> 
+        <li class="right" >
+          <a href="src.gateway.tests.html" title="tests Package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="src.html" title="src Package"
+             >previous</a> |</li>
+        <li><a href="index.html">PRISONER 0.1 documentation</a> &raquo;</li>
+          <li><a href="modules.html" >&lt;no title&gt;</a> &raquo;</li>
+          <li><a href="src.html" >src Package</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

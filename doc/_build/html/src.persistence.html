@@ -53,18 +53,66 @@
 <span class="target" id="module-src.persistence"></span></div>
 <div class="section" id="module-src.persistence.PersistenceManager">
 <span id="persistencemanager-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">PersistenceManager</span></tt> Module<a class="headerlink" href="#module-src.persistence.PersistenceManager" title="Permalink to this headline">¶</a></h2>
-<p>PRISONER Persistence Manager</p>
-<p>Responsible for writing Social Objects and experimental responses to database,
-managing and validating schema changes, and ensuring all writes respect relevant
-privacy policies</p>
 <dl class="class">
 <dt id="src.persistence.PersistenceManager.PersistenceManager">
 <em class="property">class </em><tt class="descclassname">src.persistence.PersistenceManager.</tt><tt class="descname">PersistenceManager</tt><big>(</big><em>exp_design=None</em>, <em>policy_processor=None</em><big>)</big><a class="headerlink" href="#src.persistence.PersistenceManager.PersistenceManager" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>The PersistenceManager manages the storage of all data, including
+participant metadata, experimental responses, and persistence of Social Objects.
+Storage of data is subject to the privacy policy for the experiment.
+Generally, participation clients do not directly instantiate a
+PersistenceManager, and where possible, friendlier interfaces are available
+through the ExperimentBuilder and SocialObjectsGateway.</p>
 <dl class="attribute">
 <dt id="src.persistence.PersistenceManager.PersistenceManager.experimental_design">
 <tt class="descname">experimental_design</tt><a class="headerlink" href="#src.persistence.PersistenceManager.PersistenceManager.experimental_design" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="src.persistence.PersistenceManager.PersistenceManager.get_participant">
+<tt class="descname">get_participant</tt><big>(</big><em>schema</em>, <em>participant_id</em><big>)</big><a class="headerlink" href="#src.persistence.PersistenceManager.PersistenceManager.get_participant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve the participant with the given ID from the given
+schema.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>schema</strong> (<em>str</em>) &#8211; name of scema to get participant from</li>
+<li><strong>participant_id</strong> (<em>int</em>) &#8211; ID of participant to return</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">tuple - participant data from database</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.persistence.PersistenceManager.PersistenceManager.get_table">
+<tt class="descname">get_table</tt><big>(</big><em>table_type</em>, <em>table_name</em><big>)</big><a class="headerlink" href="#src.persistence.PersistenceManager.PersistenceManager.get_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an active connection to the requested table. Used
+internally for data access. Do not use this from participation
+clients. Instead, use managed data access interfaces where possible to
+ensure data are sanitised appropriately.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>table_type</strong> (<em>str</em>) &#8211; Type of table [response, participant, object]</li>
+<li><strong>table_name</strong> &#8211; Name of table to return</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Table - requested table</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="src.persistence.PersistenceManager.PersistenceManager.post_response">
@@ -72,9 +120,67 @@ privacy policies</p>
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="src.persistence.PersistenceManager.PersistenceManager.register_participant">
+<tt class="descname">register_participant</tt><big>(</big><em>schema</em>, <em>participant</em><big>)</big><a class="headerlink" href="#src.persistence.PersistenceManager.PersistenceManager.register_participant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the participant data in given dictionary to the
+participant table in this database and return the ID</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>schema</strong> &#8211; name of participant table (must be of type</td>
+</tr>
+</tbody>
+</table>
+<p>&#8216;participant&#8217;)
+:type schema: str.
+:param participant: dictionary of data about participant
+:type participant: dict
+:returns: int &#8211; inserted row ID</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.persistence.PersistenceManager.PersistenceManager.register_participant_with_provider">
+<tt class="descname">register_participant_with_provider</tt><big>(</big><em>participant_id</em>, <em>provider</em>, <em>token</em><big>)</big><a class="headerlink" href="#src.persistence.PersistenceManager.PersistenceManager.register_participant_with_provider" title="Permalink to this definition">¶</a></dt>
+<dd><p>Store access credentials with this provider for the given
+participant. Access token can be any object, so long as the
+relevant service gateway is able to interpet it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>participant_id</strong> (<em>int</em>) &#8211; Participant to register access token with</li>
+<li><strong>provider</strong> (<em>str</em>) &#8211; Name of provider to register access token with</li>
+<li><strong>token</strong> (<em>object</em>) &#8211; Access token used in authenticated calls</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">row as inserted in meta_table</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="src.persistence.PersistenceManager.PersistenceManager.validate_design">
 <tt class="descname">validate_design</tt><big>(</big><em>design</em><big>)</big><a class="headerlink" href="#src.persistence.PersistenceManager.PersistenceManager.validate_design" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Tests that the given experimental design validates against the
+XML schema</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>design</strong> (<em>str</em>) &#8211; Path to experimental design</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body">IOError</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">ElementTree - parsed experimental design object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </dd></dl>
 

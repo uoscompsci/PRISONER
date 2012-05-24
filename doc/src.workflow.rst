@@ -17,18 +17,18 @@ workflow Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`PolicyProcessor` Module
------------------------------
+:mod:`ExperimentBuilder` Module
+-------------------------------
 
-.. automodule:: src.workflow.PolicyProcessor
+.. automodule:: src.workflow.ExperimentBuilder
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`SessionManager` Module
-----------------------------
+:mod:`PolicyProcessor` Module
+-----------------------------
 
-.. automodule:: src.workflow.SessionManager
+.. automodule:: src.workflow.PolicyProcessor
     :members:
     :undoc-members:
     :show-inheritance:
