@@ -1,9 +1,3 @@
-""" PRISONER Persistence Manager
-
-Responsible for writing Social Objects and experimental responses to database,
-managing and validating schema changes, and ensuring all writes respect relevant
-privacy policies
-"""
 import lxml.etree as etree
 from sqlalchemy import *
 
@@ -11,7 +5,24 @@ from gateway.ServiceGateway import *
 EXPERIMENTAL_DESIGN_XSD = "/home/lhutton/svn/progress2/lhutton/projects/sns_arch/src/xsd/experimental_design.xsd"
 
 class PersistenceManager(object):
+	""" The PersistenceManager manages the storage of all data, including
+	participant metadata, experimental responses, and persistence of Social Objects.
+	Storage of data is subject to the privacy policy for the experiment.
+	Generally, participation clients do not directly instantiate a
+	PersistenceManager, and where possible, friendlier interfaces are available
+	through the ExperimentBuilder and SocialObjectsGateway. 
+	"""	
 	def __init__(self, exp_design = None, policy_processor=None):
+		""" Instantiate a PersistenceManager by supply an experimental
+		design and instance of PolicyProcessor (assumed to already be bound to a valid
+		privacy policy.
+
+		:param exp_design: Path to experimental design file
+		:type exp_design: str.
+		:param policy_processor: Instance of PolicyProcessor used to
+		validate and sanitise requests to store data
+		:type policy_processor: PolicyProcessor
+		"""
 
 		self.response_tables = {}
 		self.object_tables = {}
@@ -36,6 +47,12 @@ class PersistenceManager(object):
 
 	@experimental_design.setter
 	def experimental_design(self, value):
+		""" Set the experimental design. This is immediately validated
+		and used to construct a schema for experimental responses and participant
+		metadata.	
+		:param value: Path to experimental design file
+		:type value: str
+		"""
 		self._experimental_design = self.validate_design(value)
 		# instance DB
 		exp_element = self._experimental_design.xpath("//experiment")[0]
@@ -44,6 +61,15 @@ class PersistenceManager(object):
 		self.metadata = MetaData(self.engine)
 
 	def validate_design(self, design):
+		"""
+		Tests that the given experimental design validates against the
+		XML schema
+
+		:param design: Path to experimental design
+		:type design: str
+		:raises: IOError
+		:returns: ElementTree - parsed experimental design object
+		"""
 		if not design:
 			raise IOError("Experimental design not found at path")
 		print "Validating experimental design at %s" % design
@@ -73,6 +99,15 @@ class PersistenceManager(object):
 		return table_dict[table_name]
 
 	def get_participant(self, schema, participant_id):
+		""" Retrieve the participant with the given ID from the given
+		schema.
+
+		:param schema: name of scema to get participant from
+		:type schema: str
+		:param participant_id: ID of participant to return
+		:type participant_id: int
+		:returns: tuple - participant data from database
+		"""
 		table = self.get_table("participant",schema)
 		print table.c
 		result = table.select(table.c.id==participant_id).execute().fetchone()
@@ -129,6 +164,18 @@ class PersistenceManager(object):
 		return self.get_participant(schema, result.lastrowid)
 
 	def register_participant_with_provider(self, participant_id, provider, token):
+		""" Store access credentials with this provider for the given
+		participant. Access token can be any object, so long as the
+		relevant service gateway is able to interpet it.
+		
+		:param participant_id: Participant to register access token with
+		:type participant_id: int
+		:param provider: Name of provider to register access token with
+		:type provider: str
+		:param token: Access token used in authenticated calls
+		:type token: object
+		:returns: row as inserted in meta_table 
+		"""
 		table = self.meta_participant_table
 		insert = table.insert()
 		response = {"participant_id": participant_id, "provider": provider,

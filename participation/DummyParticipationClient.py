@@ -63,7 +63,13 @@ if __name__ == "__main__":
 #	participant = expBuilder.authenticate_participant("participant",my_id[0])
 	print participant
 
-	
+	me = SocialObjects.Person()
+	me.id = "lukeweb"
+	img = expBuilder.sog.GetObject("Lastfm","Image",me)
+	print img
+	print img.fullImage
+	print img.author.displayName
+
 	expBuilder.authenticate_providers(["Lastfm"])
 	consent_url = expBuilder.build()	
 	print "Visit %s to begin participating in this experiment" % consent_url

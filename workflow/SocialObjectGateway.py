@@ -194,7 +194,7 @@ class SocialObjectsGateway(object):
 			new_coll.objects = sanitised_set
 			return new_coll
 		else:
-			response_obj = SocialActivityResponse(resp, headers)
+			response_obj = SocialActivityResponse(response, headers)
 			sanitised_response = processor._sanitise_object_request(response_obj)
 			return sanitised_response
 
