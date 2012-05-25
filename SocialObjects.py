@@ -304,10 +304,6 @@ class Event(SocialObject):
 	def endTime(self, value):
 		self._endTime = value
 
-	@location.setter
-	def location(self, value):
-		self._location = value
-
 	@property
 	def maybeAttending(self):
 		""" A collection of People who have responded to say they may
