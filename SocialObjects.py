@@ -163,6 +163,9 @@ class SocialObject(object):
 
 	@property
 	def url(self):
+		""" A permament link to this object's online representation.
+		This should be unique to this object and ideally permanent. It is acceptable for
+		this link to be inaccessible without authentication. """
 		return self._url
 
 	@url.setter
