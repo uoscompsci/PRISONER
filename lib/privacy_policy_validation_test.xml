@@ -47,7 +47,9 @@
 		<attribute type="author">
 			<attribute-policy allow="retrieve">
 				<attribute-criteria>
-					<attribute-match match="author" on_object="literal:lukeweb" />
+					<attribute-match match="author.id" on_object="literal:lukeweb" />
+					<attribute-match match="author.id" on_object="literal:lukeweb" />
+					<attribute-match match="author.id" on_object="literal:lukeweb" />
 				</attribute-criteria>
 				<transformations>		
 					<transform type="reduce" level="initials" />
@@ -57,8 +59,10 @@
 		<attribute type="fullImage">
 			<attribute-policy allow="retrieve">
 				<attribute-criteria>
-					<attribute-match
-match="author" on_object="literal:lukdeweb" />
+						<attribute-match match="author.id"
+						on_object="literal:lukdeweb" />
+						<attribute-match match="author.id"
+						on_object="literal:lukeweb" />
 				</attribute-criteria>
 			</attribute-policy>
 		</attribute>
@@ -67,7 +71,7 @@ match="author" on_object="literal:lukdeweb" />
 			<object-criteria>
 				<and-match>
 					<attribute-match match="author.id"
-					on_object="literal:lukgeweb" />
+					on_object="literal:lukeweb" />
 					<or-match>
 						<and-match>
 							<attribute-match match="author.id"

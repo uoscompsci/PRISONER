@@ -1,12 +1,3 @@
-"""
-PRISONER Social Object Gateway
-
-Participation clients talk to me to request access to objects, or to publish
-objects back to services.
-I evaluate the request in accordance with the experimental design, and construct
-a request to the appropriate service gateway. 
-I sanitise the objects it returns and hand them back to participation clients.
-"""
 from gateway import *  	# import all known service gateways
 from PolicyProcessor import PolicyProcessor
 import SocialObjects
@@ -27,7 +18,9 @@ class InvalidPrivacyPolicy(Exception):
 
 class SocialObjectsGateway(object):
 	"""
-	This is a friendlier interface to PRISONER's internals, which participation clients should access. This coordinates access to other service gateways, and the management of experimental responses. 
+	This is a friendlier interface to PRISONER's internals,
+	which participation clients should access.
+	This coordinates access to other service gateways, and the management of experimental responses. 
 
 	A single instance of this object should be maintained throughout the lifecycle of an experimental application. 
 	"""
@@ -113,10 +106,13 @@ class SocialObjectsGateway(object):
 
 	def provide_experimental_design(self, experimental_design):
 		"""
-		Provide the experimental design for this experiment. Used to instantiate a PersistenceManager. Can only be done once per instance of SocialObjectGateway. This must be called before attemtping to persist any response data.
+		Provide the experimental design for this experiment.
+		Used to instantiate a PersistenceManager.
+		Can only be done once per instance of SocialObjectGateway.
+		This must be called before attemtping to persist any response data.
 
-			:param experimental_design: path to an experimental design XML file
-			:type experimental_design: str
+		:param experimental_design: path to an experimental design XML file
+		:type experimental_design: str
 		"""
 		if self.persistence:
 			raise Exception("Experimental design already defined."+\
@@ -124,26 +120,14 @@ class SocialObjectsGateway(object):
 		self.persistence = PersistenceManager.PersistenceManager(experimental_design,
 		self.policy_processor)
 
-	"""
-	Attempts to write the response dictionary to the given schema.
-	An experimental design must be supplied, containing a table matching the
-	name schema of type 'response'.
-	
-	The supplied data may be sanitised before persistence and must match the
-	expected types. For example, well-formed instances of social objects
-	must be given where appropriate to allow sanitisation, or the request will fail.
-
-	This interface is only for schemas of response types - not for
-	persisting objects/participant data
-	"""
-
 	def post_response(self, schema, response):
-		""" Passes the response to the PersistenceManager to write to the internal database. There must be an experimental design bound first.
+		""" Passes the response to the PersistenceManager to write to the
+		internal database. There must be an experimental design bound first.
 
-			:param schema: Name of the response table to write to
-			:type schema: str.
-			:param response: The response dictionary to write to the specified schema
-			:type response: dict
+		:param schema: Name of the response table to write to
+		:type schema: str.
+		:param response: The response dictionary to write to the specified schema
+		:type response: dict
 		"""	
 		if not self.persistence:
 			raise Exception("No experimental design supplied")
@@ -152,13 +136,16 @@ class SocialObjectsGateway(object):
 		
 	def GetObject(self, provider, object_type, payload, allow_many=False):
 		"""
-		Interface for retrieving an object from a service gateway. Requests are verified against the privacy policy, and returned objects are sanitised as appropriate.
+		Interface for retrieving an object from a service gateway.
+		Requests are verified against the privacy policy, and returned objects are sanitised as appropriate.
 
 		:param provider: name of provider to get object from
 		:type provider: str
 		:param object_type: name of object to get
 		:type object_type: str
-		:param payload: dictionary of criteria of objects to return. The format of this depends on the requirements and format expected by the service gateway.
+		:param payload:
+			dictionary of criteria of objects to return.
+			The format of this depends on the requirements and format expected by the service gateway.
 		:type payload: dict
 		:returns: SocialObject -- sanitised for consumption by participation client
 		"""
@@ -220,7 +207,8 @@ class SocialObjectsGateway(object):
 
 	def PostObject(self, provider, object_type, payload):
 		"""
-		Request to write a Social Object to a given provider. Requests are verified against the privacy policy, and outgoing objects are sanitised as necessary.
+		Request to write a Social Object to a given provider.
+		Requests are verified against the privacy policy, and outgoing objects are sanitised as necessary.
 
 		:param provider: Provider name
 		:type provider: str

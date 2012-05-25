@@ -4,7 +4,7 @@ from Exceptions import *
 from gateway import *  	# import all known service gateways
 import SocialObjects
 
-PRIVACY_POLICY_XSD = "/home/lhutton/svn/progress2/lhutton/projects/sns_arch/src/xsd/privacy_policy.xsd"
+PRIVACY_POLICY_XSD = "/home/lhutton/hg/prisoner/src/xsd/privacy_policy.xsd"
 op_match = {"GET": "retrieve", "POST": "publish", "PUT": "store"}
 
 class PolicyProcessor(object):
@@ -73,20 +73,32 @@ class PolicyProcessor(object):
 			print "Privacy policy failed validation."
 	
 	def _validate_object_request(self, operation, provider, object_type, payload):
-		""" Validates a request to perform an operation on Social Objects (whether retrieving from a service gateway, publishing back to a service gateway, or putting data to a database).
+		""" Validates a request to perform an operation on Social
+		Objects (whether retrieving from a service gateway, publishing back to a service
+		gateway, or putting data to a database).
 
-			A request will only be allowed in the first instance if there is an object-policy for this object, for the appropriate operation.
+		A request will only be allowed in the first instance if
+		there is an object-policy for this object, for the appropriate operation.
 
-			:param operation: The type of request. 
-			:type operation: str.
-			:param provider: The name of the provider of this object. There must be a ServiceGateway class corresponding to this provider.
-			:type provider: str.
-			:param object_type: The type of object being processed. This should not be prefixed with a provider namespace. The method will attempt to find an implementation of this object by the Service Gateway, otherwise attempting to find an implementation from the base social objects library.
-			:type object_type: str.
-			:param payload: A dictionary of parameters, or instance of a Social Object, used to determine the query criteria, or object to write. The payload is specific to the request - see the documentation for the appropriate gateway request for the expected format.
-			:type payload: SocialObject or dictionary
-			:returns: str -- a clean object_type for this request (used in later stages of sanitisation process)
-		"""
+		:param operation: The type of request.
+		:type operation: str.
+		 :param provider:
+			The name of the provider of this object. There must be a
+			ServiceGateway class corresponding to this provider.
+		:type provider: str.
+		:param object_type:
+			The type of object being processed. This should not be
+			prefixed with a provider namespace. The method will attempt to find an
+			implementation of this object by the Service Gateway, otherwise attempting to
+			find an implementation from the base social objects library.
+		:type object_type: str.
+		:param payload:
+		A dictionary of parameters, or instance of a Social
+		Object, used to determine the query criteria, or object to write. The payload is
+		specific to the request - see the documentation for the appropriate gateway
+		request for the expected format. :type payload: SocialObject or dictionary
+		:returns: str -- a clean object_type for this request (used in later stages of
+		sanitisation process) """
 		if not self.privacy_policy:
 			raise NoPrivacyPolicyProvidedError()
 		
@@ -218,15 +230,6 @@ class PolicyProcessor(object):
 				parse_rec = getattr(parse_rec,meth)
 		return parse_rec
 
-	"""
-	Takes a ElementTree (must be a validated privacy policy) and walks its
-	logical structure, validating the criteria.
-	The root of the incoming tree should be an x-criteria element - its
-	immediate children must be the criteria. An invalid structure will
-	prevent requests being sanctioned.
-
-	This is an internal function.
-	"""
 	def __validate_criteria(self, response, tree):
 		""" Validates an object against the object and attribute criteria in the given policy.
 
@@ -247,13 +250,14 @@ class PolicyProcessor(object):
 			criteria_type = "attribute"
 		elif tree.tag == "object-criteria":
 			criteria_type = "object"
+			
 		else:
 			raise RuntimePrivacyPolicyParserError("Unexpected criteria")
-		tree = tree[0]
 		criteria_walk = etree.iterwalk(tree,
 		events=("start","end"))
-
+		criteria_walk.next()
 		for action, element in criteria_walk:
+			print element, action
 			if action == "start":
 				criteria_stack.append(element)	
 			elif action == "end" and element.tag in logical_elements:
@@ -297,10 +301,24 @@ class PolicyProcessor(object):
 							else:
 								criteria_stack.append(False)
 						break
+					# TODO: if unevaluated "implicit"
+					# elements remain, calculate result!
 			else:
-				#print action, element
-				pass
-			#print criteria_stack		
+				continue
+		# evaluate whatever is left as an implicit and
+		if (len(criteria_stack) > 1 or criteria_stack[0] not in [True,False]):
+			print criteria_stack
+			working_set = []
+			while(len(criteria_stack) > 0):
+				top_element = criteria_stack.pop()
+				working_set.append(self.__test_criteria(top_element,
+				response))
+			print working_set
+			if False in working_set:
+				criteria_stack.append(False)
+			else:
+				criteria_stack.append(True)
+				
 		
 		if len(criteria_stack) > 1:
 			raise RuntimePrivacyPolicyParserError("Criteria "+\
@@ -312,7 +330,8 @@ class PolicyProcessor(object):
 
 	def _sanitise_object_request(self, response):
 		"""
-		Sanitises a request - this reduces a Social Object to only the fields allowed by the privacy policy, and applies any transformations required by the policy.
+		Sanitises a request - this reduces a Social Object to only the
+		fields allowed by the privacy policy, and applies any transformations required by the policy.
 
 		:param response: Object to sanitise
 		:type response: SocialActivityResponse
@@ -350,6 +369,7 @@ class PolicyProcessor(object):
 
 		if not valid_object_policy:
 			print "Object policy failed for request"
+			return None
 
 		# recompose object - only include attributes with an
 		# attribute-policy
@@ -359,10 +379,12 @@ class PolicyProcessor(object):
 		attributes_collection = self.privacy_policy.xpath(xpath)
 		for attribute in attributes_collection[0]:
 			curr_attribute = attribute.get("type")
+			print curr_attribute
 			xpath = "attribute-policy[@allow='%s']//attribute-criteria" % op_match[response.headers.operation]
 			att_path = attribute.xpath(xpath)
 			if att_path:
 				# TODO: block requests without any criteria
+				print att_path[0]
 				valid_attr_policy = self.__validate_criteria(response,
 				att_path[0])
 			else:
@@ -398,13 +420,14 @@ class PolicyProcessor(object):
 		# return response
 	
 	def __test_criteria(self, element, response):
-		""" Tests that an object passes a single logical test within object or attribute criteria. Used internally when validating objects
+		""" Tests that an object passes a single logical test within object or attribute criteria.
+		Used internally when validating objects
 
-			:param element: XML element with logical criterion
-			:type element: lxml Element
-			:param response: Contains object to test
-			:type response: SocialActivityResponse
-			:returns: bool -- did object pass criteria?
+		:param element: XML element with logical criterion
+		:type element: lxml Element
+		:param response: Contains object to test
+		:type response: SocialActivityResponse
+		:returns: bool -- did object pass criteria?
 		"""
 		if element.tag == "attribute-match":
 			to_match = element.get("match")
