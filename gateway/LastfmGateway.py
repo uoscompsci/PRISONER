@@ -67,6 +67,14 @@ class LastfmServiceGateway(ServiceGateway):
 		self.network = pylast.LastFMNetwork(api_key = API_KEY,
 		api_secret = API_SECRET,
 		session_key=access_token)
+		
+		self.session = None
+
+	def Session(self):
+		""" The Last.fm session exposes the authenticated
+		user as a Person instance
+		"""
+	
 
 	def Track(self, operation, payload):	
 		""" Performs operations on Track objects. Only supports the GET

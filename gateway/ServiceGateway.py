@@ -21,6 +21,18 @@ class ServiceGateway(object):
         def __init__(self):
                 pass
 
+	def Session(self):
+		""" Each ServiceGateway can maintain a Session object, which
+		contains limited information that is needed to persist throughout the session
+		with the service. This should *not* be used as a way of caching social objects
+		to circumvent the usual GetObject interface. The session is intended to store,
+		for example, metadata about the authenticated participant so that it is possible
+		to relate the participant to their service username, etc.
+		"""
+
+		raise NotImplementedError("This Service Gateway does not expose"+\
+		" a session")
+
 	def Image(self, operation, payload): 
 		""" Perform operations on ServiceGateway to publish and retrieve
 		Image objects
