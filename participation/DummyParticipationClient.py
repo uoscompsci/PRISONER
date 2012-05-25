@@ -47,21 +47,24 @@ if __name__ == "__main__":
 	session.PostObject("Lastfm","Comment",post_shout)
 	"""
 
-	privacy_policy = "../lib/policy_validation_test.xml"
-	exp_design = "../lib/experimental_design_test.xml"
+	privacy_policy = "/home/lhutton/hg/prisoner/src/lib/privacy_policy_validation_test.xml"
+	exp_design = "/home/lhutton/hg/prisoner/src/lib/experimental_design_test.xml"
 	
 	expBuilder = ExperimentBuilder.ExperimentBuilder()
 	
 	expBuilder.provide_privacy_policy(privacy_policy)
 	expBuilder.provide_experimental_design(exp_design)
 	
-	# TODO: user-facing authentication
-	participant = expBuilder.authenticate_participant("participant",1)
-
 	# uncomment to register new participant
-#	new_participant = {"name": "Bob", "gender": "male", "serviceGroup": "Lastfm"}
-#	my_id =	expBuilder.sog.register_participant("participant",new_participant)
-#	participant = expBuilder.authenticate_participant("participant",my_id[0])
+	new_participant = {"name": "Bob", "gender": "male", "serviceGroup": "Lastfm"}
+	my_id =	expBuilder.sog.register_participant("participant",new_participant)
+	participant = expBuilder.authenticate_participant("participant",my_id[0])
+
+	# TODO: user-facing authentication
+
+	# uncomment to login as participant 1
+	#participant = expBuilder.authenticate_participant("participant",1)
+
 	print participant
 
 	me = SocialObjects.Person()

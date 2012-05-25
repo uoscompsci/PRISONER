@@ -239,10 +239,13 @@ class PersistenceManager(object):
 			print row
 		
 		trackselect = self.object_tables["track"].select()
-		res = trackselect.execute()
+			res = trackselect.execute()
 		for row in res:
 			print row
 		"""
+	
+	def do_build_schema(self, drop_first=False):
+		return self.__build_schema(drop_first)
 
 	"""
 	Parses the experimental design and constructs relevant tables, classes,
@@ -258,7 +261,13 @@ class PersistenceManager(object):
 	"""
 	def __build_schema(self, drop_first=False):
 		tables = self.experimental_design.xpath("//tables")[0]
-		
+
+		if drop_first:
+			self.metadata = MetaData(self.engine)
+			self.participant_tables = {}
+			self.response_tables = {}
+			self.object_tables = {}
+				
 		for table in tables:
 			cols = []
 			cols.append(Column("id", Integer, primary_key=True))

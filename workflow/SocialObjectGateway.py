@@ -44,7 +44,7 @@ class SocialObjectsGateway(object):
 
 		# maintains a PersistenceManager for DB interaction
 		self.persistence = None 
-		self.policyProcessor = None
+		self.policy_processor = None
 
 		self.participant = None
 	

@@ -1,3 +1,4 @@
+import sys
 import threading
 import tornado.ioloop
 import tornado.web
@@ -71,6 +72,16 @@ class ExperimentBuilder(object):
 		"""
 		self.providers = providers
 
+	def build_schema(self):
+		""" Constructs the database schema (destroying whatever data
+		might already exist). This places the database in a state in which participants
+		may be registered, and experiments run, but does not return usable interfaces to
+		the rest of the workflow (such as the SocialObjectGateway) """ 
+		
+		self.sog.persistence.do_build_schema(drop_first=True)
+		print "Schema built without error"
+		sys.exit()
+	
 	def build(self):
 		""" Using the information provided by the participation client,
 		instigate the experiment consent process. This does the
