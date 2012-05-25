@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<p:privacy-policy
+	xmlns:p="http://pvnets.cs.st-andrews.ac.uk/prisoner/privacy-policy"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pvnets.cs.st-andrews.ac.uk/prisoner/privacy-policy privacy_policy.xsd">
+
+	
+	<policy for="Lastfm:Track">
+		<attributes>
+		<attribute type="artist">
+			<attribute-policy allow="retrieve" />
+		</attribute>
+		<attribute type="title">
+			<attribute-policy allow="retrieve" />
+		</attribute>
+		<attribute type="tag">
+			<attribute-policy allow="retrieve" />
+			<attribute-policy allow="store" />
+		</attribute>
+		</attributes>	
+		<object-policy allow="retrieve">
+			<object-criteria>
+				<attribute-match match="author"
+				on_object="literal:lukeweb" />
+			</object-criteria>
+		</object-policy>
+		<object-policy allow="store">
+			<object-criteria>
+				<attribute-match match="author"
+				on_object="literal:lukeweb" />
+			</object-criteria>
+		</object-policy>
+	</policy>
+
+	<policy for="Comment">
+		<object-policy allow="publish">
+			<object-criteria>
+				<attribute-match match="author.id"
+				on_object="literal:lukeweb" />
+			</object-criteria>
+		</object-policy>
+	</policy>
+	
+	<policy for="Image">
+		<attributes>
+		<attribute type="author">
+			<attribute-policy allow="retrieve">
+				<attribute-criteria>
+					<attribute-match match="author" on_object="literal:lukeweb" />
+				</attribute-criteria>
+				<transformations>		
+					<transform type="reduce" level="initials" />
+				</transformations>
+			</attribute-policy>
+		</attribute>
+		<attribute type="fullImage">
+			<attribute-policy allow="retrieve">
+				<attribute-criteria>
+					<attribute-match
+match="author" on_object="literal:lukdeweb" />
+				</attribute-criteria>
+			</attribute-policy>
+		</attribute>
+		</attributes>
+		<object-policy allow="retrieve">
+			<object-criteria>
+				<and-match>
+					<attribute-match match="author.id"
+					on_object="literal:lukgeweb" />
+					<or-match>
+						<and-match>
+							<attribute-match match="author.id"
+							on_object="literal:lukeweb" />
+							<attribute-match match="author.id"
+							on_object="literal:lukeweb" />
+						</and-match>
+						<attribute-match match="author.id"
+						on_object="literal:lukefweb" />
+						<attribute-match match="author.id"
+						on_object="literal:lukgeweb" />
+					</or-match>
+				</and-match>
+			</object-criteria>	
+		</object-policy>
+	</policy>
+</p:privacy-policy>

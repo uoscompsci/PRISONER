@@ -101,6 +101,27 @@ class SocialObject(object):
 		self._displayName = value
 
 	@property
+	def id(self):
+		""" A unique identifier for this object. Where possible, this
+		should allow the service gateway to relate an instance of a SocialObject to its
+		counterpart on the service """
+		return self._id
+
+	@id.setter
+	def id(self, value):
+		self._id = value
+
+	@property
+	def location(self):
+		""" An instance of Place to indicate the location of an object,
+		or the location in which it was used. """
+		return self._location
+
+	@location.setter
+	def location(self, value):
+		self._location = value
+
+	@property
 	def provider(self):
 		""" The name of the ServiceGateway which generated this object,
 		or where it is intended to be published to. This must map to an available
@@ -111,6 +132,111 @@ class SocialObject(object):
 	def provider(self, value):
 		self._provider = value
 
+	@property
+	def published(self):
+		""" A time object indicating when the object was created. """
+		return self._published
+
+	@published.setter
+	def published(self, value):
+		self._published = value
+	
+	@property
+	def tags(self):
+		""" A collection of SocialObjects associated with this object.
+		This object must not be dependent on the tags to be semantically correct (eg. do
+		not embed a collection of authors as tags) """
+		return self._tags
+
+	@tags.setter
+	def tags(self, value):
+		self._tags = value
+
+	@property
+	def updated(self):
+		""" A time object indicating when the object was last updated. """
+		return self._updated
+
+	@updated.setter
+	def updated(self, value):
+		self._updated = value
+
+	@property
+	def url(self):
+		return self._url
+
+	@url.setter
+	def url(self, value):
+		self._url = value
+
+class Address(SocialObject):
+	""" Generally used as an attribute of Place, encodes a textual
+	description of a physical address on Earth """
+	
+	def __init__(self):
+		super(Address, self).__init__()
+		self._formatted = None
+		self._streetAddress = None
+		self._locality = None
+		self._region = None
+		self._postalCode = None
+		self._country = None
+
+	@property
+	def formatted(self):
+		""" A full textual representation of the address, formatted as
+		for printing a mailing label """
+		return self._formatted
+
+	@formatted.setter
+	def formatted(self, value):
+		self._formatted = value
+
+	@property
+	def streetAddress(self):
+		""" The street address including house number, street name, PO
+		Box """
+		return self._streetAddress
+
+	@streetAddress.setter
+	def streetAddress(self, value):
+		self._streetAddress = value
+
+	@property
+	def locality(self):
+		""" The city, town, village, etc. """
+		return self._locality
+
+	@locality.setter
+	def locality(self, value):
+		self._locality = value
+
+	@property
+	def region(self):
+		""" The state or region """
+		return self._region
+
+	@region.setter
+	def region(self, value):
+		self._region = value
+
+	@property
+	def postalCode(self):
+		""" The zip or postal code """
+		return self._postalCode
+
+	@postalCode.setter
+	def postalCode(self, value):
+		self._postalCode = value
+
+	@property
+	def country(self):
+		""" The country name """
+		return self._country
+
+	@country.setter
+	def country(self, value):
+		self._country = value
 
 class Collection(SocialObject):
 	""" Represents a generic collection of SocialObjects. It may contain any
@@ -147,6 +273,67 @@ class Comment(SocialObject):
 	def inReplyTo(self, value):
 		self._inReplyTo = value
 
+class Event(SocialObject):
+	""" An event occuring in a place during a time interval. """
+	def __init__(self):
+		super(Event, self).__init__()
+		self._attending = None
+		self._endTime = None
+		self._maybeAttending = None
+		self._notAttending = None
+		self._startTime = None
+	
+	@property
+	def attending(self):
+		""" A collection of People who have RSVP'd to an event """
+		return self._attending
+
+	@attending.setter
+	def attending(self, value):
+		self._attending = value
+
+	@property
+	def endTime(self):
+		""" A time object representing when the event ends """
+		return self._endTime
+
+	@endTime.setter
+	def endTime(self, value):
+		self._endTime = value
+
+	@location.setter
+	def location(self, value):
+		self._location = value
+
+	@property
+	def maybeAttending(self):
+		""" A collection of People who have responded to say they may
+		attend the event """
+		return self._maybeAttending
+
+	@maybeAttending.setter
+	def maybeAttending(self, value):
+		self._maybeAttending = value
+
+	@property
+	def notAttending(self):
+		""" A collection of People who have responded to say they are
+		not attending the event """
+		return self._notAttending
+
+	@notAttending.setter
+	def notAttending(self, value):
+		self._notAttending = value
+
+	@property
+	def startTime(self):
+		""" A time object representing when the event starts """
+		return self._startTime
+
+	@startTime.setter
+	def startTime(self, value):
+		self._startTime = value
+
 class Image(SocialObject):
 	""" A graphical image, such as a photo. """
 	def __init__(self):
@@ -161,6 +348,14 @@ class Image(SocialObject):
 	@fullImage.setter
 	def fullImage(self, value):
 		self._fullImage = value
+
+class Note(SocialObject):
+	""" A short text message, often used in a microblogging context, or to
+	share short status updates. Shorter than blog posts, Notes are expected
+	to have a shorter life and might not even expose a permalink """
+
+	def __init__(self):
+		super(Note, self).__init__()
 
 class Person(SocialObject):
 	""" A human actor involved in the exchange of SocialObjects. """
@@ -178,3 +373,33 @@ class Person(SocialObject):
 	def image(self,value):
 		self._image = value
 
+class Place(SocialObject):
+	""" A location on Earth. For maximum flexibility, use geographic
+	coordinates. Alternatively, a physical address or free-form location name may be
+	provided, so long as the applications which consume Place objects can
+	understand its semantics. A combination of location identifiers may be
+	used. """
+
+	def __init__(self):
+		super(Place, self).__init__()
+		self._position = None
+		self._address = None
+
+	@property
+	def position(self):
+		""" Latitude, longitude and altitude of point on Earth. This
+		must be an ISO 6709 string (eg. "+27.5916+086.5640+8850/") """
+		return self._position
+
+	@position.setter
+	def position(self, value):
+		self._position = value
+
+	@property
+	def address(self):
+		""" An instance of Address, for encoding a textual addresss """
+		return self._address
+
+	@address.setter
+	def address(self, value):
+		self._address = value
