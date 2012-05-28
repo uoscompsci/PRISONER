@@ -4,7 +4,7 @@ from Exceptions import *
 from gateway import *  	# import all known service gateways
 import SocialObjects
 
-PRIVACY_POLICY_XSD = "..//xsd/privacy_policy.xsd"
+PRIVACY_POLICY_XSD = "xsd/privacy_policy.xsd"
 op_match = {"GET": "retrieve", "POST": "publish", "PUT": "store"}
 
 class PolicyProcessor(object):
@@ -17,8 +17,11 @@ class PolicyProcessor(object):
 	The PolicyProcessor is an internal object. Service gateways and
 	participation clients do not need to directly interact with it.
 	See the SocialObjectGateway for a friendly interface to these innards.
+
+	PolicyProcessor needs an instance of SocialObjectGateway so it can
+	evaluate the current session scope of service gateways.
 	"""
-	def __init__(self, policy=None):
+	def __init__(self, policy=None, sog=None):
 		""" Do not instantiate your own PolicyProcessor.
 	
 		However, if you choose to ignore that and instantiate your own
@@ -30,6 +33,8 @@ class PolicyProcessor(object):
 			self.privacy_policy = policy
 		self.namespaces = {"p":
 		"http://pvnets.cs.st-andrews.ac.uk/prisoner/privacy-policy"}
+
+		self.sog = sog
 
 	@property
 	def privacy_policy(self):
@@ -199,8 +204,20 @@ class PolicyProcessor(object):
 				raise RuntimePrivacyPolicyParserError("Empty \
 				string literal")
 		elif ns == "session":
-			# TODO: SESSION LAYER
-			pass
+			obj_ref = obj_components[1].split(".")
+			# split again on . - 1st component is service gateway,
+			# rest is session obj ref
+			gateway = self.sog.get_service_gateway(obj_ref[0])
+			gateway_session = gateway.Session()
+			
+			concat_attrs = ""
+			# for each remaining attr, concat a string to getattr
+			for comp in obj_ref[1:]:
+				concat_attrs = "%s%s." % (concat_attrs, comp)
+			concat_attrs = concat_attrs[:-1]
+				
+			return getattr(gateway_session, concat_attrs)
+			 				
 		elif ns == "base":
 			try:
 				ns_obj = getattr(SocialObjects, obj_components[1])()

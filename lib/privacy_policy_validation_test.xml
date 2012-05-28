@@ -37,7 +37,7 @@
 		<object-policy allow="publish">
 			<object-criteria>
 				<attribute-match match="author.id"
-				on_object="literal:lukeweb" />
+				on_object="session:Lastfm.id" />
 			</object-criteria>
 		</object-policy>
 	</policy>
@@ -47,9 +47,7 @@
 		<attribute type="author">
 			<attribute-policy allow="retrieve">
 				<attribute-criteria>
-					<attribute-match match="author.id" on_object="literal:lukeweb" />
-					<attribute-match match="author.id" on_object="literal:lukeweb" />
-					<attribute-match match="author.id" on_object="literal:lukeweb" />
+					<attribute-match match="author.id" on_object="session:Lastfm.id" />
 				</attribute-criteria>
 				<transformations>		
 					<transform type="reduce" level="initials" />

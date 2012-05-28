@@ -39,7 +39,7 @@ class SocialObjectsGateway(object):
 		self.persistence = None 
 		self.policy_processor = None
 
-		self.participant = None
+		self.participant = None	
 	
 	def request_authentication(self, provider, callback):
 		""" Call this if it is necessary to perform authenticated API
@@ -102,7 +102,8 @@ class SocialObjectsGateway(object):
 	#	processor = PolicyProcessor()
 	#	policy = processor.validate_policy(privacy_policy)
 		self.privacy_policy = privacy_policy	
-		self.policy_processor = PolicyProcessor(self.privacy_policy)
+		self.policy_processor = PolicyProcessor(self.privacy_policy,
+		self)
 
 	def provide_experimental_design(self, experimental_design):
 		"""
@@ -154,11 +155,14 @@ class SocialObjectsGateway(object):
 		if not self.privacy_policy:
 			raise Exception("Provide a privacy policy before"\
 			" making requests.")
+		"""
 		try:
 			provider_gateway = globals()["%sServiceGateway" %			
 			provider]()
 		except:
 			raise ServiceGatewayNotFound(provider)
+		"""
+		provider_gateway = self.__getServiceGateway(provider)
 		
 		#processor = PolicyProcessor(self.privacy_policy)
 		processor = self.policy_processor
@@ -185,8 +189,10 @@ class SocialObjectsGateway(object):
 			sanitised_response = processor._sanitise_object_request(response_obj)
 			return sanitised_response
 
-			
-		
+	def get_service_gateway(self, provider):
+		""" External wrapper to internal function """		
+		return self.__getServiceGateway(provider)
+
 	def __getServiceGateway(self, provider):
 		""" Given the name of a provider, return an instance of the appropriate service gateway
 

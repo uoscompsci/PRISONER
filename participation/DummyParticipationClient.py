@@ -11,6 +11,19 @@ import SocialObjects
 from gateway import LastfmServiceGateway
 from workflow import ExperimentBuilder, SocialObjectGateway
 
+
+def do_experiment():
+	""" Call this after consent completed to do object calls """
+
+	print "Consent complete. Now start experiment"
+	me = SocialObjects.Person()
+	me.id = "lukeweb"
+	img = expBuilder.sog.GetObject("Lastfm","Image",me)
+	print img
+	print img.fullImage
+	print img.author.displayName
+
+
 if __name__ == "__main__":
 	"""
 	OLD DUMMY CODE	
@@ -47,8 +60,8 @@ if __name__ == "__main__":
 	session.PostObject("Lastfm","Comment",post_shout)
 	"""
 
-	privacy_policy = "../lib/privacy_policy_validation_test.xml"
-	exp_design = "../lib/experimental_design_test.xml"
+	privacy_policy = "lib/privacy_policy_validation_test.xml"
+	exp_design = "lib/experimental_design_test.xml"
 	
 	expBuilder = ExperimentBuilder.ExperimentBuilder()
 	
@@ -67,15 +80,9 @@ if __name__ == "__main__":
 
 	print participant
 
-	me = SocialObjects.Person()
-	me.id = "lukeweb"
-	img = expBuilder.sog.GetObject("Lastfm","Image",me)
-	print img
-	print img.fullImage
-	print img.author.displayName
 
 	expBuilder.authenticate_providers(["Lastfm"])
-	consent_url = expBuilder.build()	
+	consent_url = expBuilder.build(do_experiment)	
 	print "Visit %s to begin participating in this experiment" % consent_url
 	
 

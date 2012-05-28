@@ -82,7 +82,7 @@ class ExperimentBuilder(object):
 		print "Schema built without error"
 		sys.exit()
 	
-	def build(self):
+	def build(self, callback):
 		""" Using the information provided by the participation client,
 		instigate the experiment consent process. This does the
 		following:
@@ -101,14 +101,20 @@ class ExperimentBuilder(object):
 		authentication flow, so you may need to host this yourself, particularly if this
 		involves two (or more) factor authentication as users are bounced between URLs
 		(many authentication flows expect a URL callback). This flow
-		must return a token to persist alongside the Participant. We are
-		looking towards managing more of this flow within PRISONER
+		must return a token to persist alongside the Participant.
+
+		: param callback: A callable to be invoked only when consent is
+		confirmed - ie. the entrypoint for the participation client
+		:type callback: callable
+		: returns: URL participant must visit to begin consent flow
 		"""
 		# TODO: does authenticated participant already have a meta row?
 		# if so, consent already given, so skip consent and load auth,
 		# easier if servicegateways can persist throughout session
 
 		# start server
+		self.exp_callback = callback
+
 		application = tornado.web.Application([
 		(r"/", ConsentFlowHandler),
 		(r"/confirm", ProviderAuthentHandler),
@@ -139,6 +145,8 @@ class CompleteConsentHandler(tornado.web.RequestHandler):
 		self.request)
 
 		self.write("Thanks. Now ready to start the experiment...")
+		# evoke callback
+		builder.exp_callback()
 
 
 class ConsentFlowHandler(tornado.web.RequestHandler):

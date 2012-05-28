@@ -74,7 +74,7 @@ class LastfmServiceGateway(ServiceGateway):
 		""" The Last.fm session exposes the authenticated
 		user as a Person instance
 		"""
-	
+		return self.session	
 
 	def Track(self, operation, payload):	
 		""" Performs operations on Track objects. Only supports the GET
@@ -187,9 +187,9 @@ class LastfmServiceGateway(ServiceGateway):
 		self.network.session_key = session_key
 
 		# place username in session
-		user = self.network.get_user()
+		user = self.network.get_authenticated_user()
 		user_person = SocialObjects.Person()
-		user_person.id = user_person.get_name()
+		user_person.id = user.get_name()
 		self.session = user_person
 		return session_key
 	
