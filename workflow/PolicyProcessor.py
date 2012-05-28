@@ -4,7 +4,7 @@ from Exceptions import *
 from gateway import *  	# import all known service gateways
 import SocialObjects
 
-PRIVACY_POLICY_XSD = "/home/lhutton/hg/prisoner/src/xsd/privacy_policy.xsd"
+PRIVACY_POLICY_XSD = "..//xsd/privacy_policy.xsd"
 op_match = {"GET": "retrieve", "POST": "publish", "PUT": "store"}
 
 class PolicyProcessor(object):
