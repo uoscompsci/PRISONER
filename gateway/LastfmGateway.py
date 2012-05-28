@@ -185,6 +185,12 @@ class LastfmServiceGateway(ServiceGateway):
 		session_key = self.session_manager.get_web_auth_session_key_verbose(access_token)
 		self.session_key = session_key
 		self.network.session_key = session_key
+
+		# place username in session
+		user = self.network.get_user()
+		user_person = SocialObjects.Person()
+		user_person.id = user_person.get_name()
+		self.session = user_person
 		return session_key
 	
 

@@ -241,6 +241,15 @@ looking towards managing more of this flow within PRISONER</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="src.workflow.ExperimentBuilder.ExperimentBuilder.build_schema">
+<tt class="descname">build_schema</tt><big>(</big><big>)</big><a class="headerlink" href="#src.workflow.ExperimentBuilder.ExperimentBuilder.build_schema" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs the database schema (destroying whatever data
+might already exist). This places the database in a state in which participants
+may be registered, and experiments run, but does not return usable interfaces to
+the rest of the workflow (such as the SocialObjectGateway)</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="src.workflow.ExperimentBuilder.ExperimentBuilder.consent_confirmed">
 <tt class="descname">consent_confirmed</tt><big>(</big><em>cookie</em><big>)</big><a class="headerlink" href="#src.workflow.ExperimentBuilder.ExperimentBuilder.consent_confirmed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called when user with given cookie accepts consent. If
@@ -334,12 +343,6 @@ See the SocialObjectGateway for a friendly interface to these innards.</p>
 </div>
 <div class="section" id="module-src.workflow.SocialObjectGateway">
 <span id="socialobjectgateway-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">SocialObjectGateway</span></tt> Module<a class="headerlink" href="#module-src.workflow.SocialObjectGateway" title="Permalink to this headline">¶</a></h2>
-<p>PRISONER Social Object Gateway</p>
-<p>Participation clients talk to me to request access to objects, or to publish
-objects back to services.
-I evaluate the request in accordance with the experimental design, and construct
-a request to the appropriate service gateway. 
-I sanitise the objects it returns and hand them back to participation clients.</p>
 <dl class="exception">
 <dt id="src.workflow.SocialObjectGateway.InvalidPrivacyPolicy">
 <em class="property">exception </em><tt class="descclassname">src.workflow.SocialObjectGateway.</tt><tt class="descname">InvalidPrivacyPolicy</tt><big>(</big><em>error</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.InvalidPrivacyPolicy" title="Permalink to this definition">¶</a></dt>
@@ -356,12 +359,15 @@ I sanitise the objects it returns and hand them back to participation clients.</
 <dt id="src.workflow.SocialObjectGateway.SocialObjectsGateway">
 <em class="property">class </em><tt class="descclassname">src.workflow.SocialObjectGateway.</tt><tt class="descname">SocialObjectsGateway</tt><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
-<p>This is a friendlier interface to PRISONER&#8217;s internals, which participation clients should access. This coordinates access to other service gateways, and the management of experimental responses.</p>
+<p>This is a friendlier interface to PRISONER&#8217;s internals,
+which participation clients should access.
+This coordinates access to other service gateways, and the management of experimental responses.</p>
 <p>A single instance of this object should be maintained throughout the lifecycle of an experimental application.</p>
 <dl class="method">
 <dt id="src.workflow.SocialObjectGateway.SocialObjectsGateway.GetObject">
 <tt class="descname">GetObject</tt><big>(</big><em>provider</em>, <em>object_type</em>, <em>payload</em>, <em>allow_many=False</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway.GetObject" title="Permalink to this definition">¶</a></dt>
-<dd><p>Interface for retrieving an object from a service gateway. Requests are verified against the privacy policy, and returned objects are sanitised as appropriate.</p>
+<dd><p>Interface for retrieving an object from a service gateway.
+Requests are verified against the privacy policy, and returned objects are sanitised as appropriate.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -369,7 +375,8 @@ I sanitise the objects it returns and hand them back to participation clients.</
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>provider</strong> (<em>str</em>) &#8211; name of provider to get object from</li>
 <li><strong>object_type</strong> (<em>str</em>) &#8211; name of object to get</li>
-<li><strong>payload</strong> (<em>dict</em>) &#8211; dictionary of criteria of objects to return. The format of this depends on the requirements and format expected by the service gateway.</li>
+<li><strong>payload</strong> (<em>dict</em>) &#8211; dictionary of criteria of objects to return.
+The format of this depends on the requirements and format expected by the service gateway.</li>
 </ul>
 </td>
 </tr>
@@ -383,7 +390,8 @@ I sanitise the objects it returns and hand them back to participation clients.</
 <dl class="method">
 <dt id="src.workflow.SocialObjectGateway.SocialObjectsGateway.PostObject">
 <tt class="descname">PostObject</tt><big>(</big><em>provider</em>, <em>object_type</em>, <em>payload</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway.PostObject" title="Permalink to this definition">¶</a></dt>
-<dd><p>Request to write a Social Object to a given provider. Requests are verified against the privacy policy, and outgoing objects are sanitised as necessary.</p>
+<dd><p>Request to write a Social Object to a given provider.
+Requests are verified against the privacy policy, and outgoing objects are sanitised as necessary.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -423,7 +431,8 @@ complete authentication
 <dl class="method">
 <dt id="src.workflow.SocialObjectGateway.SocialObjectsGateway.post_response">
 <tt class="descname">post_response</tt><big>(</big><em>schema</em>, <em>response</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway.post_response" title="Permalink to this definition">¶</a></dt>
-<dd><p>Passes the response to the PersistenceManager to write to the internal database. There must be an experimental design bound first.</p>
+<dd><p>Passes the response to the PersistenceManager to write to the
+internal database. There must be an experimental design bound first.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -441,7 +450,10 @@ complete authentication
 <dl class="method">
 <dt id="src.workflow.SocialObjectGateway.SocialObjectsGateway.provide_experimental_design">
 <tt class="descname">provide_experimental_design</tt><big>(</big><em>experimental_design</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway.provide_experimental_design" title="Permalink to this definition">¶</a></dt>
-<dd><p>Provide the experimental design for this experiment. Used to instantiate a PersistenceManager. Can only be done once per instance of SocialObjectGateway. This must be called before attemtping to persist any response data.</p>
+<dd><p>Provide the experimental design for this experiment.
+Used to instantiate a PersistenceManager.
+Can only be done once per instance of SocialObjectGateway.
+This must be called before attemtping to persist any response data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />

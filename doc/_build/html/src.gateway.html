@@ -118,6 +118,13 @@ image</li>
 </dd></dl>
 
 <dl class="method">
+<dt id="src.gateway.LastfmGateway.LastfmServiceGateway.Session">
+<tt class="descname">Session</tt><big>(</big><big>)</big><a class="headerlink" href="#src.gateway.LastfmGateway.LastfmServiceGateway.Session" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Last.fm session exposes the authenticated
+user as a Person instance</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="src.gateway.LastfmGateway.LastfmServiceGateway.Track">
 <tt class="descname">Track</tt><big>(</big><em>operation</em>, <em>payload</em><big>)</big><a class="headerlink" href="#src.gateway.LastfmGateway.LastfmServiceGateway.Track" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs operations on Track objects. Only supports the GET
@@ -288,6 +295,17 @@ objects matching criteria, or POST this object to service</li>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.gateway.ServiceGateway.ServiceGateway.Session">
+<tt class="descname">Session</tt><big>(</big><big>)</big><a class="headerlink" href="#src.gateway.ServiceGateway.ServiceGateway.Session" title="Permalink to this definition">¶</a></dt>
+<dd><p>Each ServiceGateway can maintain a Session object, which
+contains limited information that is needed to persist throughout the session
+with the service. This should <em>not</em> be used as a way of caching social objects
+to circumvent the usual GetObject interface. The session is intended to store,
+for example, metadata about the authenticated participant so that it is possible
+to relate the participant to their service username, etc.</p>
 </dd></dl>
 
 <dl class="method">

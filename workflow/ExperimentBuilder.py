@@ -104,6 +104,10 @@ class ExperimentBuilder(object):
 		must return a token to persist alongside the Participant. We are
 		looking towards managing more of this flow within PRISONER
 		"""
+		# TODO: does authenticated participant already have a meta row?
+		# if so, consent already given, so skip consent and load auth,
+		# easier if servicegateways can persist throughout session
+
 		# start server
 		application = tornado.web.Application([
 		(r"/", ConsentFlowHandler),
