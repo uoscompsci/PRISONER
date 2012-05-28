@@ -1,9 +1,10 @@
 from ServiceGateway import ServiceGateway
 import SocialObjects
 
-import md5
-import random
-import urllib
+import urlparse	# Used for reading Facebook access token.
+import md5	# Used for generating unique state.
+import random	# Used for generating unique state.
+import urllib	# Used for formatting URI params, reading web addresses, etc.
 
 
 class FacebookServiceGateway(ServiceGateway):
@@ -22,7 +23,8 @@ class FacebookServiceGateway(ServiceGateway):
 		self.app_secret = "ffccbab29c959b17bf53c8d200321c12"
 		
 		# URI references.
-		self.auth_base_uri = "https://www.facebook.com/dialog/oauth?"
+		self.auth_request_uri = "https://www.facebook.com/dialog/oauth?"
+		self.auth_token_uri = "https://graph.facebook.com/oauth/access_token?"
 		self.request_base_uri = "http://graph.facebook.com"
 		
 		# Generate a unique state.
@@ -44,21 +46,58 @@ class FacebookServiceGateway(ServiceGateway):
 		Returns a URI at which the user can confirm access to their profile by the application.
 		"""
 		
+		# Parameters for the authorisation request URI.
 		params = {}
 		params["client_id"] = self.app_id
 		params["redirect_uri"] = callback
 		params["scope"] = self.scope
 		params["state"] = self.state
 		
-		uri = self.auth_base_uri + urllib.urlencode(params)
+		uri = self.auth_request_uri + urllib.urlencode(params)
 		return uri
+	
+	
+	def complete_authentication(self, request):
+		"""
+		Completes authentication. Extracts the "code" param that Facebook provided and exchanges it for an
+		access token so we can make authenticated calls on behalf of the user.
+		"""
+		
+		# Before doing this, could check that our state value matches the state returned by Facebook. (Later addition)
+		facebook_code = request.arguments['code'][0]
+		# facebook_code = request # Uncomment me if testing with a known code.
+		
+		# Parameters for the token request URI.
+		params = {}
+		params["code"] = facebook_code
+		params["client_secret"] = self.app_secret
+		params["redirect_uri"] = "http://www.st-andrews.ac.uk/"
+		params["client_id"] = self.app_id
+		
+		# Load the token request URI and get its response parameters.
+		token_request_uri = self.auth_token_uri + urllib.urlencode(params)
+		response = urlparse.parse_qs(urllib.urlopen(token_request_uri).read())
+		
+		# Parse response to get access token and expiry date.
+		access_token = response["access_token"][0]
+		expires = response["expires"][0]
+		
+		print "Access token: " + access_token
+		print "Token expires in: " + expires + " secs"
+		
+		return access_token
+		
 	
 	
 	
 # Testing.
 if __name__ == "__main__":
+	# Create an instance of the service gateway.
 	fb = FacebookServiceGateway()
-	print fb.request_authentication("http://www.st-andrews.ac.uk")
-		
-		
-		
+	
+	# Request authentication and print the resulting URI.
+	response = fb.request_authentication("http://www.st-andrews.ac.uk/")
+	print "Request authentication URI: " + response
+	
+	# Complete authentication. (Comment out the parsing of input params in complete_authentication() to use)
+	fb.complete_authentication("AQBhC4ulE3Mv_TLJHgnfXAZj5DU1_XM132ISR8z3c3J4M1pYIy-UVrAPahsb1NG_p1yudjqKob0qLJgXNslkW3cgpmr-kjqOZAgxmzRyJWtHYqA_U0Yi7IhL8kVvj3UdO4irNC-nJHvyUB0u7mJH2RzzlbGdTkq__vWcPmnMg_tjNM7aq6pXi8Soknpx_kE1qvI#_=_")
