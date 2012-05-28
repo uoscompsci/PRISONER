@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<p:privacy-policy
+	xmlns:p="http://pvnets.cs.st-andrews.ac.uk/prisoner/privacy-policy"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pvnets.cs.st-andrews.ac.uk/prisoner/privacy-policy privacy_policy.xsd">
+	
+	<policy for="Image">
+		<attributes>
+		<attribute type="author">
+			<attribute-policy allow="retrieve">
+				<transformations>		
+					<transform type="reduce" level="initials" />
+				</transformations>
+			</attribute-policy>
+		</attribute>
+		
+		<attribute type="fullImage">
+			<attribute-policy allow="retrieve">
+			</attribute-policy>
+		</attribute>
+		</attributes>
+		<object-policy allow="retrieve">
+			<object-criteria>
+				<and-match>
+					<attribute-match match="author.id" on_object="literal:532336768" />
+				</and-match>
+			</object-criteria>	
+		</object-policy>
+	</policy>
+</p:privacy-policy>
