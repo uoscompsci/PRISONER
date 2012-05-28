@@ -20,6 +20,10 @@ class FacebookServiceGateway(ServiceGateway):
 		Initialises itself with PRISONER's App ID and App Secret. (Might be unnecessary?)
 		"""
 		
+		# Gateway details.
+		self.service_name = "Facebook"
+		self.service_description = "Connect and share with people you know."
+		
 		# App details.
 		self.app_id = "123177727819065"
 		self.app_secret = "ffccbab29c959b17bf53c8d200321c12"
@@ -69,14 +73,14 @@ class FacebookServiceGateway(ServiceGateway):
 		"""
 		
 		# Before doing this, could check that our state value matches the state returned by Facebook. (Later addition)
-		#facebook_code = request.arguments['code'][0]
-		facebook_code = request # Uncomment me if testing with a known code.
+		facebook_code = request.arguments['code'][0]
+		#facebook_code = request # Uncomment me if testing with a known code.
 		
 		# Parameters for the token request URI.
 		params = {}
 		params["code"] = facebook_code
 		params["client_secret"] = self.app_secret
-		params["redirect_uri"] = "http://www.st-andrews.ac.uk/"
+		params["redirect_uri"] = "http://localhost:8888/"
 		params["client_id"] = self.app_id
 		
 		# Load the token request URI and get its response parameters.
@@ -100,8 +104,8 @@ class FacebookServiceGateway(ServiceGateway):
 
 		if (operation == "GET"):
 			try:
-				#user_id = payload.id
-				user_id = "me"
+				user_id = payload.id
+				#user_id = "me"
 				
 				# Get information about the image's author.
 				author_obj = SocialObjects.Person()
@@ -116,6 +120,9 @@ class FacebookServiceGateway(ServiceGateway):
 				
 				# Add any additional information to the image object.
 				img_object.author = author_obj
+				
+				print "Image() details below:"
+				print "Author ID: " + author_obj.id + ", Author Name: " + author_obj.displayName + ", Full Image: " + img_object.fullImage
 				
 				return img_object
 			
