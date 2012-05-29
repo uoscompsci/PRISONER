@@ -40,7 +40,7 @@ if __name__ == "__main__":
 	#print img.author.displayName
 
 	expBuilder.authenticate_providers(["Facebook"])
-	consent_url = expBuilder.build()	
+	consent_url = expBuilder.build(None)	
 	print "Visit %s to begin participating in this experiment" % consent_url
 	
 

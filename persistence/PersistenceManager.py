@@ -184,6 +184,26 @@ class PersistenceManager(object):
 
 		res = table.select().execute()	
 		print res.fetchone()
+
+	def get_existing_provider_auth(self, participant_id, provider):
+		""" Checks if the given participant has been
+		previously authenticated with the named provider. If so, returns the credentials
+		stored. Otherwise, returns None, so participant should continue with consent
+		flow.
+		If credentials are found, a ServiceGateway should be provided with them. It
+		should signal whether it is able to successfully authenticate with them. If not,
+		it should attempt to reauthenticate server-side if possible (eg. request new
+		session from API). If clientside intervention is required, it should signal
+		this. 
+	
+		:param participant_id: ID of participant to authenticate
+		:type participant_id: int
+		:param provider: Name of provider to return authentication for
+		:type provider: str
+		:returns: Stored credentials or None
+		"""
+		pass
+	
 		
 	
 	"""

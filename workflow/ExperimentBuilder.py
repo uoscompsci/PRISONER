@@ -8,6 +8,8 @@ import uuid
 from workflow import PolicyProcessor, SocialObjectGateway
 
 
+SERVER_PORT = 8888
+
 class ExperimentBuilder(object):
 	""" The ExperimentBuilder is the interface for bootstrapping an
 	experiment with PRISONER. After instantiating an ExperimentBuilder,
@@ -111,6 +113,9 @@ class ExperimentBuilder(object):
 		# TODO: does authenticated participant already have a meta row?
 		# if so, consent already given, so skip consent and load auth,
 		# easier if servicegateways can persist throughout session
+		#for provider in self.providers:
+		#	if(self.sog.persistence.
+			
 
 		# start server
 		self.exp_callback = callback
@@ -121,10 +126,11 @@ class ExperimentBuilder(object):
 		(r"/complete", CompleteConsentHandler),
 		(r".*",CallbackHandler),
 		], builder=self)
-		application.listen(8888)
+		application.listen(SERVER_PORT)
 		t = threading.Thread(target=tornado.ioloop.IOLoop.instance().start)
 		t.start()
-		return "http://localhost:8888/?pctoken=%s" % self.token	
+		return "http://localhost:%s/?pctoken=%s" % (SERVER_PORT,
+		self.token)
 		# serve human readable policies
 	
 	def consent_confirmed(cookie):
@@ -173,6 +179,7 @@ class CallbackHandler(tornado.web.RequestHandler):
 	def get(self):
 		url = urllib.unquote(self.request.uri)
 		url = url.replace("?token","&token") # this is an insane shim for a bug in LFM
+		url = url.replace("?state","&state") # shim for FB callback arg append
 		self.redirect(url)
 
 class ProviderAuthentHandler(tornado.web.RequestHandler):
@@ -198,10 +205,10 @@ class ProviderAuthentHandler(tornado.web.RequestHandler):
 			return
 
 		if providers:
-			callback = "http://localhost:8888/confirm?pctoken=%s&provider=%s&cbprovider=%s" % (token,
+			callback = "http://localhost:%s/confirm?pctoken=%s&provider=%s&cbprovider=%s" % (SERVER_PORT, token,
 			providers[len(providers)-1], current_provider)
 		else:
-			callback = "http://localhost:8888/complete?pctoken=%s&cbprovider=%s" % (token,
+			callback = "http://localhost:%s/complete?pctoken=%s&cbprovider=%s" % (SERVER_PORT, token,
 			current_provider)
 		
 		try:

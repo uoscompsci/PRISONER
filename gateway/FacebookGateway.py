@@ -175,7 +175,7 @@ if __name__ == "__main__":
 	fb = FacebookServiceGateway()
 	
 	# Request authentication and print the resulting URI.
-	response = fb.request_authentication("http://www.st-andrews.ac.uk/")
+	response = fb.request_authentication("http://localhost")
 	print "Request authentication URI: " + response
 	
 	# Complete authentication. (Comment out the parsing of input params in complete_authentication() to use)
