@@ -30,7 +30,7 @@ class FacebookServiceGateway(ServiceGateway):
 		self.app_secret = "ffccbab29c959b17bf53c8d200321c12"
 		
 		# URI references.
-		self.redirect_uri = "http://localhost:8888/" # Set to St Andrews' web address for testing. (And adjust App settings accordingly)
+		self.redirect_uri = None # Placeholder. This will be initialised by request_authorisation()
 		self.auth_request_uri = "https://www.facebook.com/dialog/oauth?"
 		self.auth_token_uri = "https://graph.facebook.com/oauth/access_token?"
 		self.graph_uri = "https://graph.facebook.com"
@@ -62,10 +62,14 @@ class FacebookServiceGateway(ServiceGateway):
 		:return: URI the user must visit in order to authenticate.
 		"""
 		
+		# Save the callback URI as our redirect. This is required by Facebook / OAuth.
+		# (Redirect URIs for authentication and requesting token must match)
+		self.redirect_uri = callback
+		
 		# Parameters for the authorisation request URI.
 		params = {}
 		params["client_id"] = self.app_id
-		params["redirect_uri"] = callback
+		params["redirect_uri"] = self.redirect_uri
 		params["scope"] = self.scope
 		params["state"] = self.state
 		
@@ -132,7 +136,7 @@ class FacebookServiceGateway(ServiceGateway):
 			
 				# Get the user's profile picture. (URL)
 				img_object = SocialObjects.Image()
-				user_image = self.graph_uri + "/" + user_id + "/picture/" + "?access_token=" + self.access_token
+				user_image = self.graph_uri + "/" + user_id + "/picture?type=normal" + "&access_token=" + self.access_token
 				img_object.fullImage = user_image
 				
 				# Add any additional information to the image object.
@@ -150,7 +154,7 @@ class FacebookServiceGateway(ServiceGateway):
 		"""
 		Queries Facebook's Graph API and returns the result as a dict.
 		
-		:param query: The Graph API query to perform. (Eg: /me/picture/?access_token=...)
+		:param query: The Graph API query to perform. (Eg: /me/picture?access_token=...)
 		:type query: str
 		:return: A Dict containing the parsed JSON response from Facebook. Attributes are accessed through their name.
 		"""
