@@ -109,9 +109,22 @@ class ExperimentBuilder(object):
 		:type callback: callable
 		: returns: URL participant must visit to begin consent flow
 		"""
-		# TODO: does authenticated participant already have a meta row?
+		# does authenticated participant already have a meta row?
 		# if so, consent already given, so skip consent and load auth,
-		# easier if servicegateways can persist throughout session
+		for provider in self.providers:
+			provider_auth = self.sog.persistence.get_existing_provider_auth(self.sog.participant[0],
+			provider)
+			if provider_auth:
+				can_auth = self.sog.restore_authentication(provider,
+				provider_auth)
+				if can_auth:
+					print "Already authenticated with %s" % provider
+					self.providers.remove(provider)	
+
+		# no providers to authenticate
+		if not self.providers:
+			callback()
+			return
 
 		# start server
 		self.exp_callback = callback

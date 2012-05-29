@@ -89,6 +89,23 @@ class SocialObjectsGateway(object):
 		self.persistence.register_participant_with_provider(self.participant[0],
 		provider, ret_access_token)
 
+	def restore_authentication(self, provider, access_token):
+		""" Attempt to provide a service gateway with an existing access
+		token (eg. stored in DB) to authenticate without going through clientside flow.
+		Returns boolean value to indicate success. If False, a call
+		should be made to requst_authentication() to begin clientside flow.
+
+		:param provider: Name of provider to authenticate with
+		:type provider: str
+		:param access_token: Object used to authenticate with this provider
+		:type access_token: object
+		:returns boolean - was authentication attempt successful?
+		"""
+		gateway = self.__getServiceGateway(provider)
+		auth_success = gateway.restore_authentication(access_token)
+		return auth_success
+	
+
 	def provide_privacy_policy(self, privacy_policy):
 		"""
 		Provide the privacy policy for this experiment. Used to instantiate an instance of PolicyProcessor. This can only be done once for an instance of SocialObjectGateway. This must be called before attempting to read or write Social Objects.

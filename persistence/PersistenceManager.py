@@ -202,8 +202,13 @@ class PersistenceManager(object):
 		:type provider: str
 		:returns: Stored credentials or None
 		"""
-		pass
-	
+		table = self.meta_participant_table
+		result = table.select(and_(table.c.participant_id==participant_id,
+		table.c.provider == provider)).execute().fetchone()	
+		if result:
+			return result.access_token
+		else:
+			return None
 		
 	
 	"""

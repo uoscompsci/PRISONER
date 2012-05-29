@@ -57,10 +57,8 @@
 		<attribute type="fullImage">
 			<attribute-policy allow="retrieve">
 				<attribute-criteria>
-						<attribute-match match="author.id"
-						on_object="literal:lukdeweb" />
-						<attribute-match match="author.id"
-						on_object="literal:lukeweb" />
+					<attribute-match match="author.id"
+					on_object="session:Lastfm.id" />
 				</attribute-criteria>
 			</attribute-policy>
 		</attribute>

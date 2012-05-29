@@ -61,7 +61,7 @@ if __name__ == "__main__":
 	"""
 
 	privacy_policy = "../lib/lastfm_privacy_policy_test.xml"
-	exp_design = "lib/lastfm_exp_design_test.xml"
+	exp_design = "../lib/lastfm_exp_design_test.xml"
 	
 	expBuilder = ExperimentBuilder.ExperimentBuilder()
 	

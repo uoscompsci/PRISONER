@@ -82,6 +82,24 @@ class ServiceGateway(object):
 		raise NotImplementedError("Service Gateway does not support "+\
 		"authenticated requests")
 
+	def restore_authentication(self, access_token):
+		""" Similar to complete_authentication(), except directly
+		providing the access token needed by the gateway to restore an existing session.
+		We can't guarantee the token is still valid, so the gateway should return a
+		boolean value to indicate whether the attempt was successful. If not, it may be
+		necessary to complete the clientside request/complete flow.
+
+		:param access_token:
+			Object needed by service gateway to restore
+			authentication
+		:type access_token: object
+		:returns: boolean - was authentication attempt succesful?
+		"""
+		raise NotImplementedError("Service gateway is not able to\
+		restore existing authentication attempts. Go through clientside flow (starting\
+		with request_authentication()) to authenticate with this service. Alternatively,\
+		this service does not support authenticated requests at all.")
+
 class SocialActivityResponse(object):
 	""" SocialActivityResponse wraps a SocialObject received from a service
 	gateway. It provides the original object alongside headers relating to the

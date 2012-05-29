@@ -193,4 +193,27 @@ class LastfmServiceGateway(ServiceGateway):
 		self.session = user_person
 		return session_key
 	
+	def restore_authentication(self, access_token):
+		""" Restores previously authenticated session. Last.fm session
+		keys last indefinitely so this just provides pylast with the old session key and
+		hope it works
+
+		:param access_token:
+			Last.fm session key received from previous
+			auth attempt
+		:type access_token: str
+		:returns: boolean - was auth successful?
+		"""
+		self.session_key = access_token
+		self.network.session_key = access_token
+
+		# place username in session
+		user = self.network.get_authenticated_user()
+		user_person = SocialObjects.Person()
+		user_person.id = user.get_name()
+		self.session = user_person
+		
+		return True
+	
+		
 
