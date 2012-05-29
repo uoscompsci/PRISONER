@@ -30,6 +30,7 @@ class FacebookServiceGateway(ServiceGateway):
 		self.app_secret = "ffccbab29c959b17bf53c8d200321c12"
 		
 		# URI references.
+		self.redirect_uri = "http://localhost:8888/" # Set to St Andrews' web address for testing. (And adjust App settings accordingly)
 		self.auth_request_uri = "https://www.facebook.com/dialog/oauth?"
 		self.auth_token_uri = "https://graph.facebook.com/oauth/access_token?"
 		self.graph_uri = "https://graph.facebook.com"
@@ -90,7 +91,7 @@ class FacebookServiceGateway(ServiceGateway):
 		params = {}
 		params["code"] = facebook_code
 		params["client_secret"] = self.app_secret
-		params["redirect_uri"] = "http://localhost:8888/"
+		params["redirect_uri"] = self.redirect_uri
 		params["client_id"] = self.app_id
 		
 		# Load the token request URI and get its response parameters.
@@ -137,9 +138,6 @@ class FacebookServiceGateway(ServiceGateway):
 				# Add any additional information to the image object.
 				img_object.author = author_obj
 				
-				print "Image() details below:"
-				print "Author ID: " + author_obj.id + ", Author Name: " + author_obj.displayName + ", Full Image: " + img_object.fullImage
-				
 				return img_object
 			
 			except:
@@ -175,13 +173,23 @@ if __name__ == "__main__":
 	fb = FacebookServiceGateway()
 	
 	# Request authentication and print the resulting URI.
-	response = fb.request_authentication("http://www.st-andrews.ac.uk/")
+	# To test, go to the address printed on-screen, sign in, then copy the "Code" param from the URI and paste it 
+	# in the complete_authentication() method below.
+	response = fb.request_authentication(fb.redirect_uri) # This param would be callback under real usage.
 	print "Request authentication URI: " + response
 	
 	# Complete authentication. (Comment out the parsing of input params in complete_authentication() to use)
-	fb.complete_authentication("AQBhC4ulE3Mv_TLJHgnfXAZj5DU1_XM132ISR8z3c3J4M1pYIy-UVrAPahsb1NG_p1yudjqKob0qLJgXNslkW3cgpmr-kjqOZAgxmzRyJWtHYqA_U0Yi7IhL8kVvj3UdO4irNC-nJHvyUB0u7mJH2RzzlbGdTkq__vWcPmnMg_tjNM7aq6pXi8Soknpx_kE1qvI#_=_")
+	fb.complete_authentication("AQDl1Sveh39IuntpJjJnf0yovWEi1z-c7SRv1vuLk1lqoNne6ncTCzM0zn10WvSwkgFVRcNE1xjqqLNsBI2Ctxf0kO1pTaB1pVHHpogZGg6M1JSuuxh3OYqr3x_qa-1Yk7HAPp7Q5xqG1sVuvqHD8CnmL0gdzQMYkx0e_PzbIh700FQOdt5QMyR_eexZ65sZg48#_=_")
+	
+	# Set up a person for testing.
+	person_1 = SocialObjects.Person()
+	person_1.id = "532336768"
 	
 	# Test "Get Image."
-	fb.Image("GET", "")
+	img_obj = fb.Image("GET", person_1)
+	print "Grabbed image from Facebook:"
+	print "- Full image: " + img_obj.fullImage
+	print "- Author ID: " + img_obj.author.id
+	print "- Author name: " + img_obj.author.displayName
 	
 	
