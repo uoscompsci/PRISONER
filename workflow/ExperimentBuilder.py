@@ -7,6 +7,7 @@ import uuid
 
 from workflow import PolicyProcessor, SocialObjectGateway
 
+SERVER_URL = "http://localhost:8888"
 
 class ExperimentBuilder(object):
 	""" The ExperimentBuilder is the interface for bootstrapping an
@@ -124,7 +125,7 @@ class ExperimentBuilder(object):
 		application.listen(8888)
 		t = threading.Thread(target=tornado.ioloop.IOLoop.instance().start)
 		t.start()
-		return "http://localhost:8888/?pctoken=%s" % self.token	
+		return "%s/?pctoken=%s" % (SERVER_URL, self.token)
 		# serve human readable policies
 	
 	def consent_confirmed(cookie):
@@ -173,6 +174,7 @@ class CallbackHandler(tornado.web.RequestHandler):
 	def get(self):
 		url = urllib.unquote(self.request.uri)
 		url = url.replace("?token","&token") # this is an insane shim for a bug in LFM
+		url = url.replace("?state","&state") # temp FB shim
 		self.redirect(url)
 
 class ProviderAuthentHandler(tornado.web.RequestHandler):
@@ -198,10 +200,10 @@ class ProviderAuthentHandler(tornado.web.RequestHandler):
 			return
 
 		if providers:
-			callback = "http://localhost:8888/confirm?pctoken=%s&provider=%s&cbprovider=%s" % (token,
+			callback = "%s/confirm?pctoken=%s&provider=%s&cbprovider=%s" % (SERVER_URL, token,
 			providers[len(providers)-1], current_provider)
 		else:
-			callback = "http://localhost:8888/complete?pctoken=%s&cbprovider=%s" % (token,
+			callback = "%s/complete?pctoken=%s&cbprovider=%s" % (SERVER_URL, token,
 			current_provider)
 		
 		try:
