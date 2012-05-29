@@ -73,6 +73,9 @@ class SocialObjectsGateway(object):
 		self.participant = participant
 		return participant
 
+	def get_participant(self):
+		return self.participant
+
 	def complete_authentication(self, provider, request=None):
 		"""
 		Completes the second stage of authentication with a provider.
@@ -196,12 +199,14 @@ class SocialObjectsGateway(object):
 		if hasattr(response, "objects"): #is a Collection
 			new_coll = response
 			for resp in response.objects:
+				resp.provider = provider
 				response_obj = SocialActivityResponse(resp, headers)
 				sanitised_response = processor._sanitise_object_request(response_obj)
 				sanitised_set.append(sanitised_response)
 			new_coll.objects = sanitised_set
 			return new_coll
 		else:
+			response.provider = provider
 			response_obj = SocialActivityResponse(response, headers)
 			sanitised_response = processor._sanitise_object_request(response_obj)
 			return sanitised_response

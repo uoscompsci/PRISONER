@@ -173,7 +173,7 @@ class PolicyProcessor(object):
 		:returns: instance of an object
 		:raises: RuntimePrivacyPolicyParserError, ServiceGatewayNotFoundError
 		"""
-		base_namespaces = ["literal","session","base"]
+		base_namespaces = ["literal","session","participant","base"]
 
 		try:
 			obj_components = object_name.split(":")
@@ -217,7 +217,10 @@ class PolicyProcessor(object):
 			concat_attrs = concat_attrs[:-1]
 				
 			return getattr(gateway_session, concat_attrs)
-			 				
+		elif ns == "participant":
+			# get a reference to the current participant object	
+			participant = self.sog.get_participant()
+			return participant[obj_components[1]]			
 		elif ns == "base":
 			try:
 				ns_obj = getattr(SocialObjects, obj_components[1])()
@@ -274,7 +277,6 @@ class PolicyProcessor(object):
 		events=("start","end"))
 		criteria_walk.next()
 		for action, element in criteria_walk:
-			print element, action
 			if action == "start":
 				criteria_stack.append(element)	
 			elif action == "end" and element.tag in logical_elements:
@@ -324,13 +326,11 @@ class PolicyProcessor(object):
 				continue
 		# evaluate whatever is left as an implicit and
 		if (len(criteria_stack) > 1 or criteria_stack[0] not in [True,False]):
-			print criteria_stack
 			working_set = []
 			while(len(criteria_stack) > 0):
 				top_element = criteria_stack.pop()
 				working_set.append(self.__test_criteria(top_element,
 				response))
-			print working_set
 			if False in working_set:
 				criteria_stack.append(False)
 			else:
@@ -396,12 +396,10 @@ class PolicyProcessor(object):
 		attributes_collection = self.privacy_policy.xpath(xpath)
 		for attribute in attributes_collection[0]:
 			curr_attribute = attribute.get("type")
-			print curr_attribute
 			xpath = "attribute-policy[@allow='%s']//attribute-criteria" % op_match[response.headers.operation]
 			att_path = attribute.xpath(xpath)
 			if att_path:
 				# TODO: block requests without any criteria
-				print att_path[0]
 				valid_attr_policy = self.__validate_criteria(response,
 				att_path[0])
 			else:
@@ -427,7 +425,8 @@ class PolicyProcessor(object):
 					setattr(sanitised_object,
 					curr_attribute,
 					getattr(response.content, curr_attribute))
-		
+	
+		sanitised_object.provider = response.content.provider
 		return sanitised_object
 		
  

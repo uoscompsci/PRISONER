@@ -65,22 +65,8 @@
 		</attributes>
 		<object-policy allow="retrieve">
 			<object-criteria>
-				<and-match>
-					<attribute-match match="author.id"
-					on_object="literal:lukeweb" />
-					<or-match>
-						<and-match>
-							<attribute-match match="author.id"
-							on_object="literal:lukeweb" />
-							<attribute-match match="author.id"
-							on_object="literal:lukeweb" />
-						</and-match>
-						<attribute-match match="author.id"
-						on_object="literal:lukefweb" />
-						<attribute-match match="author.id"
-						on_object="literal:lukgeweb" />
-					</or-match>
-				</and-match>
+					<attribute-match match="provider"
+					on_object="participant:serviceGroup" />
 			</object-criteria>	
 		</object-policy>
 	</policy>
