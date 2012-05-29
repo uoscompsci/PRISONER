@@ -88,8 +88,8 @@ class FacebookServiceGateway(ServiceGateway):
 		"""
 		
 		# Before doing this, could check that our state value matches the state returned by Facebook. (Later addition)
-		facebook_code = request.arguments['code'][0]
-		#facebook_code = request # Uncomment me if testing with a known code.
+		#facebook_code = request.arguments['code'][0]
+		facebook_code = request # Uncomment me if testing with a known code.
 		
 		# Parameters for the token request URI.
 		params = {}
@@ -126,7 +126,6 @@ class FacebookServiceGateway(ServiceGateway):
 		if (operation == "GET"):
 			try:
 				user_id = payload.id
-				#user_id = "me"
 				
 				# Get information about the image's author.
 				author_obj = SocialObjects.Person()
@@ -150,8 +149,52 @@ class FacebookServiceGateway(ServiceGateway):
 			raise NotImplementedException("Operation not supported")
 	
 	
+	def User(self, operation, payload):
+		"""
+		Performs operations on a User object.
+		Takes a Person object as a payload and returns a new object populated with that person's profile information.
+		Only supports GET operations as you can only get a user's details, not change them.
+		
+		:param operation: The operation to perform. (GET)
+		:type operation: str
+		:param payload: A person whose ID is either a Facebook UID or username.
+		:type payload: SocialObject
+		:returns: A person object.
+		"""
+		
+		if (operation == "GET"):
+			try:
+				# Get user ID and query Facebook for their info.
+				user_id = payload.id
+				user_details = self.get_graph("/" + user_id)
+				
+				# Create and populate person object.
+				user = User()
+				user.id = self.get_value(user_details, "id")
+				user.firstName = self.get_value(user_details, "first_name")
+				user.middleName = self.get_value(user_details, "middle_name")
+				user.lastName = self.get_value(user_details, "last_name")
+				user.username = self.get_value(user_details, "username")
+				user.displayName = self.get_value(user_details, "name")
+				user.gender = self.get_value(user_details, "gender")
+				user.languages = self.get_value(user_details, "languages")
+				user.timezone = self.get_value(user_details, "timezone")
+				user.updatedTime = self.get_value(user_details, "updated_time")
+				user.bio = self.get_value(user_details, "about")
+				user.birthday = self.get_value(user_details, "birthday")
+				
+				return user
+				
+			except:
+				return SocialObjects.Person()
+		
+		else:
+			raise NotImplementedException("Operation not supported.")
+	
+	
 	def get_graph(self, query):
 		"""
+		Internal function.
 		Queries Facebook's Graph API and returns the result as a dict.
 		
 		:param query: The Graph API query to perform. (Eg: /me/picture?access_token=...)
@@ -167,8 +210,281 @@ class FacebookServiceGateway(ServiceGateway):
 		json_obj = json.loads(data)
 
 		return json_obj
-		
 	
+	
+	def get_value(self, haystack, needle):
+		"""
+		Internal function.
+		Attempts to get the value corresponding to the supplied key.
+		If no key exists, None is returned.
+		
+		:param haystack: The Dictionary object to look at.
+		:type query: dict
+		:param needle: The key we're looking for.
+		:type query: str
+		:return: If the key exists, its corresponding value is returned. Otherwise False is returned.
+		"""
+		
+		# This key exists, so return it.
+		if haystack.has_key(needle):
+			return haystack[needle]
+		
+		# Key doesn't exist.
+		else:
+			return "N/A" # Should be False, but it's a String for testing.
+			
+		
+class User(SocialObjects.Person):
+	"""
+	A Facebook user object. Contains details such as name, email address and other personal information.
+	Could probably be used in place of a Person object in some cases, as a User object has an id which can 
+	be used to query Facebook.
+	"""
+	
+	def __init__(self):
+		super(User, self).__init__()
+		self._provider = "Facebook"
+		self._username = None
+		self._firstName = None
+		self._middleName = None
+		self._lastName = None
+		self._gender = None
+		self._languages = None
+		self._timezone = None
+		self._updatedTime = None
+		self._bio = None
+		self._birthday = None
+		self._education = None
+		self._email = None
+		self._hometown = None
+		self._interestedIn = None
+		self._location = None
+		self._politicalViews = None
+		self._religion = None
+		self._relationshipStatus = None
+		self._significantOther = None
+		self._work = None
+	
+	
+	@property
+	def username(self):
+		""" This person's Facebook username. """
+		return self._username
+	
+	
+	@property
+	def firstName(self):
+		""" This person's first name. """
+		return self._firstName
+	
+	
+	@property
+	def middleName(self):
+		""" This person's middle name. """
+		return self._middleName
+	
+	
+	@property
+	def lastName(self):
+		""" This person's last name. """
+		return self._lastName
+	
+	
+	@property
+	def gender(self):
+		""" This person's gender. """
+		return self._gender
+	
+	
+	@property
+	def languages(self):
+		""" Languages this person can speak. """
+		return self._languages
+	
+	
+	@property
+	def timezone(self):
+		""" This person's timezone. (Offset from UTC) """
+		return self._timezone
+	
+	
+	@property
+	def updatedTime(self):
+		""" When this person last updated their Facebook profile. """
+		return self._updatedTime
+	
+	
+	@property
+	def bio(self):
+		""" This person's short biography. """
+		return self._bio
+	
+	
+	@property
+	def birthday(self):
+		""" This person's birthday. """
+		return self._birthday
+	
+	
+	@property
+	def education(self):
+		""" This person's education history. """
+		return self._education
+	
+	
+	@property
+	def email(self):
+		""" This person's email address. """
+		return self._email
+	
+	
+	@property
+	def hometown(self):
+		""" This person's hometown. """
+		return self._hometown
+	
+	
+	@property
+	def location(self):
+		""" This person's current location. """
+		return self._location
+	
+	
+	@property
+	def interestedIn(self):
+		""" This person's sexual orientation. """
+		return self._interestedIn
+	
+	
+	@property
+	def politicalViews(self):
+		""" This person's political preferences. """
+		return self._politicalViews
+	
+	
+	@property
+	def religion(self):
+		""" This person's religion. """
+		return self._religion
+	
+	
+	@property
+	def relationshipStatus(self):
+		""" This person's relationship status. """
+		return self._relationshipStatus
+	
+	
+	@property
+	def significantOther(self):
+		""" This person's significant other. """
+		return self._significantOther
+	
+	
+	@property
+	def work(self):
+		""" This person's work history. """
+		return self._work
+	
+	
+	@username.setter
+	def username(self, value):
+		self._username = value
+	
+	
+	@firstName.setter
+	def firstName(self, value):
+		self._firstName = value
+	
+	
+	@middleName.setter
+	def middleName(self, value):
+		self._middleName = value
+	
+	
+	@lastName.setter
+	def lastName(self, value):
+		self._lastName = value
+	
+	
+	@gender.setter
+	def gender(self, value):
+		self._gender = value
+	
+	
+	@languages.setter
+	def languages(self, value):
+		self._languages = value
+	
+	
+	@timezone.setter
+	def timezone(self, value):
+		self._timezone = value
+	
+	
+	@updatedTime.setter
+	def updatedTime(self, value):
+		self._updatedTime = value
+	
+	
+	@bio.setter
+	def bio(self, value):
+		self._bio = value
+	
+	
+	@birthday.setter
+	def birthday(self, value):
+		self._birthday = value
+	
+	
+	@education.setter
+	def education(self, value):
+		self._education = value
+	
+	
+	@email.setter
+	def email(self, value):
+		self._email = value
+	
+	
+	@hometown.setter
+	def hometown(self, value):
+		self._hometown = value
+	
+	
+	@location.setter
+	def location(self, value):
+		self._location = value
+	
+	
+	@interestedIn.setter
+	def interestedIn(self, value):
+		self._interestedIn = value
+	
+	
+	@politicalViews.setter
+	def politicalViews(self, value):
+		self._politicalViews = value
+	
+	
+	@religion.setter
+	def religion(self, value):
+		self._religion = value
+	
+	
+	@relationshipStatus.setter
+	def relationshipStatus(self, value):
+		self._relationshipStatus = value
+	
+	
+	@significantOther.setter
+	def significantOther(self, value):
+		self._significantOther = value
+	
+	
+	@work.setter
+	def work(self, value):
+		self._work = value
+		
 	
 	
 # Testing.
@@ -179,11 +495,11 @@ if __name__ == "__main__":
 	# Request authentication and print the resulting URI.
 	# To test, go to the address printed on-screen, sign in, then copy the "Code" param from the URI and paste it 
 	# in the complete_authentication() method below.
-	response = fb.request_authentication(fb.redirect_uri) # This param would be callback under real usage.
+	response = fb.request_authentication("http://www.st-andrews.ac.uk/") # This param would be callback under real usage.
 	print "Request authentication URI: " + response
 	
 	# Complete authentication. (Comment out the parsing of input params in complete_authentication() to use)
-	fb.complete_authentication("AQDl1Sveh39IuntpJjJnf0yovWEi1z-c7SRv1vuLk1lqoNne6ncTCzM0zn10WvSwkgFVRcNE1xjqqLNsBI2Ctxf0kO1pTaB1pVHHpogZGg6M1JSuuxh3OYqr3x_qa-1Yk7HAPp7Q5xqG1sVuvqHD8CnmL0gdzQMYkx0e_PzbIh700FQOdt5QMyR_eexZ65sZg48#_=_")
+	fb.complete_authentication("AQBLtHUJ7B0bbvLDMFucJFeoEJSudt_2xk_s6J3IHMM9BAjcSqd-zt6bG_rjC97bn8thdpKcuF-lQiUPA4QKBhQJfN3_aHJd54fLCPr14Z-isq5c9Z2Odzu8NtyKO1Jmt7wTd3tf60abNYQ8624IhtM7_sEBxUKkJD3sevBpNedXFhUo3YL24KXtQrmAzkh5evc#_=_")
 	
 	# Set up a person for testing.
 	person_1 = SocialObjects.Person()
@@ -195,5 +511,17 @@ if __name__ == "__main__":
 	print "- Full image: " + img_obj.fullImage
 	print "- Author ID: " + img_obj.author.id
 	print "- Author name: " + img_obj.author.displayName
+	
+	# Test "Get Person."
+	person_obj = fb.User("GET", person_1)
+	print "Grabbed user from Facebook:"
+	print "- ID: " + person_obj.id
+	print "- Display Name: " + person_obj.displayName
+	print "- First Name: " + person_obj.firstName
+	print "- Last Name: " + person_obj.lastName
+	print "- Gender: " + person_obj.gender
+	print "- Middle Name: " + person_obj.middleName
+	print "- Last Update: " + person_obj.updatedTime
+	print "- Birthday: " + person_obj.birthday
 	
 	
