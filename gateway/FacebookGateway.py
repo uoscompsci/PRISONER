@@ -12,6 +12,7 @@ import urlparse	# Used for reading Facebook access token.
 class FacebookServiceGateway(ServiceGateway):
 	"""
 	Service gateway for Facebook.
+	This gateway interacts with Facebook directly by making calls via the network's Social Graph API.
 	"""
 	
 	
@@ -19,6 +20,10 @@ class FacebookServiceGateway(ServiceGateway):
 		"""
 		Initialises itself with PRISONER's App ID and App Secret. (Might be unnecessary?)
 		"""
+		
+		# Gateway details.
+		self.service_name = "Facebook"
+		self.service_description = "Connect and share with people you know."
 		
 		# App details.
 		self.app_id = "123177727819065"
@@ -29,7 +34,7 @@ class FacebookServiceGateway(ServiceGateway):
 		self.auth_token_uri = "https://graph.facebook.com/oauth/access_token?"
 		self.graph_uri = "https://graph.facebook.com"
 		
-		# Generate a unique state.
+		# Generate a unique state. (Required by Facebook for security)
 		r = random.random()
 		self.state = md5.new(str(r)).hexdigest()
 		
@@ -49,6 +54,11 @@ class FacebookServiceGateway(ServiceGateway):
 		"""
 		Initiates Facebook's authentication process.
 		Returns a URI at which the user can confirm access to their profile by the application.
+		
+		:param callback: PRISONER's authentication flow URL. User must be redirected here after registering with Facebook 
+		in order to continue the flow.
+		:type callback: str
+		:return: URI the user must visit in order to authenticate.
 		"""
 		
 		# Parameters for the authorisation request URI.
@@ -66,17 +76,21 @@ class FacebookServiceGateway(ServiceGateway):
 		"""
 		Completes authentication. Extracts the "code" param that Facebook provided and exchanges it for an
 		access token so we can make authenticated calls on behalf of the user.
+		
+		:param request: Response from the first stage of authentication.
+		:type request: HTTPRequest
+		:returns: Unique access token that should persist for this user.
 		"""
 		
 		# Before doing this, could check that our state value matches the state returned by Facebook. (Later addition)
-		#facebook_code = request.arguments['code'][0]
-		facebook_code = request # Uncomment me if testing with a known code.
+		facebook_code = request.arguments['code'][0]
+		#facebook_code = request # Uncomment me if testing with a known code.
 		
 		# Parameters for the token request URI.
 		params = {}
 		params["code"] = facebook_code
 		params["client_secret"] = self.app_secret
-		params["redirect_uri"] = "http://www.st-andrews.ac.uk/"
+		params["redirect_uri"] = "http://localhost:8888/"
 		params["client_id"] = self.app_id
 		
 		# Load the token request URI and get its response parameters.
@@ -96,12 +110,18 @@ class FacebookServiceGateway(ServiceGateway):
 	def Image(self, operation, payload):
 		"""
 		Dummy operation (At present) to get a user's Facebook profile picture.
+		
+		:param operation: The operation to perform. (GET)
+		:type operation: str
+		:param payload: Provide a Person object, to return that user's profile image.
+		:type payload: SocialObject
+		:returns: An image object complete with author data and so on.
 		"""
 
 		if (operation == "GET"):
 			try:
-				#user_id = payload.id
-				user_id = "me"
+				user_id = payload.id
+				#user_id = "me"
 				
 				# Get information about the image's author.
 				author_obj = SocialObjects.Person()
@@ -117,6 +137,9 @@ class FacebookServiceGateway(ServiceGateway):
 				# Add any additional information to the image object.
 				img_object.author = author_obj
 				
+				print "Image() details below:"
+				print "Author ID: " + author_obj.id + ", Author Name: " + author_obj.displayName + ", Full Image: " + img_object.fullImage
+				
 				return img_object
 			
 			except:
@@ -128,6 +151,10 @@ class FacebookServiceGateway(ServiceGateway):
 	def get_graph(self, query):
 		"""
 		Queries Facebook's Graph API and returns the result as a dict.
+		
+		:param query: The Graph API query to perform. (Eg: /me/picture/?access_token=...)
+		:type query: str
+		:return: A Dict containing the parsed JSON response from Facebook. Attributes are accessed through their name.
 		"""
 		
 		# Compose query to Facebook.
@@ -154,6 +181,7 @@ if __name__ == "__main__":
 	# Complete authentication. (Comment out the parsing of input params in complete_authentication() to use)
 	fb.complete_authentication("AQBhC4ulE3Mv_TLJHgnfXAZj5DU1_XM132ISR8z3c3J4M1pYIy-UVrAPahsb1NG_p1yudjqKob0qLJgXNslkW3cgpmr-kjqOZAgxmzRyJWtHYqA_U0Yi7IhL8kVvj3UdO4irNC-nJHvyUB0u7mJH2RzzlbGdTkq__vWcPmnMg_tjNM7aq6pXi8Soknpx_kE1qvI#_=_")
 	
+	# Test "Get Image."
 	fb.Image("GET", "")
 	
 	
