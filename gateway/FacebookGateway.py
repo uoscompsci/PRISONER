@@ -1,10 +1,12 @@
 from ServiceGateway import ServiceGateway
 import SocialObjects
 
-import urlparse	# Used for reading Facebook access token.
+import json	# Used for parsing responses from Facebook.
 import md5	# Used for generating unique state.
 import random	# Used for generating unique state.
 import urllib	# Used for formatting URI params, reading web addresses, etc.
+import urllib2	# Used for formatting URI params, reading web addresses, etc.
+import urlparse	# Used for reading Facebook access token.
 
 
 class FacebookServiceGateway(ServiceGateway):
@@ -25,7 +27,7 @@ class FacebookServiceGateway(ServiceGateway):
 		# URI references.
 		self.auth_request_uri = "https://www.facebook.com/dialog/oauth?"
 		self.auth_token_uri = "https://graph.facebook.com/oauth/access_token?"
-		self.request_base_uri = "http://graph.facebook.com"
+		self.graph_uri = "https://graph.facebook.com"
 		
 		# Generate a unique state.
 		r = random.random()
@@ -38,6 +40,9 @@ class FacebookServiceGateway(ServiceGateway):
 		
 		# Set the scope for our app. (What permissions do we need?)
 		self.scope = user_permissions + "," + friend_permissions + "," + extended_permissions
+		
+		# Placeholder for token.
+		self.access_token = None
 	
 	
 	def request_authentication(self, callback):
@@ -64,8 +69,8 @@ class FacebookServiceGateway(ServiceGateway):
 		"""
 		
 		# Before doing this, could check that our state value matches the state returned by Facebook. (Later addition)
-		facebook_code = request.arguments['code'][0]
-		# facebook_code = request # Uncomment me if testing with a known code.
+		#facebook_code = request.arguments['code'][0]
+		facebook_code = request # Uncomment me if testing with a known code.
 		
 		# Parameters for the token request URI.
 		params = {}
@@ -79,13 +84,60 @@ class FacebookServiceGateway(ServiceGateway):
 		response = urlparse.parse_qs(urllib.urlopen(token_request_uri).read())
 		
 		# Parse response to get access token and expiry date.
-		access_token = response["access_token"][0]
+		self.access_token = response["access_token"][0]
 		expires = response["expires"][0]
 		
-		print "Access token: " + access_token
+		print "Access token: " + self.access_token
 		print "Token expires in: " + expires + " secs"
 		
-		return access_token
+		return self.access_token
+	
+	
+	def Image(self, operation, payload):
+		"""
+		Dummy operation (At present) to get a user's Facebook profile picture.
+		"""
+
+		if (operation == "GET"):
+			try:
+				#user_id = payload.id
+				user_id = "me"
+				
+				# Get information about the image's author.
+				author_obj = SocialObjects.Person()
+				author_details = self.get_graph("/" + user_id)
+				author_obj.id = author_details["id"]
+				author_obj.displayName = author_details["name"]
+			
+				# Get the user's profile picture. (URL)
+				img_object = SocialObjects.Image()
+				user_image = self.graph_uri + "/" + user_id + "/picture/" + "?access_token=" + self.access_token
+				img_object.fullImage = user_image
+				
+				# Add any additional information to the image object.
+				img_object.author = author_obj
+				
+				return img_object
+			
+			except:
+				return SocialObjects.Image()
+		else:
+			raise NotImplementedException("Operation not supported")
+	
+	
+	def get_graph(self, query):
+		"""
+		Queries Facebook's Graph API and returns the result as a dict.
+		"""
+		
+		# Compose query to Facebook.
+		query = self.graph_uri + query + "?access_token=" + self.access_token
+		
+		# Retrieve and parse result.
+		data = urllib2.urlopen(query).read()
+		json_obj = json.loads(data)
+
+		return json_obj
 		
 	
 	
@@ -101,3 +153,7 @@ if __name__ == "__main__":
 	
 	# Complete authentication. (Comment out the parsing of input params in complete_authentication() to use)
 	fb.complete_authentication("AQBhC4ulE3Mv_TLJHgnfXAZj5DU1_XM132ISR8z3c3J4M1pYIy-UVrAPahsb1NG_p1yudjqKob0qLJgXNslkW3cgpmr-kjqOZAgxmzRyJWtHYqA_U0Yi7IhL8kVvj3UdO4irNC-nJHvyUB0u7mJH2RzzlbGdTkq__vWcPmnMg_tjNM7aq6pXi8Soknpx_kE1qvI#_=_")
+	
+	fb.Image("GET", "")
+	
+	

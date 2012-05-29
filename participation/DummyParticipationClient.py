@@ -60,8 +60,8 @@ if __name__ == "__main__":
 	session.PostObject("Lastfm","Comment",post_shout)
 	"""
 
-	privacy_policy = "lib/privacy_policy_validation_test.xml"
-	exp_design = "lib/experimental_design_test.xml"
+	privacy_policy = "../lib/privacy_policy_validation_test.xml"
+	exp_design = "../lib/experimental_design_test.xml"
 	
 	expBuilder = ExperimentBuilder.ExperimentBuilder()
 	
