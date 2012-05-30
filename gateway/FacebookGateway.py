@@ -183,7 +183,7 @@ class FacebookServiceGateway(ServiceGateway):
 				languages = self.get_value(user_details, "languages")
 				
 				# Info exists.
-				if (len(languages) > 0):
+				if ((languages) and (len(languages)) > 0):
 					# Create list to hold languages.
 					lang_list = []
 					
@@ -216,7 +216,7 @@ class FacebookServiceGateway(ServiceGateway):
 				education_list = self.get_value(user_details, "education")
 				
 				# Info exists.
-				if (len(education_list) > 0):
+				if ((education_list) and (len(education_list) > 0)):
 					# Create Collection object to hold education history.
 					edu_coll = SocialObjects.Collection()
 					edu_coll.author = user.id
@@ -242,16 +242,31 @@ class FacebookServiceGateway(ServiceGateway):
 				# Make a Place object for the user's hometown.
 				hometown_place = SocialObjects.Place()
 				hometown_info = self.get_value(user_details, "hometown")
-				hometown_place.id = hometown_info["id"]
-				hometown_place.displayName = hometown_info["name"]
-				user.hometown = hometown_place
+				
+				# Hometown supplied.
+				if (hometown_info):
+					hometown_place.id = hometown_info["id"]
+					hometown_place.displayName = hometown_info["name"]
+					user.hometown = hometown_place
+				
+				# Not supplied.
+				else:
+					user.hometown = None
 				
 				# Make a Place object for the user's current location.
 				location_place = SocialObjects.Place()
 				location_info = self.get_value(user_details, "location")
-				location_place.id = location_info["id"]
-				location_place.displayName = location_info["name"]
-				user.location = location_place
+				
+				# Location supplied.
+				if (location_info):
+					location_place.id = location_info["id"]
+					location_place.displayName = location_info["name"]
+					user.location = location_place
+				
+				# Location not supplied.
+				else:
+					user.location = None
+				
 				
 				user.interestedIn = self.get_value(user_details, "interested_in")
 				user.politicalViews = self.get_value(user_details, "political")
@@ -261,15 +276,22 @@ class FacebookServiceGateway(ServiceGateway):
 				# Make a User object for the user's significant other.
 				sig_other = User()
 				sig_other_info = self.get_value(user_details, "significant_other")
-				sig_other.id = sig_other_info["id"]
-				sig_other.displayName = sig_other_info["name"]
-				user.significantOther = sig_other
+				
+				# Info exists.
+				if (sig_other_info):
+					sig_other.id = sig_other_info["id"]
+					sig_other.displayName = sig_other_info["name"]
+					user.significantOther = sig_other
+				
+				# No info.
+				else:
+					user.significantOther = None
 				
 				# Get a list detailing the user's work history.
 				work_history = self.get_value(user_details, "work")
 				
 				# Info exists.
-				if (len(work_history) > 0):
+				if ((work_history) and (len(work_history) > 0)):
 					# Create Collection object to hold work history.
 					work_coll = SocialObjects.Collection()
 					work_coll.author = user.id
@@ -339,7 +361,53 @@ class FacebookServiceGateway(ServiceGateway):
 				
 			
 			except:
-				return SocialObjects.SocialObject()
+				return []
+		
+		else:
+			raise NotImplementedException("Operation not supported.")
+	
+	
+	def Movies(self, operation, payload):
+		"""
+		Performs operations relating to people's taste in films.
+		Takes a Person object and returns a list of movies that that person likes. (In String form)
+		Currently only supports GET operations.
+		
+		:param operation: The operation to perform. (GET)
+		:type operation: str
+		:param payload: A person whose ID is either a Facebook UID or username.
+		:type payload: SocialObject
+		:returns: A list of strings.
+		"""
+		
+		if (operation == "GET"):
+			try:
+				# Get user ID and query Facebook for their info.
+				user_id = payload.id
+				
+				# Get the initial result set.
+				result_set = self.get_graph_data("/" + user_id + "/movies")
+				movie_obj_list = []
+				
+				# While there are still more bands, add them to the list.
+				while (result_set["paging"].has_key("next")):
+					# Get bands.
+					movie_obj_list.extend(result_set["data"])
+					
+					# Get next result set.
+					result_set = self.get_graph_data(result_set["paging"]["next"])
+				
+				# Loop through the band object list and add their names to a separate list.
+				movies = []
+				
+				for movie in movie_obj_list:
+					movies.append(movie["name"])
+				
+				return sorted(movies)
+				
+			
+			except:
+				return []
 		
 		else:
 			raise NotImplementedException("Operation not supported.")
@@ -654,7 +722,7 @@ class User(SocialObjects.Person):
 		self._work = value
 	
 	
-	def to_string(self):
+	def print_obj(self):
 		"""
 		Returns a String representation of this User object.
 		Mainly used for testing purposes.
@@ -662,51 +730,69 @@ class User(SocialObjects.Person):
 		:returns: A String.
 		"""
 		
-		str_rep = "String representation of User:" + "\n"
-		str_rep += "- ID: " + self.check_none(self.id) + "\n"
-		str_rep += "- Display Name: " + self.check_none(self.displayName) + "\n"
-		str_rep += "- Username: " + self.check_none(self.username) + "\n"
-		str_rep += "- First Name: " + self.check_none(self.firstName) + "\n"
-		str_rep += "- Middle Name: " + self.check_none(self.middleName) + "\n"
-		str_rep += "- Last Name: " + self.check_none(self.lastName) + "\n"
-		str_rep += "- Gender: " + self.check_none(self.gender) + "\n"
-		str_rep += "- Last Update: " + self.check_none(self.updatedTime).strftime("%d/%m/%Y @ %H:%M:%S") + "\n"
-		str_rep += "- Birthday: " + self.check_none(self.birthday).strftime("%d/%m/%Y") + "\n"
+		# Single value.
+		print "String representation of User:"
+		print "- ID: " + self.check_none(self.id)
+		print "- Display Name: " + self.check_none(self.displayName)
+		print "- Username: " + self.check_none(self.username)
+		print "- First Name: " + self.check_none(self.firstName)
+		print "- Middle Name: " + self.check_none(self.middleName)
+		print "- Last Name: " + self.check_none(self.lastName)
+		print "- Gender: " + self.check_none(self.gender)
+		print "- Last Update: " + self.check_none(self.updatedTime).strftime("%d/%m/%Y @ %H:%M:%S")
+		print "- Birthday: " + self.check_none(self.birthday).strftime("%d/%m/%Y")
 		
 		# Multi value.
 		user_langs = self.check_none(self.languages)
-		for lang in user_langs:
-			str_rep += "- Language: " + lang + "\n"
-
-		str_rep += "- Timezone: " + self.check_none(str(self.timezone)) + "\n"
-		str_rep += "- Bio: " + self.check_none(self.bio) + "\n"
+		print "- Language: " + str(user_langs)
+		
+		# Single value.
+		print "- Timezone: " + self.check_none(str(self.timezone))
+		print "- Bio: " + self.check_none(self.bio)
 		
 		# Multi value.
 		user_education = self.check_none(self.education).objects
 		for place in user_education:
-			str_rep += "- Education: " + place.displayName + "\n"
-
-		str_rep += "- Email: " + self.check_none(self.email) + "\n"
-		str_rep += "- Hometown: " + self.check_none(self.hometown).displayName + "\n"
-		str_rep += "- Location: " + self.check_none(self.location).displayName + "\n"
-		str_rep += "- Political Views: " + self.check_none(self.politicalViews) + "\n"
-		str_rep += "- Religion: " + self.check_none(self.religion) + "\n"
+			print "- Education: " + place.displayName
+		
+		# Single value.
+		print "- Email: " + self.check_none(self.email)
+		
+		# Single value.
+		hometown = self.check_none(self.hometown)
+		
+		if (not (hometown == "None")):
+			print "- Hometown: " + hometown.displayName
+		
+		else:
+			print "- Hometown: " + hometown
+		
+		# Single value.
+		location = self.check_none(self.location)
+		
+		if (not (location == "None")):
+			print "- Location: " + location.displayName
+		
+		else:
+			print "- Hometown: " + location
+		
+		# Single value.
+		print "- Political Views: " + self.check_none(self.politicalViews)
+		print "- Religion: " + self.check_none(self.religion)
 		
 		# Multi value.
 		interested_in = self.check_none(self.interestedIn)
-		for pref in interested_in:
-			str_rep += "- Interested In: " + pref + "\n"
+		print "- Interested In: " + str(interested_in)
 		
-		
-		str_rep += "- Relationship Status: " + self.check_none(self.relationshipStatus) + "\n"
-		str_rep += "- Significant Other: " + self.check_none(self.significantOther).displayName + "\n"
+		# Single value.
+		print "- Relationship Status: " + self.check_none(self.relationshipStatus)
+		print "- Significant Other: " + self.check_none(self.significantOther).displayName
 		
 		# Multi value.
-		user_work = self.check_none(self.work).objects
-		for place in user_work:
-			str_rep += "- Work: " + place.displayName + "\n"
-		
-		return str_rep
+		user_work = self.check_none(self.work)
+		if (not (user_work == "None")):
+			for place in user_work.objects:
+				print "- Work: " + place.displayName
 	
 	
 	def check_none(self, value):
@@ -736,11 +822,11 @@ if __name__ == "__main__":
 	print "Request authentication URI: " + response
 	
 	# Complete authentication. (Comment out the parsing of input params in complete_authentication() to use)
-	fb.complete_authentication("AQBLtHUJ7B0bbvLDMFucJFeoEJSudt_2xk_s6J3IHMM9BAjcSqd-zt6bG_rjC97bn8thdpKcuF-lQiUPA4QKBhQJfN3_aHJd54fLCPr14Z-isq5c9Z2Odzu8NtyKO1Jmt7wTd3tf60abNYQ8624IhtM7_sEBxUKkJD3sevBpNedXFhUo3YL24KXtQrmAzkh5evc#_=_")
+	fb.complete_authentication("AQCtAM9kH0g_wprxPFkX_PzBnPxOsebD0MB2iiTp2A2ViyJ076wIaBlbLKRkoavFt9lBmFrtBlCMUPrRWd7-peC3T81z7hoDRKqdCEl9L1V-nupHqa_PGBeUYJDnQLaUQWqWX4qUtlDp9SAVyxkAQE1PrYFxfgo9coEeMpertXaj_k61FqxNEB9ptuKrHATNVX8#_=_")
 	
 	# Set up a person for testing.
 	person_1 = SocialObjects.Person()
-	person_1.id = "532336768"
+	person_1.id = "1301961036"
 	
 	# Test "Get Image."
 	img_obj = fb.Image("GET", person_1)
@@ -752,12 +838,17 @@ if __name__ == "__main__":
 	# Test "Get Person."
 	person_obj = fb.User("GET", person_1)
 	print "Grabbed user from Facebook:"
-	print person_obj.to_string()
+	person_obj.print_obj()
 	
 	# Test "Get Music."
 	music_obj = fb.Music("GET", person_1)
 	for band in music_obj:
 		print band
+	
+	# Test "Get Movies."
+	movie_obj = fb.Movies("GET", person_1)
+	for movie in movie_obj:
+		print movie
 
 	
 	
