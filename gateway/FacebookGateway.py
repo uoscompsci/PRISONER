@@ -1,6 +1,7 @@
 from ServiceGateway import ServiceGateway
 import SocialObjects
 
+import datetime	# Used for creating standardised date / time objects from Facebook's attribute values.
 import json	# Used for parsing responses from Facebook.
 import md5	# Used for generating unique state.
 import random	# Used for generating unique state.
@@ -177,16 +178,122 @@ class FacebookServiceGateway(ServiceGateway):
 				user.username = self.get_value(user_details, "username")
 				user.displayName = self.get_value(user_details, "name")
 				user.gender = self.get_value(user_details, "gender")
-				user.languages = self.get_value(user_details, "languages")
+				
+				# Get a list of the user's languages.
+				languages = self.get_value(user_details, "languages")
+				
+				# Info exists.
+				if (len(languages) > 0):
+					# Create list to hold languages.
+					lang_list = []
+					
+					# Loop through languages and add to list.
+					for lang in languages:
+						this_lang = lang["name"]
+						lang_list.append(this_lang)
+					
+					user.languages = lang_list
+				
+				# No info.
+				else:
+					user.languages = None
+				
 				user.timezone = self.get_value(user_details, "timezone")
-				user.updatedTime = self.get_value(user_details, "updated_time")
+				
+				# Parse the user's last update time.
+				updated_time_str = self.get_value(user_details, "updated_time")
+				timestamp = datetime.datetime.strptime(updated_time_str, "%Y-%m-%dT%H:%M:%S+0000")
+				user.updatedTime = timestamp
+				
 				user.bio = self.get_value(user_details, "about")
-				user.birthday = self.get_value(user_details, "birthday")
+				
+				# Parse the user's birthday.
+				birthday_str = self.get_value(user_details, "birthday")
+				birthday_timestamp = datetime.datetime.strptime(birthday_str, "%m/%d/%Y")
+				user.birthday = birthday_timestamp
+				
+				# Get a list detailing the user's education history.
+				education_list = self.get_value(user_details, "education")
+				
+				# Info exists.
+				if (len(education_list) > 0):
+					# Create Collection object to hold education history.
+					edu_coll = SocialObjects.Collection()
+					edu_coll.author = user.id
+					edu_list = []
+					
+					# Loop through places and add to list.
+					for place in education_list:
+						this_place = SocialObjects.Place()
+						this_place.id = place["school"]["id"]
+						this_place.displayName = place["school"]["name"]
+						edu_list.append(this_place)
+					
+					edu_coll.objects = edu_list
+					user.education = edu_coll
+						
+				
+				# No info.
+				else:
+					user.education = None
+				
+				user.email = self.get_value(user_details, "email")
+				
+				# Make a Place object for the user's hometown.
+				hometown_place = SocialObjects.Place()
+				hometown_info = self.get_value(user_details, "hometown")
+				hometown_place.id = hometown_info["id"]
+				hometown_place.displayName = hometown_info["name"]
+				user.hometown = hometown_place
+				
+				# Make a Place object for the user's current location.
+				location_place = SocialObjects.Place()
+				location_info = self.get_value(user_details, "location")
+				location_place.id = location_info["id"]
+				location_place.displayName = location_info["name"]
+				user.location = location_place
+				
+				user.interestedIn = self.get_value(user_details, "interested_in")
+				user.politicalViews = self.get_value(user_details, "political")
+				user.religion = self.get_value(user_details, "religion")
+				user.relationshipStatus = self.get_value(user_details, "relationship_status")
+				
+				# Make a User object for the user's significant other.
+				sig_other = User()
+				sig_other_info = self.get_value(user_details, "significant_other")
+				sig_other.id = sig_other_info["id"]
+				sig_other.displayName = sig_other_info["name"]
+				user.significantOther = sig_other
+				
+				# Get a list detailing the user's work history.
+				work_history = self.get_value(user_details, "work")
+				
+				# Info exists.
+				if (len(work_history) > 0):
+					# Create Collection object to hold work history.
+					work_coll = SocialObjects.Collection()
+					work_coll.author = user.id
+					work_list = []
+					
+					# Loop through places and add to list.
+					for place in work_history:
+						this_place = SocialObjects.Place()
+						this_place.id = place["employer"]["id"]
+						this_place.displayName = place["employer"]["name"]
+						work_list.append(this_place)
+					
+					work_coll.objects = work_list
+					user.work = work_coll
+						
+				
+				# No info.
+				else:
+					user.work = None
 				
 				return user
 				
 			except:
-				return SocialObjects.Person()
+				return User()
 		
 		else:
 			raise NotImplementedException("Operation not supported.")
@@ -199,7 +306,7 @@ class FacebookServiceGateway(ServiceGateway):
 		
 		:param query: The Graph API query to perform. (Eg: /me/picture?access_token=...)
 		:type query: str
-		:return: A Dict containing the parsed JSON response from Facebook. Attributes are accessed through their name.
+		:returns: A Dict containing the parsed JSON response from Facebook. Attributes are accessed through their name.
 		"""
 		
 		# Compose query to Facebook.
@@ -207,7 +314,7 @@ class FacebookServiceGateway(ServiceGateway):
 		
 		# Retrieve and parse result.
 		data = urllib2.urlopen(query).read()
-		json_obj = json.loads(data)
+		json_obj = self.parse_json(data)
 
 		return json_obj
 	
@@ -222,7 +329,7 @@ class FacebookServiceGateway(ServiceGateway):
 		:type query: dict
 		:param needle: The key we're looking for.
 		:type query: str
-		:return: If the key exists, its corresponding value is returned. Otherwise False is returned.
+		:returns: If the key exists, its corresponding value is returned. Otherwise None is returned.
 		"""
 		
 		# This key exists, so return it.
@@ -231,7 +338,21 @@ class FacebookServiceGateway(ServiceGateway):
 		
 		# Key doesn't exist.
 		else:
-			return "N/A" # Should be False, but it's a String for testing.
+			return None # Should be False, but it's a String for testing.
+	
+	
+	def parse_json(self, json_obj):
+		"""
+		Internal function.
+		Takes a JSON object as returned by Facebook and returns the Dict representation of it.
+		Avoids having to call json.loads(?) everywhere, and allows for potential improvements in the future.
+		
+		:param json_obj: The JSON object to parse.
+		:type json_obj: str, list
+		:returns: A Dict object representing the supplied JSON.
+		"""
+		
+		return json.loads(json_obj)
 			
 		
 class User(SocialObjects.Person):
@@ -243,27 +364,27 @@ class User(SocialObjects.Person):
 	
 	def __init__(self):
 		super(User, self).__init__()
-		self._provider = "Facebook"
-		self._username = None
-		self._firstName = None
-		self._middleName = None
-		self._lastName = None
-		self._gender = None
-		self._languages = None
-		self._timezone = None
-		self._updatedTime = None
-		self._bio = None
-		self._birthday = None
-		self._education = None
-		self._email = None
-		self._hometown = None
-		self._interestedIn = None
-		self._location = None
-		self._politicalViews = None
-		self._religion = None
-		self._relationshipStatus = None
-		self._significantOther = None
-		self._work = None
+		self._provider = "Facebook"	# String
+		self._username = None	# String
+		self._firstName = None	# String
+		self._middleName = None	# String
+		self._lastName = None	# String
+		self._gender = None	# String
+		self._languages = None	# List of strings.
+		self._timezone = None	# String
+		self._updatedTime = None	# ???
+		self._bio = None	# String
+		self._birthday = None	# String
+		self._education = None	# Collection of places
+		self._email = None	# String
+		self._hometown = None	# Place
+		self._interestedIn = None	# List of strings.
+		self._location = None	# Place
+		self._politicalViews = None	# String
+		self._religion = None	# String
+		self._relationshipStatus = None	# String
+		self._significantOther = None	# User or Person object
+		self._work = None	# Collection of places
 	
 	
 	@property
@@ -484,6 +605,75 @@ class User(SocialObjects.Person):
 	@work.setter
 	def work(self, value):
 		self._work = value
+	
+	
+	def to_string(self):
+		"""
+		Returns a String representation of this User object.
+		Mainly used for testing purposes.
+		
+		:returns: A String.
+		"""
+		
+		str_rep = "String representation of User:" + "\n"
+		str_rep += "- ID: " + self.check_none(self.id) + "\n"
+		str_rep += "- Display Name: " + self.check_none(self.displayName) + "\n"
+		str_rep += "- Username: " + self.check_none(self.username) + "\n"
+		str_rep += "- First Name: " + self.check_none(self.firstName) + "\n"
+		str_rep += "- Middle Name: " + self.check_none(self.middleName) + "\n"
+		str_rep += "- Last Name: " + self.check_none(self.lastName) + "\n"
+		str_rep += "- Gender: " + self.check_none(self.gender) + "\n"
+		str_rep += "- Last Update: " + self.check_none(self.updatedTime).strftime("%d/%m/%Y @ %H:%M:%S") + "\n"
+		str_rep += "- Birthday: " + self.check_none(self.birthday).strftime("%d/%m/%Y") + "\n"
+		
+		# Multi value.
+		user_langs = self.check_none(self.languages)
+		for lang in user_langs:
+			str_rep += "- Language: " + lang + "\n"
+
+		str_rep += "- Timezone: " + self.check_none(str(self.timezone)) + "\n"
+		str_rep += "- Bio: " + self.check_none(self.bio) + "\n"
+		
+		# Multi value.
+		user_education = self.check_none(self.education).objects
+		for place in user_education:
+			str_rep += "- Education: " + place.displayName + "\n"
+
+		str_rep += "- Email: " + self.check_none(self.email) + "\n"
+		str_rep += "- Hometown: " + self.check_none(self.hometown).displayName + "\n"
+		str_rep += "- Location: " + self.check_none(self.location).displayName + "\n"
+		str_rep += "- Political Views: " + self.check_none(self.politicalViews) + "\n"
+		str_rep += "- Religion: " + self.check_none(self.religion) + "\n"
+		
+		# Multi value.
+		interested_in = self.check_none(self.interestedIn)
+		for pref in interested_in:
+			str_rep += "- Interested In: " + pref + "\n"
+		
+		
+		str_rep += "- Relationship Status: " + self.check_none(self.relationshipStatus) + "\n"
+		str_rep += "- Significant Other: " + self.check_none(self.significantOther).displayName + "\n"
+		
+		# Multi value.
+		user_work = self.check_none(self.work).objects
+		for place in user_work:
+			str_rep += "- Work: " + place.displayName + "\n"
+		
+		return str_rep
+	
+	
+	def check_none(self, value):
+		"""
+		Internal function.
+		Used to check to see whether or not a value is None. If so, it replaces it with N/A.
+		Mainly used for testing and in the to_string() function.
+		"""
+		
+		if (value == None):
+			return "None"
+		
+		else:
+			return value
 		
 	
 	
@@ -515,13 +705,7 @@ if __name__ == "__main__":
 	# Test "Get Person."
 	person_obj = fb.User("GET", person_1)
 	print "Grabbed user from Facebook:"
-	print "- ID: " + person_obj.id
-	print "- Display Name: " + person_obj.displayName
-	print "- First Name: " + person_obj.firstName
-	print "- Last Name: " + person_obj.lastName
-	print "- Gender: " + person_obj.gender
-	print "- Middle Name: " + person_obj.middleName
-	print "- Last Update: " + person_obj.updatedTime
-	print "- Birthday: " + person_obj.birthday
+	print person_obj.to_string()
+
 	
 	
