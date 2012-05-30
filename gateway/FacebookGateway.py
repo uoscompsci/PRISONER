@@ -130,7 +130,7 @@ class FacebookServiceGateway(ServiceGateway):
 				
 				# Get information about the image's author.
 				author_obj = SocialObjects.Person()
-				author_details = self.get_graph("/" + user_id)
+				author_details = self.get_graph_data("/" + user_id)
 				author_obj.id = author_details["id"]
 				author_obj.displayName = author_details["name"]
 			
@@ -167,7 +167,7 @@ class FacebookServiceGateway(ServiceGateway):
 			try:
 				# Get user ID and query Facebook for their info.
 				user_id = payload.id
-				user_details = self.get_graph("/" + user_id)
+				user_details = self.get_graph_data("/" + user_id)
 				
 				# Create and populate person object.
 				user = User()
@@ -299,7 +299,53 @@ class FacebookServiceGateway(ServiceGateway):
 			raise NotImplementedException("Operation not supported.")
 	
 	
-	def get_graph(self, query):
+	def Music(self, operation, payload):
+		"""
+		Performs operations relating to people's musical tastes.
+		Takes a Person object and returns a list of bands that that person likes. (In String form)
+		Currently only supports GET operations.
+		
+		:param operation: The operation to perform. (GET)
+		:type operation: str
+		:param payload: A person whose ID is either a Facebook UID or username.
+		:type payload: SocialObject
+		:returns: A list of strings.
+		"""
+		
+		if (operation == "GET"):
+			try:
+				# Get user ID and query Facebook for their info.
+				user_id = payload.id
+				
+				# Get the initial result set.
+				result_set = self.get_graph_data("/" + user_id + "/music")
+				band_obj_list = []
+				
+				# While there are still more bands, add them to the list.
+				while (result_set["paging"].has_key("next")):
+					# Get bands.
+					band_obj_list.extend(result_set["data"])
+					
+					# Get next result set.
+					result_set = self.get_graph_data(result_set["paging"]["next"])
+				
+				# Loop through the band object list and add their names to a separate list.
+				bands = []
+				
+				for band in band_obj_list:
+					bands.append(band["name"])
+				
+				return sorted(bands)
+				
+			
+			except:
+				return SocialObjects.SocialObject()
+		
+		else:
+			raise NotImplementedException("Operation not supported.")
+	
+	
+	def get_graph_data(self, query):
 		"""
 		Internal function.
 		Queries Facebook's Graph API and returns the result as a dict.
@@ -309,8 +355,9 @@ class FacebookServiceGateway(ServiceGateway):
 		:returns: A Dict containing the parsed JSON response from Facebook. Attributes are accessed through their name.
 		"""
 		
-		# Compose query to Facebook.
-		query = self.graph_uri + query + "?access_token=" + self.access_token
+		# If query doesn't start with https://, we assume it is relative.
+		if (not query.startswith("https://")):
+			query = self.graph_uri + query + "?access_token=" + self.access_token
 		
 		# Retrieve and parse result.
 		data = urllib2.urlopen(query).read()
@@ -338,7 +385,7 @@ class FacebookServiceGateway(ServiceGateway):
 		
 		# Key doesn't exist.
 		else:
-			return None # Should be False, but it's a String for testing.
+			return None
 	
 	
 	def parse_json(self, json_obj):
@@ -372,9 +419,9 @@ class User(SocialObjects.Person):
 		self._gender = None	# String
 		self._languages = None	# List of strings.
 		self._timezone = None	# String
-		self._updatedTime = None	# ???
+		self._updatedTime = None	# Date / Time.
 		self._bio = None	# String
-		self._birthday = None	# String
+		self._birthday = None	# Date / Time.
 		self._education = None	# Collection of places
 		self._email = None	# String
 		self._hometown = None	# Place
@@ -706,6 +753,11 @@ if __name__ == "__main__":
 	person_obj = fb.User("GET", person_1)
 	print "Grabbed user from Facebook:"
 	print person_obj.to_string()
+	
+	# Test "Get Music."
+	music_obj = fb.Music("GET", person_1)
+	for band in music_obj:
+		print band
 
 	
 	
