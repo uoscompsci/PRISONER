@@ -327,6 +327,11 @@ class FacebookServiceGateway(ServiceGateway):
 				else:
 					user.work = None
 				
+				# Get the user's profile picture.
+				img = SocialObjects.Image()
+				img.fullImage = self.graph_uri + "/me/picture?type=normal" + "&access_token=" + self.access_token
+				user.image = img
+				
 				return user
 				
 			except:
@@ -798,6 +803,7 @@ class User(SocialObjects.Person):
 		print "String representation of User:"
 		print "- ID: " + self.check_none(self.id)
 		print "- Display Name: " + self.check_none(self.displayName)
+		print "- Profile Picture: " + self.check_none(self.image.fullImage)
 		print "- Username: " + self.check_none(self.username)
 		print "- First Name: " + self.check_none(self.firstName)
 		print "- Middle Name: " + self.check_none(self.middleName)
