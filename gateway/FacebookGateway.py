@@ -113,6 +113,21 @@ class FacebookServiceGateway(ServiceGateway):
 		return self.access_token
 	
 	
+	def restore_authentication(self, access_token):
+		"""
+		Provides a mechanism to restore a session. (Essentially refresh an access token)
+		Facebook does not allow access tokens to be refreshed. However, if the user is forced to go through the
+		authentication process again, it will be done transparently so long as the PRISONER app has not requested
+		additional permissions.
+		
+		:param access_token: The current access token held for this user.
+		:type access_token: str
+		:returns: False, thus forcing the authentication process to take place again. (Transparently)
+		"""
+		
+		return False
+	
+	
 	def Image(self, operation, payload):
 		"""
 		Dummy operation (At present) to get a user's Facebook profile picture.
@@ -357,6 +372,7 @@ class FacebookServiceGateway(ServiceGateway):
 				for band in band_obj_list:
 					bands.append(band["name"])
 				
+				print "Number of favourite bands for user " + user_id + ": " + str(len(bands))
 				return sorted(bands)
 				
 			
@@ -389,21 +405,69 @@ class FacebookServiceGateway(ServiceGateway):
 				result_set = self.get_graph_data("/" + user_id + "/movies")
 				movie_obj_list = []
 				
-				# While there are still more bands, add them to the list.
-				while (result_set["paging"].has_key("next")):
-					# Get bands.
+				# While there are still more movies available, add them to the list.
+				while ((result_set.has_key("paging")) and (result_set["paging"].has_key("next"))):
+					# Get movies.
 					movie_obj_list.extend(result_set["data"])
 					
 					# Get next result set.
 					result_set = self.get_graph_data(result_set["paging"]["next"])
 				
-				# Loop through the band object list and add their names to a separate list.
+				# Loop through the movie object list and add their names to a separate list.
 				movies = []
 				
 				for movie in movie_obj_list:
 					movies.append(movie["name"])
 				
+				print "Number of movies for user " + user_id + ": " + str(len(movies))
 				return sorted(movies)
+				
+			
+			except:
+				return []
+		
+		else:
+			raise NotImplementedException("Operation not supported.")
+	
+	
+	def Books(self, operation, payload):
+		"""
+		Performs operations relating to people's taste in books and literature.
+		Takes a Person object and returns a list of books that that person likes. (In String form)
+		Currently only supports GET operations.
+		
+		:param operation: The operation to perform. (GET)
+		:type operation: str
+		:param payload: A person whose ID is either a Facebook UID or username.
+		:type payload: SocialObject
+		:returns: A list of strings.
+		"""
+		
+		if (operation == "GET"):
+			try:
+				# Get user ID and query Facebook for their info.
+				user_id = payload.id
+				
+				# Get the initial result set.
+				result_set = self.get_graph_data("/" + user_id + "/books")
+				book_obj_list = []
+				
+				# While there are still more books available, add them to the list.
+				while ((result_set.has_key("paging")) and (result_set["paging"].has_key("next"))):
+					# Get books.
+					book_obj_list.extend(result_set["data"])
+					
+					# Get next result set.
+					result_set = self.get_graph_data(result_set["paging"]["next"])
+				
+				# Loop through the book object list and add their names to a separate list.
+				books = []
+				
+				for book in book_obj_list:
+					books.append(book["name"])
+				
+				print "Number of books for user " + user_id + ": " + str(len(books))
+				return sorted(books)
 				
 			
 			except:
@@ -752,8 +816,13 @@ class User(SocialObjects.Person):
 		
 		# Multi value.
 		user_education = self.check_none(self.education).objects
-		for place in user_education:
-			print "- Education: " + place.displayName
+		
+		if (not (user_education == "None")):
+			for place in user_education:
+				print "- Education: " + place.displayName
+		
+		else:
+			print "- Education: " + user_education
 		
 		# Single value.
 		print "- Email: " + self.check_none(self.email)
@@ -790,9 +859,13 @@ class User(SocialObjects.Person):
 		
 		# Multi value.
 		user_work = self.check_none(self.work)
+		
 		if (not (user_work == "None")):
 			for place in user_work.objects:
 				print "- Work: " + place.displayName
+		
+		else:
+			print "- Work: " + user_work
 	
 	
 	def check_none(self, value):
@@ -812,6 +885,9 @@ class User(SocialObjects.Person):
 	
 # Testing.
 if __name__ == "__main__":
+	# Start tests.
+	print "<Start tests>"
+	
 	# Create an instance of the service gateway.
 	fb = FacebookServiceGateway()
 	
@@ -842,13 +918,24 @@ if __name__ == "__main__":
 	
 	# Test "Get Music."
 	music_obj = fb.Music("GET", person_1)
+	print "Printing list of favourite bands:"
 	for band in music_obj:
-		print band
+		print "- " + band
 	
 	# Test "Get Movies."
 	movie_obj = fb.Movies("GET", person_1)
+	print "Printing list of favourite movies:"
 	for movie in movie_obj:
-		print movie
+		print "- " + movie
+	
+	# Test "Get Books."
+	book_obj = fb.Books("GET", person_1)
+	print "Printing list of favourite books:"
+	for book in book_obj:
+		print "- " + book
+	
+	# End.
+	print "<End tests>"
 
 	
 	
