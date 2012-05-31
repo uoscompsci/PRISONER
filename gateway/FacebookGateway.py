@@ -5,8 +5,9 @@ import datetime	# Used for creating standardised date / time objects from Facebo
 import json	# Used for parsing responses from Facebook.
 import md5	# Used for generating unique state.
 import random	# Used for generating unique state.
-import urllib	# Used for formatting URI params, reading web addresses, etc.
+import re
 import urllib2	# Used for formatting URI params, reading web addresses, etc.
+import urllib	# Used for formatting URI params, reading web addresses, etc.
 import urlparse	# Used for reading Facebook access token.
 
 
@@ -480,6 +481,63 @@ class FacebookServiceGateway(ServiceGateway):
 		
 		else:
 			raise NotImplementedException("Operation not supported.")
+		
+		
+	def Statuses(self, operation, payload):
+		"""
+		Performs operations on a user's status updates.
+		Takes a Person object and returns a collection of Status objects. (All of them)
+		Currently only supports GET operations.
+		
+		:param operation: The operation to perform. (GET)
+		:type operation: str
+		:param payload: A person whose ID is either a Facebook UID or username.
+		:type payload: SocialObject
+		:returns: A collection of Status objects.
+		"""
+		
+		if (operation == "GET"):
+			try:
+				# Get user ID and query Facebook for their info.
+				user_id = payload.id
+				print "GET Statuses: " + user_id
+				
+				# Get the initial result set.
+				result_set = self.get_graph_data("/" + user_id + "/statuses")
+				status_obj_list = []
+				page_num = 1
+				
+				# Add all statuses to our list.
+				while ((result_set.has_key("paging")) and (result_set["paging"].has_key("next"))):
+					# Get status updates.
+					this_data = result_set["data"]
+					num_updates = len(this_data)
+					print "- Page " + str(page_num) + " has " + str(num_updates) + " updates"
+					page_num += 1
+					
+					last_update = this_data[num_updates - 1]
+					last_update_stamp = datetime.datetime.strptime(last_update["updated_time"], "%Y-%m-%dT%H:%M:%S+0000").strftime("%s")
+					print "- Got last update on page (Posted: " + last_update["updated_time"] + ")"
+					print "- Timestamp: " + last_update_stamp
+					
+					next_address = result_set["paging"]["next"]
+					print "- Next address: " + next_address
+					match = re.compile("until=..........")
+					replace_with = "until=" + last_update_stamp
+					new_address = re.sub(match, replace_with, next_address)
+					print "\n- New address: " + new_address + "\n"
+					
+					# Get next result set.
+					result_set = self.get_graph_data(new_address)
+				
+				return None
+				
+			
+			except:
+				return None
+		
+		else:
+			raise NotImplementedException("Operation not supported.")
 	
 	
 	def get_graph_data(self, query):
@@ -554,15 +612,15 @@ class User(SocialObjects.Person):
 		self._middleName = None	# String
 		self._lastName = None	# String
 		self._gender = None	# String
-		self._languages = None	# List of strings.
+		self._languages = None	# List of strings
 		self._timezone = None	# String
-		self._updatedTime = None	# Date / Time.
+		self._updatedTime = None	# Date / Time
 		self._bio = None	# String
-		self._birthday = None	# Date / Time.
+		self._birthday = None	# Date / Time
 		self._education = None	# Collection of places
 		self._email = None	# String
 		self._hometown = None	# Place
-		self._interestedIn = None	# List of strings.
+		self._interestedIn = None	# List of strings
 		self._location = None	# Place
 		self._politicalViews = None	# String
 		self._religion = None	# String
@@ -791,7 +849,7 @@ class User(SocialObjects.Person):
 		self._work = value
 	
 	
-	def print_obj(self):
+	def __str__(self):
 		"""
 		Returns a String representation of this User object.
 		Mainly used for testing purposes.
@@ -799,94 +857,146 @@ class User(SocialObjects.Person):
 		:returns: A String.
 		"""
 		
-		# Single value.
-		print "String representation of User:"
-		print "- ID: " + self.check_none(self.id)
-		print "- Display Name: " + self.check_none(self.displayName)
-		print "- Profile Picture: " + self.check_none(self.image.fullImage)
-		print "- Username: " + self.check_none(self.username)
-		print "- First Name: " + self.check_none(self.firstName)
-		print "- Middle Name: " + self.check_none(self.middleName)
-		print "- Last Name: " + self.check_none(self.lastName)
-		print "- Gender: " + self.check_none(self.gender)
-		print "- Last Update: " + self.check_none(self.updatedTime).strftime("%d/%m/%Y @ %H:%M:%S")
-		print "- Birthday: " + self.check_none(self.birthday).strftime("%d/%m/%Y")
-		
-		# Multi value.
-		user_langs = self.check_none(self.languages)
-		print "- Language: " + str(user_langs)
+		# Start off the string representation...
+		str_rep =  "<User>"
 		
 		# Single value.
-		print "- Timezone: " + self.check_none(str(self.timezone))
-		print "- Bio: " + self.check_none(self.bio)
+		
+		str_rep += "- ID: " + check_none(self.id) + "\n"
+		str_rep += "- Display Name: " + check_none(self.displayName) + "\n"
+		str_rep += "- Profile Picture: " + check_none(self.image.fullImage) + "\n"
+		str_rep += "- Username: " + check_none(self.username) + "\n"
+		str_rep += "- First Name: " + check_none(self.firstName) + "\n"
+		str_rep += "- Middle Name: " + check_none(self.middleName) + "\n"
+		str_rep += "- Last Name: " + check_none(self.lastName) + "\n"
+		str_rep += "- Gender: " + check_none(self.gender) + "\n"
+		str_rep += "- Last Update: " + check_none(self.updatedTime).strftime("%d/%m/%Y @ %H:%M:%S") + "\n"
+		str_rep += "- Birthday: " + check_none(self.birthday).strftime("%d/%m/%Y") + "\n"
 		
 		# Multi value.
-		user_education = self.check_none(self.education).objects
+		user_langs = check_none(self.languages)
+		str_rep += "- Language: " + str(user_langs) + "\n"
+		
+		# Single value.
+		str_rep += "- Timezone: " + check_none(str(self.timezone)) + "\n"
+		str_rep += "- Bio: " + check_none(self.bio) + "\n"
+		
+		# Multi value.
+		user_education = check_none(self.education).objects
 		
 		if (not (user_education == "None")):
 			for place in user_education:
-				print "- Education: " + place.displayName
+				str_rep += "- Education: " + place.displayName + "\n"
 		
 		else:
-			print "- Education: " + user_education
+			str_rep += "- Education: " + user_education + "\n"
 		
 		# Single value.
-		print "- Email: " + self.check_none(self.email)
+		str_rep += "- Email: " + check_none(self.email) + "\n"
 		
 		# Single value.
-		hometown = self.check_none(self.hometown)
+		hometown = check_none(self.hometown)
 		
 		if (not (hometown == "None")):
-			print "- Hometown: " + hometown.displayName
+			str_rep += "- Hometown: " + hometown.displayName + "\n"
 		
 		else:
-			print "- Hometown: " + hometown
+			str_rep += "- Hometown: " + hometown + "\n"
 		
 		# Single value.
-		location = self.check_none(self.location)
+		location = check_none(self.location)
 		
 		if (not (location == "None")):
-			print "- Location: " + location.displayName
+			str_rep += "- Location: " + location.displayName + "\n"
 		
 		else:
-			print "- Hometown: " + location
+			str_rep += "- Hometown: " + location + "\n"
 		
 		# Single value.
-		print "- Political Views: " + self.check_none(self.politicalViews)
-		print "- Religion: " + self.check_none(self.religion)
+		str_rep += "- Political Views: " + check_none(self.politicalViews) + "\n"
+		str_rep += "- Religion: " + check_none(self.religion) + "\n"
 		
 		# Multi value.
-		interested_in = self.check_none(self.interestedIn)
-		print "- Interested In: " + str(interested_in)
+		interested_in = check_none(self.interestedIn)
+		str_rep += "- Interested In: " + str(interested_in) + "\n"
 		
 		# Single value.
-		print "- Relationship Status: " + self.check_none(self.relationshipStatus)
-		print "- Significant Other: " + self.check_none(self.significantOther).displayName
+		str_rep += "- Relationship Status: " + check_none(self.relationshipStatus) + "\n"
+		str_rep += "- Significant Other: " + check_none(self.significantOther).displayName + "\n"
 		
 		# Multi value.
-		user_work = self.check_none(self.work)
+		user_work = check_none(self.work)
 		
 		if (not (user_work == "None")):
 			for place in user_work.objects:
-				print "- Work: " + place.displayName
+				str_rep += "- Work: " + place.displayName + "\n"
 		
 		else:
-			print "- Work: " + user_work
+			str_rep += "- Work: " + user_work + "\n"
+		
+		# Finish off and return.
+		str_rep += "</User>"
+		return str_rep
+			
+
+class Status(SocialObjects.Note):
+	"""
+	A Facebook Status object. Contains details such as content, location, number of likes and
+	so on.
+	"""
+	
+	def __init__(self):
+		super(Status, self).__init__()
+		self._provider = "Facebook"	# String
+		self._place = None	# Place
+		self._likes = None	# Collection of users
+		self._comments = None	# Collection of comments.
+	
+	@property
+	def place(self):
+		""" The location this status was tagged at. """
+		return self._place
 	
 	
-	def check_none(self, value):
-		"""
-		Internal function.
-		Used to check to see whether or not a value is None. If so, it replaces it with N/A.
-		Mainly used for testing and in the to_string() function.
-		"""
+	@property
+	def likes(self):
+		""" The people who liked this status update. """
+		return self._likes
+	
+	
+	@property
+	def comments(self):
+		""" The comments on this status update. """
+		return self._comments
+	
+	
+	@place.setter
+	def place(self, value):
+		self._place = value
+	
+	
+	@likes.setter
+	def likes(self, value):
+		self._likes = value
+	
+	
+	@comments.setter
+	def comments(self, value):
+		self._comments = value
+
+
+def check_none(value):
+	"""
+	Internal function.
+	Used to check to see whether or not a value is None. If so, it replaces it with N/A.
+	Mainly used for testing and creating string representations.
+	"""
 		
-		if (value == None):
-			return "None"
+	if (value == None):
+		return "None"
 		
-		else:
-			return value
-		
+	else:
+		return value		
 	
 	
 # Testing.
@@ -904,11 +1014,11 @@ if __name__ == "__main__":
 	print "Request authentication URI: " + response
 	
 	# Complete authentication. (Comment out the parsing of input params in complete_authentication() to use)
-	fb.complete_authentication("AQCtAM9kH0g_wprxPFkX_PzBnPxOsebD0MB2iiTp2A2ViyJ076wIaBlbLKRkoavFt9lBmFrtBlCMUPrRWd7-peC3T81z7hoDRKqdCEl9L1V-nupHqa_PGBeUYJDnQLaUQWqWX4qUtlDp9SAVyxkAQE1PrYFxfgo9coEeMpertXaj_k61FqxNEB9ptuKrHATNVX8#_=_")
+	fb.complete_authentication("AQClg-2eEzYdYQ_PRlsYOnzmGgSlb7VgAxHSIjGKtOpUmYB-g_zTSjNvhrZD9m7zLqOGyxIVihFQKjwLRcMMZp14NOrl60DQBZvI9nRO0s358YVtnw5tvGoocadR_5NY1tYv9bfuGJUxIT4pt2v-TnAaeJp8X_lN5DG9gYlKTw0Yp3uE3ML2od-_zG8Oh8E88ts#_=_")
 	
 	# Set up a person for testing.
 	person_1 = SocialObjects.Person()
-	person_1.id = "1301961036"
+	person_1.id = "532336768"
 	
 	# Test "Get Image."
 	img_obj = fb.Image("GET", person_1)
@@ -920,25 +1030,28 @@ if __name__ == "__main__":
 	# Test "Get Person."
 	person_obj = fb.User("GET", person_1)
 	print "Grabbed user from Facebook:"
-	person_obj.print_obj()
+	print person_obj
 	
 	# Test "Get Music."
-	music_obj = fb.Music("GET", person_1)
-	print "Printing list of favourite bands:"
-	for band in music_obj:
-		print "- " + band
+	#music_obj = fb.Music("GET", person_1)
+	#print "Printing list of favourite bands:"
+	#for band in music_obj:
+		#print "- " + band
 	
 	# Test "Get Movies."
-	movie_obj = fb.Movies("GET", person_1)
-	print "Printing list of favourite movies:"
-	for movie in movie_obj:
-		print "- " + movie
+	#movie_obj = fb.Movies("GET", person_1)
+	#print "Printing list of favourite movies:"
+	#for movie in movie_obj:
+		#print "- " + movie
 	
 	# Test "Get Books."
-	book_obj = fb.Books("GET", person_1)
-	print "Printing list of favourite books:"
-	for book in book_obj:
-		print "- " + book
+	#book_obj = fb.Books("GET", person_1)
+	#print "Printing list of favourite books:"
+	#for book in book_obj:
+		#print "- " + book
+	
+	# Test "Get Statuses."
+	statuses = fb.Statuses("GET", person_1)
 	
 	# End.
 	print "<End tests>"
