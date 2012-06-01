@@ -18,10 +18,19 @@ def do_experiment():
 	print "Consent complete. Now start experiment"
 	me = SocialObjects.Person()
 	me.id = "lukeweb"
+
+	# test: get image
+	"""
 	img = expBuilder.sog.GetObject("Lastfm","Image",me)
 	print img
 	print img.fullImage
 	print img.author.displayName
+	"""
+
+	tracks = expBuilder.sog.GetObject("Lastfm", "Track", me,
+	criteria="x.artist == 'Cajun Dance Party'")
+
+	print tracks.objects[0]
 
 
 if __name__ == "__main__":
