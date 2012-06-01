@@ -503,32 +503,29 @@ class FacebookServiceGateway(ServiceGateway):
 				print "GET Statuses: " + user_id
 				
 				# Get the initial result set.
-				result_set = self.get_graph_data("/" + user_id + "/statuses")
+				limit = 100
+				offset = 0
 				status_obj_list = []
-				page_num = 1
+				result_set_address = self.graph_uri + "/me/statuses?limit=" + str(limit) + "&offset=" + str(offset) + "&access_token=" + self.access_token
+				result_set = self.get_graph_data(result_set_address)
 				
-				# Add all statuses to our list.
-				while ((result_set.has_key("paging")) and (result_set["paging"].has_key("next"))):
+				while ((result_set.has_key("data")) and (len(result_set["data"]) > 0)):
 					# Get status updates.
 					this_data = result_set["data"]
 					num_updates = len(this_data)
-					print "- Page " + str(page_num) + " has " + str(num_updates) + " updates"
-					page_num += 1
 					
-					last_update = this_data[num_updates - 1]
-					last_update_stamp = datetime.datetime.strptime(last_update["updated_time"], "%Y-%m-%dT%H:%M:%S+0000").strftime("%s")
-					print "- Got last update on page (Posted: " + last_update["updated_time"] + ")"
-					print "- Timestamp: " + last_update_stamp
+					# Add each update to our list.
+					for item in this_data:
+						status_obj_list.append(item)
 					
-					next_address = result_set["paging"]["next"]
-					print "- Next address: " + next_address
-					match = re.compile("until=..........")
-					replace_with = "until=" + last_update_stamp
-					new_address = re.sub(match, replace_with, next_address)
-					print "\n- New address: " + new_address + "\n"
-					
-					# Get next result set.
-					result_set = self.get_graph_data(new_address)
+					# Compose next address.
+					offset = offset + limit
+					next_address = self.graph_uri + "/me/statuses?limit=" + str(limit) + "&offset=" + str(offset) + "&access_token=" + self.access_token
+					result_set = self.get_graph_data(next_address)
+				
+				num_statuses = len(status_obj_list)
+				print "Grabbed " + str(num_statuses) + " status updates!"
+				print "Begin processing..."
 				
 				return None
 				
