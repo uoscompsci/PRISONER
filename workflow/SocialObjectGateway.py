@@ -155,7 +155,8 @@ class SocialObjectsGateway(object):
 	
 		self.persistence.post_response(schema, response)	
 		
-	def GetObject(self, provider, object_type, payload, allow_many=False):
+	def GetObject(self, provider, object_type, payload, allow_many=False,
+	filter= None):
 		"""
 		Interface for retrieving an object from a service gateway.
 		Requests are verified against the privacy policy, and returned objects are sanitised as appropriate.
@@ -168,6 +169,13 @@ class SocialObjectsGateway(object):
 			dictionary of criteria of objects to return.
 			The format of this depends on the requirements and format expected by the service gateway.
 		:type payload: dict
+		:param filter:
+			optional filter expression - retrieves objects matching
+			criteria. Expression is run on all objects returned by
+			gateway. Uses syntax similar to lambda expressions, without prefix. x is used
+			to refer to each instance of an object.
+			eg. '"party" in x.tags'
+		:type filter: str
 		:returns: SocialObject -- sanitised for consumption by participation client
 		"""
 		headers = SARHeaders("GET", provider, object_type, payload)
@@ -198,6 +206,9 @@ class SocialObjectsGateway(object):
 		sanitised_set = []
 		if hasattr(response, "objects"): #is a Collection
 			new_coll = response
+			if filter:
+				response.objects = filter(response.objects,
+				eval("lambda x: %s" % filter))
 			for resp in response.objects:
 				resp.provider = provider
 				response_obj = SocialActivityResponse(resp, headers)
@@ -206,6 +217,10 @@ class SocialObjectsGateway(object):
 			new_coll.objects = sanitised_set
 			return new_coll
 		else:
+			if filter:
+				response_set = [response]
+				response = filter(response.objects, 
+				eval("lambda x: %s" % filter))
 			response.provider = provider
 			response_obj = SocialActivityResponse(response, headers)
 			sanitised_response = processor._sanitise_object_request(response_obj)
