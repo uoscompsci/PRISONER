@@ -5,7 +5,6 @@ import datetime	# Used for creating standardised date / time objects from Facebo
 import json	# Used for parsing responses from Facebook.
 import md5	# Used for generating unique state.
 import random	# Used for generating unique state.
-import re
 import urllib2	# Used for formatting URI params, reading web addresses, etc.
 import urllib	# Used for formatting URI params, reading web addresses, etc.
 import urlparse	# Used for reading Facebook access token.
@@ -218,14 +217,14 @@ class FacebookServiceGateway(ServiceGateway):
 				
 				# Parse the user's last update time.
 				updated_time_str = self.get_value(user_details, "updated_time")
-				timestamp = datetime.datetime.strptime(updated_time_str, "%Y-%m-%dT%H:%M:%S+0000")
+				timestamp = self.str_to_time(updated_time_str)
 				user.updatedTime = timestamp
 				
 				user.bio = self.get_value(user_details, "about")
 				
 				# Parse the user's birthday.
 				birthday_str = self.get_value(user_details, "birthday")
-				birthday_timestamp = datetime.datetime.strptime(birthday_str, "%m/%d/%Y")
+				birthday_timestamp = self.str_to_time(birthday_str)
 				user.birthday = birthday_timestamp
 				
 				# Get a list detailing the user's education history.
@@ -525,9 +524,43 @@ class FacebookServiceGateway(ServiceGateway):
 				
 				num_statuses = len(status_obj_list)
 				print "Grabbed " + str(num_statuses) + " status updates!"
-				print "Begin processing..."
+				print "<Processing>"
 				
-				return None
+				status_coll = SocialObjects.Collection()
+				status_coll.author = user_id
+				status_list = []
+				status_num = 1
+				
+				for status in status_obj_list:
+					# Set basic info.
+					this_status = Status()
+					this_status.author = user_id
+					this_status.content = status["message"]
+					this_status.id = status["id"]
+					this_status.published = self.str_to_time(status["updated_time"])
+					this_status.url = "https://www.facebook.com/" + user_id + "/posts/" + this_status.id
+					
+					print "Basic info for status " + this_status.id + " (# " + str(status_num) + ")"
+					print "- Author: " + this_status.author
+					print "- Content: " + this_status.content
+					print "- Pubished: " + str(this_status.published)
+					print "- Permalink: " + this_status.url
+					
+					# Get likes.
+					this_status.likes = self.parse_likes(status)
+					print "- " + str(len(this_status.likes)) + " people like this status"
+					
+					# Get comments.
+					this_status.comments = self.parse_comments(status)
+					print "- " + str(len(this_status.comments)) + " comments on this status"
+					
+					status_num += 1
+					status_list.append(this_status)
+				
+				status_coll.objects = status_list
+				
+				print "</Processing>"
+				return status_coll
 				
 			
 			except:
@@ -535,6 +568,131 @@ class FacebookServiceGateway(ServiceGateway):
 		
 		else:
 			raise NotImplementedException("Operation not supported.")
+	
+	
+	def parse_likes(self, facebook_obj):
+		"""
+		Internal function.
+		Takes a JSON Facebook object and returns a list of the people who've liked it.
+		
+		:param facebook_obj: The Facebook object to get likes for.
+		:type facebook_obj: Dict
+		:returns: A list of User objects.
+		"""
+		
+		# This object has likes.
+		if (facebook_obj.has_key("likes")):
+			likes = []
+			have_liked = facebook_obj["likes"]["data"]
+			
+			# Loop through likes and add them to our list.
+			for person in have_liked:
+				this_person = User()
+				this_person.id = person["id"]
+				this_person.displayName = person["name"]
+				likes.append(this_person)
+			
+			return likes
+		
+		# No likes, return an empty list.
+		else:
+			return []
+	
+	
+	def parse_comments(self, facebook_obj):
+		"""
+		Internal function.
+		Takes a JSON Facebook object and returns a list of the comments on it.
+		
+		:param facebook_obj: The Facebook object to get comments on.
+		:type facebook_obj: Dict
+		:returns: A list of Note objects.
+		"""
+		
+		# This object has comments.
+		if (facebook_obj.has_key("comments")):
+			comments = []
+			comments_on = facebook_obj["comments"]["data"]
+			
+			# Loop through comments and add them to our list.
+			for comment in comments_on:
+				this_comment = SocialObjects.Note()
+				this_comment.id = comment["id"]
+				this_comment.author = comment["from"]["id"]
+				this_comment.content = comment["message"]
+				this_comment.published = self.str_to_time(comment["created_time"])
+				this_comment.url = "https://www.facebook.com/me/posts/" + this_comment.id
+				comments.append(this_comment)
+			
+			return comments
+		
+		# No comments, return an empty list.
+		else:
+			return []
+		
+	
+	
+	def get_likes(self, object_id):
+		"""
+		Internal function.
+		Takes a Facebook object ID and returns a list of people who have Liked it.
+		
+		:param object_id: The object's ID on Facebook.
+		:type object_id: str
+		:returns: A list of User objects.
+		"""
+		
+		# Get initial likes.
+		likes = []
+		result_set = self.get_graph_data("/" + object_id + "/likes")
+		
+		# Loop through all likes and add them to our list.
+		while ((result_set.has_key("data")) and (len(result_set["data"]) > 0)):
+			while ((result_set.has_key("paging")) and (result_set["paging"].has_key("next"))):
+				have_liked = result_set["data"]
+				
+				for person in have_liked:
+					this_person = User()
+					this_person.id = person["id"]
+					this_person.displayName = person["name"]
+					likes.append(this_person)
+			
+				result_set = self.get_graph_data(result_set["paging"]["next"])
+		
+		return likes
+	
+	
+	def get_comments(self, object_id):
+		"""
+		Internal function.
+		Takes a Facebook object ID and returns a list of comments that people have made on it.
+		
+		:param object_id: The object's ID on Facebook.
+		:type object_id: str
+		:returns: A list of Note objects.
+		"""
+		
+		# Get initial likes.
+		comments = []
+		result_set = self.get_graph_data("/" + object_id + "/comments")
+		
+		# Loop through all comments and add them to our list.
+		while ((result_set.has_key("data")) and (len(result_set["data"]) > 0)):
+			while ((result_set.has_key("paging")) and (result_set["paging"].has_key("next"))):
+				comment_list = result_set["data"]
+				
+				for comment in comment_list:
+					this_comment = SocialObjects.Note()
+					this_comment.id = comment["id"]
+					this_comment.author = comment["from"]["id"]
+					this_comment.content = comment["message"]
+					this_comment.published = self.str_to_time(comment["created_time"])
+					this_comment.url = "https://www.facebook.com/me/posts/" + this_comment.id
+					comments.append(this_comment)
+				
+				result_set = self.get_graph_data(result_set["paging"]["next"])
+		
+		return comments
 	
 	
 	def get_graph_data(self, query):
@@ -592,7 +750,26 @@ class FacebookServiceGateway(ServiceGateway):
 		"""
 		
 		return json.loads(json_obj)
-			
+	
+	
+	def str_to_time(self, time):
+		"""
+		Internal function.
+		Used to convert Facebook's ISO-8601 date/time into a Date/Time object.
+		Also converts Facebook's MM/DD/YYYY format used for birthdays.
+		
+		:param time: The string to parse.
+		:type time: str
+		:returns: A Date/Time object.
+		"""
+		
+		# ISO 8601
+		if (len(time) > 10):
+			return datetime.datetime.strptime(time, "%Y-%m-%dT%H:%M:%S+0000")
+		
+		# MM/DD/YYYY
+		else:
+			return datetime.datetime.strptime(time, "%m/%d/%Y")
 		
 class User(SocialObjects.Person):
 	"""
@@ -1011,9 +1188,12 @@ if __name__ == "__main__":
 	print "Request authentication URI: " + response
 	
 	# Complete authentication. (Comment out the parsing of input params in complete_authentication() to use)
-	fb.complete_authentication("AQClg-2eEzYdYQ_PRlsYOnzmGgSlb7VgAxHSIjGKtOpUmYB-g_zTSjNvhrZD9m7zLqOGyxIVihFQKjwLRcMMZp14NOrl60DQBZvI9nRO0s358YVtnw5tvGoocadR_5NY1tYv9bfuGJUxIT4pt2v-TnAaeJp8X_lN5DG9gYlKTw0Yp3uE3ML2od-_zG8Oh8E88ts#_=_")
+	fb.complete_authentication("AQARnoOJST6jPEpYu4Lduyx4soRV6e6mVXozt4Pn-zr9nhZVp0ifzYPZxkQtXaRiXZtwBoWJZo9uiR7StQM3V_vFvm7kHaW3Av6Zk7Wrjh7nY_OZmNtAbhyzdw-MmUnFTgMRUgdep3cduUHDDn5sAj46pzz4HNR6UG8gFrpluC1i7dq5evh9j5yn3bmp4pcGilA#_=_")
 	
 	# Set up a person for testing.
+	# Me: 532336768
+	# Alex: 
+	# Ben: 100001427539048
 	person_1 = SocialObjects.Person()
 	person_1.id = "532336768"
 	
