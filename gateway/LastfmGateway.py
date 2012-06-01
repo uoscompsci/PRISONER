@@ -6,7 +6,7 @@ import pylast # wrapper for last.fm API
 class Track(SocialObjects.SocialObject):
 	def __init__(self):
 		super(Track,self).__init__()
-		self._track = None
+		self._title = None
 		self._artist = None	
 		self._provider = "Lastfm"
 		self._tag = None
@@ -24,12 +24,12 @@ class Track(SocialObjects.SocialObject):
 		else:
 			return None	
 	@property
-	def track(self):
+	def title(self):
 		""" The title of this track. """
 		return self._track
 
-	@track.setter
-	def track(self, value):
+	@title.setter
+	def title(self, value):
 		self._track = value
 
 	@property
@@ -49,6 +49,9 @@ class Track(SocialObjects.SocialObject):
 	@tag.setter
 	def tag(self, value):
 		self._tag = value
+
+	def __str__(self):
+		return "%s - %s" % (self.artist, self.title)
 
 class Playlist(SocialObjects.Collection):
 	def __init__(self):
@@ -106,13 +109,13 @@ class LastfmServiceGateway(ServiceGateway):
 			user = self.network.get_user(payload.id)
 			tracks = user.get_loved_tracks(limit=10)
 			track_coll = SocialObjects.Collection()
-			track_coll.author = user
+			track_coll.author = payload
 
 			track_set = []
 			for track in tracks:
 				this_track = Track()
-				this_track.author = user
-				this_track.artist = track.track.artist
+				this_track.author = payload
+				this_track.artist = track.track.artist.name
 				this_track.title = track.track.title
 				this_track.tag = track.track.get_top_tags(limit=1)[0].item.name
 				track_set.append(this_track)
