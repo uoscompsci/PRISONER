@@ -10,7 +10,19 @@ class Track(SocialObjects.SocialObject):
 		self._artist = None	
 		self._provider = "Lastfm"
 		self._tag = None
+		self._friendly_names = {
+		"track": "title",
+		"artist": "artist"}
 	
+	def get_friendly_name(self, attribute):
+		# TODO: move method out of class - dynamically attempt requested
+		# subclass (use intermediate method with provider, attribte
+		# signature and if fail then try on base
+		if attribute in self._friendly_names:
+			return self._friendly_names[attribute]
+
+		else:
+			return None	
 	@property
 	def track(self):
 		""" The title of this track. """

@@ -32,6 +32,38 @@ class SocialObject(object):
 		self._location = None
 		self._tags = None
 		self._provider = None
+	
+		self._friendly_names = {
+		"author": "author",
+		"content": "content",
+		"displayName": "full name",
+		"id": "unique identifier",
+		"published": "time of publication",
+		"summary": "brief summary",
+		"updated": "last updated time",
+		"url": "permanent link online",
+		"location": "location of creation",
+		"tags": "tags",
+		"provider": "service where originally published"}
+
+	def get_friendly_name(self, attribute):
+		""" All Social Objects should include a dictionary of friendly
+		names - mapping their attributes to human-readable terms. Friendly names may
+		consist of several words, and must make sense in the following sentence
+		construction:
+
+		"This experiment may retrieve this social object's <friendly
+		name>"
+
+		Subclassed objects should provide their own self._friendly_names
+		dictionary with mappings for each additional attribute it provides, or where it
+		has semantically altered a base attribute. PRISONER will attempt to return a
+		friendly name from the most specialised dictionary where possible
+
+		:param attribute: Attribute to get friendly name of
+		:type attribute: str
+		"""
+		return self._friendly_names[attribute]	
 
 	def transform_author(self, transformation, level):
 		""" Applies sanitising transformations to the author attribute.
