@@ -9,7 +9,15 @@
 	<policy for="Lastfm:Track">
 		<attributes>
 		<attribute type="artist">
-			<attribute-policy allow="retrieve" />
+			<attribute-policy allow="retrieve">
+				<attribute-criteria>
+					<attribute-match match="artist"
+					on_object="literal:Cajun Dance Party" />
+				</attribute-criteria>
+				<transformations>
+					<transform type="reduce" level="initials" />
+				</transformations>
+			</attribute-policy>
 		</attribute>
 		<attribute type="title">
 			<attribute-policy allow="retrieve" />

@@ -50,8 +50,16 @@ class Track(SocialObjects.SocialObject):
 	def tag(self, value):
 		self._tag = value
 
+
 	def __str__(self):
 		return "%s - %s" % (self.artist, self.title)
+
+
+	def transform_artist(self, transformation, level):
+		""" Applies anonymising transformation to the artist attribute.
+		Uses the base_transform_name transformation """
+		self.artist = self.base_transform_name(self.artist, transformation,
+		level)
 
 class Playlist(SocialObjects.Collection):
 	def __init__(self):
