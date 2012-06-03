@@ -499,7 +499,6 @@ class FacebookServiceGateway(ServiceGateway):
 			try:
 				# Get user ID and query Facebook for their info.
 				user_id = payload.id
-				print "GET Statuses: " + user_id
 				
 				# Get the initial result set.
 				limit = 100
@@ -508,10 +507,10 @@ class FacebookServiceGateway(ServiceGateway):
 				result_set_address = self.graph_uri + "/me/statuses?limit=" + str(limit) + "&offset=" + str(offset) + "&access_token=" + self.access_token
 				result_set = self.get_graph_data(result_set_address)
 				
+				# So long as there's data, parse it.
 				while ((result_set.has_key("data")) and (len(result_set["data"]) > 0)):
 					# Get status updates.
 					this_data = result_set["data"]
-					num_updates = len(this_data)
 					
 					# Add each update to our list.
 					for item in this_data:
@@ -522,10 +521,6 @@ class FacebookServiceGateway(ServiceGateway):
 					next_address = self.graph_uri + "/me/statuses?limit=" + str(limit) + "&offset=" + str(offset) + "&access_token=" + self.access_token
 					result_set = self.get_graph_data(next_address)
 				
-				num_statuses = len(status_obj_list)
-				print "Grabbed " + str(num_statuses) + " status updates!"
-				print "<Processing>"
-				
 				status_coll = SocialObjects.Collection()
 				status_coll.author = user_id
 				status_list = []
@@ -535,31 +530,51 @@ class FacebookServiceGateway(ServiceGateway):
 					# Set basic info.
 					this_status = Status()
 					this_status.author = user_id
-					this_status.content = status["message"]
-					this_status.id = status["id"]
-					this_status.published = self.str_to_time(status["updated_time"])
+					this_status.content = self.get_value(status, "message")
+					this_status.id = self.get_value(status, "id")
+					this_status.published = self.str_to_time(self.get_value(status, "updated_time"))
 					this_status.url = "https://www.facebook.com/" + user_id + "/posts/" + this_status.id
 					
-					print "Basic info for status " + this_status.id + " (# " + str(status_num) + ")"
-					print "- Author: " + this_status.author
-					print "- Content: " + this_status.content
-					print "- Pubished: " + str(this_status.published)
-					print "- Permalink: " + this_status.url
-					
-					# Get likes.
+					# Parse likes. (Initial limit of 25 per status)
 					this_status.likes = self.parse_likes(status)
-					print "- " + str(len(this_status.likes)) + " people like this status"
 					
-					# Get comments.
+					# Parse comments. (Initial limit of 25 per status)
 					this_status.comments = self.parse_comments(status)
-					print "- " + str(len(this_status.comments)) + " comments on this status"
 					
-					status_num += 1
+					# Get location.
+					if (status.has_key("place")):
+						place = SocialObjects.Place()
+						place.id = status["place"]["id"]
+						place.displayName = status["place"]["name"]
+						
+						# Get additional location info if it's present.
+						if (status["place"].has_key("location")):
+							latitude = str(status["place"]["location"]["latitude"])
+							longitude = str(status["place"]["location"]["longitude"])
+							
+							# Format latitude if necessary.
+							if (not latitude.startswith("-")):
+								latitude = "+" + latitude
+							
+							# Format longitude if necessary.
+							if (not longitude.startswith("-")):
+								longitude = "+" + longitude
+							
+							place.position = latitude + longitude + "/"
+						
+						# Get address info.
+						city = self.get_value(status["place"]["location"], "city")
+						country = self.get_value(status["place"]["location"], "country")
+						place.address = place.displayName + ", " + city + ", " + country
+						this_status.location = place
+					
+					# Add status to our list of statuses.
 					status_list.append(this_status)
 				
+				# Add the status list to our collection.
 				status_coll.objects = status_list
 				
-				print "</Processing>"
+				# Return statuses.
 				return status_coll
 				
 			
@@ -1032,7 +1047,7 @@ class User(SocialObjects.Person):
 		"""
 		
 		# Start off the string representation...
-		str_rep =  "<User>"
+		str_rep =  "<User>" + "\n"
 		
 		# Single value.
 		
@@ -1122,14 +1137,8 @@ class Status(SocialObjects.Note):
 	def __init__(self):
 		super(Status, self).__init__()
 		self._provider = "Facebook"	# String
-		self._place = None	# Place
 		self._likes = None	# Collection of users
 		self._comments = None	# Collection of comments.
-	
-	@property
-	def place(self):
-		""" The location this status was tagged at. """
-		return self._place
 	
 	
 	@property
@@ -1142,11 +1151,6 @@ class Status(SocialObjects.Note):
 	def comments(self):
 		""" The comments on this status update. """
 		return self._comments
-	
-	
-	@place.setter
-	def place(self, value):
-		self._place = value
 	
 	
 	@likes.setter
@@ -1229,9 +1233,8 @@ if __name__ == "__main__":
 	
 	# Test "Get Statuses."
 	statuses = fb.Statuses("GET", person_1)
+	print len(statuses.objects)
 	
 	# End.
 	print "<End tests>"
-
-	
 	
