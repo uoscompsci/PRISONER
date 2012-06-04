@@ -584,6 +584,61 @@ class FacebookServiceGateway(ServiceGateway):
 		else:
 			raise NotImplementedException("Operation not supported.")
 	
+	def Friends(self, operation, payload):
+		"""
+		Performs operations on a user's friends.
+		Takes a Person object and returns a collection of Person objects representing friends.
+		Only supports GET operations. Can't make new friends.
+		
+		:param operation: The operation to perform. (GET)
+		:type operation: str
+		:param payload: A person whose ID is either a Facebook UID or username.
+		:type payload: Person
+		:returns: A collection of Person objects.
+		"""
+		
+		if (operation == "GET"):
+			try:
+				# Get user ID and query Facebook for their friends.
+				user_id = payload.id
+				result_set = self.get_graph_data("/" + user_id + "/friends")
+				friend_coll = SocialObjects.Collection()
+				friend_obj_list = []
+				
+				# While there is still data available...
+				while ((result_set.has_key("data")) and (len(result_set["data"]) > 0)):
+					# Grab the current batch of friends.
+					this_data = result_set["data"]
+					
+					for friend in this_data:
+						# Get basic info for this friend.
+						this_friend = SocialObjects.Person()
+						this_friend.id = self.get_value(friend, "id")
+						this_friend.displayName = self.get_value(friend, "name")
+						
+						# Compose profile pic URI.
+						profile_pic = SocialObjects.Image()
+						profile_pic.fullImage = self.graph_uri + "/" + this_friend.id + "/picture?type=normal" + "&access_token=" + self.access_token
+						profile_pic.author = this_friend.id
+						this_friend.image = profile_pic
+						
+						# Add friend to list.
+						friend_obj_list.append(this_friend)
+					
+					# Get next set of results.
+					next_address = result_set["paging"]["next"]
+					result_set = self.get_graph_data(next_address)
+				
+				# Add friend list to collection and return.
+				friend_coll.objects = friend_obj_list
+				return friend_coll
+				
+			except:
+				return SocialObjects.Collection()
+		
+		else:
+			raise NotImplementedException("Operation not supported.")
+	
 	
 	def parse_likes(self, facebook_obj):
 		"""
@@ -1232,8 +1287,12 @@ if __name__ == "__main__":
 		#print "- " + book
 	
 	# Test "Get Statuses."
-	statuses = fb.Statuses("GET", person_1)
-	print len(statuses.objects)
+	#statuses = fb.Statuses("GET", person_1)
+	#print len(statuses.objects)
+	
+	# Test "Get Friends."
+	friends = fb.Friends("GET", person_1)
+	print len(friends.objects)
 	
 	# End.
 	print "<End tests>"
