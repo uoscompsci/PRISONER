@@ -128,43 +128,6 @@ class FacebookServiceGateway(ServiceGateway):
 		return False
 	
 	
-	def Image(self, operation, payload):
-		"""
-		Dummy operation (At present) to get a user's Facebook profile picture.
-		
-		:param operation: The operation to perform. (GET)
-		:type operation: str
-		:param payload: Provide a Person object, to return that user's profile image.
-		:type payload: SocialObject
-		:returns: An image object complete with author data and so on.
-		"""
-
-		if (operation == "GET"):
-			try:
-				user_id = payload.id
-				
-				# Get information about the image's author.
-				author_obj = SocialObjects.Person()
-				author_details = self.get_graph_data("/" + user_id)
-				author_obj.id = author_details["id"]
-				author_obj.displayName = author_details["name"]
-			
-				# Get the user's profile picture. (URL)
-				img_object = SocialObjects.Image()
-				user_image = self.graph_uri + "/" + user_id + "/picture?type=normal" + "&access_token=" + self.access_token
-				img_object.fullImage = user_image
-				
-				# Add any additional information to the image object.
-				img_object.author = author_obj
-				
-				return img_object
-			
-			except:
-				return SocialObjects.Image()
-		else:
-			raise NotImplementedException("Operation not supported")
-	
-	
 	def User(self, operation, payload):
 		"""
 		Performs operations on a User object.
@@ -375,9 +338,8 @@ class FacebookServiceGateway(ServiceGateway):
 				bands = []
 				
 				for band in band_obj_list:
-					bands.append(band["name"])
+					bands.append(self.get_value(band, "name"))
 				
-				print "Number of favourite bands for user " + user_id + ": " + str(len(bands))
 				return sorted(bands)
 				
 			
@@ -422,9 +384,8 @@ class FacebookServiceGateway(ServiceGateway):
 				movies = []
 				
 				for movie in movie_obj_list:
-					movies.append(movie["name"])
+					movies.append(self.get_value(movie, "name"))
 				
-				print "Number of movies for user " + user_id + ": " + str(len(movies))
 				return sorted(movies)
 				
 			
@@ -469,9 +430,9 @@ class FacebookServiceGateway(ServiceGateway):
 				books = []
 				
 				for book in book_obj_list:
-					books.append(book["name"])
+					books.append(self.get_value(book, "name"))
 				
-				print "Number of books for user " + user_id + ": " + str(len(books))
+				# Return books.
 				return sorted(books)
 				
 			
@@ -541,32 +502,8 @@ class FacebookServiceGateway(ServiceGateway):
 					# Parse comments. (Initial limit of 25 per status)
 					this_status.comments = self.parse_comments(status)
 					
-					# Get location.
-					if (status.has_key("place")):
-						place = SocialObjects.Place()
-						place.id = status["place"]["id"]
-						place.displayName = status["place"]["name"]
-						
-						# Get additional location info if it's present.
-						if (status["place"].has_key("location")):
-							latitude = str(status["place"]["location"]["latitude"])
-							longitude = str(status["place"]["location"]["longitude"])
-							
-							# Format latitude if necessary.
-							if (not latitude.startswith("-")):
-								latitude = "+" + latitude
-							
-							# Format longitude if necessary.
-							if (not longitude.startswith("-")):
-								longitude = "+" + longitude
-							
-							place.position = latitude + longitude + "/"
-						
-						# Get address info.
-						city = self.get_value(status["place"]["location"], "city")
-						country = self.get_value(status["place"]["location"], "country")
-						place.address = place.displayName + ", " + city + ", " + country
-						this_status.location = place
+					# Parse location.
+					this_status.location = self.parse_location(status)
 					
 					# Add status to our list of statuses.
 					status_list.append(this_status)
@@ -583,6 +520,7 @@ class FacebookServiceGateway(ServiceGateway):
 		
 		else:
 			raise NotImplementedException("Operation not supported.")
+	
 	
 	def Friends(self, operation, payload):
 		"""
@@ -640,6 +578,193 @@ class FacebookServiceGateway(ServiceGateway):
 			raise NotImplementedException("Operation not supported.")
 	
 	
+	def Albums(self, operation, payload):
+		"""
+		Performs operations on a user's photo albums.
+		Uses the ID attribute of the payload to get / post associated albums.
+		Currently only supports GET operations.
+		
+		:param operation: The operation to perform. (GET)
+		:type operation: str
+		:param payload: A person whose ID is either a Facebook UID or username.
+		:type payload: Person
+		:returns: A collection of Album objects.
+		"""
+		
+		if (operation == "GET"):
+			try:
+				# Get the object's ID from payload and query for albums.
+				obj_id = payload.id
+				result_set = self.get_graph_data("/" + obj_id + "/albums")
+				album_coll = Albums()
+				album_obj_list = []
+				
+				# While there is still data available...
+				while ((result_set.has_key("data")) and (len(result_set["data"]) > 0)):
+					# Grab the current batch of albums.
+					this_data = result_set["data"]
+					
+					for album in this_data:
+						# Set basic album info.
+						this_album = Album()
+						this_album.id = self.get_value(album, "id")
+						this_album.displayName = self.get_value(album, "name")
+						this_album.author = self.get_value(album["from"], "id")
+						this_album.published = self.str_to_time(self.get_value(album, "created_time"))
+						this_album.summary = self.get_value(album, "description")
+						this_album.updated = self.str_to_time(self.get_value(album, "updated_time"))
+						this_album.url = self.get_value(album, "link")
+						
+						# Parse location info.
+						this_album.location = self.parse_location(album)
+						
+						# Cover photo.
+						cover_photo = SocialObjects.Image()
+						cover_photo.author = this_album.author
+						cover_id = self.get_value(album, "cover_photo")
+						
+						# Only compose a cover photo if one exists.
+						if (cover_id):
+							cover_photo.fullImage = self.graph_uri + "/" + cover_id + "/picture?type=normal" + "&access_token=" + self.access_token
+						
+						this_album.coverPhoto = cover_photo
+						
+						# Set additional info.
+						this_album.privacy = self.get_value(album, "privacy")
+						this_album.count = self.get_value(album, "count")
+						this_album.albumType = self.get_value(album, "type")
+						
+						# Parse likes.
+						likes_list = self.parse_likes(album)
+						album_likes = SocialObjects.Collection()
+						album_likes.objects = likes_list
+						this_album.likes = album_likes
+						
+						# Parse comments.
+						comments_list = self.parse_comments(album)
+						album_comments = SocialObjects.Collection()
+						album_comments.objects = comments_list
+						this_album.comments = album_comments
+						
+						album_obj_list.append(this_album)
+						
+					
+					# Get next set of results.
+					next_address = result_set["paging"]["next"]
+					result_set = self.get_graph_data(next_address)
+				
+				album_coll.objects = album_obj_list
+				return album_coll
+				
+			except:
+				return Albums()
+		
+		else:
+			raise NotImplementedException("Operation not supported.")
+	
+	
+	def Images(self, operation, payload):
+		"""
+		Performs operations on images. Takes a social object as a payload and either gets or posts
+		associated photos / images.
+		Currently only supports GET operations.
+		
+		:param operation: The operation to perform. (GET)
+		:type operation: str
+		:param payload: Provide an Album to get images in that album.
+		:type payload: SocialObject
+		:returns: A collection of images.
+		"""
+
+		if (operation == "GET"):
+			try:
+				# Get the payload object's ID.
+				obj_id = str(payload.id)
+				result_set = self.get_graph_data("/" + obj_id + "/photos")
+				photo_obj_list = []
+				
+				# While there is still data available...
+				while ((result_set.has_key("data")) and (len(result_set["data"]) > 0)):
+					# Grab the current batch of photos.
+					this_data = result_set["data"]
+					
+					for photo in this_data:
+						# Create photo object and set basic info.
+						this_photo = Photo()
+						this_photo.id = self.get_value(photo, "id")
+						this_photo.author = self.get_value(photo["from"], "id")
+						this_photo.displayName = self.get_value(photo, "name")
+						this_photo.published = self.str_to_time(self.get_value(photo, "created_time"))
+						this_photo.updated = self.str_to_time(self.get_value(photo, "updated_time"))
+						this_photo.url = self.get_value(photo, "link")
+						this_photo.position = self.get_value(photo, "position")
+						
+						# Get image info.
+						img_normal = SocialObjects.Image()
+						img_normal.id = this_photo.id
+						img_normal.author = this_photo.author
+						img_normal.fullImage = self.get_value(photo["images"][0], "source")
+						this_photo.image = img_normal
+						
+						# Image dimensions.
+						this_photo.width = self.get_value(photo["images"][0], "width")
+						this_photo.height = self.get_value(photo["images"][0], "height")
+						
+						# Thumbnail.
+						img_small = SocialObjects.Image()
+						img_small.id = this_photo.id
+						img_small.author = this_photo.author
+						img_small.fullImage = self.get_value(photo, "picture")
+						this_photo.thumbnail = img_small
+						
+						# Parse location info.
+						this_photo.location = self.parse_location(photo)
+						
+						# Parse likes.
+						likes_list = self.parse_likes(photo)
+						photo_likes_coll = SocialObjects.Collection()
+						photo_likes_coll.objects = likes_list
+						this_photo.likes = photo_likes_coll
+						
+						# Parse comments.
+						comments_list = self.parse_comments(photo)
+						photo_comments_coll = SocialObjects.Collection()
+						photo_comments_coll.objects = comments_list
+						this_photo.comments = photo_comments_coll
+						
+						# Parse tags.
+						tags_list = self.parse_tags(photo)
+						photo_tags_coll = SocialObjects.Collection()
+						photo_tags_coll.objects = tags_list
+						this_photo.tags = photo_tags_coll
+						
+						# Add photo to list.
+						photo_obj_list.append(this_photo)
+					
+					# Get next set of results.
+					next_address = result_set["paging"]["next"]
+					result_set = self.get_graph_data(next_address)
+				
+				# Create a collection object for the photos.
+				photo_album = SocialObjects.Collection()
+				photo_album.objects = photo_obj_list
+				
+				# If the payload was a photo album, add the photos into it.
+				if (type(payload) is Album):
+					payload.photos = photo_album
+					return payload
+				
+				# Otherwise return the collection object.
+				else:
+					return photo_album
+			
+			except:
+				return SocialObjects.Collection()
+		
+		else:
+			raise NotImplementedException("Operation not supported")
+	
+	
 	def parse_likes(self, facebook_obj):
 		"""
 		Internal function.
@@ -658,8 +783,8 @@ class FacebookServiceGateway(ServiceGateway):
 			# Loop through likes and add them to our list.
 			for person in have_liked:
 				this_person = User()
-				this_person.id = person["id"]
-				this_person.displayName = person["name"]
+				this_person.id = self.get_value(person, "id")
+				this_person.displayName = self.get_value(person, "name")
 				likes.append(this_person)
 			
 			return likes
@@ -687,10 +812,10 @@ class FacebookServiceGateway(ServiceGateway):
 			# Loop through comments and add them to our list.
 			for comment in comments_on:
 				this_comment = SocialObjects.Note()
-				this_comment.id = comment["id"]
-				this_comment.author = comment["from"]["id"]
-				this_comment.content = comment["message"]
-				this_comment.published = self.str_to_time(comment["created_time"])
+				this_comment.id = self.get_value(comment, "id")
+				this_comment.author = self.get_value(comment["from"], "id")
+				this_comment.content = self.get_value(comment, "message")
+				this_comment.published = self.str_to_time(self.get_value(comment, "created_time"))
 				this_comment.url = "https://www.facebook.com/me/posts/" + this_comment.id
 				comments.append(this_comment)
 			
@@ -699,7 +824,81 @@ class FacebookServiceGateway(ServiceGateway):
 		# No comments, return an empty list.
 		else:
 			return []
+	
+	
+	def parse_location(self, facebook_obj):
+		"""
+		Internal function.
+		Takes a JSON Facebook object and returns a Place object representing its location.
 		
+		:param facebook_obj: The Facebook object to get the location of.
+		:type facebook_obj: Dict
+		:returns: A Place object.
+		"""
+		
+		# Get location.
+		if (facebook_obj.has_key("place")):
+			place = SocialObjects.Place()
+			place.id = self.get_value(facebook_obj["place"], "id")
+			place.displayName = self.get_value(facebook_obj["place"], "name")
+						
+			# Get additional location info if it's present.
+			if (facebook_obj["place"].has_key("location")):
+				latitude = str(self.get_value(facebook_obj["place"]["location"], "latitude"))
+				longitude = str(self.get_value(facebook_obj["place"]["location"], "longitude"))
+							
+				# Format latitude if necessary.
+				if (not latitude.startswith("-")):
+					latitude = "+" + latitude
+							
+				# Format longitude if necessary.
+				if (not longitude.startswith("-")):
+					longitude = "+" + longitude
+							
+				place.position = latitude + longitude + "/"
+						
+			# Get address info.
+			if ((facebook_obj["place"]["location"].has_key("city")) and (facebook_obj["place"]["location"].has_key("country"))):
+				city = self.get_value(facebook_obj["place"]["location"], "city")
+				country = self.get_value(facebook_obj["place"]["location"], "country")
+				place.address = place.displayName + ", " + city + ", " + country
+			
+			# Return place object.
+			return place
+		
+		# Return empty place.
+		else:
+			return SocialObjects.Place()
+	
+	
+	def parse_tags(self, facebook_obj):
+		"""
+		Internal function.
+		Takes a JSON Facebook object and returns a list of the objects that have been tagged
+		in it. (Usually people)
+		
+		:param facebook_obj: The Facebook object to get tags for.
+		:type facebook_obj: Dict
+		:returns: A list of User objects.
+		"""
+		
+		# This object has likes.
+		if (facebook_obj.has_key("tags")):
+			tags = []
+			are_tagged = facebook_obj["tags"]["data"]
+			
+			# Loop through the tags and add them to our list.
+			for person in are_tagged:
+				this_person = User()
+				this_person.id = self.get_value(person, "id")
+				this_person.displayName = self.get_value(person, "name")
+				tags.append(this_person)
+			
+			return tags
+		
+		# No likes, return an empty list.
+		else:
+			return []
 	
 	
 	def get_likes(self, object_id):
@@ -1105,7 +1304,6 @@ class User(SocialObjects.Person):
 		str_rep =  "<User>" + "\n"
 		
 		# Single value.
-		
 		str_rep += "- ID: " + check_none(self.id) + "\n"
 		str_rep += "- Display Name: " + check_none(self.displayName) + "\n"
 		str_rep += "- Profile Picture: " + check_none(self.image.fullImage) + "\n"
@@ -1193,7 +1391,7 @@ class Status(SocialObjects.Note):
 		super(Status, self).__init__()
 		self._provider = "Facebook"	# String
 		self._likes = None	# Collection of users
-		self._comments = None	# Collection of comments.
+		self._comments = None	# Collection of comments
 	
 	
 	@property
@@ -1206,6 +1404,203 @@ class Status(SocialObjects.Note):
 	def comments(self):
 		""" The comments on this status update. """
 		return self._comments
+	
+	
+	@likes.setter
+	def likes(self, value):
+		self._likes = value
+	
+	
+	@comments.setter
+	def comments(self, value):
+		self._comments = value
+
+
+class Album(SocialObjects.SocialObject):
+	def __init__(self):
+		super(Album, self).__init__()
+		self._provider = "Facebook"	# String
+		self._coverPhoto = None	# Image
+		self._privacy = None	# String
+		self._count = None	# Integer
+		self._albumType = None	# String
+		self._photos = None	# Collection of photos
+		self._likes = None	# Collection of users
+		self._comments = None	# Collection of comments
+		
+		
+	@property
+	def coverPhoto(self):
+		""" This album's cover photo. """
+		return self._coverPhoto
+	
+	
+	@property
+	def privacy(self):
+		""" The privacy setting for this album. """
+		return self._privacy
+	
+	
+	@property
+	def count(self):
+		""" The number of photos in this album. """
+		return self._count
+	
+	
+	@property
+	def albumType(self):
+		""" The album's type. (Eg: Wall, Mobile) """
+		return self._albumType
+	
+	
+	@property
+	def photos(self):
+		""" The images in the album. """
+		return self._photos
+	
+	
+	@property
+	def likes(self):
+		""" The people who've liked this album. """
+		return self._likes
+	
+	
+	@property
+	def comments(self):
+		""" The comments on this photo album. """
+		return self._comments
+	
+	
+	@coverPhoto.setter
+	def coverPhoto(self, value):
+		self._coverPhoto = value
+	
+	
+	@privacy.setter
+	def privacy(self, value):
+		self._privacy = value
+	
+	
+	@count.setter
+	def count(self, value):
+		self._count = value
+	
+	
+	@albumType.setter
+	def albumType(self, value):
+		self._albumType = value
+	
+	
+	@photos.setter
+	def photos(self, value):
+		self._photos = value
+	
+	
+	@likes.setter
+	def likes(self, value):
+		self._likes = value
+	
+	
+	@comments.setter
+	def comments(self, value):
+		self._comments = value
+
+
+class Albums(SocialObjects.Collection):
+	def __init__(self):
+		pass
+
+
+class Photo(SocialObjects.Image):
+	def __init__(self):
+		super(Photo, self).__init__()
+		self._provider = "Facebook"	# String
+		self._position = None	# Integer
+		self._image = None	# Image
+		self._thumbnail = None	# Image
+		self._width = None	# Integer
+		self._height = None	# Integer
+		self._tags = None	# Collection of users
+		self._likes = None	# Collection of users
+		self._comments = None	# Collection of comments
+		
+		
+	@property
+	def position(self):
+		""" Position of this photo in its album. """
+		return self._position
+	
+	
+	@property
+	def image(self):
+		""" The full size version of this photo. """
+		return self._image
+	
+	
+	@property
+	def thumbnail(self):
+		""" The thumbnail image for this photo. """
+		return self._thumbnail
+	
+	
+	@property
+	def width(self):
+		""" The width of this photo. (Pixels) """
+		return self._width
+	
+	
+	@property
+	def height(self):
+		""" The height of this photo. (Pixels) """
+		return self._height
+	
+	
+	@property
+	def tags(self):
+		""" The people who are tagged in this photo. """
+		return self._tags
+	
+	
+	@property
+	def likes(self):
+		""" The people who've liked this photo. """
+		return self._likes
+	
+	
+	@property
+	def comments(self):
+		""" The comments on this photo. """
+		return self._comments
+	
+	
+	@position.setter
+	def position(self, value):
+		self._position = value
+	
+	
+	@image.setter
+	def image(self, value):
+		self._image = value
+	
+	
+	@thumbnail.setter
+	def thumbnail(self, value):
+		self._thumbnail = value
+	
+	
+	@width.setter
+	def width(self, value):
+		self._width = value
+	
+	
+	@height.setter
+	def height(self, value):
+		self._height = value
+	
+	
+	@tags.setter
+	def tags(self, value):
+		self._tags = value
 	
 	
 	@likes.setter
@@ -1256,13 +1651,6 @@ if __name__ == "__main__":
 	person_1 = SocialObjects.Person()
 	person_1.id = "532336768"
 	
-	# Test "Get Image."
-	img_obj = fb.Image("GET", person_1)
-	print "Grabbed image from Facebook:"
-	print "- Full image: " + img_obj.fullImage
-	print "- Author ID: " + img_obj.author.id
-	print "- Author name: " + img_obj.author.displayName
-	
 	# Test "Get Person."
 	person_obj = fb.User("GET", person_1)
 	print "Grabbed user from Facebook:"
@@ -1292,7 +1680,20 @@ if __name__ == "__main__":
 	
 	# Test "Get Friends."
 	friends = fb.Friends("GET", person_1)
-	print len(friends.objects)
+	print "Grabbed friends list from Facebook"
+	print "- From user: " + person_1.id
+	print "- Number of friends: " + str(len(friends.objects))
+	
+	# Test "Get Albums."
+	albums = fb.Albums("GET", person_1)
+	print "Grabbed albums from Facebook:"
+	print "- From user: " + person_1.id
+	print "- Number of albums: " + str(len(albums.objects))
+	
+	# Test "Get Images."
+	album_1 = Album()
+	album_1.id = 433269826768
+	images = fb.Images("GET", album_1)
 	
 	# End.
 	print "<End tests>"
