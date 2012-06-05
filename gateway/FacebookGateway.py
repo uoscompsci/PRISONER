@@ -1,7 +1,6 @@
 from ServiceGateway import ServiceGateway
 import SocialObjects
 
-
 import datetime	# Used for creating standardised date / time objects from Facebook's attribute values.
 import json	# Used for parsing responses from Facebook.
 import md5	# Used for generating unique state.
@@ -20,7 +19,7 @@ class FacebookServiceGateway(ServiceGateway):
 	
 	def __init__(self, access_token=None):
 		"""
-		Initialises itself with PRISONER's App ID and App Secret. (Might be unnecessary?)
+		Initialises itself with PRISONER's App ID and App Secret.
 		"""
 		
 		# Gateway details.
@@ -137,9 +136,9 @@ class FacebookServiceGateway(ServiceGateway):
 		
 		:param operation: The operation to perform. (GET)
 		:type operation: str
-		:param payload: A person whose ID is either a Facebook UID or username.
+		:param payload: A Person() or User() object whose ID is either a Facebook UID or username.
 		:type payload: SocialObject
-		:returns: A person object.
+		:returns: A User() object with all available attributes populated.
 		"""
 		
 		if (operation == "GET"):
@@ -308,14 +307,13 @@ class FacebookServiceGateway(ServiceGateway):
 	def Music(self, operation, payload):
 		"""
 		Performs operations relating to people's musical tastes.
-		Takes a Person object and returns a list of bands that that person likes. (In String form)
-		Currently only supports GET operations.
+		Currently only supports GET operations, so we can just get the bands a person / user likes.
 		
 		:param operation: The operation to perform. (GET)
 		:type operation: str
-		:param payload: A person whose ID is either a Facebook UID or username.
+		:param payload: A User() or Person() whose ID is either a Facebook UID or username.
 		:type payload: SocialObject
-		:returns: A list of strings.
+		:returns: A list of the bands this person likes.
 		"""
 		
 		if (operation == "GET"):
@@ -341,6 +339,7 @@ class FacebookServiceGateway(ServiceGateway):
 				for band in band_obj_list:
 					bands.append(self.get_value(band, "name"))
 				
+				# Return a sorted list.
 				return sorted(bands)
 				
 			
@@ -354,14 +353,13 @@ class FacebookServiceGateway(ServiceGateway):
 	def Movies(self, operation, payload):
 		"""
 		Performs operations relating to people's taste in films.
-		Takes a Person object and returns a list of movies that that person likes. (In String form)
-		Currently only supports GET operations.
+		Currently only supports GET operations. This lets us retrieve the movies / films people like.
 		
 		:param operation: The operation to perform. (GET)
 		:type operation: str
-		:param payload: A person whose ID is either a Facebook UID or username.
+		:param payload: A User() or Person() whose ID is either a Facebook UID or username.
 		:type payload: SocialObject
-		:returns: A list of strings.
+		:returns: A list of the movies this person likes.
 		"""
 		
 		if (operation == "GET"):
@@ -387,6 +385,7 @@ class FacebookServiceGateway(ServiceGateway):
 				for movie in movie_obj_list:
 					movies.append(self.get_value(movie, "name"))
 				
+				# Return a sorted list.
 				return sorted(movies)
 				
 			
@@ -400,14 +399,13 @@ class FacebookServiceGateway(ServiceGateway):
 	def Books(self, operation, payload):
 		"""
 		Performs operations relating to people's taste in books and literature.
-		Takes a Person object and returns a list of books that that person likes. (In String form)
-		Currently only supports GET operations.
+		Currently only supports GET operations. This lets us get the books / authors people are into.
 		
 		:param operation: The operation to perform. (GET)
 		:type operation: str
-		:param payload: A person whose ID is either a Facebook UID or username.
+		:param payload: A User() or Person() whose ID is either a Facebook UID or username.
 		:type payload: SocialObject
-		:returns: A list of strings.
+		:returns: A list of the books this person likes.
 		"""
 		
 		if (operation == "GET"):
@@ -433,7 +431,7 @@ class FacebookServiceGateway(ServiceGateway):
 				for book in book_obj_list:
 					books.append(self.get_value(book, "name"))
 				
-				# Return books.
+				# Return a sorted list.
 				return sorted(books)
 				
 			
@@ -447,14 +445,13 @@ class FacebookServiceGateway(ServiceGateway):
 	def Statuses(self, operation, payload):
 		"""
 		Performs operations on a user's status updates.
-		Takes a Person object and returns a collection of Status objects. (All of them)
-		Currently only supports GET operations.
+		Currently only supports GET operations. This lets us retrieve a user's entire backlog of status updates.
 		
 		:param operation: The operation to perform. (GET)
 		:type operation: str
-		:param payload: A person whose ID is either a Facebook UID or username.
+		:param payload: A User() or Person() whose ID is either a Facebook UID or username.
 		:type payload: SocialObject
-		:returns: A collection of Status objects.
+		:returns: A collection representing this person's backlog of status updates.
 		"""
 		
 		if (operation == "GET"):
@@ -483,11 +480,12 @@ class FacebookServiceGateway(ServiceGateway):
 					next_address = self.graph_uri + "/me/statuses?limit=" + str(limit) + "&offset=" + str(offset) + "&access_token=" + self.access_token
 					result_set = self.get_graph_data(next_address)
 				
+				# Create collection object and list to hold status updates.
 				status_coll = StatusList()
 				status_coll.author = user_id
 				status_list = []
-				status_num = 1
 				
+				# For each status we retrieved...
 				for status in status_obj_list:
 					# Set basic info.
 					this_status = Status()
@@ -530,14 +528,13 @@ class FacebookServiceGateway(ServiceGateway):
 	def Friends(self, operation, payload):
 		"""
 		Performs operations on a user's friends.
-		Takes a Person object and returns a collection of Person objects representing friends.
-		Only supports GET operations. Can't make new friends.
+		Only supports GET operations. This lets us retrieve someone's entire friends list.
 		
 		:param operation: The operation to perform. (GET)
 		:type operation: str
-		:param payload: A person whose ID is either a Facebook UID or username.
+		:param payload: A User() or Person() whose ID is either a Facebook UID or username.
 		:type payload: Person
-		:returns: A collection of Person objects.
+		:returns: A collection representing this person's friends list.
 		"""
 		
 		if (operation == "GET"):
@@ -553,13 +550,14 @@ class FacebookServiceGateway(ServiceGateway):
 					# Grab the current batch of friends.
 					this_data = result_set["data"]
 					
+					# For each friend in this batch...
 					for friend in this_data:
 						# Get basic info for this friend.
 						this_friend = User()
 						this_friend.id = self.get_value(friend, "id")
 						this_friend.displayName = self.get_value(friend, "name") 
 						
-						# Compose profile pic URI.
+						# Compose profile pic address.
 						profile_pic = SocialObjects.Image()
 						profile_pic.fullImage = self.graph_uri + "/" + this_friend.id + "/picture?type=normal" + "&access_token=" + self.access_token
 						profile_pic.author = this_friend.id
@@ -586,19 +584,19 @@ class FacebookServiceGateway(ServiceGateway):
 	def Albums(self, operation, payload):
 		"""
 		Performs operations on a user's photo albums.
-		Uses the ID attribute of the payload to get / post associated albums.
-		Currently only supports GET operations.
+		Currently only supports GET operations. This lets us retrieve a list of photo albums associated with the
+		supplied payload ID.
 		
 		:param operation: The operation to perform. (GET)
 		:type operation: str
-		:param payload: A person whose ID is either a Facebook UID or username.
+		:param payload: A User() or Person() whose ID is either a Facebook UID or username.
 		:type payload: Person
-		:returns: A collection of Album objects.
+		:returns: A collection representing this person / object's photo albums.
 		"""
 		
 		if (operation == "GET"):
 			try:
-				# Get the object's ID from payload and query for albums.
+				# Get the object's ID from the payload and query for albums.
 				obj_id = payload.id
 				result_set = self.get_graph_data("/" + obj_id + "/albums")
 				album_coll = Albums()
@@ -651,13 +649,14 @@ class FacebookServiceGateway(ServiceGateway):
 						album_comments.objects = comments_list
 						this_album.comments = album_comments
 						
+						# Add this album to our list of albums.
 						album_obj_list.append(this_album)
-						
 					
 					# Get next set of results.
 					next_address = result_set["paging"]["next"]
 					result_set = self.get_graph_data(next_address)
 				
+				# Populate and return our album collection.
 				album_coll.objects = album_obj_list
 				return album_coll
 				
@@ -670,15 +669,16 @@ class FacebookServiceGateway(ServiceGateway):
 	
 	def Images(self, operation, payload):
 		"""
-		Performs operations on images. Takes a social object as a payload and either gets or posts
-		associated photos / images.
-		Currently only supports GET operations.
+		Performs operations on images.
+		Currently only supports GET operations. This lets us retrieve the photos associated with the supplied 
+		payload's ID. This will commonly be an Album() to get the photos in said album, or a User() / Person() 
+		to get any photos they're tagged in.
 		
 		:param operation: The operation to perform. (GET)
 		:type operation: str
-		:param payload: Provide an Album to get images in that album.
+		:param payload: The Facebook object to retrieve associated photos for.
 		:type payload: SocialObject
-		:returns: A collection of images.
+		:returns: A collection representing photos associated with the supplied object.
 		"""
 
 		if (operation == "GET"):
@@ -693,6 +693,7 @@ class FacebookServiceGateway(ServiceGateway):
 					# Grab the current batch of photos.
 					this_data = result_set["data"]
 					
+					# For each photo in this batch...
 					for photo in this_data:
 						# Create photo object and set basic info.
 						this_photo = Photo()
@@ -715,7 +716,7 @@ class FacebookServiceGateway(ServiceGateway):
 						this_photo.width = self.get_value(photo["images"][0], "width")
 						this_photo.height = self.get_value(photo["images"][0], "height")
 						
-						# Thumbnail.
+						# Thumbnail info.
 						img_small = SocialObjects.Image()
 						img_small.id = this_photo.id
 						img_small.author = this_photo.author
@@ -773,12 +774,14 @@ class FacebookServiceGateway(ServiceGateway):
 	def Checkins(self, operation, payload):
 		"""
 		Performs operations on check-ins / objects with location.
+		Currently only supports GET operations. This lets us retrieve a list of places the supplied User()
+		or Person() has been.
 		
 		:param operation: The operation to perform. (GET)
 		:type operation: str
-		:param payload: A User or Person object.
+		:param payload: The User() or Person() object to retrieve check-in information for.
 		:type payload: SocialObject
-		:returns: A collection of checkins.
+		:returns: A collection of objects representing check-ins.
 		"""
 
 		if (operation == "GET"):
@@ -822,7 +825,7 @@ class FacebookServiceGateway(ServiceGateway):
 				return checkins_coll
 			
 			except:
-				return SocialObjects.Collection()
+				return Checkins()
 		
 		else:
 			raise NotImplementedException("Operation not supported")
@@ -832,10 +835,12 @@ class FacebookServiceGateway(ServiceGateway):
 		"""
 		Internal function.
 		Takes a JSON Facebook object and returns a list of the people who've liked it.
+		Note that this function just PARSES. It does not attempt to retrieve all the likes for the given 
+		object. This means it has a limit of around 25 likes.
 		
 		:param facebook_obj: The Facebook object to get likes for.
 		:type facebook_obj: Dict
-		:returns: A list of User objects.
+		:returns: A list representing the people / users that have liked this object.
 		"""
 		
 		# This object has likes.
@@ -861,10 +866,12 @@ class FacebookServiceGateway(ServiceGateway):
 		"""
 		Internal function.
 		Takes a JSON Facebook object and returns a list of the comments on it.
+		Note that this function just PARSES. It does not attempt to retrieve all the comments on the given 
+		object. This means it has a limit of around 25 comments.
 		
 		:param facebook_obj: The Facebook object to get comments on.
 		:type facebook_obj: Dict
-		:returns: A list of Note objects.
+		:returns: A list representing the comments on this object.
 		"""
 		
 		# This object has comments.
@@ -896,7 +903,7 @@ class FacebookServiceGateway(ServiceGateway):
 		
 		:param facebook_obj: The Facebook object to get the location of.
 		:type facebook_obj: Dict
-		:returns: A Place object.
+		:returns: A Place() object representing the location of the supplied object.
 		"""
 		
 		# Get location.
@@ -920,7 +927,7 @@ class FacebookServiceGateway(ServiceGateway):
 							
 				place.position = latitude + longitude + "/"
 						
-			# Get address info.
+			# Get address info if available.
 			if ((facebook_obj["place"]["location"].has_key("city")) and (facebook_obj["place"]["location"].has_key("country"))):
 				city = self.get_value(facebook_obj["place"]["location"], "city")
 				country = self.get_value(facebook_obj["place"]["location"], "country")
@@ -942,7 +949,7 @@ class FacebookServiceGateway(ServiceGateway):
 		
 		:param facebook_obj: The Facebook object to get tags for.
 		:type facebook_obj: Dict
-		:returns: A list of User objects.
+		:returns: A list representing the people / objects that were tagged in the supplied object.
 		"""
 		
 		# This object has tags.
@@ -967,11 +974,11 @@ class FacebookServiceGateway(ServiceGateway):
 	def get_likes(self, object_id):
 		"""
 		Internal function.
-		Takes a Facebook object ID and returns a list of people who have Liked it.
+		Takes a JSON Facebook object and returns a list of the people who've liked it.
 		
-		:param object_id: The object's ID on Facebook.
-		:type object_id: str
-		:returns: A list of User objects.
+		:param facebook_obj: The Facebook object to get likes for.
+		:type facebook_obj: Dict
+		:returns: A list representing the people / users that have liked this object.
 		"""
 		
 		# Get initial likes.
@@ -989,7 +996,8 @@ class FacebookServiceGateway(ServiceGateway):
 					this_person.id = person["id"]
 					this_person.displayName = person["name"]
 					likes.append(this_person)
-			
+				
+				# Get the next result set.
 				result_set = self.get_graph_data(result_set["paging"]["next"])
 		
 		return likes
@@ -998,14 +1006,14 @@ class FacebookServiceGateway(ServiceGateway):
 	def get_comments(self, object_id):
 		"""
 		Internal function.
-		Takes a Facebook object ID and returns a list of comments that people have made on it.
+		Takes a JSON Facebook object and returns a list of the comments on it.
 		
-		:param object_id: The object's ID on Facebook.
-		:type object_id: str
-		:returns: A list of Note objects.
+		:param facebook_obj: The Facebook object to get comments on.
+		:type facebook_obj: Dict
+		:returns: A list representing the comments on this object.
 		"""
 		
-		# Get initial likes.
+		# Get initial comments.
 		comments = []
 		result_set = self.get_graph_data("/" + object_id + "/comments")
 		
@@ -1014,7 +1022,7 @@ class FacebookServiceGateway(ServiceGateway):
 			while ((result_set.has_key("paging")) and (result_set["paging"].has_key("next"))):
 				comment_list = result_set["data"]
 				
-				# Make and populate a Note for each comment we see...
+				# Make a Comment() object for each comment in the list...
 				for comment in comment_list:
 					this_comment = Comment()
 					this_comment.id = comment["id"]
@@ -1024,6 +1032,7 @@ class FacebookServiceGateway(ServiceGateway):
 					this_comment.url = "https://www.facebook.com/me/posts/" + this_comment.id
 					comments.append(this_comment)
 				
+				# Get the next set of results.
 				result_set = self.get_graph_data(result_set["paging"]["next"])
 		
 		return comments
@@ -1357,12 +1366,12 @@ class User(SocialObjects.Person):
 		self._work = value
 	
 	
-	def __str__(self):
+	def __unicode__(self):
 		"""
-		Returns a String representation of this User object.
+		Returns a string representation of this object.
 		Mainly used for testing purposes.
 		
-		:returns: A String.
+		:returns: A string representation of this object.
 		"""
 		
 		# Start off the string representation...
@@ -1370,12 +1379,12 @@ class User(SocialObjects.Person):
 		
 		# Single value.
 		str_rep += "- ID: " + check_none(self.id) + "\n"
-		str_rep += "- Display Name: " + (check_none(self.displayName)) + "\n"
+		str_rep += "- Display Name: " + unicode((check_none(self.displayName))) + "\n"
 		str_rep += "- Profile Picture: " + check_none(self.image.fullImage) + "\n"
 		str_rep += "- Username: " + check_none(self.username) + "\n"
-		str_rep += "- First Name: " + check_none(self.firstName) + "\n"
-		str_rep += "- Middle Name: " + check_none(self.middleName) + "\n"
-		str_rep += "- Last Name: " + check_none(self.lastName) + "\n"
+		str_rep += "- First Name: " + unicode(check_none(self.firstName)) + "\n"
+		str_rep += "- Middle Name: " + unicode(check_none(self.middleName)) + "\n"
+		str_rep += "- Last Name: " + unicode(check_none(self.lastName)) + "\n"
 		str_rep += "- Gender: " + check_none(self.gender) + "\n"
 		str_rep += "- Last Update: " + str(check_none(self.updatedTime)) + "\n"
 		str_rep += "- Birthday: " + str(check_none(self.birthday)) + "\n"
@@ -1386,14 +1395,14 @@ class User(SocialObjects.Person):
 		
 		# Single value.
 		str_rep += "- Timezone: " + check_none(str(self.timezone)) + "\n"
-		str_rep += "- Bio: " + check_none(self.bio) + "\n"
+		str_rep += "- Bio: " + unicode(check_none(self.bio)) + "\n"
 		
 		# Multi value.
 		user_education = check_none(self.education)
 		
 		if (not (user_education == "None")):
 			for place in user_education.objects:
-				str_rep += "- Education: " + place.displayName + "\n"
+				str_rep += "- Education: " + unicode(place.displayName) + "\n"
 		
 		else:
 			str_rep += "- Education: " + user_education + "\n"
@@ -1405,7 +1414,7 @@ class User(SocialObjects.Person):
 		hometown = check_none(self.hometown)
 		
 		if (not (hometown == "None")):
-			str_rep += "- Hometown: " + hometown.displayName + "\n"
+			str_rep += "- Hometown: " + unicode(hometown.displayName) + "\n"
 		
 		else:
 			str_rep += "- Hometown: " + hometown + "\n"
@@ -1414,14 +1423,14 @@ class User(SocialObjects.Person):
 		location = check_none(self.location)
 		
 		if (not (location == "None")):
-			str_rep += "- Location: " + location.displayName + "\n"
+			str_rep += "- Location: " + unicode(location.displayName) + "\n"
 		
 		else:
 			str_rep += "- Hometown: " + location + "\n"
 		
 		# Single value.
-		str_rep += "- Political Views: " + check_none(self.politicalViews) + "\n"
-		str_rep += "- Religion: " + check_none(self.religion) + "\n"
+		str_rep += "- Political Views: " + unicode(check_none(self.politicalViews)) + "\n"
+		str_rep += "- Religion: " + unicode(check_none(self.religion)) + "\n"
 		
 		# Multi value.
 		interested_in = check_none(self.interestedIn)
@@ -1434,7 +1443,7 @@ class User(SocialObjects.Person):
 		significant_other = check_none(self.significantOther)
 		
 		if (not (significant_other == "None")):
-			str_rep += "- Significant Other: " + significant_other.displayName + "\n"
+			str_rep += "- Significant Other: " + unicode(significant_other.displayName) + "\n"
 		
 		else:
 			str_rep += "- Significant Other: " + significant_other + "\n"
@@ -1444,7 +1453,7 @@ class User(SocialObjects.Person):
 		
 		if (not (user_work == "None")):
 			for place in user_work.objects:
-				str_rep += "- Work: " + place.displayName + "\n"
+				str_rep += "- Work: " + unicode(place.displayName) + "\n"
 		
 		else:
 			str_rep += "- Work: " + user_work + "\n"
@@ -1461,20 +1470,21 @@ class FriendsList(SocialObjects.Collection):
 	
 	def __unicode__(self):
 		"""
-		Returns a Unicode representation of this object.
+		Returns a unicode representation of this object.
 		Mainly used for testing purposes.
 		
-		:returns: A String.
+		:returns: A unicode representation of this object.
 		"""
 		
 		# Start off string representation.
-		str_rep =  unicode("<Friends>" + "\n")
+		str_rep =  "<Friends>" + "\n"
 		
-		# Loop through the objects attribute. (Should be a list of User objects)
+		# Loop through the objects attribute. (Should be a list of User() objects)
 		for user in self.objects:
-			str_rep += unicode(user) + unicode("\n")
+			str_rep += unicode(user) + "\n"
 		
-		str_rep += unicode("</Friends>")
+		# Finish off and return.
+		str_rep += "</Friends>"
 		return str_rep
 			
 
@@ -1515,25 +1525,25 @@ class Status(SocialObjects.Note):
 	
 	def __unicode__(self):
 		"""
-		Returns a Unicode representation of this object.
+		Returns a string representation of this object.
 		Mainly used for testing purposes.
 		
-		:returns: A Unicode string.
+		:returns: A string representation of this object.
 		"""
 		
 		# Start off string representation.
-		str_rep =  unicode("<Status>" + "\n")
+		str_rep =  "<Status>" + "\n"
 		
 		# Basic info.
-		str_rep += unicode("- ID: " + check_none(self.id) + "\n")
-		str_rep += unicode("- Author: " + check_none(self.author) + "\n")
-		str_rep += unicode("- Content: " + check_none(self.content) + "\n")
-		str_rep += unicode("- Published: " + str(check_none(self.published)) + "\n")
-		str_rep += unicode("- URL: " + check_none(self.url) + "\n")
+		str_rep += "- ID: " + check_none(self.id) + "\n"
+		str_rep += "- Author: " + unicode(check_none(self.author)) + "\n"
+		str_rep += "- Content: " + unicode(check_none(self.content)) + "\n"
+		str_rep += "- Published: " + str(check_none(self.published)) + "\n"
+		str_rep += "- URL: " + check_none(self.url) + "\n"
 		
 		# Location.
 		location = check_none(self.location.displayName)
-		str_rep += unicode("- Location: " + location + "\n")
+		str_rep += "- Location: " + unicode(location) + "\n"
 		
 		# Likes
 		str_rep += unicode(self.likes)
@@ -1542,7 +1552,7 @@ class Status(SocialObjects.Note):
 		str_rep += unicode(self.comments)
 		
 		# Finish up and return.
-		str_rep +=  unicode("</Status>" + "\n")
+		str_rep +=  "</Status>" + "\n"
 		return str_rep
 
 
@@ -1553,21 +1563,21 @@ class StatusList(SocialObjects.Collection):
 	
 	def __unicode__(self):
 		"""
-		Returns a Unicode representation of this object.
+		Returns a string representation of this object.
 		Mainly used for testing purposes.
 		
-		:returns: A String.
+		:returns: A string representation of this object.
 		"""
 		
 		# Start off string representation.
-		str_rep =  unicode("<Statuses>" + "\n")
+		str_rep =  "<Statuses>" + "\n"
 		
-		# Loop through the objects attribute. (Should be a list of Status objects)
+		# Loop through the objects attribute. (Should be a list of Status() objects)
 		for status in self.objects:
 			str_rep += unicode(status)
 		
 		# Finish up and return.
-		str_rep += unicode("</Statuses>")
+		str_rep += "</Statuses>"
 		return str_rep
 
 
@@ -1578,21 +1588,21 @@ class Likes(SocialObjects.Collection):
 	
 	def __unicode__(self):
 		"""
-		Returns a Unicode representation of this object.
+		Returns a string representation of this object.
 		Mainly used for testing purposes.
 		
-		:returns: A String.
+		:returns: A string representation of this object.
 		"""
 		
 		# Start off string representation.
-		str_rep =  unicode("<Likes: " + str(len(self.objects)) + ">" + "\n")
+		str_rep =  "<Likes: " + str(len(self.objects)) + ">" + "\n"
 		
-		# Loop through the objects attribute. (Should be a list of User objects)
+		# Loop through the objects attribute. (Should be a list of User() objects)
 		for user in self.objects:
-			str_rep += unicode("- " + user.displayName) + "\n"
+			str_rep += "- " + unicode(user.displayName) + "\n"
 		
 		# Finish up and return.
-		str_rep += unicode("</Likes>" + "\n")
+		str_rep += "</Likes>" + "\n"
 		return str_rep
 
 
@@ -1604,24 +1614,24 @@ class Comment(SocialObjects.Note):
 	
 	def __unicode__(self):
 		"""
-		Returns a Unicode representation of this object.
+		Returns a string representation of this object.
 		Mainly used for testing purposes.
 		
-		:returns: A String.
+		:returns: A string representation of this object.
 		"""
 		
 		# Start off string representation.
-		str_rep =  unicode("<Comment>" + "\n")
+		str_rep =  "<Comment>" + "\n"
 		
 		# Basic info.
-		str_rep += unicode("- ID: " + check_none(self.id) + "\n")
+		str_rep += "- ID: " + check_none(self.id) + "\n"
 		str_rep += unicode("- Author: " + check_none(self.author) + "\n")
 		str_rep += unicode("- Content: " + check_none(self.content) + "\n")
-		str_rep += unicode("- Published: " + str(check_none(self.published)) + "\n")
-		str_rep += unicode("- URL: " + check_none(self.url) + "\n")
+		str_rep += "- Published: " + str(check_none(self.published)) + "\n"
+		str_rep += "- URL: " + check_none(self.url) + "\n"
 		
 		# Finish up and return.
-		str_rep += unicode("</Comment>" + "\n")
+		str_rep += "</Comment>" + "\n"
 		return str_rep
 
 
@@ -1632,21 +1642,21 @@ class Comments(SocialObjects.Collection):
 	
 	def __unicode__(self):
 		"""
-		Returns a Unicode representation of this object.
+		Returns a string representation of this object.
 		Mainly used for testing purposes.
 		
-		:returns: A String.
+		:returns: A string representation of this object.
 		"""
 		
 		# Start off string representation.
-		str_rep =  unicode("<Comments: " + str(len(self.objects)) + ">" + "\n")
+		str_rep =  "<Comments: " + str(len(self.objects)) + ">" + "\n"
 		
-		# Loop through the objects attribute. (Should be a list of Comment objects)
+		# Loop through the objects attribute. (Should be a list of Comment() objects)
 		for comment in self.objects:
 			str_rep += unicode(comment)
 		
 		# Finish up and return.
-		str_rep += unicode("</Comments>" + "\n")
+		str_rep += "</Comments>" + "\n"
 		return str_rep
 
 
@@ -1742,10 +1752,10 @@ class Album(SocialObjects.SocialObject):
 	
 	def __unicode__(self):
 		"""
-		Returns a String representation of this object.
+		Returns a string representation of this object.
 		Mainly used for testing purposes.
 		
-		:returns: A String.
+		:returns: A string representation of this object.
 		"""
 		
 		# Start off string representation.
@@ -1753,13 +1763,13 @@ class Album(SocialObjects.SocialObject):
 		
 		# Basic info.
 		str_rep += "- ID: " + check_none(self.id) + "\n"
-		str_rep += "- Author: " + check_none(self.author) + "\n"
-		str_rep += "- Name: " + check_none(self.displayName) + "\n"
-		str_rep += "- Summary: " + check_none(self.summary) + "\n"
+		str_rep += "- Author: " + unicode(check_none(self.author)) + "\n"
+		str_rep += "- Name: " + unicode(check_none(self.displayName)) + "\n"
+		str_rep += "- Summary: " + unicode(check_none(self.summary)) + "\n"
 		str_rep += "- Published: " + str(check_none(self.published)) + "\n"
 		str_rep += "- Updated: " + str(check_none(self.updated)) + "\n"
 		str_rep += "- URL: " + check_none(self.url) + "\n"
-		str_rep += "- Location: " + check_none(self.location.displayName) + "\n"
+		str_rep += "- Location: " + unicode(check_none(self.location.displayName)) + "\n"
 		str_rep += "- Cover Photo: " + check_none(self.coverPhoto.fullImage) + "\n"
 		str_rep += "- Privacy: " + check_none(self.privacy) + "\n"
 		str_rep += "- Number Of Photos: " + str(check_none(self.count)) + "\n"
@@ -1776,7 +1786,7 @@ class Album(SocialObjects.SocialObject):
 		
 		# Finish up and return.
 		str_rep += "</Album>"
-		return unicode(str_rep)
+		return str_rep
 
 
 class Albums(SocialObjects.Collection):
@@ -1786,10 +1796,10 @@ class Albums(SocialObjects.Collection):
 	
 	def __unicode__(self):
 		"""
-		Returns a Unicode representation of this object.
+		Returns a string representation of this object.
 		Mainly used for testing purposes.
 		
-		:returns: A String.
+		:returns: A string representation of this object.
 		"""
 		
 		# Start off string representation.
@@ -1801,7 +1811,7 @@ class Albums(SocialObjects.Collection):
 		
 		# Finish up and return.
 		str_rep += "</Albums>"
-		return unicode(str_rep)
+		return str_rep
 
 
 class Photo(SocialObjects.Image):
@@ -1908,10 +1918,10 @@ class Photo(SocialObjects.Image):
 	
 	def __unicode__(self):
 		"""
-		Returns a String representation of this object.
+		Returns a string representation of this object.
 		Mainly used for testing purposes.
 		
-		:returns: A String.
+		:returns: A string representation of this object.
 		"""
 		
 		# Start off string representation.
@@ -1919,15 +1929,15 @@ class Photo(SocialObjects.Image):
 		
 		# Basic info.
 		str_rep += "- ID: " + check_none(self.id) + "\n"
-		str_rep += "- Author: " + check_none(self.author) + "\n"
-		str_rep += "- Name: " + check_none(self.displayName) + "\n"
+		str_rep += "- Author: " + unicode(check_none(self.author)) + "\n"
+		str_rep += "- Name: " + unicode(check_none(self.displayName)) + "\n"
 		str_rep += "- Published: " + str(check_none(self.published)) + "\n"
 		str_rep += "- Updated: " + str(check_none(self.updated)) + "\n"
 		str_rep += "- URL: " + check_none(self.url) + "\n"
 		str_rep += "- Position: " + str(check_none(self.position)) + "\n"
 		str_rep += "- Image: " + check_none(self.image.fullImage) + "\n"
 		str_rep += "- Thumbnail: " + check_none(self.thumbnail.fullImage) + "\n"
-		str_rep += "- Location: " + check_none(self.location.displayName) + "\n"
+		str_rep += "- Location: " + unicode(check_none(self.location.displayName)) + "\n"
 		
 		# Tags
 		str_rep += unicode(self.tags)
@@ -1940,7 +1950,7 @@ class Photo(SocialObjects.Image):
 		
 		# Finish up and return.
 		str_rep += "</Photo>" + "\n"
-		return unicode(str_rep)
+		return str_rep
 
 
 class Photos(SocialObjects.Collection):
@@ -1950,10 +1960,10 @@ class Photos(SocialObjects.Collection):
 	
 	def __unicode__(self):
 		"""
-		Returns a Unicode representation of this object.
+		Returns a string representation of this object.
 		Mainly used for testing purposes.
 		
-		:returns: A String.
+		:returns: A string representation of this object.
 		"""
 		
 		# Start off string representation.
@@ -1965,7 +1975,7 @@ class Photos(SocialObjects.Collection):
 		
 		# Finish up and return.
 		str_rep += "</Photos>"
-		return unicode(str_rep)
+		return str_rep
 
 
 class Tags(SocialObjects.Collection):
@@ -1975,10 +1985,10 @@ class Tags(SocialObjects.Collection):
 	
 	def __unicode__(self):
 		"""
-		Returns a Unicode representation of this object.
+		Returns a string representation of this object.
 		Mainly used for testing purposes.
 		
-		:returns: A String.
+		:returns: A string representation of this object.
 		"""
 		
 		# Start off string representation.
@@ -1986,11 +1996,11 @@ class Tags(SocialObjects.Collection):
 		
 		# Loop through the objects attribute. (Should be a list of User objects)
 		for user in self.objects:
-			str_rep += "- " + user.displayName + "\n"
+			str_rep += "- " + unicode(user.displayName) + "\n"
 		
 		# Finish up and return.
 		str_rep += "</Tags>" + "\n"
-		return unicode(str_rep)
+		return str_rep
 
 
 class Checkin(SocialObjects.SocialObject):
@@ -2002,7 +2012,7 @@ class Checkin(SocialObjects.SocialObject):
 	
 	@property
 	def checkinType(self):
-		""" Th's check-in's type. (Eg: Status, Photo) """
+		""" This check-in's type. (Eg: Status, Photo) """
 		return self._checkinType
 	
 	
@@ -2013,10 +2023,10 @@ class Checkin(SocialObjects.SocialObject):
 	
 	def __unicode__(self):
 		"""
-		Returns a String representation of this object.
+		Returns a string representation of this object.
 		Mainly used for testing purposes.
 		
-		:returns: A String.
+		:returns: A string representation of this object.
 		"""
 		
 		# Start off string representation.
@@ -2024,16 +2034,16 @@ class Checkin(SocialObjects.SocialObject):
 		
 		# Basic info.
 		str_rep += "- ID: " + check_none(self.id) + "\n"
-		str_rep += "- Author: " + check_none(self.author) + "\n"
+		str_rep += "- Author: " + unicode(check_none(self.author)) + "\n"
 		str_rep += "- Published: " + str(check_none(self.published)) + "\n"
-		str_rep += "- Location: " + check_none(self.location.displayName) + "\n"
+		str_rep += "- Location: " + unicode(check_none(self.location.displayName)) + "\n"
 		
 		# Tags
 		str_rep += unicode(self.tags)
 		
 		# Finish up and return.
 		str_rep += "</Check-in>" + "\n"
-		return unicode(str_rep)
+		return str_rep
 
 
 class Checkins(SocialObjects.Collection):
@@ -2043,10 +2053,10 @@ class Checkins(SocialObjects.Collection):
 	
 	def __unicode__(self):
 		"""
-		Returns a Unicode representation of this object.
+		Returns a string representation of this object.
 		Mainly used for testing purposes.
 		
-		:returns: A String.
+		:returns: A string representation of this object.
 		"""
 		
 		# Start off string representation.
@@ -2058,7 +2068,7 @@ class Checkins(SocialObjects.Collection):
 		
 		# Finish up and return.
 		str_rep += "</Check-ins>"
-		return unicode(str_rep)
+		return str_rep
 
 
 def check_none(value):
@@ -2078,7 +2088,7 @@ def check_none(value):
 # Testing.
 if __name__ == "__main__":
 	# Start tests.
-	print "<Start tests>"
+	print "<Tests>"
 	
 	# Create an instance of the service gateway.
 	fb = FacebookServiceGateway()
@@ -2102,7 +2112,7 @@ if __name__ == "__main__":
 	# Test "Get Person."
 	person_obj = fb.User("GET", person_1)
 	print "Grabbed user from Facebook:"
-	print person_obj
+	print unicode(person_obj)
 	
 	# Test "Get Music."
 	music_list = fb.Music("GET", person_1)
@@ -2123,7 +2133,7 @@ if __name__ == "__main__":
 	print "<Books>"
 	for book in book_list:
 		print "- " + book
-	print "<Books>"
+	print "</Books>"
 	
 	# Test "Get Statuses."
 	statuses = fb.Statuses("GET", person_1)
@@ -2147,5 +2157,9 @@ if __name__ == "__main__":
 	print unicode(checkins)
 	
 	# End.
-	print "<End tests>"
-	
+	print "</Tests>"
+
+
+# Ignore me! I'm just for testing.	
+class NotImplementedException(Exception):
+	pass
