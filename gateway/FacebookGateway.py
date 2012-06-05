@@ -1,6 +1,7 @@
 from ServiceGateway import ServiceGateway
 import SocialObjects
 
+
 import datetime	# Used for creating standardised date / time objects from Facebook's attribute values.
 import json	# Used for parsing responses from Facebook.
 import md5	# Used for generating unique state.
@@ -482,7 +483,7 @@ class FacebookServiceGateway(ServiceGateway):
 					next_address = self.graph_uri + "/me/statuses?limit=" + str(limit) + "&offset=" + str(offset) + "&access_token=" + self.access_token
 					result_set = self.get_graph_data(next_address)
 				
-				status_coll = SocialObjects.Collection()
+				status_coll = StatusList()
 				status_coll.author = user_id
 				status_list = []
 				status_num = 1
@@ -497,10 +498,14 @@ class FacebookServiceGateway(ServiceGateway):
 					this_status.url = "https://www.facebook.com/" + user_id + "/posts/" + this_status.id
 					
 					# Parse likes. (Initial limit of 25 per status)
-					this_status.likes = self.parse_likes(status)
+					likes_coll = Likes()
+					likes_coll.objects = self.parse_likes(status)
+					this_status.likes = likes_coll
 					
 					# Parse comments. (Initial limit of 25 per status)
-					this_status.comments = self.parse_comments(status)
+					comments_coll = Comments()
+					comments_coll.objects = self.parse_comments(status)
+					this_status.comments = comments_coll
 					
 					# Parse location.
 					this_status.location = self.parse_location(status)
@@ -516,7 +521,7 @@ class FacebookServiceGateway(ServiceGateway):
 				
 			
 			except:
-				return None
+				return StatusList()
 		
 		else:
 			raise NotImplementedException("Operation not supported.")
@@ -540,7 +545,7 @@ class FacebookServiceGateway(ServiceGateway):
 				# Get user ID and query Facebook for their friends.
 				user_id = payload.id
 				result_set = self.get_graph_data("/" + user_id + "/friends")
-				friend_coll = SocialObjects.Collection()
+				friend_coll = FriendsList()
 				friend_obj_list = []
 				
 				# While there is still data available...
@@ -550,9 +555,9 @@ class FacebookServiceGateway(ServiceGateway):
 					
 					for friend in this_data:
 						# Get basic info for this friend.
-						this_friend = SocialObjects.Person()
+						this_friend = User()
 						this_friend.id = self.get_value(friend, "id")
-						this_friend.displayName = self.get_value(friend, "name")
+						this_friend.displayName = self.get_value(friend, "name") 
 						
 						# Compose profile pic URI.
 						profile_pic = SocialObjects.Image()
@@ -572,7 +577,7 @@ class FacebookServiceGateway(ServiceGateway):
 				return friend_coll
 				
 			except:
-				return SocialObjects.Collection()
+				return FriendsList()
 		
 		else:
 			raise NotImplementedException("Operation not supported.")
@@ -636,13 +641,13 @@ class FacebookServiceGateway(ServiceGateway):
 						
 						# Parse likes.
 						likes_list = self.parse_likes(album)
-						album_likes = SocialObjects.Collection()
+						album_likes = Likes()
 						album_likes.objects = likes_list
 						this_album.likes = album_likes
 						
 						# Parse comments.
 						comments_list = self.parse_comments(album)
-						album_comments = SocialObjects.Collection()
+						album_comments = Comments()
 						album_comments.objects = comments_list
 						this_album.comments = album_comments
 						
@@ -722,19 +727,19 @@ class FacebookServiceGateway(ServiceGateway):
 						
 						# Parse likes.
 						likes_list = self.parse_likes(photo)
-						photo_likes_coll = SocialObjects.Collection()
+						photo_likes_coll = Likes()
 						photo_likes_coll.objects = likes_list
 						this_photo.likes = photo_likes_coll
 						
 						# Parse comments.
 						comments_list = self.parse_comments(photo)
-						photo_comments_coll = SocialObjects.Collection()
+						photo_comments_coll = Comments()
 						photo_comments_coll.objects = comments_list
 						this_photo.comments = photo_comments_coll
 						
 						# Parse tags.
 						tags_list = self.parse_tags(photo)
-						photo_tags_coll = SocialObjects.Collection()
+						photo_tags_coll = Tags()
 						photo_tags_coll.objects = tags_list
 						this_photo.tags = photo_tags_coll
 						
@@ -746,7 +751,7 @@ class FacebookServiceGateway(ServiceGateway):
 					result_set = self.get_graph_data(next_address)
 				
 				# Create a collection object for the photos.
-				photo_album = SocialObjects.Collection()
+				photo_album = Photos()
 				photo_album.objects = photo_obj_list
 				
 				# If the payload was a photo album, add the photos into it.
@@ -759,7 +764,7 @@ class FacebookServiceGateway(ServiceGateway):
 					return photo_album
 			
 			except:
-				return SocialObjects.Collection()
+				return Photos()
 		
 		else:
 			raise NotImplementedException("Operation not supported")
@@ -802,7 +807,7 @@ class FacebookServiceGateway(ServiceGateway):
 						
 						# Get tag info. (People that've been tagged in this check-in)
 						tags_list = self.parse_tags(checkin)
-						tags_coll = SocialObjects.Collection()
+						tags_coll = Tags()
 						tags_coll.objects = tags_list
 						this_checkin.tags = tags_coll
 						checkin_obj_list.append(this_checkin)
@@ -812,7 +817,7 @@ class FacebookServiceGateway(ServiceGateway):
 					result_set = self.get_graph_data(next_address)
 				
 				# Compose collection and return it.
-				checkins_coll = SocialObjects.Collection()
+				checkins_coll = Checkins()
 				checkins_coll.objects = checkin_obj_list
 				return checkins_coll
 			
@@ -869,7 +874,7 @@ class FacebookServiceGateway(ServiceGateway):
 			
 			# Loop through comments and add them to our list.
 			for comment in comments_on:
-				this_comment = SocialObjects.Note()
+				this_comment = Comment()
 				this_comment.id = self.get_value(comment, "id")
 				this_comment.author = self.get_value(comment["from"], "id")
 				this_comment.content = self.get_value(comment, "message")
@@ -940,7 +945,7 @@ class FacebookServiceGateway(ServiceGateway):
 		:returns: A list of User objects.
 		"""
 		
-		# This object has likes.
+		# This object has tags.
 		if (facebook_obj.has_key("tags")):
 			tags = []
 			are_tagged = facebook_obj["tags"]["data"]
@@ -1011,7 +1016,7 @@ class FacebookServiceGateway(ServiceGateway):
 				
 				# Make and populate a Note for each comment we see...
 				for comment in comment_list:
-					this_comment = SocialObjects.Note()
+					this_comment = Comment()
 					this_comment.id = comment["id"]
 					this_comment.author = comment["from"]["id"]
 					this_comment.content = comment["message"]
@@ -1365,15 +1370,15 @@ class User(SocialObjects.Person):
 		
 		# Single value.
 		str_rep += "- ID: " + check_none(self.id) + "\n"
-		str_rep += "- Display Name: " + check_none(self.displayName) + "\n"
+		str_rep += "- Display Name: " + (check_none(self.displayName)) + "\n"
 		str_rep += "- Profile Picture: " + check_none(self.image.fullImage) + "\n"
 		str_rep += "- Username: " + check_none(self.username) + "\n"
 		str_rep += "- First Name: " + check_none(self.firstName) + "\n"
 		str_rep += "- Middle Name: " + check_none(self.middleName) + "\n"
 		str_rep += "- Last Name: " + check_none(self.lastName) + "\n"
 		str_rep += "- Gender: " + check_none(self.gender) + "\n"
-		str_rep += "- Last Update: " + check_none(self.updatedTime).strftime("%d/%m/%Y @ %H:%M:%S") + "\n"
-		str_rep += "- Birthday: " + check_none(self.birthday).strftime("%d/%m/%Y") + "\n"
+		str_rep += "- Last Update: " + str(check_none(self.updatedTime)) + "\n"
+		str_rep += "- Birthday: " + str(check_none(self.birthday)) + "\n"
 		
 		# Multi value.
 		user_langs = check_none(self.languages)
@@ -1384,10 +1389,10 @@ class User(SocialObjects.Person):
 		str_rep += "- Bio: " + check_none(self.bio) + "\n"
 		
 		# Multi value.
-		user_education = check_none(self.education).objects
+		user_education = check_none(self.education)
 		
 		if (not (user_education == "None")):
-			for place in user_education:
+			for place in user_education.objects:
 				str_rep += "- Education: " + place.displayName + "\n"
 		
 		else:
@@ -1424,7 +1429,15 @@ class User(SocialObjects.Person):
 		
 		# Single value.
 		str_rep += "- Relationship Status: " + check_none(self.relationshipStatus) + "\n"
-		str_rep += "- Significant Other: " + check_none(self.significantOther).displayName + "\n"
+		
+		# Single value.
+		significant_other = check_none(self.significantOther)
+		
+		if (not (significant_other == "None")):
+			str_rep += "- Significant Other: " + significant_other.displayName + "\n"
+		
+		else:
+			str_rep += "- Significant Other: " + significant_other + "\n"
 		
 		# Multi value.
 		user_work = check_none(self.work)
@@ -1438,6 +1451,30 @@ class User(SocialObjects.Person):
 		
 		# Finish off and return.
 		str_rep += "</User>"
+		return str_rep
+
+
+class FriendsList(SocialObjects.Collection):
+	def __init__(self):
+		pass
+	
+	
+	def __unicode__(self):
+		"""
+		Returns a Unicode representation of this object.
+		Mainly used for testing purposes.
+		
+		:returns: A String.
+		"""
+		
+		# Start off string representation.
+		str_rep =  unicode("<Friends>" + "\n")
+		
+		# Loop through the objects attribute. (Should be a list of User objects)
+		for user in self.objects:
+			str_rep += unicode(user) + unicode("\n")
+		
+		str_rep += unicode("</Friends>")
 		return str_rep
 			
 
@@ -1476,15 +1513,141 @@ class Status(SocialObjects.Note):
 		self._comments = value
 	
 	
-	def __str__(self):
+	def __unicode__(self):
 		"""
-		Returns a String representation of this object.
+		Returns a Unicode representation of this object.
+		Mainly used for testing purposes.
+		
+		:returns: A Unicode string.
+		"""
+		
+		# Start off string representation.
+		str_rep =  unicode("<Status>" + "\n")
+		
+		# Basic info.
+		str_rep += unicode("- ID: " + check_none(self.id) + "\n")
+		str_rep += unicode("- Author: " + check_none(self.author) + "\n")
+		str_rep += unicode("- Content: " + check_none(self.content) + "\n")
+		str_rep += unicode("- Published: " + str(check_none(self.published)) + "\n")
+		str_rep += unicode("- URL: " + check_none(self.url) + "\n")
+		
+		# Location.
+		location = check_none(self.location.displayName)
+		str_rep += unicode("- Location: " + location + "\n")
+		
+		# Likes
+		str_rep += unicode(self.likes)
+		
+		# Comments
+		str_rep += unicode(self.comments)
+		
+		# Finish up and return.
+		str_rep +=  unicode("</Status>" + "\n")
+		return str_rep
+
+
+class StatusList(SocialObjects.Collection):
+	def __init__(self):
+		pass
+	
+	
+	def __unicode__(self):
+		"""
+		Returns a Unicode representation of this object.
 		Mainly used for testing purposes.
 		
 		:returns: A String.
 		"""
 		
-		#TODO Implement string representation.
+		# Start off string representation.
+		str_rep =  unicode("<Statuses>" + "\n")
+		
+		# Loop through the objects attribute. (Should be a list of Status objects)
+		for status in self.objects:
+			str_rep += unicode(status)
+		
+		# Finish up and return.
+		str_rep += unicode("</Statuses>")
+		return str_rep
+
+
+class Likes(SocialObjects.Collection):
+	def __init__(self):
+		pass
+	
+	
+	def __unicode__(self):
+		"""
+		Returns a Unicode representation of this object.
+		Mainly used for testing purposes.
+		
+		:returns: A String.
+		"""
+		
+		# Start off string representation.
+		str_rep =  unicode("<Likes: " + str(len(self.objects)) + ">" + "\n")
+		
+		# Loop through the objects attribute. (Should be a list of User objects)
+		for user in self.objects:
+			str_rep += unicode("- " + user.displayName) + "\n"
+		
+		# Finish up and return.
+		str_rep += unicode("</Likes>" + "\n")
+		return str_rep
+
+
+class Comment(SocialObjects.Note):
+	def __init__(self):
+		super(Comment, self).__init__()
+		self._provider = "Facebook"	# String
+	
+	
+	def __unicode__(self):
+		"""
+		Returns a Unicode representation of this object.
+		Mainly used for testing purposes.
+		
+		:returns: A String.
+		"""
+		
+		# Start off string representation.
+		str_rep =  unicode("<Comment>" + "\n")
+		
+		# Basic info.
+		str_rep += unicode("- ID: " + check_none(self.id) + "\n")
+		str_rep += unicode("- Author: " + check_none(self.author) + "\n")
+		str_rep += unicode("- Content: " + check_none(self.content) + "\n")
+		str_rep += unicode("- Published: " + str(check_none(self.published)) + "\n")
+		str_rep += unicode("- URL: " + check_none(self.url) + "\n")
+		
+		# Finish up and return.
+		str_rep += unicode("</Comment>" + "\n")
+		return str_rep
+
+
+class Comments(SocialObjects.Collection):
+	def __init__(self):
+		pass
+	
+	
+	def __unicode__(self):
+		"""
+		Returns a Unicode representation of this object.
+		Mainly used for testing purposes.
+		
+		:returns: A String.
+		"""
+		
+		# Start off string representation.
+		str_rep =  unicode("<Comments: " + str(len(self.objects)) + ">" + "\n")
+		
+		# Loop through the objects attribute. (Should be a list of Comment objects)
+		for comment in self.objects:
+			str_rep += unicode(comment)
+		
+		# Finish up and return.
+		str_rep += unicode("</Comments>" + "\n")
+		return str_rep
 
 
 class Album(SocialObjects.SocialObject):
@@ -1577,7 +1740,7 @@ class Album(SocialObjects.SocialObject):
 		self._comments = value
 	
 	
-	def __str__(self):
+	def __unicode__(self):
 		"""
 		Returns a String representation of this object.
 		Mainly used for testing purposes.
@@ -1585,7 +1748,35 @@ class Album(SocialObjects.SocialObject):
 		:returns: A String.
 		"""
 		
-		#TODO Implement string representation.
+		# Start off string representation.
+		str_rep =  "<Album>" + "\n"
+		
+		# Basic info.
+		str_rep += "- ID: " + check_none(self.id) + "\n"
+		str_rep += "- Author: " + check_none(self.author) + "\n"
+		str_rep += "- Name: " + check_none(self.displayName) + "\n"
+		str_rep += "- Summary: " + check_none(self.summary) + "\n"
+		str_rep += "- Published: " + str(check_none(self.published)) + "\n"
+		str_rep += "- Updated: " + str(check_none(self.updated)) + "\n"
+		str_rep += "- URL: " + check_none(self.url) + "\n"
+		str_rep += "- Location: " + check_none(self.location.displayName) + "\n"
+		str_rep += "- Cover Photo: " + check_none(self.coverPhoto.fullImage) + "\n"
+		str_rep += "- Privacy: " + check_none(self.privacy) + "\n"
+		str_rep += "- Number Of Photos: " + str(check_none(self.count)) + "\n"
+		str_rep += "- Type: " + check_none(self.albumType) + "\n"
+		
+		# Likes
+		str_rep += unicode(self.likes)
+		
+		# Comments
+		str_rep += unicode(self.comments)
+		
+		# Photos
+		str_rep += unicode(self.photos) + "\n"
+		
+		# Finish up and return.
+		str_rep += "</Album>"
+		return unicode(str_rep)
 
 
 class Albums(SocialObjects.Collection):
@@ -1593,15 +1784,24 @@ class Albums(SocialObjects.Collection):
 		pass
 	
 	
-	def __str__(self):
+	def __unicode__(self):
 		"""
-		Returns a String representation of this object.
+		Returns a Unicode representation of this object.
 		Mainly used for testing purposes.
 		
 		:returns: A String.
 		"""
 		
-		#TODO Implement string representation.
+		# Start off string representation.
+		str_rep =  "<Albums: " + str(len(self.objects)) + ">" + "\n"
+		
+		# Loop through the objects attribute. (Should be a list of Album objects)
+		for album in self.objects:
+			str_rep += unicode(album) + "\n"
+		
+		# Finish up and return.
+		str_rep += "</Albums>"
+		return unicode(str_rep)
 
 
 class Photo(SocialObjects.Image):
@@ -1706,7 +1906,7 @@ class Photo(SocialObjects.Image):
 		self._comments = value
 	
 	
-	def __str__(self):
+	def __unicode__(self):
 		"""
 		Returns a String representation of this object.
 		Mainly used for testing purposes.
@@ -1714,7 +1914,83 @@ class Photo(SocialObjects.Image):
 		:returns: A String.
 		"""
 		
-		#TODO Implement string representation.
+		# Start off string representation.
+		str_rep =  "<Photo>" + "\n"
+		
+		# Basic info.
+		str_rep += "- ID: " + check_none(self.id) + "\n"
+		str_rep += "- Author: " + check_none(self.author) + "\n"
+		str_rep += "- Name: " + check_none(self.displayName) + "\n"
+		str_rep += "- Published: " + str(check_none(self.published)) + "\n"
+		str_rep += "- Updated: " + str(check_none(self.updated)) + "\n"
+		str_rep += "- URL: " + check_none(self.url) + "\n"
+		str_rep += "- Position: " + str(check_none(self.position)) + "\n"
+		str_rep += "- Image: " + check_none(self.image.fullImage) + "\n"
+		str_rep += "- Thumbnail: " + check_none(self.thumbnail.fullImage) + "\n"
+		str_rep += "- Location: " + check_none(self.location.displayName) + "\n"
+		
+		# Tags
+		str_rep += unicode(self.tags)
+		
+		# Likes
+		str_rep += unicode(self.likes)
+		
+		# Comments
+		str_rep += unicode(self.comments)
+		
+		# Finish up and return.
+		str_rep += "</Photo>" + "\n"
+		return unicode(str_rep)
+
+
+class Photos(SocialObjects.Collection):
+	def __init__(self):
+		pass
+	
+	
+	def __unicode__(self):
+		"""
+		Returns a Unicode representation of this object.
+		Mainly used for testing purposes.
+		
+		:returns: A String.
+		"""
+		
+		# Start off string representation.
+		str_rep =  "<Photos: " + str(len(self.objects)) + ">" + "\n"
+		
+		# Loop through the objects attribute. (Should be a list of Album objects)
+		for photo in self.objects:
+			str_rep += unicode(photo)
+		
+		# Finish up and return.
+		str_rep += "</Photos>"
+		return unicode(str_rep)
+
+
+class Tags(SocialObjects.Collection):
+	def __init__(self):
+		pass
+	
+	
+	def __unicode__(self):
+		"""
+		Returns a Unicode representation of this object.
+		Mainly used for testing purposes.
+		
+		:returns: A String.
+		"""
+		
+		# Start off string representation.
+		str_rep =  "<Tags: " + str(len(self.objects)) + ">" + "\n"
+		
+		# Loop through the objects attribute. (Should be a list of User objects)
+		for user in self.objects:
+			str_rep += "- " + user.displayName + "\n"
+		
+		# Finish up and return.
+		str_rep += "</Tags>" + "\n"
+		return unicode(str_rep)
 
 
 class Checkin(SocialObjects.SocialObject):
@@ -1735,7 +2011,7 @@ class Checkin(SocialObjects.SocialObject):
 		self._checkinType = value
 	
 	
-	def __str__(self):
+	def __unicode__(self):
 		"""
 		Returns a String representation of this object.
 		Mainly used for testing purposes.
@@ -1743,7 +2019,46 @@ class Checkin(SocialObjects.SocialObject):
 		:returns: A String.
 		"""
 		
-		#TODO Implement string representation.
+		# Start off string representation.
+		str_rep =  "<Check-in>" + "\n"
+		
+		# Basic info.
+		str_rep += "- ID: " + check_none(self.id) + "\n"
+		str_rep += "- Author: " + check_none(self.author) + "\n"
+		str_rep += "- Published: " + str(check_none(self.published)) + "\n"
+		str_rep += "- Location: " + check_none(self.location.displayName) + "\n"
+		
+		# Tags
+		str_rep += unicode(self.tags)
+		
+		# Finish up and return.
+		str_rep += "</Check-in>" + "\n"
+		return unicode(str_rep)
+
+
+class Checkins(SocialObjects.Collection):
+	def __init__(self):
+		pass
+	
+	
+	def __unicode__(self):
+		"""
+		Returns a Unicode representation of this object.
+		Mainly used for testing purposes.
+		
+		:returns: A String.
+		"""
+		
+		# Start off string representation.
+		str_rep =  "<Check-ins>: " + str(len(self.objects)) + ">" + "\n"
+		
+		# Loop through the objects attribute. (Should be a list of Checkin objects)
+		for checkin in self.objects:
+			str_rep += unicode(checkin)
+		
+		# Finish up and return.
+		str_rep += "</Check-ins>"
+		return unicode(str_rep)
 
 
 def check_none(value):
@@ -1811,31 +2126,25 @@ if __name__ == "__main__":
 	print "<Books>"
 	
 	# Test "Get Statuses."
-	#statuses = fb.Statuses("GET", person_1)
-	#print len(statuses.objects)
+	statuses = fb.Statuses("GET", person_1)
+	print unicode(statuses)
 	
 	# Test "Get Friends."
 	friends = fb.Friends("GET", person_1)
-	print "Grabbed friends list from Facebook"
-	print "- From user: " + person_1.id
-	print "- Number of friends: " + str(len(friends.objects))
+	print unicode(friends)
 	
 	# Test "Get Albums."
-	#albums = fb.Albums("GET", person_1)
-	#print "Grabbed albums from Facebook:"
-	#print "- From user: " + person_1.id
-	#print "- Number of albums: " + str(len(albums.objects))
+	albums = fb.Albums("GET", person_1)
+	print unicode(albums)
 	
 	# Test "Get Images."
-	album_1 = Album()
-	album_1.id = 433269826768
-	#images = fb.Images("GET", album_1)
+	for album in albums.objects:
+		tmp_album = fb.Images("GET", album)
+		print unicode(tmp_album)
 	
 	# Test "Get Check-ins."
 	checkins = fb.Checkins("GET", person_1)
-	print "Grabbed list of check-ins from Facebook"
-	print "- From user: " + person_1.id
-	print "- Number of checkins: " + str(len(checkins.objects))
+	print unicode(checkins)
 	
 	# End.
 	print "<End tests>"
