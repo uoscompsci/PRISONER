@@ -765,6 +765,64 @@ class FacebookServiceGateway(ServiceGateway):
 			raise NotImplementedException("Operation not supported")
 	
 	
+	def Checkins(self, operation, payload):
+		"""
+		Performs operations on check-ins / objects with location.
+		
+		:param operation: The operation to perform. (GET)
+		:type operation: str
+		:param payload: A User or Person object.
+		:type payload: SocialObject
+		:returns: A collection of checkins.
+		"""
+
+		if (operation == "GET"):
+			try:
+				# Get user ID from payload and query for initial result set.
+				user_id = payload.id
+				result_set = self.get_graph_data("/" + user_id + "/locations")
+				checkin_obj_list = []
+				
+				# While there is still data available...
+				while ((result_set.has_key("data")) and (len(result_set["data"]) > 0)):
+					# Grab the current batch of check-ins.
+					this_data = result_set["data"]
+					
+					# Loop through each check-in on this page.
+					for checkin in this_data:
+						# Get and set basic info.
+						this_checkin = Checkin()
+						this_checkin.id = self.get_value(checkin, "id")
+						this_checkin.author = self.get_value(checkin["from"], "id")
+						this_checkin.checkinType = self.get_value(checkin, "type")
+						this_checkin.published = self.str_to_time(self.get_value(checkin, "created_time"))
+						
+						# Get location info.
+						this_checkin.location = self.parse_location(checkin)
+						
+						# Get tag info. (People that've been tagged in this check-in)
+						tags_list = self.parse_tags(checkin)
+						tags_coll = SocialObjects.Collection()
+						tags_coll.objects = tags_list
+						this_checkin.tags = tags_coll
+						checkin_obj_list.append(this_checkin)
+					
+					# Get next set of results.
+					next_address = result_set["paging"]["next"]
+					result_set = self.get_graph_data(next_address)
+				
+				# Compose collection and return it.
+				checkins_coll = SocialObjects.Collection()
+				checkins_coll.objects = checkin_obj_list
+				return checkins_coll
+			
+			except:
+				return SocialObjects.Collection()
+		
+		else:
+			raise NotImplementedException("Operation not supported")
+	
+	
 	def parse_likes(self, facebook_obj):
 		"""
 		Internal function.
@@ -920,6 +978,7 @@ class FacebookServiceGateway(ServiceGateway):
 			while ((result_set.has_key("paging")) and (result_set["paging"].has_key("next"))):
 				have_liked = result_set["data"]
 				
+				# Create a User object for each like...
 				for person in have_liked:
 					this_person = User()
 					this_person.id = person["id"]
@@ -950,6 +1009,7 @@ class FacebookServiceGateway(ServiceGateway):
 			while ((result_set.has_key("paging")) and (result_set["paging"].has_key("next"))):
 				comment_list = result_set["data"]
 				
+				# Make and populate a Note for each comment we see...
 				for comment in comment_list:
 					this_comment = SocialObjects.Note()
 					this_comment.id = comment["id"]
@@ -1414,6 +1474,17 @@ class Status(SocialObjects.Note):
 	@comments.setter
 	def comments(self, value):
 		self._comments = value
+	
+	
+	def __str__(self):
+		"""
+		Returns a String representation of this object.
+		Mainly used for testing purposes.
+		
+		:returns: A String.
+		"""
+		
+		#TODO Implement string representation.
 
 
 class Album(SocialObjects.SocialObject):
@@ -1504,11 +1575,33 @@ class Album(SocialObjects.SocialObject):
 	@comments.setter
 	def comments(self, value):
 		self._comments = value
+	
+	
+	def __str__(self):
+		"""
+		Returns a String representation of this object.
+		Mainly used for testing purposes.
+		
+		:returns: A String.
+		"""
+		
+		#TODO Implement string representation.
 
 
 class Albums(SocialObjects.Collection):
 	def __init__(self):
 		pass
+	
+	
+	def __str__(self):
+		"""
+		Returns a String representation of this object.
+		Mainly used for testing purposes.
+		
+		:returns: A String.
+		"""
+		
+		#TODO Implement string representation.
 
 
 class Photo(SocialObjects.Image):
@@ -1611,6 +1704,46 @@ class Photo(SocialObjects.Image):
 	@comments.setter
 	def comments(self, value):
 		self._comments = value
+	
+	
+	def __str__(self):
+		"""
+		Returns a String representation of this object.
+		Mainly used for testing purposes.
+		
+		:returns: A String.
+		"""
+		
+		#TODO Implement string representation.
+
+
+class Checkin(SocialObjects.SocialObject):
+	def __init__(self):
+		super(Checkin, self).__init__()
+		self._provider = "Facebook"	# String
+		self._checkinType = None	# String
+	
+	
+	@property
+	def checkinType(self):
+		""" Th's check-in's type. (Eg: Status, Photo) """
+		return self._checkinType
+	
+	
+	@checkinType.setter
+	def checkinType(self, value):
+		self._checkinType = value
+	
+	
+	def __str__(self):
+		"""
+		Returns a String representation of this object.
+		Mainly used for testing purposes.
+		
+		:returns: A String.
+		"""
+		
+		#TODO Implement string representation.
 
 
 def check_none(value):
@@ -1657,22 +1790,25 @@ if __name__ == "__main__":
 	print person_obj
 	
 	# Test "Get Music."
-	#music_obj = fb.Music("GET", person_1)
-	#print "Printing list of favourite bands:"
-	#for band in music_obj:
-		#print "- " + band
+	music_list = fb.Music("GET", person_1)
+	print "<Music>"
+	for band in music_list:
+		print "- " + band
+	print "</Music>"
 	
 	# Test "Get Movies."
-	#movie_obj = fb.Movies("GET", person_1)
-	#print "Printing list of favourite movies:"
-	#for movie in movie_obj:
-		#print "- " + movie
+	movie_list = fb.Movies("GET", person_1)
+	print "<Movies>"
+	for movie in movie_list:
+		print "- " + movie
+	print "</Movies>"
 	
 	# Test "Get Books."
-	#book_obj = fb.Books("GET", person_1)
-	#print "Printing list of favourite books:"
-	#for book in book_obj:
-		#print "- " + book
+	book_list = fb.Books("GET", person_1)
+	print "<Books>"
+	for book in book_list:
+		print "- " + book
+	print "<Books>"
 	
 	# Test "Get Statuses."
 	#statuses = fb.Statuses("GET", person_1)
@@ -1685,15 +1821,21 @@ if __name__ == "__main__":
 	print "- Number of friends: " + str(len(friends.objects))
 	
 	# Test "Get Albums."
-	albums = fb.Albums("GET", person_1)
-	print "Grabbed albums from Facebook:"
-	print "- From user: " + person_1.id
-	print "- Number of albums: " + str(len(albums.objects))
+	#albums = fb.Albums("GET", person_1)
+	#print "Grabbed albums from Facebook:"
+	#print "- From user: " + person_1.id
+	#print "- Number of albums: " + str(len(albums.objects))
 	
 	# Test "Get Images."
 	album_1 = Album()
 	album_1.id = 433269826768
-	images = fb.Images("GET", album_1)
+	#images = fb.Images("GET", album_1)
+	
+	# Test "Get Check-ins."
+	checkins = fb.Checkins("GET", person_1)
+	print "Grabbed list of check-ins from Facebook"
+	print "- From user: " + person_1.id
+	print "- Number of checkins: " + str(len(checkins.objects))
 	
 	# End.
 	print "<End tests>"
