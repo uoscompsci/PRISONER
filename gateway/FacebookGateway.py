@@ -458,58 +458,58 @@ class FacebookServiceGateway(ServiceGateway):
 			try:
 				# Get user ID and query Facebook for their info.
 				user_id = payload.id
-				
-				# Get the initial result set.
-				limit = 100
-				offset = 0
-				status_obj_list = []
-				result_set_address = self.graph_uri + "/me/statuses?limit=" + str(limit) + "&offset=" + str(offset) + "&access_token=" + self.access_token
-				result_set = self.get_graph_data(result_set_address)
-				
-				# So long as there's data, parse it.
-				while ((result_set.has_key("data")) and (len(result_set["data"]) > 0)):
-					# Get status updates.
-					this_data = result_set["data"]
-					
-					# Add each update to our list.
-					for item in this_data:
-						status_obj_list.append(item)
-					
-					# Compose next address.
-					offset = offset + limit
-					next_address = self.graph_uri + "/me/statuses?limit=" + str(limit) + "&offset=" + str(offset) + "&access_token=" + self.access_token
-					result_set = self.get_graph_data(next_address)
-				
-				# Create collection object and list to hold status updates.
 				status_coll = StatusList()
 				status_coll.author = user_id
 				status_list = []
 				
-				# For each status we retrieved...
-				for status in status_obj_list:
-					# Set basic info.
-					this_status = Status()
-					this_status.author = user_id
-					this_status.content = self.get_value(status, "message")
-					this_status.id = self.get_value(status, "id")
-					this_status.published = self.str_to_time(self.get_value(status, "updated_time"))
-					this_status.url = "https://www.facebook.com/" + user_id + "/posts/" + this_status.id
+				# Get the initial result set.
+				result_set = self.get_graph_data("/" + user_id + "/feed")
+				
+				# So long as there's data, parse it. (We're grabbing all updates before working with them)
+				while ((result_set.has_key("data")) and (len(result_set["data"]) > 0)):
+					# Get status updates.
+					this_data = result_set["data"]
 					
-					# Parse likes. (Initial limit of 25 per status)
-					likes_coll = Likes()
-					likes_coll.objects = self.parse_likes(status)
-					this_status.likes = likes_coll
+					# Loop through this batch.
+					for status in this_data:
+						status_type = self.get_value(status, "type")
+						status_author = self.get_value(status["from"], "id")
+						
+						# Ensure this is a real status update. (Not a story, comment, etc.)
+						if (status.has_key("message")):
+							# Ensure the current user posted this update and it is a valid status object.
+							if (((status_type == "status") or (status_type == "link") or (status_type == "photo")) and (status_author == user_id)):
+								# Set basic info.
+								this_status = Status()
+								this_status.author = user_id
+								this_status.content = self.get_value(status, "message")
+								this_status.id = self.get_value(status, "id")
+								this_status.published = self.str_to_time(self.get_value(status, "created_time"))
+								this_status.url = "https://www.facebook.com/" + user_id + "/posts/" + this_status.id
+								
+								# Privacy info. (If available)
+								if (status.has_key("privacy")):
+									this_status.privacy = self.get_value(status["privacy"], "description")
 					
-					# Parse comments. (Initial limit of 25 per status)
-					comments_coll = Comments()
-					comments_coll.objects = self.parse_comments(status)
-					this_status.comments = comments_coll
+								# Parse likes. (Initial limit of 25 per status)
+								likes_coll = Likes()
+								likes_coll.objects = self.parse_likes(status)
+								this_status.likes = likes_coll
 					
-					# Parse location.
-					this_status.location = self.parse_location(status)
+								# Parse comments. (Initial limit of 25 per status)
+								comments_coll = Comments()
+								comments_coll.objects = self.parse_comments(status)
+								this_status.comments = comments_coll
 					
-					# Add status to our list of statuses.
-					status_list.append(this_status)
+								# Parse location.
+								this_status.location = self.parse_location(status)
+					
+								# Add status to our list of statuses.
+								status_list.append(this_status)
+													
+					# Compose next address.
+					next_address = result_set["paging"]["next"]
+					result_set = self.get_graph_data(next_address)
 				
 				# Add the status list to our collection.
 				status_coll.objects = status_list
@@ -843,19 +843,25 @@ class FacebookServiceGateway(ServiceGateway):
 		:returns: A list representing the people / users that have liked this object.
 		"""
 		
-		# This object has likes.
+		# This object has a "Likes" attribute.
 		if (facebook_obj.has_key("likes")):
-			likes = []
-			have_liked = facebook_obj["likes"]["data"]
+			# This object has likes.
+			if (facebook_obj["likes"].has_key("data")):
+				likes = []
+				have_liked = facebook_obj["likes"]["data"]
 			
-			# Loop through likes and add them to our list.
-			for person in have_liked:
-				this_person = User()
-				this_person.id = self.get_value(person, "id")
-				this_person.displayName = self.get_value(person, "name")
-				likes.append(this_person)
+				# Loop through likes and add them to our list.
+				for person in have_liked:
+					this_person = User()
+					this_person.id = self.get_value(person, "id")
+					this_person.displayName = self.get_value(person, "name")
+					likes.append(this_person)
 			
-			return likes
+				return likes
+			
+			# No likes, return an empty list.
+			else:
+				return []
 		
 		# No likes, return an empty list.
 		else:
@@ -874,25 +880,33 @@ class FacebookServiceGateway(ServiceGateway):
 		:returns: A list representing the comments on this object.
 		"""
 		
-		# This object has comments.
+		
+		# This object has a "Comments" attribute.
 		if (facebook_obj.has_key("comments")):
-			comments = []
-			comments_on = facebook_obj["comments"]["data"]
+			# This object has comments.
+			if (facebook_obj["comments"].has_key("data")):
+				comments = []
+				comments_on = facebook_obj["comments"]["data"]
 			
-			# Loop through comments and add them to our list.
-			for comment in comments_on:
-				this_comment = Comment()
-				this_comment.id = self.get_value(comment, "id")
-				this_comment.author = self.get_value(comment["from"], "id")
-				this_comment.content = self.get_value(comment, "message")
-				this_comment.published = self.str_to_time(self.get_value(comment, "created_time"))
-				this_comment.url = "https://www.facebook.com/me/posts/" + this_comment.id
-				comments.append(this_comment)
+				# Loop through comments and add them to our list.
+				for comment in comments_on:
+					this_comment = Comment()
+					this_comment.id = self.get_value(comment, "id")
+					this_comment.author = self.get_value(comment["from"], "id")
+					this_comment.content = self.get_value(comment, "message")
+					this_comment.published = self.str_to_time(self.get_value(comment, "created_time"))
+					this_comment.url = "https://www.facebook.com/me/posts/" + this_comment.id
+					comments.append(this_comment)
+				
+				return comments
 			
-			return comments
+			# No comments, return empty list.
+			else:
+				return []
 		
 		# No comments, return an empty list.
 		else:
+			print " - None. Empty list."
 			return []
 	
 	
@@ -1497,8 +1511,15 @@ class Status(SocialObjects.Note):
 	def __init__(self):
 		super(Status, self).__init__()
 		self._provider = "Facebook"	# String
+		self._privacy = None	# String
 		self._likes = None	# Collection of users
 		self._comments = None	# Collection of comments
+	
+	
+	@property
+	def privacy(self):
+		""" The privacy setting for this status update. (Eg: Friends) """
+		return self._privacy
 	
 	
 	@property
@@ -1511,6 +1532,11 @@ class Status(SocialObjects.Note):
 	def comments(self):
 		""" The comments on this status update. """
 		return self._comments
+	
+	
+	@privacy.setter
+	def privacy(self, value):
+		self._privacy = value
 	
 	
 	@likes.setter
@@ -1537,6 +1563,7 @@ class Status(SocialObjects.Note):
 		# Basic info.
 		str_rep += "- ID: " + check_none(self.id) + "\n"
 		str_rep += "- Author: " + unicode(check_none(self.author)) + "\n"
+		str_rep += "- Privacy: " + check_none(self.privacy) + "\n"
 		str_rep += "- Content: " + unicode(check_none(self.content)) + "\n"
 		str_rep += "- Published: " + str(check_none(self.published)) + "\n"
 		str_rep += "- URL: " + check_none(self.url) + "\n"
@@ -2115,46 +2142,46 @@ if __name__ == "__main__":
 	print unicode(person_obj)
 	
 	# Test "Get Music."
-	music_list = fb.Music("GET", person_1)
-	print "<Music>"
-	for band in music_list:
-		print "- " + band
-	print "</Music>"
+	#music_list = fb.Music("GET", person_1)
+	#print "<Music>"
+	#for band in music_list:
+		#print "- " + band
+	#print "</Music>"
 	
 	# Test "Get Movies."
-	movie_list = fb.Movies("GET", person_1)
-	print "<Movies>"
-	for movie in movie_list:
-		print "- " + movie
-	print "</Movies>"
+	#movie_list = fb.Movies("GET", person_1)
+	#print "<Movies>"
+	#for movie in movie_list:
+		#print "- " + movie
+	#print "</Movies>"
 	
 	# Test "Get Books."
-	book_list = fb.Books("GET", person_1)
-	print "<Books>"
-	for book in book_list:
-		print "- " + book
-	print "</Books>"
+	#book_list = fb.Books("GET", person_1)
+	#print "<Books>"
+	#for book in book_list:
+		#print "- " + book
+	#print "</Books>"
 	
 	# Test "Get Statuses."
 	statuses = fb.Statuses("GET", person_1)
 	print unicode(statuses)
 	
 	# Test "Get Friends."
-	friends = fb.Friends("GET", person_1)
-	print unicode(friends)
+	#friends = fb.Friends("GET", person_1)
+	#print unicode(friends)
 	
 	# Test "Get Albums."
-	albums = fb.Albums("GET", person_1)
-	print unicode(albums)
+	#albums = fb.Albums("GET", person_1)
+	#print unicode(albums)
 	
 	# Test "Get Images."
-	for album in albums.objects:
-		tmp_album = fb.Images("GET", album)
-		print unicode(tmp_album)
+	#for album in albums.objects:
+		#tmp_album = fb.Images("GET", album)
+		#print unicode(tmp_album)
 	
 	# Test "Get Check-ins."
-	checkins = fb.Checkins("GET", person_1)
-	print unicode(checkins)
+	#checkins = fb.Checkins("GET", person_1)
+	#print unicode(checkins)
 	
 	# End.
 	print "</Tests>"
