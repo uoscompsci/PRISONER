@@ -245,7 +245,6 @@ class FacebookServiceGateway(ServiceGateway):
 				else:
 					user.location = None
 				
-				
 				user.interestedIn = self.get_value(user_details, "interested_in")
 				user.politicalViews = self.get_value(user_details, "political")
 				user.religion = self.get_value(user_details, "religion")
@@ -459,18 +458,22 @@ class FacebookServiceGateway(ServiceGateway):
 				# Get user ID and query Facebook for their info.
 				user_id = payload.id
 				status_coll = StatusList()
-				status_coll.author = user_id
 				status_list = []
+				
+				# Create author object for this collection.
+				author = SocialObjects.Person()
+				author.id = user_id
+				status_coll.author = author
 				
 				# Get the initial result set.
 				result_set = self.get_graph_data("/" + user_id + "/feed")
 				
-				# So long as there's data, parse it. (We're grabbing all updates before working with them)
+				# So long as there's data, parse it.
 				while ((result_set.has_key("data")) and (len(result_set["data"]) > 0)):
-					# Get status updates.
+					# Get status updates in this batch.
 					this_data = result_set["data"]
 					
-					# Loop through this batch.
+					# For each update...
 					for status in this_data:
 						status_type = self.get_value(status, "type")
 						status_author = self.get_value(status["from"], "id")
@@ -481,7 +484,11 @@ class FacebookServiceGateway(ServiceGateway):
 							if (((status_type == "status") or (status_type == "link") or (status_type == "photo")) and (status_author == user_id)):
 								# Set basic info.
 								this_status = Status()
-								this_status.author = user_id
+
+								author = SocialObjects.Person()
+								author.id = user_id
+								this_status.author = author
+								
 								this_status.content = self.get_value(status, "message")
 								this_status.id = self.get_value(status, "id")
 								this_status.published = self.str_to_time(self.get_value(status, "created_time"))
@@ -519,6 +526,7 @@ class FacebookServiceGateway(ServiceGateway):
 				
 			
 			except:
+				raise
 				return StatusList()
 		
 		else:
@@ -544,6 +552,11 @@ class FacebookServiceGateway(ServiceGateway):
 				result_set = self.get_graph_data("/" + user_id + "/friends")
 				friend_coll = FriendsList()
 				friend_obj_list = []
+				
+				# Create author object for this collection.
+				author = SocialObjects.Person()
+				author.id = user_id
+				friend_coll.author = author
 				
 				# While there is still data available...
 				while ((result_set.has_key("data")) and (len(result_set["data"]) > 0)):
@@ -575,6 +588,7 @@ class FacebookServiceGateway(ServiceGateway):
 				return friend_coll
 				
 			except:
+				raise
 				return FriendsList()
 		
 		else:
@@ -602,6 +616,11 @@ class FacebookServiceGateway(ServiceGateway):
 				album_coll = Albums()
 				album_obj_list = []
 				
+				# Create author object for this collection.
+				author = SocialObjects.Person()
+				author.id = obj_id
+				album_coll.author = author
+				
 				# While there is still data available...
 				while ((result_set.has_key("data")) and (len(result_set["data"]) > 0)):
 					# Grab the current batch of albums.
@@ -612,7 +631,12 @@ class FacebookServiceGateway(ServiceGateway):
 						this_album = Album()
 						this_album.id = self.get_value(album, "id")
 						this_album.displayName = self.get_value(album, "name")
-						this_album.author = self.get_value(album["from"], "id")
+						
+						# Author info.
+						author = SocialObjects.Person()
+						author.id = self.get_value(album["from"], "id")
+						this_album.author = author
+						
 						this_album.published = self.str_to_time(self.get_value(album, "created_time"))
 						this_album.summary = self.get_value(album, "description")
 						this_album.updated = self.str_to_time(self.get_value(album, "updated_time"))
@@ -661,6 +685,7 @@ class FacebookServiceGateway(ServiceGateway):
 				return album_coll
 				
 			except:
+				raise
 				return Albums()
 		
 		else:
@@ -698,12 +723,16 @@ class FacebookServiceGateway(ServiceGateway):
 						# Create photo object and set basic info.
 						this_photo = Photo()
 						this_photo.id = self.get_value(photo, "id")
-						this_photo.author = self.get_value(photo["from"], "id")
 						this_photo.displayName = self.get_value(photo, "name")
 						this_photo.published = self.str_to_time(self.get_value(photo, "created_time"))
 						this_photo.updated = self.str_to_time(self.get_value(photo, "updated_time"))
 						this_photo.url = self.get_value(photo, "link")
 						this_photo.position = self.get_value(photo, "position")
+						
+						# Author info.
+						author = SocialObjects.Person()
+						author.id = self.get_value(photo["from"], "id")
+						this_photo.author = author
 						
 						# Get image info.
 						img_normal = SocialObjects.Image()
@@ -755,6 +784,11 @@ class FacebookServiceGateway(ServiceGateway):
 				photo_album = Photos()
 				photo_album.objects = photo_obj_list
 				
+				# Create author object for this collection.
+				author = SocialObjects.Person()
+				author.id = obj_id
+				photo_album.author = author
+				
 				# If the payload was a photo album, add the photos into it.
 				if (type(payload) is Album):
 					payload.photos = photo_album
@@ -805,6 +839,11 @@ class FacebookServiceGateway(ServiceGateway):
 						this_checkin.checkinType = self.get_value(checkin, "type")
 						this_checkin.published = self.str_to_time(self.get_value(checkin, "created_time"))
 						
+						# Author info.
+						author = SocialObjects.Person()
+						author.id = self.get_value(checkin["from"], "id")
+						this_checkin.author = author
+						
 						# Get location info.
 						this_checkin.location = self.parse_location(checkin)
 						
@@ -822,6 +861,12 @@ class FacebookServiceGateway(ServiceGateway):
 				# Compose collection and return it.
 				checkins_coll = Checkins()
 				checkins_coll.objects = checkin_obj_list
+				
+				# Create author object for this collection.
+				author = SocialObjects.Person()
+				author.id = user_id
+				checkins_coll.author = author
+				
 				return checkins_coll
 			
 			except:
@@ -892,10 +937,15 @@ class FacebookServiceGateway(ServiceGateway):
 				for comment in comments_on:
 					this_comment = Comment()
 					this_comment.id = self.get_value(comment, "id")
-					this_comment.author = self.get_value(comment["from"], "id")
+					
+					author = SocialObjects.Person()
+					author.id = self.get_value(comment["from"], "id")
+					this_comment.author = author
+					
 					this_comment.content = self.get_value(comment, "message")
 					this_comment.published = self.str_to_time(self.get_value(comment, "created_time"))
 					this_comment.url = "https://www.facebook.com/me/posts/" + this_comment.id
+					
 					comments.append(this_comment)
 				
 				return comments
@@ -906,7 +956,6 @@ class FacebookServiceGateway(ServiceGateway):
 		
 		# No comments, return an empty list.
 		else:
-			print " - None. Empty list."
 			return []
 	
 	
@@ -1040,7 +1089,11 @@ class FacebookServiceGateway(ServiceGateway):
 				for comment in comment_list:
 					this_comment = Comment()
 					this_comment.id = comment["id"]
-					this_comment.author = comment["from"]["id"]
+					
+					author = SocialObjects.Person()
+					author.id = self.get_value(comment["from"], "id")
+					this_comment.author = author
+					
 					this_comment.content = comment["message"]
 					this_comment.published = self.str_to_time(comment["created_time"])
 					this_comment.url = "https://www.facebook.com/me/posts/" + this_comment.id
@@ -1562,7 +1615,7 @@ class Status(SocialObjects.Note):
 		
 		# Basic info.
 		str_rep += "- ID: " + check_none(self.id) + "\n"
-		str_rep += "- Author: " + unicode(check_none(self.author)) + "\n"
+		str_rep += "- Author: " + unicode(check_none(self.author.id)) + "\n"
 		str_rep += "- Privacy: " + check_none(self.privacy) + "\n"
 		str_rep += "- Content: " + unicode(check_none(self.content)) + "\n"
 		str_rep += "- Published: " + str(check_none(self.published)) + "\n"
@@ -1652,7 +1705,7 @@ class Comment(SocialObjects.Note):
 		
 		# Basic info.
 		str_rep += "- ID: " + check_none(self.id) + "\n"
-		str_rep += unicode("- Author: " + check_none(self.author) + "\n")
+		str_rep += unicode("- Author: " + check_none(self.author.id) + "\n")
 		str_rep += unicode("- Content: " + check_none(self.content) + "\n")
 		str_rep += "- Published: " + str(check_none(self.published)) + "\n"
 		str_rep += "- URL: " + check_none(self.url) + "\n"
@@ -1790,7 +1843,7 @@ class Album(SocialObjects.SocialObject):
 		
 		# Basic info.
 		str_rep += "- ID: " + check_none(self.id) + "\n"
-		str_rep += "- Author: " + unicode(check_none(self.author)) + "\n"
+		str_rep += "- Author: " + unicode(check_none(self.author.id)) + "\n"
 		str_rep += "- Name: " + unicode(check_none(self.displayName)) + "\n"
 		str_rep += "- Summary: " + unicode(check_none(self.summary)) + "\n"
 		str_rep += "- Published: " + str(check_none(self.published)) + "\n"
@@ -1956,7 +2009,7 @@ class Photo(SocialObjects.Image):
 		
 		# Basic info.
 		str_rep += "- ID: " + check_none(self.id) + "\n"
-		str_rep += "- Author: " + unicode(check_none(self.author)) + "\n"
+		str_rep += "- Author: " + unicode(check_none(self.author.id)) + "\n"
 		str_rep += "- Name: " + unicode(check_none(self.displayName)) + "\n"
 		str_rep += "- Published: " + str(check_none(self.published)) + "\n"
 		str_rep += "- Updated: " + str(check_none(self.updated)) + "\n"
@@ -2061,7 +2114,7 @@ class Checkin(SocialObjects.SocialObject):
 		
 		# Basic info.
 		str_rep += "- ID: " + check_none(self.id) + "\n"
-		str_rep += "- Author: " + unicode(check_none(self.author)) + "\n"
+		str_rep += "- Author: " + unicode(check_none(self.author.id)) + "\n"
 		str_rep += "- Published: " + str(check_none(self.published)) + "\n"
 		str_rep += "- Location: " + unicode(check_none(self.location.displayName)) + "\n"
 		
@@ -2142,46 +2195,46 @@ if __name__ == "__main__":
 	print unicode(person_obj)
 	
 	# Test "Get Music."
-	#music_list = fb.Music("GET", person_1)
-	#print "<Music>"
-	#for band in music_list:
-		#print "- " + band
-	#print "</Music>"
+	music_list = fb.Music("GET", person_1)
+	print "<Music>"
+	for band in music_list:
+		print "- " + band
+	print "</Music>"
 	
 	# Test "Get Movies."
-	#movie_list = fb.Movies("GET", person_1)
-	#print "<Movies>"
-	#for movie in movie_list:
-		#print "- " + movie
-	#print "</Movies>"
+	movie_list = fb.Movies("GET", person_1)
+	print "<Movies>"
+	for movie in movie_list:
+		print "- " + movie
+	print "</Movies>"
 	
 	# Test "Get Books."
-	#book_list = fb.Books("GET", person_1)
-	#print "<Books>"
-	#for book in book_list:
-		#print "- " + book
-	#print "</Books>"
+	book_list = fb.Books("GET", person_1)
+	print "<Books>"
+	for book in book_list:
+		print "- " + book
+	print "</Books>"
 	
 	# Test "Get Statuses."
 	statuses = fb.Statuses("GET", person_1)
 	print unicode(statuses)
 	
 	# Test "Get Friends."
-	#friends = fb.Friends("GET", person_1)
-	#print unicode(friends)
+	friends = fb.Friends("GET", person_1)
+	print unicode(friends)
 	
 	# Test "Get Albums."
-	#albums = fb.Albums("GET", person_1)
-	#print unicode(albums)
+	albums = fb.Albums("GET", person_1)
+	print unicode(albums)
 	
 	# Test "Get Images."
-	#for album in albums.objects:
-		#tmp_album = fb.Images("GET", album)
-		#print unicode(tmp_album)
+	for album in albums.objects:
+		tmp_album = fb.Images("GET", album)
+		print unicode(tmp_album)
 	
 	# Test "Get Check-ins."
-	#checkins = fb.Checkins("GET", person_1)
-	#print unicode(checkins)
+	checkins = fb.Checkins("GET", person_1)
+	print unicode(checkins)
 	
 	# End.
 	print "</Tests>"
