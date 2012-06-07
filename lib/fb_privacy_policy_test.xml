@@ -5,25 +5,88 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://pvnets.cs.st-andrews.ac.uk/prisoner/privacy-policy privacy_policy.xsd">
 	
-	<policy for="Image">
+	<policy for="Facebook:User">
 		<attributes>
-		<attribute type="author">
-			<attribute-policy allow="retrieve">
-				<transformations>		
-					<transform type="reduce" level="initials" />
-				</transformations>
-			</attribute-policy>
-		</attribute>
-		
-		<attribute type="fullImage">
-			<attribute-policy allow="retrieve">
-			</attribute-policy>
-		</attribute>
+			<attribute type="id">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="displayName">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="username">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="image">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="updatedTime">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			
+			<attribute type="firstName">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="middleName">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="lastName">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="birthday">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="gender">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			
+			<attribute type="interestedIn">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="relationshipStatus">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="significantOther">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			
+			<attribute type="email">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="languages">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="bio">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="politicalViews">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="religion">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			
+			<attribute type="education">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="work">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			
+			<attribute type="hometown">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="location">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="timezone">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
 		</attributes>
+		
 		<object-policy allow="retrieve">
 			<object-criteria>
 				<and-match>
-					<attribute-match match="author.id" on_object="literal:532336768" />
+					<attribute-match match="author.id" on_object="session:Facebook.id" />
 				</and-match>
 			</object-criteria>	
 		</object-policy>

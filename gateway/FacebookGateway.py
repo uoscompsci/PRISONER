@@ -48,8 +48,9 @@ class FacebookServiceGateway(ServiceGateway):
 		# Set the scope for our app. (What permissions do we need?)
 		self.scope = user_permissions + "," + friend_permissions + "," + extended_permissions
 		
-		# Placeholder for token.
+		# Placeholders.
 		self.access_token = None
+		self.session = None
 	
 	
 	def request_authentication(self, callback):
@@ -75,6 +76,7 @@ class FacebookServiceGateway(ServiceGateway):
 		params["state"] = self.state
 		
 		uri = self.auth_request_uri + urllib.urlencode(params)
+		print "Request URI: " + uri
 		return uri
 	
 	
@@ -89,8 +91,8 @@ class FacebookServiceGateway(ServiceGateway):
 		"""
 		
 		# Before doing this, could check that our state value matches the state returned by Facebook. (Later addition)
-		#facebook_code = request.arguments['code'][0]
-		facebook_code = request # Uncomment me if testing with a known code.
+		facebook_code = request.arguments['code'][0]
+		#facebook_code = request # Uncomment me if testing with a known code.
 		
 		# Parameters for the token request URI.
 		params = {}
@@ -106,6 +108,17 @@ class FacebookServiceGateway(ServiceGateway):
 		# Parse response to get access token and expiry date.
 		self.access_token = response["access_token"][0]
 		expires = response["expires"][0]
+		
+		# Create a User() object for the authenticated user.
+		auth_user = User()
+		
+		# Query Facebook to get the authenticated user's ID and username.
+		result_set = self.get_graph_data("/me")
+		auth_user.id = self.get_value(result_set, "id")
+		auth_user.username = self.get_value(result_set, "username")
+		
+		# Set up session.
+		self.session = auth_user
 		
 		print "Access token: " + self.access_token
 		print "Token expires in: " + expires + " secs"
@@ -126,6 +139,15 @@ class FacebookServiceGateway(ServiceGateway):
 		"""
 		
 		return False
+	
+	
+	def Session(self):
+		"""
+		The Facebook session exposes the authenticated user as an instance of User().
+		Can also be accessed in the same way as Person() as this class simply extends it.
+		"""
+		
+		return self.session
 	
 	
 	def User(self, operation, payload):
@@ -2239,7 +2261,3 @@ if __name__ == "__main__":
 	# End.
 	print "</Tests>"
 
-
-# Ignore me! I'm just for testing.	
-class NotImplementedException(Exception):
-	pass
