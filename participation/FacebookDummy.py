@@ -55,21 +55,52 @@ def do_experiment():
 	print "- Significant Other: " + str(person_obj.significantOther)
 	
 	# Get user's friends list.
-	#print "- GetObject() :: FriendsList"
-	#friends_list = expBuilder.sog.GetObject("Facebook","Friends", me)
-	#print "- Done!"
+	print "- GetObject() :: FriendsList"
+	friends_list = expBuilder.sog.GetObject("Facebook","Friends", me)
+	print "- Done!"
 	
 	# Print friends list.
-	#print "- Friends List: " + str(friends_list)
-	#print "- Number of friends: " + str(len(friends_list.objects))
+	print "- Friends list: " + str(friends_list)
+	print "- Number of friends: " + str(len(friends_list.objects))
 	
-	#for friend in friends_list.objects:
-		#print "- Friend object type: " + str(type(friend))
+	for friend in friends_list.objects:
+		print "  - " + unicode(friend.displayName)
 	
 	# Get user's music interests.
 	print "- GetObject() :: Music"
-	music = expBuilder.sog.GetObject("Facebook","Music", me)
+	fav_music = expBuilder.sog.GetObject("Facebook","Music", me)
 	print "- Done!"
+	
+	# Print favourite music.
+	print "- Favourite bands: " + str(fav_music)
+	print "- Number of bands: " + str(len(fav_music.objects))
+	
+	for band in fav_music.objects:
+		print "  - " + unicode(band.displayName)
+	
+	# Get user's movie interests.
+	print "- GetObject() :: Movies"
+	fav_movies = expBuilder.sog.GetObject("Facebook","Movie", me)
+	print "- Done!"
+	
+	# Print favourite movies.
+	print "- Favourite movies: " + str(fav_movies)
+	print "- Number of movies: " + str(len(fav_movies.objects))
+	
+	for movie in fav_movies.objects:
+		print "  - " + unicode(movie.displayName)
+	
+	# Get user's literature interests.
+	print "- GetObject() :: Books"
+	fav_books = expBuilder.sog.GetObject("Facebook","Book", me)
+	print "- Done!"
+	
+	# Print favourite books / authors.
+	print "- Favourite books: " + str(fav_books)
+	print "- Number of books: " + str(len(fav_books.objects))
+	
+	for book in fav_books.objects:
+		print "  - " + unicode(book.displayName)
 
 
 if __name__ == "__main__":

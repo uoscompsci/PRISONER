@@ -126,6 +126,63 @@
 		</object-policy>
 	</policy>
 	
+	<policy for="Facebook:Music">
+		<attributes>
+			<attribute type="id">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="displayName">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+		</attributes>
+		
+		<object-policy allow="retrieve">
+			<object-criteria>
+				<and-match>
+					<attribute-match match="author.id" on_object="session:Facebook.id" />
+				</and-match>
+			</object-criteria>	
+		</object-policy>
+	</policy>
+	
+	<policy for="Facebook:Movie">
+		<attributes>
+			<attribute type="id">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="displayName">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+		</attributes>
+		
+		<object-policy allow="retrieve">
+			<object-criteria>
+				<and-match>
+					<attribute-match match="author.id" on_object="session:Facebook.id" />
+				</and-match>
+			</object-criteria>	
+		</object-policy>
+	</policy>
+	
+	<policy for="Facebook:Book">
+		<attributes>
+			<attribute type="id">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="displayName">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+		</attributes>
+		
+		<object-policy allow="retrieve">
+			<object-criteria>
+				<and-match>
+					<attribute-match match="author.id" on_object="session:Facebook.id" />
+				</and-match>
+			</object-criteria>	
+		</object-policy>
+	</policy>
+	
 	<policy for="Facebook:Friends">
 		<object-policy allow="retrieve">
 			<object-criteria>
@@ -136,27 +193,7 @@
 		</object-policy>
 	</policy>
 	
-	<policy for="Facebook:Music">
-		<object-policy allow="retrieve">
-			<object-criteria>
-				<and-match>
-					<attribute-match match="author.id" on_object="session:Facebook.id" />
-				</and-match>
-			</object-criteria>	
-		</object-policy>
-	</policy>
-	
-	<policy for="Facebook:Movies">
-		<object-policy allow="retrieve">
-			<object-criteria>
-				<and-match>
-					<attribute-match match="author.id" on_object="session:Facebook.id" />
-				</and-match>
-			</object-criteria>	
-		</object-policy>
-	</policy>
-	
-	<policy for="Facebook:Books">
+	<policy for="Collection">
 		<object-policy allow="retrieve">
 			<object-criteria>
 				<and-match>

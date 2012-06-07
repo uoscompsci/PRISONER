@@ -363,7 +363,7 @@ class FacebookServiceGateway(ServiceGateway):
 				
 				for band in band_obj_list:
 					# Create an object for this band.
-					this_band = Page()
+					this_band = Music()
 					this_band.displayName = self.get_value(band, "name")
 					this_band.author = author
 					bands.append(this_band)
@@ -384,7 +384,7 @@ class FacebookServiceGateway(ServiceGateway):
 			raise NotImplementedException("Operation not supported.")
 	
 	
-	def Movies(self, operation, payload):
+	def Movie(self, operation, payload):
 		"""
 		Performs operations relating to people's taste in films.
 		Currently only supports GET operations. This lets us retrieve the movies / films people like.
@@ -422,7 +422,7 @@ class FacebookServiceGateway(ServiceGateway):
 				
 				for movie in movie_obj_list:
 					# Create an object for this movie.
-					this_movie = Page()
+					this_movie = Movie()
 					this_movie.displayName = self.get_value(movie, "name")
 					this_movie.author = author
 					movies.append(this_movie)
@@ -443,7 +443,7 @@ class FacebookServiceGateway(ServiceGateway):
 			raise NotImplementedException("Operation not supported.")
 	
 	
-	def Books(self, operation, payload):
+	def Book(self, operation, payload):
 		"""
 		Performs operations relating to people's taste in books and literature.
 		Currently only supports GET operations. This lets us get the books / authors people are into.
@@ -481,7 +481,7 @@ class FacebookServiceGateway(ServiceGateway):
 				
 				for book in book_obj_list:
 					# Create an object for this book.
-					this_book = Page()
+					this_book = Book()
 					this_book.displayName = self.get_value(book, "name")
 					this_book.author = author
 					books.append(this_book)
@@ -2292,6 +2292,33 @@ class Page(SocialObjects.SocialObject):
 	def __init__(self):
 		super(Page, self).__init__()
 		self._provider = "Facebook"
+
+
+class Music(Page):
+	"""
+	Stub for representing music.
+	"""
+	
+	def __init__(self):
+		super(Music, self).__init__()
+
+
+class Movie(Page):
+	"""
+	Stub for representing music.
+	"""
+	
+	def __init__(self):
+		super(Movie, self).__init__()
+
+
+class Book(Page):
+	"""
+	Stub for representing music.
+	"""
+	
+	def __init__(self):
+		super(Book, self).__init__()
 
 
 def check_none(value):
