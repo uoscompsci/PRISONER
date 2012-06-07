@@ -216,7 +216,7 @@ authentication logic.</p>
 
 <dl class="method">
 <dt id="src.workflow.ExperimentBuilder.ExperimentBuilder.build">
-<tt class="descname">build</tt><big>(</big><big>)</big><a class="headerlink" href="#src.workflow.ExperimentBuilder.ExperimentBuilder.build" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">build</tt><big>(</big><em>callback</em><big>)</big><a class="headerlink" href="#src.workflow.ExperimentBuilder.ExperimentBuilder.build" title="Permalink to this definition">¶</a></dt>
 <dd><p>Using the information provided by the participation client,
 instigate the experiment consent process. This does the
 following:</p>
@@ -236,8 +236,11 @@ confidence). Note, this URL must contain the entire
 authentication flow, so you may need to host this yourself, particularly if this
 involves two (or more) factor authentication as users are bounced between URLs
 (many authentication flows expect a URL callback). This flow
-must return a token to persist alongside the Participant. We are
-looking towards managing more of this flow within PRISONER</p>
+must return a token to persist alongside the Participant.</p>
+<p>: param callback: A callable to be invoked only when consent is
+confirmed - ie. the entrypoint for the participation client
+:type callback: callable
+: returns: URL participant must visit to begin consent flow</p>
 </dd></dl>
 
 <dl class="method">
@@ -305,7 +308,7 @@ then redirects to the appropriate URL for that service.</p>
 <span id="policyprocessor-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">PolicyProcessor</span></tt> Module<a class="headerlink" href="#module-src.workflow.PolicyProcessor" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="src.workflow.PolicyProcessor.PolicyProcessor">
-<em class="property">class </em><tt class="descclassname">src.workflow.PolicyProcessor.</tt><tt class="descname">PolicyProcessor</tt><big>(</big><em>policy=None</em><big>)</big><a class="headerlink" href="#src.workflow.PolicyProcessor.PolicyProcessor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">src.workflow.PolicyProcessor.</tt><tt class="descname">PolicyProcessor</tt><big>(</big><em>policy=None</em>, <em>sog=None</em><big>)</big><a class="headerlink" href="#src.workflow.PolicyProcessor.PolicyProcessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 <p>The Policy Processor is responsible for validating and sanitising all
 requests to retrieve and publish Social Objects.</p>
@@ -314,6 +317,8 @@ this is missing or invalid, all requests will fail.</p>
 <p>The PolicyProcessor is an internal object. Service gateways and
 participation clients do not need to directly interact with it.
 See the SocialObjectGateway for a friendly interface to these innards.</p>
+<p>PolicyProcessor needs an instance of SocialObjectGateway so it can
+evaluate the current session scope of service gateways.</p>
 <dl class="attribute">
 <dt id="src.workflow.PolicyProcessor.PolicyProcessor.privacy_policy">
 <tt class="descname">privacy_policy</tt><a class="headerlink" href="#src.workflow.PolicyProcessor.PolicyProcessor.privacy_policy" title="Permalink to this definition">¶</a></dt>
@@ -365,9 +370,11 @@ This coordinates access to other service gateways, and the management of experim
 <p>A single instance of this object should be maintained throughout the lifecycle of an experimental application.</p>
 <dl class="method">
 <dt id="src.workflow.SocialObjectGateway.SocialObjectsGateway.GetObject">
-<tt class="descname">GetObject</tt><big>(</big><em>provider</em>, <em>object_type</em>, <em>payload</em>, <em>allow_many=False</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway.GetObject" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">GetObject</tt><big>(</big><em>provider</em>, <em>object_type</em>, <em>payload</em>, <em>allow_many=False</em>, <em>criteria=None</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway.GetObject" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interface for retrieving an object from a service gateway.
-Requests are verified against the privacy policy, and returned objects are sanitised as appropriate.</p>
+Requests are verified against the privacy policy, and returned objects are sanitised as appropriate.
+The payload and filter arguments are semantically distinct. See
+the documentation for each argument to understand how to use them.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -375,8 +382,20 @@ Requests are verified against the privacy policy, and returned objects are sanit
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>provider</strong> (<em>str</em>) &#8211; name of provider to get object from</li>
 <li><strong>object_type</strong> (<em>str</em>) &#8211; name of object to get</li>
-<li><strong>payload</strong> (<em>dict</em>) &#8211; dictionary of criteria of objects to return.
-The format of this depends on the requirements and format expected by the service gateway.</li>
+<li><strong>payload</strong> (<em>object</em>) &#8211; This must contain a SocialObject or dictionary of
+arguments necessary for the ServiceGateway to make a meaningful request. For
+example, it may be a user ID to retrieve their photos, however it should not
+contain criteria for filtering the objects returned
+(see criteria).
+The expected payload depends on the ServiceGateway and
+the objects you are requesting. See the documentation for each object exposed by
+the ServiceGateway to see the payload it requests.</li>
+<li><strong>criteria</strong> &#8211; Optional criteria for filtering the objects returned by the
+ServiceGateway. This expression is run on all objects returned by
+gateway, and only where it evaluates as True is the
+object returned. Uses syntax similar to lambda expressions, without prefix. x is used
+to refer to each instance of an object.
+eg. &#8216;&#8220;party&#8221; in x.tags&#8217;</li>
 </ul>
 </td>
 </tr>
@@ -426,6 +445,17 @@ Requests are verified against the privacy policy, and outgoing objects are sanit
 <p>called the PRISONER callback. This should contain any parameters needed to
 complete authentication 
 :type request: tornado.httpserver.HTTPRequest</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.workflow.SocialObjectGateway.SocialObjectsGateway.get_participant">
+<tt class="descname">get_participant</tt><big>(</big><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway.get_participant" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.workflow.SocialObjectGateway.SocialObjectsGateway.get_service_gateway">
+<tt class="descname">get_service_gateway</tt><big>(</big><em>provider</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway.get_service_gateway" title="Permalink to this definition">¶</a></dt>
+<dd><p>External wrapper to internal function</p>
 </dd></dl>
 
 <dl class="method">
@@ -508,6 +538,28 @@ to users, then calling complete_authentication() with its token.</p>
 <p>user has provided authentication
 :type callback: str.
 :returns: URL required to complete authentication</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.workflow.SocialObjectGateway.SocialObjectsGateway.restore_authentication">
+<tt class="descname">restore_authentication</tt><big>(</big><em>provider</em>, <em>access_token</em><big>)</big><a class="headerlink" href="#src.workflow.SocialObjectGateway.SocialObjectsGateway.restore_authentication" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempt to provide a service gateway with an existing access
+token (eg. stored in DB) to authenticate without going through clientside flow.
+Returns boolean value to indicate success. If False, a call
+should be made to requst_authentication() to begin clientside flow.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>provider</strong> (<em>str</em>) &#8211; Name of provider to authenticate with</li>
+<li><strong>access_token</strong> (<em>object</em>) &#8211; Object used to authenticate with this provider</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>:returns boolean - was authentication attempt successful?</p>
 </dd></dl>
 
 </dd></dl>

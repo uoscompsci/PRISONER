@@ -5,6 +5,19 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://pvnets.cs.st-andrews.ac.uk/prisoner/privacy-policy privacy_policy.xsd">
 
+	<policy for="Lastfm:Playlist">
+		<attributes>
+		<attribute type="objects">
+			<attribute-policy allow="retrieve" />
+		</attribute>
+		</attributes>
+		<object-policy allow="retrieve">
+			<object-criteria>
+				<attribute-match match="author.id"
+				on_object="session:Lastfm.id" />
+			</object-criteria>
+		</object-policy>
+	</policy>
 	
 	<policy for="Lastfm:Track">
 		<attributes>

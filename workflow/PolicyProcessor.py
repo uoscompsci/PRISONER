@@ -107,6 +107,13 @@ class PolicyProcessor(object):
 		if not self.privacy_policy:
 			raise NoPrivacyPolicyProvidedError()
 		
+		orig_object_type = object_type	
+		object_type = self.__get_most_specialised_policy_for_class(provider, object_type)
+		if not object_type:
+			raise DisallowedByPrivacyPolicyError("Privacy policy contains no policy element" + \
+			" for %s - no requests will be allowed" % orig_object_type)
+
+
 		query_path = ("//policy[@for='%s']"%
 		object_type)
 
@@ -152,7 +159,7 @@ class PolicyProcessor(object):
 		# providers on an experiment-policy to avoid repetition for each
 		# object - so hold off until those primitives exist
 
-		return self.__get_clean_object_name(object_type)
+		return self.__get_clean_object_name(orig_object_type)
 		return True # you made it this far
 
 	def __get_clean_object_name(self, object_type):
@@ -345,6 +352,61 @@ class PolicyProcessor(object):
 		else:
 			return True
 
+	def __get_most_specialised_policy_for_object(self, provider, test_object):
+		""" Returns the name of the most-specialised superclass of this
+		object which has a policy element.
+		If I have a Playlist which subclasses Collection, and only a
+		policy for Collection, this will return Collection.
+
+		:param test_object: Object to find policy for
+		:type test_object: str
+		:returns: str -- matching policy object
+		"""
+		classes = test_object.__class__.__bases__
+		classes = list(classes)
+		classes.insert(0, test_object.__class__)
+		# for each superclass (and original object):
+		for obj in classes:
+			# is a provider namespaced policy available?
+			xpath = "//policy[@for='%s:%s']" % (provider,
+			obj.__name__)
+			xpath_res = self.privacy_policy.xpath(xpath)
+			if xpath_res:
+				#return "%s:%s" % (provider, obj.__name__)
+				return obj.__name__
+			# is a non-namespaced policy?
+			xpath = "//policy[@for='%s']" % obj.__name__
+			xpath_res = self.privacy_policy.xpath(xpath)
+			if xpath_res:
+				return obj.__name__
+		return False
+
+	def __get_most_specialised_policy_for_class(self, provider, class_name):
+		""" Similar to get_most_specialised_policy_for_object except
+		class_name is a string, not an instance of the object to test. 
+		Attempts to infer the class before getting the best-fitting
+		policy
+		"""
+		# try inferring namespaced object
+		try:
+			#obj = self._infer_object("%s:%s" % (provider,
+			#class_name))
+			provider_gateway = globals()["%sGateway" %			
+			provider]
+			obj = getattr(
+			provider_gateway, class_name)
+
+		except:
+			# try inferring base object
+			obj = self._infer_object(class_name)
+	
+		inst = obj()
+		# call get_most_specialised with this instance
+		return self.__get_most_specialised_policy_for_object(provider,
+		inst)
+		
+	
+
 	def _sanitise_object_request(self, response):
 		"""
 		Sanitises a request - this reduces a Social Object to only the
@@ -357,6 +419,10 @@ class PolicyProcessor(object):
 		if response.headers == None:
 			raise Exception("Response has no headers, so cannot " + \
 			"be sanitised. No object will be returned.")
+
+		policy_object_type = self.__get_most_specialised_policy_for_object(response.headers.provider,
+		response.content)
+		response.headers.object_type = policy_object_type
 
 		# did the object policy allow us to collect this?
 
