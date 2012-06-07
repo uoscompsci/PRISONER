@@ -65,10 +65,16 @@ class SocialObject(object):
 		"""
 		return self._friendly_names[attribute]	
 
-	def transform_author(self, transformation, level):
-		""" Applies sanitising transformations to the author attribute.
-		This assumes the author is an instance of Person.
-		
+
+	def base_transform_name(self, string, transformation, level):
+		""" The Base Social Objects package provides a number of
+		standard transformations which are intended for use by any objects providing
+		attributes of common types.
+		This base transformation is designed to anonymise names of
+		people, objects etc. but can be used for any string attribute
+
+		:param string: the string to transform
+		:type string: str
 		:param transformation:
 			"reduce" supported. Coarsens author object depending on
 			value for level
@@ -82,20 +88,31 @@ class SocialObject(object):
 		:raises: InvalidTransformationLevelError
 		"""
 		levels = ["first","last","initials"]
-		if level not in levels:
-			raise InvalidTransformationLevelError(level)
+                if level not in levels:
+                        raise InvalidTransformationLevelError(level)
 
-		if level == "first":
-			self.author.displayName = self.author.displayName.split(" ")[0]
-		elif level == "last":
-			split_name = self.author.displayName.split(" ") 
-			self.author.displayName = split_name[len(split_name)-1]
-		elif level == "initials":
-			split_name = self.author.displayName.split(" ")
-			initials = ""
-			for word in split_name:
-				initials = initials + word[0]
-			self.author.displayName = initials
+                if level == "first":
+                        string = string.split(" ")[0]
+                elif level == "last":
+                        split_name = string.split(" ")
+                        string = split_name[len(split_name)-1]
+                elif level == "initials":
+                        split_name = string.split(" ")
+                        initials = ""
+                        for word in split_name:
+                                initials = initials + word[0]
+                        string = initials
+
+		return string
+
+
+	def transform_author(self, transformation, level):
+		""" Applies sanitising transformations to the author attribute,
+		using the base name transformation (see base_transform_name()).
+		This assumes the author is an instance of Person.
+		"""
+		self.author.displayName = self.base_transform_name(self.author.displayName,
+		transformation, level)
 
 	@property
 	def author(self):

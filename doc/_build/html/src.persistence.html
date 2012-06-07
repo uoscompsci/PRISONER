@@ -85,6 +85,35 @@ through the ExperimentBuilder and SocialObjectsGateway.</p>
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="src.persistence.PersistenceManager.PersistenceManager.get_existing_provider_auth">
+<tt class="descname">get_existing_provider_auth</tt><big>(</big><em>participant_id</em>, <em>provider</em><big>)</big><a class="headerlink" href="#src.persistence.PersistenceManager.PersistenceManager.get_existing_provider_auth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the given participant has been
+previously authenticated with the named provider. If so, returns the credentials
+stored. Otherwise, returns None, so participant should continue with consent
+flow.
+If credentials are found, a ServiceGateway should be provided with them. It
+should signal whether it is able to successfully authenticate with them. If not,
+it should attempt to reauthenticate server-side if possible (eg. request new
+session from API). If clientside intervention is required, it should signal
+this.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>participant_id</strong> (<em>int</em>) &#8211; ID of participant to authenticate</li>
+<li><strong>provider</strong> (<em>str</em>) &#8211; Name of provider to return authentication for</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Stored credentials or None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="src.persistence.PersistenceManager.PersistenceManager.get_participant">
 <tt class="descname">get_participant</tt><big>(</big><em>schema</em>, <em>participant_id</em><big>)</big><a class="headerlink" href="#src.persistence.PersistenceManager.PersistenceManager.get_participant" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve the participant with the given ID from the given

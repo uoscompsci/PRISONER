@@ -27,9 +27,15 @@ def do_experiment():
 	print img.author.displayName
 	"""
 
+	# test get track with criteria
+	"""
 	tracks = expBuilder.sog.GetObject("Lastfm", "Track", me,
 	criteria="x.artist == 'Cajun Dance Party'")
+	print tracks.objects[0]
+	"""
 
+	# test get playlist
+	tracks = expBuilder.sog.GetObject("Lastfm", "Playlist", me)
 	print tracks.objects[0]
 
 

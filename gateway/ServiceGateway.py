@@ -159,6 +159,10 @@ class SARHeaders(object):
 		attribute."""
 		return self._object_type
 
+	@object_type.setter
+	def object_type(self, value):
+		self._object_type = value
+
 	@property
 	def payload(self):
 		""" The criteria for a request, or object to publish. """

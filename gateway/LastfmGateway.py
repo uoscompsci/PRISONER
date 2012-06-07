@@ -50,12 +50,20 @@ class Track(SocialObjects.SocialObject):
 	def tag(self, value):
 		self._tag = value
 
+
 	def __str__(self):
 		return "%s - %s" % (self.artist, self.title)
 
+
+	def transform_artist(self, transformation, level):
+		""" Applies anonymising transformation to the artist attribute.
+		Uses the base_transform_name transformation """
+		self.artist = self.base_transform_name(self.artist, transformation,
+		level)
+
 class Playlist(SocialObjects.Collection):
 	def __init__(self):
-		pass
+		super(Playlist, self).__init__()
 
 		
 
@@ -91,6 +99,10 @@ class LastfmServiceGateway(ServiceGateway):
 		"""
 		return self.session	
 
+	def Playlist(self, operation, payload):
+		if(operation == "GET"):
+			return self.Track(operation, payload)
+
 	def Track(self, operation, payload):	
 		""" Performs operations on Track objects. Only supports the GET
 		operation (you can get a user's tracks, you can't create them).
@@ -108,7 +120,7 @@ class LastfmServiceGateway(ServiceGateway):
 		if(operation == "GET"):
 			user = self.network.get_user(payload.id)
 			tracks = user.get_loved_tracks(limit=10)
-			track_coll = SocialObjects.Collection()
+			track_coll = Playlist()
 			track_coll.author = payload
 
 			track_set = []
@@ -117,7 +129,8 @@ class LastfmServiceGateway(ServiceGateway):
 				this_track.author = payload
 				this_track.artist = track.track.artist.name
 				this_track.title = track.track.title
-				this_track.tag = track.track.get_top_tags(limit=1)[0].item.name
+				#this_track.tag = track.track.get_top_tags(limit=1)[0].item.name
+				this_track.tag = "test_tag"
 				track_set.append(this_track)
 			track_coll.objects = track_set
 			return track_coll	
@@ -151,6 +164,7 @@ class LastfmServiceGateway(ServiceGateway):
 			Provide a Person object, to return that user's profile
 			image
 		:type payload: SocialObject
+
 		:returns Image -- image of requested object
 		"""
 		if (operation == "GET"):

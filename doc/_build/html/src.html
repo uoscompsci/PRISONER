@@ -267,6 +267,36 @@ example, the person who wrote a post, uploaded a photo, etc.
 Should be an instance of Person.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="src.SocialObjects.SocialObject.base_transform_name">
+<tt class="descname">base_transform_name</tt><big>(</big><em>string</em>, <em>transformation</em>, <em>level</em><big>)</big><a class="headerlink" href="#src.SocialObjects.SocialObject.base_transform_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Base Social Objects package provides a number of
+standard transformations which are intended for use by any objects providing
+attributes of common types.
+This base transformation is designed to anonymise names of
+people, objects etc. but can be used for any string attribute</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>string</strong> (<em>str</em>) &#8211; the string to transform</li>
+<li><strong>transformation</strong> (<em>str</em>) &#8211; &#8220;reduce&#8221; supported. Coarsens author object depending on
+value for level</li>
+<li><strong>level</strong> (<em>str</em>) &#8211; first - reduce author&#8217;s displayName to first name
+last - reduce author&#8217;s displayName to last name
+initial - reduce author&#8217;s displayName to initials of
+current names</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><p class="first last">InvalidTransformationLevelError</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="src.SocialObjects.SocialObject.content">
 <tt class="descname">content</tt><a class="headerlink" href="#src.SocialObjects.SocialObject.content" title="Permalink to this definition">¶</a></dt>
@@ -281,6 +311,29 @@ this property as it may be difficult to sanitise and serialize.</p>
 <dd><p>A natural language plain-text description of this object,
 without any additional markup. For example, the name of a location, or a
 person&#8217;s full name.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.SocialObjects.SocialObject.get_friendly_name">
+<tt class="descname">get_friendly_name</tt><big>(</big><em>attribute</em><big>)</big><a class="headerlink" href="#src.SocialObjects.SocialObject.get_friendly_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>All Social Objects should include a dictionary of friendly
+names - mapping their attributes to human-readable terms. Friendly names may
+consist of several words, and must make sense in the following sentence
+construction:</p>
+<p>&#8220;This experiment may retrieve this social object&#8217;s &lt;friendly
+name&gt;&#8221;</p>
+<p>Subclassed objects should provide their own self._friendly_names
+dictionary with mappings for each additional attribute it provides, or where it
+has semantically altered a base attribute. PRISONER will attempt to return a
+friendly name from the most specialised dictionary where possible</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>attribute</strong> (<em>str</em>) &#8211; Attribute to get friendly name of</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
@@ -323,27 +376,9 @@ not embed a collection of authors as tags)</p>
 <dl class="method">
 <dt id="src.SocialObjects.SocialObject.transform_author">
 <tt class="descname">transform_author</tt><big>(</big><em>transformation</em>, <em>level</em><big>)</big><a class="headerlink" href="#src.SocialObjects.SocialObject.transform_author" title="Permalink to this definition">¶</a></dt>
-<dd><p>Applies sanitising transformations to the author attribute.
+<dd><p>Applies sanitising transformations to the author attribute,
+using the base name transformation (see base_transform_name()).
 This assumes the author is an instance of Person.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>transformation</strong> (<em>str</em>) &#8211; &#8220;reduce&#8221; supported. Coarsens author object depending on
-value for level</li>
-<li><strong>level</strong> (<em>str</em>) &#8211; first - reduce author&#8217;s displayName to first name
-last - reduce author&#8217;s displayName to last name
-initial - reduce author&#8217;s displayName to initials of
-current names</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><p class="first last">InvalidTransformationLevelError</p>
-</td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 <dl class="attribute">
