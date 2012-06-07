@@ -205,7 +205,7 @@ class FacebookServiceGateway(ServiceGateway):
 				timestamp = self.str_to_time(updated_time_str)
 				user.updatedTime = timestamp
 				
-				user.bio = self.get_value(user_details, "about")
+				user.bio = self.get_value(user_details, "bio")
 				
 				# Parse the user's birthday.
 				birthday_str = self.get_value(user_details, "birthday")
@@ -502,7 +502,7 @@ class FacebookServiceGateway(ServiceGateway):
 			raise NotImplementedException("Operation not supported.")
 		
 		
-	def Statuses(self, operation, payload):
+	def Status(self, operation, payload):
 		"""
 		Performs operations on a user's status updates.
 		Currently only supports GET operations. This lets us retrieve a user's entire backlog of status updates.
@@ -529,8 +529,12 @@ class FacebookServiceGateway(ServiceGateway):
 				# Get the initial result set.
 				result_set = self.get_graph_data("/" + user_id + "/feed")
 				
+				# Page limit for testing.
+				page_limit = 2
+				page = 0
+				
 				# So long as there's data, parse it.
-				while ((result_set.has_key("data")) and (len(result_set["data"]) > 0)):
+				while ((result_set.has_key("data")) and (len(result_set["data"]) > 0) and (page < page_limit)):
 					# Get status updates in this batch.
 					this_data = result_set["data"]
 					
@@ -576,6 +580,7 @@ class FacebookServiceGateway(ServiceGateway):
 								status_list.append(this_status)
 													
 					# Compose next address.
+					page += 1
 					next_address = result_set["paging"]["next"]
 					result_set = self.get_graph_data(next_address)
 				

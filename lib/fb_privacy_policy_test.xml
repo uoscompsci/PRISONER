@@ -203,7 +203,7 @@
 		</object-policy>
 	</policy>
 	
-	<policy for="Facebook:Statuses">
+	<policy for="Facebook:StatusList">
 		<object-policy allow="retrieve">
 			<object-criteria>
 				<and-match>

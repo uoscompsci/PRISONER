@@ -101,6 +101,23 @@ def do_experiment():
 	
 	for book in fav_books.objects:
 		print "  - " + unicode(book.displayName)
+	
+	# Get user's statuses.
+	print "- GetObject() :: Statuses"
+	statuses = expBuilder.sog.GetObject("Facebook","Status", me)
+	print "- Done!"
+	
+	# Print status history
+	print "- Statuses: " + str(statuses)
+	print "- Number of status updates: " + str(len(statuses.objects))
+	
+	for status in statuses.objects:
+		print "  - ID: " + unicode(status.id)
+		print "  - Content: " + unicode(status.content)
+		print "  - Privacy: " + unicode(status.privacy)
+		print "  - Permalink: " + unicode(status.url)
+		print "  - Likes: " + unicode(len(status.likes.objects))
+		print "  - Comments: " + unicode(len(status.comments.objects))
 
 
 if __name__ == "__main__":
