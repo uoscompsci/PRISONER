@@ -7,27 +7,30 @@ various features of PRISONER.
 If its various bits work, it's a good indication you've set it up right.
 """
 
+
 import SocialObjects
-from gateway import LastfmServiceGateway
+from gateway import FacebookGateway
 from workflow import ExperimentBuilder, SocialObjectGateway
 
 
 def do_experiment():
 	""" Call this after consent completed to do object calls """
 
-	print "\n"
-	print "-----"
+	print "\n-----"
 	print "Start experiment..."
 	
+	# Create user for experimemt.
 	print "- Creating person object with ID..."
 	me = SocialObjects.Person()
 	me.id = "532336768"
 	print "- Done!"
 	
+	# Get user's profile info.
 	print "- GetObject() :: User"
 	person_obj = expBuilder.sog.GetObject("Facebook","User", me)
 	print "- Done!"
 	
+	# Print profile info.
 	print "- ID: " + str(person_obj.id)
 	print "- First Name: " + str(person_obj.firstName)
 	print "- Middle Name: " + str(person_obj.middleName)
@@ -50,6 +53,23 @@ def do_experiment():
 	print "- Religion: " + str(person_obj.religion)
 	print "- Relationship Status: " + str(person_obj.relationshipStatus)
 	print "- Significant Other: " + str(person_obj.significantOther)
+	
+	# Get user's friends list.
+	#print "- GetObject() :: FriendsList"
+	#friends_list = expBuilder.sog.GetObject("Facebook","Friends", me)
+	#print "- Done!"
+	
+	# Print friends list.
+	#print "- Friends List: " + str(friends_list)
+	#print "- Number of friends: " + str(len(friends_list.objects))
+	
+	#for friend in friends_list.objects:
+		#print "- Friend object type: " + str(type(friend))
+	
+	# Get user's music interests.
+	print "- GetObject() :: Music"
+	music = expBuilder.sog.GetObject("Facebook","Music", me)
+	print "- Done!"
 
 
 if __name__ == "__main__":
