@@ -154,6 +154,9 @@ class SocialObjectsGateway(object):
 			raise Exception("No experimental design supplied")
 	
 		self.persistence.post_response(schema, response)	
+
+	def GetObjectJSON(self, provider, object_type, payload, criteria):
+		pass
 		
 	def GetObject(self, provider, object_type, payload, allow_many=False,
 	criteria = None):

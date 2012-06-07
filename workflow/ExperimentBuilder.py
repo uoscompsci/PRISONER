@@ -83,7 +83,7 @@ class ExperimentBuilder(object):
 		print "Schema built without error"
 		sys.exit()
 	
-	def build(self, callback):
+	def build(self, callback_url):
 		""" Using the information provided by the participation client,
 		instigate the experiment consent process. This does the
 		following:
@@ -123,8 +123,8 @@ class ExperimentBuilder(object):
 
 		# no providers to authenticate
 		if not self.providers:
-			callback()
-			return
+			#callback()
+			return callback_url
 
 		# start server
 		self.exp_callback = callback
