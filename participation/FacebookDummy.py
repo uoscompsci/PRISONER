@@ -25,7 +25,7 @@ def do_experiment():
 	# Me: 532336768
 	# Ben: 100001427539048
 	me = SocialObjects.Person()
-	me.id = "532336768"
+	me.id = "100001427539048"
 	print "\n" + "Experiment user: " + me.id
 	
 	# Grab data.
@@ -79,9 +79,6 @@ def do_experiment():
 	rand_photo = unicode(random.choice(photos_of.objects).image.fullImage)
 	rand_band = unicode(random.choice(fav_music.objects).displayName)
 	rand_place = random.choice(checkins.objects)
-	print checkins.objects
-	print "*****"
-	print unicode(rand_place)
 	rand_album = random.choice(albums.objects)
 	rand_upload = unicode(random.choice(rand_album.photos.objects).image.fullImage)
 	

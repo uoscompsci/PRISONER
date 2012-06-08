@@ -874,7 +874,6 @@ class FacebookServiceGateway(ServiceGateway):
 					return photo_album
 			
 			except:
-				raise
 				return Photos()
 		
 		else:
