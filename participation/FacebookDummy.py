@@ -22,6 +22,8 @@ def do_experiment():
 	print "-----"
 	
 	# Create user for experimemt.
+	# Me: 532336768
+	# Ben: 100001427539048
 	me = SocialObjects.Person()
 	me.id = "532336768"
 	print "\n" + "Experiment user: " + me.id
@@ -79,7 +81,7 @@ def do_experiment():
 	rand_place = random.choice(checkins.objects)
 	print checkins.objects
 	print "*****"
-	print rand_place
+	print unicode(rand_place)
 	rand_album = random.choice(albums.objects)
 	rand_upload = unicode(random.choice(rand_album.photos.objects).image.fullImage)
 	
@@ -87,16 +89,13 @@ def do_experiment():
 	print "Your current profile picture: " + profile_pic
 	print "Random photo of you: " + rand_photo
 	print "You like: " + rand_band
-	print "You've been at " + str(rand_place.displayName) + " recently with around " + str(len(rand_place.tags.objects)) + " people"
+	print "You've been at " + str(rand_place.location.displayName) + " recently with around " + str(len(rand_place.tags.objects)) + " people"
 	print "Random album you've uploaded: " + rand_album.displayName
 	print "Random image from that album: " + rand_upload
 	
 	print "\n-----"
 	print "End experiment"
 	print "-----"
-	
-	return
-	
 	
 
 if __name__ == "__main__":

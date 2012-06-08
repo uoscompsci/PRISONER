@@ -127,7 +127,7 @@ class ExperimentBuilder(object):
 			return callback_url
 
 		# start server
-		self.exp_callback = callback
+		self.exp_callback = callback_url
 
 		application = tornado.web.Application([
 		(r"/", ConsentFlowHandler),
