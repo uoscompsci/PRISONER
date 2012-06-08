@@ -32,6 +32,7 @@ class SocialObject(object):
 		self._location = None
 		self._tags = None
 		self._provider = None
+		self.prisoner_id = None
 	
 		self._friendly_names = {
 		"author": "author",

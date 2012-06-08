@@ -3,6 +3,10 @@ from PolicyProcessor import PolicyProcessor
 import SocialObjects
 from persistence import PersistenceManager
 
+import json
+import jsonpickle
+import uuid
+
 class ServiceGatewayNotFound(Exception):
 	def __init__(self,gateway):
 		self.gateway = gateway
@@ -40,6 +44,27 @@ class SocialObjectsGateway(object):
 		self.policy_processor = None
 
 		self.participant = None	
+	
+		# stores instances of SocialObjects under a unique id so clients
+		# can refer to previous instances
+		self.cached_objects = {}
+
+	def cache_object(self, object_to_cache):
+		""" Generates a unique identifier for this object, caches it,
+		and returns the identifier.
+
+		:param object_to_cache: SocialObject to cache
+		:type object_to_cache: SocialObject
+		:returns: str -- object's identifier
+		"""
+		ident = str(uuid.uuid4())
+		while(ident in self.cached_objects):
+			ident = str(uuid.uuid4())
+		object_to_cache.prisoner_id = ident
+		self.cached_objects[ident] = object_to_cache
+		return ident
+
+	
 	
 	def request_authentication(self, provider, callback):
 		""" Call this if it is necessary to perform authenticated API
@@ -156,7 +181,41 @@ class SocialObjectsGateway(object):
 		self.persistence.post_response(schema, response)	
 
 	def GetObjectJSON(self, provider, object_type, payload, criteria):
-		pass
+		""" Interface for retrieving objects from a service gateway, for
+		consumption by web services.	
+
+		This differs from GetObject in some fundamental ways. GetObject
+		is more pythonic - you request objects by supplying relevant SocialObjects, and
+		you get SocialObject instances in return. This method however, receives
+		plain-text responses, and returns JSON objects. Whereas GetObject expects a
+		semantically-appropriate SocialObject as the payload (eg. supply an instance of Person to
+		receive objects of a given type owned by that Person), this method expects a
+		payload expressed as a query string, using the namespaced syntax found in the
+		privacy policy spec. For example, a payload of "session:Lastfm.id" will
+		be evaluated as "get objects authored by the user ID in the Last.fm session.
+		"literal:lukeweb", similarly, returns objects owned by that literal user.
+		JSON objects are returned, with the same fields as the Pythonic counterparts. A
+		key difference is that the returned object has an additional attribute injected
+		- prisoner_id. This is a unique identifier for the returned object *that is
+		  valid for the duration of this session*. Rather than passing around full
+		instances of objects, subsequent queries, or publication of experimental
+		responses, need only refer to this ID to ensure PRISONER is able to relate your
+		requests back to the full representation of the data. Note that subsequent
+		attempts to retrieve the cached object are subject to the privacy policy
+		sanitisation process of the *original* request.
+		""" 
+
+		# evaluate payload
+		eval_payload = self.policy_processor._infer_object(payload)
+		eval_payload_obj = SocialObjects.SocialObject()
+		eval_payload_obj.id = eval_payload
+
+		# call getobject with cleaned object
+		ret_object = self.GetObject(provider, object_type, eval_payload_obj,
+		criteria)
+		# cache the object under a unique id, JSONify, return
+		ident = self.cache_object(ret_object)
+		return jsonpickle.encode(self.cached_objects[ident])
 		
 	def GetObject(self, provider, object_type, payload, allow_many=False,
 	criteria = None):

@@ -42,9 +42,8 @@ class LastFmExperimentClient(object):
 
 	
 		api_response = urllib2.urlopen(request)
-		print "response: %s" % api_response.read()
-
-		return Response("done")
+		resp = api_response.read()
+		return Response(resp)
 	
 
 		

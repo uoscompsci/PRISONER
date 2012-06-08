@@ -91,6 +91,7 @@ class PRISONER(object):
 
 	def set_builder_reference(self, request, builder):
 		self.session_internals[request.cookies.get("PRISession")] = builder
+		print "set session for %s" % request.cookies.get("PRISession")
 		return self.get_builder_reference(request)
 
 	def on_begin(self, request):
@@ -120,8 +121,7 @@ class PRISONER(object):
 		response = builder.sog.GetObjectJSON(provider, object_name, payload,
 		criteria)
 
-		return Response("Getting %s from %s with payload %s on criteria %s" % (object_name,
-		provider, payload, criteria))
+		return Response(response)
 
 
 	def dispatch_request(self, request):
