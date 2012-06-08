@@ -9,6 +9,7 @@ from werkzeug.utils import redirect, cached_property
 
 from workflow import PolicyProcessor, SocialObjectGateway, ExperimentBuilder
 
+import csv
 import os
 
 class PRISONER(object):
@@ -18,22 +19,21 @@ class PRISONER(object):
 
 	The PRISONER web service requires the following flow:
 
-	1) Call /authenticate/begin with the following POST payload:
+	1) Call / to handshake with PRISONER. Use returned PRISession cookie
+	in future requests
+
+	2) Call /begin with the following POST payload:
 		'policy': URL to your experiment's privacy policy
 		'design': URL to your experimental design
 		'participant': The ID of the current participant
 		'providers': A comma-seperated list of services the participant
 		must be authenticated with
 
-	2) PRISONER will return a URL your participant must visit to complete
+	3) PRISONER will return a URL your participant must visit to complete
 	their consent and authentication flow. Call this and append an (escaped)
 	argument "callback" - this is the URL your participant should be
 	returned to, to begin using your experiment
 
-	3) When PRISONER redirects your participant, the repsonse will include a
-	'PRISession' argument - this must be included in ALL future requests to
-	PRISONER by this participant to ensure the session persists correctly. 
-	
 	4) From this point onwards, use PRISONER to request objects:
 		/get/<provider>/<object_name>/<payload>/<criteria>
 	
@@ -66,7 +66,7 @@ class PRISONER(object):
 		}	
 
 	Note that the PRISONER Web Service returns JSON objects corresponding to
-	instances of Social Objects. Each object in a JSON response includes a "unique_id"
+	instances of Social Objects. Each object in a JSON response includes a "prisoner_id"
 	attribute. Use this to subsequently relate a request to a previous
 	object you received. PRISONER will lookup the original object based on
 	this identifier. For example, in our experimental response above, we
@@ -76,6 +76,7 @@ class PRISONER(object):
 
 	def __init__(self):
 		self.url_map = Map([
+			Rule('/', endpoint="handshake"),
 			Rule('/begin', endpoint="begin"),
 			Rule('/get/<string:provider>/<string:object_name>/<string:payload>/<string:criteria>',
 			endpoint="get_object"),
@@ -87,6 +88,9 @@ class PRISONER(object):
 		self.session_internals = {}
 
 	def get_builder_reference(self, request):
+		""" Each session has its own instance of PRISONER's internals,
+		keyed on the session cookie.
+		"""
 		return self.session_internals[request.cookies.get("PRISession")]
 
 	def set_builder_reference(self, request, builder):
@@ -94,11 +98,19 @@ class PRISONER(object):
 		print "set session for %s" % request.cookies.get("PRISession")
 		return self.get_builder_reference(request)
 
+	def on_handshake(self, request):
+		""" This initial call provides the client with their session
+		token. If response is good, call /begin with cookie set
+		"""
+		return Response("Welcome to PRISONER. Now call /begin to "+\
+		"initialise your experiment, supplying the PRISession cookie.")		
+
 	def on_begin(self, request):
 		builder = self.set_builder_reference(request,ExperimentBuilder.ExperimentBuilder())
 	
 
-		# for testing, these are hard-coded
+		# test with hard-coded
+		"""
 		privacy_policy = "../lib/lastfm_privacy_policy_test.xml"
 		exp_design = "../lib/lastfm_exp_design_test.xml"
 
@@ -106,11 +118,21 @@ class PRISONER(object):
 		builder.provide_experimental_design(exp_design)
 		participant = builder.authenticate_participant("participant",1)
 		builder.authenticate_providers(["Lastfm"])
+		"""
+		privacy_policy = request.form["policy"]
+		exp_design = request.form["design"]
+		builder.provide_privacy_policy(privacy_policy)
+		builder.provide_experimental_design(exp_design)
+		participant = builder.authenticate_participant("participant",request.form["participant"])	
+	
+		providers = request.form["providers"].strip().split(",")
+		builder.authenticate_providers(providers)
 
 		callback = request.args["callback"]
 
 		consent_url = builder.build(callback)	
-		return redirect(consent_url)
+		return Response(consent_url)
+		#return redirect(consent_url)
 	
 
 
@@ -136,9 +158,11 @@ class PRISONER(object):
 	def wsgi_app(self, environ, start_response):
 		request = Request(environ)
 		sid = request.cookies.get("PRISession")
+		print "sid: %s" % sid
 		if not sid:
 			request.session = self.session_store.new()
 			request.session["active"] = True
+			print "set session"
 		else:
 			request.session = self.session_store.get(sid)
 

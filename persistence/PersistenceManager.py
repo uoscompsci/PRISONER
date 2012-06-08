@@ -1,5 +1,6 @@
 import lxml.etree as etree
 from sqlalchemy import *
+import urllib2
 
 from gateway.ServiceGateway import *
 EXPERIMENTAL_DESIGN_XSD = "../xsd/experimental_design.xsd"
@@ -76,7 +77,10 @@ class PersistenceManager(object):
 		xsd_file = open(EXPERIMENTAL_DESIGN_XSD)
 		schema = etree.XMLSchema(etree.parse(xsd_file))
 
-		design_file = open(design)
+		try:
+			design_file = open(design)
+		except IOError:
+			design_file = urllib2.urlopen(design)
 		design = etree.parse(design_file)
 
 		validation = schema.assertValid(design)

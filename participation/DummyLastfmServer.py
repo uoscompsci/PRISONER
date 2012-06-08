@@ -19,26 +19,44 @@ import urllib2
 PRISONER_URI = "http://127.0.0.1:5000"
 SELF_URI = "http://127.0.0.1:1457"
 
+
 class LastFmExperimentClient(object):
 	def __init__(self):
 		self.url_map = Map([
 			Rule('/', endpoint="start"),
 			Rule('/start', endpoint="auth_done")
 		])
+		self.cj = cookielib.LWPCookieJar()
+		self.opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cj))
+		urllib2.install_opener(self.opener)
 
 	def on_start(self, request):
-		redir = "%s/begin?callback=%s/start" % (PRISONER_URI, SELF_URI)
-		return redirect(redir)
+
+		# initial handshake - get session cookie
+		handshake = urllib2.urlopen(url_fix(PRISONER_URI))
+		resp_info = handshake.info()
+
+		request_url = "%s/begin?callback=%s/start" % (PRISONER_URI, SELF_URI)
+		
+		post_data = {"policy": "http://pvnets.cs.st-andrews.ac.uk/prisoner/demo/lastfm_privacy_policy_test.xml",
+		"design": "http://pvnets.cs.st-andrews.ac.uk/prisoner/demo/lastfm_exp_design_test.xml",
+		"participant": "1",
+		"providers": "Lastfm"
+		}
+
+		
+		start_request = urllib2.Request(url_fix(request_url),
+		data=urllib.urlencode(post_data))
+		start_response = urllib2.urlopen(start_request)
+		
+		return redirect(start_response.read())
 
 	def on_auth_done(self, request):
 		""" Run the dummy experiment here """
-		# hold onto the PRISession so we use it in future requests
-		self.cookie = request.cookies["PRISession"]	
-
+		
 		request_url = "%s/get/%s/%s/%s" % (PRISONER_URI, "Lastfm", "Track",
 		"session:Lastfm.id")
 		request = urllib2.Request(url_fix(request_url))
-		request.add_header("Cookie","PRISession=%s" % self.cookie)
 
 	
 		api_response = urllib2.urlopen(request)

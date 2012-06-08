@@ -1,4 +1,5 @@
 import lxml.etree as etree
+import urllib2
 
 from Exceptions import *
 from gateway import *  	# import all known service gateways
@@ -65,7 +66,10 @@ class PolicyProcessor(object):
 		xsd_file = open(PRIVACY_POLICY_XSD)
 		schema = etree.XMLSchema(etree.parse(xsd_file))
 
-		policy_file = open(policy)
+		try:
+			policy_file = open(policy)
+		except IOError:
+			policy_file = urllib2.urlopen(policy)
 		policy = etree.parse(policy_file)
 
 		validation = schema.assertValid(policy)		
