@@ -667,7 +667,7 @@ class FacebookServiceGateway(ServiceGateway):
 			raise NotImplementedException("Operation not supported.")
 	
 	
-	def Albums(self, operation, payload):
+	def Album(self, operation, payload):
 		"""
 		Performs operations on a user's photo albums.
 		Currently only supports GET operations. This lets us retrieve a list of photo albums associated with the
@@ -764,7 +764,7 @@ class FacebookServiceGateway(ServiceGateway):
 			raise NotImplementedException("Operation not supported.")
 	
 	
-	def Images(self, operation, payload):
+	def Photo(self, operation, payload):
 		"""
 		Performs operations on images.
 		Currently only supports GET operations. This lets us retrieve the photos associated with the supplied 
@@ -785,6 +785,17 @@ class FacebookServiceGateway(ServiceGateway):
 				result_set = self.get_graph_data("/" + obj_id + "/photos")
 				photo_obj_list = []
 				
+				# Author info for individual photos and the collection.
+				author = SocialObjects.Person()
+				
+				# If the payload was an album, the author of the photos should match the album's author.
+				if (type(payload) is Album):
+					author = payload.author
+				
+				# Otherwise, just use the object's ID as author.
+				else:
+					author.id = obj_id
+				
 				# While there is still data available...
 				while ((result_set.has_key("data")) and (len(result_set["data"]) > 0)):
 					# Grab the current batch of photos.
@@ -800,10 +811,6 @@ class FacebookServiceGateway(ServiceGateway):
 						this_photo.updated = self.str_to_time(self.get_value(photo, "updated_time"))
 						this_photo.url = self.get_value(photo, "link")
 						this_photo.position = self.get_value(photo, "position")
-						
-						# Author info.
-						author = SocialObjects.Person()
-						author.id = self.get_value(photo["from"], "id")
 						this_photo.author = author
 						
 						# Get image info.
@@ -855,10 +862,6 @@ class FacebookServiceGateway(ServiceGateway):
 				# Create a collection object for the photos.
 				photo_album = Photos()
 				photo_album.objects = photo_obj_list
-				
-				# Create author object for this collection.
-				author = SocialObjects.Person()
-				author.id = obj_id
 				photo_album.author = author
 				
 				# If the payload was a photo album, add the photos into it.
@@ -871,13 +874,14 @@ class FacebookServiceGateway(ServiceGateway):
 					return photo_album
 			
 			except:
+				raise
 				return Photos()
 		
 		else:
 			raise NotImplementedException("Operation not supported")
 	
 	
-	def Checkins(self, operation, payload):
+	def Checkin(self, operation, payload):
 		"""
 		Performs operations on check-ins / objects with location.
 		Currently only supports GET operations. This lets us retrieve a list of places the supplied User()
@@ -897,6 +901,10 @@ class FacebookServiceGateway(ServiceGateway):
 				result_set = self.get_graph_data("/" + user_id + "/locations")
 				checkin_obj_list = []
 				
+				# Author info.
+				author = SocialObjects.Person()
+				author.id = user_id
+				
 				# While there is still data available...
 				while ((result_set.has_key("data")) and (len(result_set["data"]) > 0)):
 					# Grab the current batch of check-ins.
@@ -907,14 +915,9 @@ class FacebookServiceGateway(ServiceGateway):
 						# Get and set basic info.
 						this_checkin = Checkin()
 						this_checkin.id = self.get_value(checkin, "id")
-						this_checkin.author = self.get_value(checkin["from"], "id")
+						this_checkin.author = author
 						this_checkin.checkinType = self.get_value(checkin, "type")
 						this_checkin.published = self.str_to_time(self.get_value(checkin, "created_time"))
-						
-						# Author info.
-						author = SocialObjects.Person()
-						author.id = self.get_value(checkin["from"], "id")
-						this_checkin.author = author
 						
 						# Get location info.
 						this_checkin.location = self.parse_location(checkin)
@@ -933,10 +936,6 @@ class FacebookServiceGateway(ServiceGateway):
 				# Compose collection and return it.
 				checkins_coll = Checkins()
 				checkins_coll.objects = checkin_obj_list
-				
-				# Create author object for this collection.
-				author = SocialObjects.Person()
-				author.id = user_id
 				checkins_coll.author = author
 				
 				return checkins_coll
@@ -1610,7 +1609,7 @@ class Friends(SocialObjects.Collection):
 	"""
 	
 	def __init__(self):
-		pass
+		super(Friends, self).__init__()
 	
 	
 	def __unicode__(self):
@@ -1722,7 +1721,7 @@ class StatusList(SocialObjects.Collection):
 	"""
 	
 	def __init__(self):
-		pass
+		super(StatusList, self).__init__()
 	
 	
 	def __unicode__(self):
@@ -1751,7 +1750,7 @@ class Likes(SocialObjects.Collection):
 	"""
 	
 	def __init__(self):
-		pass
+		super(Likes, self).__init__()
 	
 	
 	def __unicode__(self):
@@ -1815,7 +1814,7 @@ class Comments(SocialObjects.Collection):
 	"""
 	
 	def __init__(self):
-		pass
+		super(Comments, self).__init__()
 	
 	
 	def __unicode__(self):
@@ -1980,7 +1979,7 @@ class Albums(SocialObjects.Collection):
 	"""
 	
 	def __init__(self):
-		pass
+		super(Albums, self).__init__()
 	
 	
 	def __unicode__(self):
@@ -2155,7 +2154,7 @@ class Photos(SocialObjects.Collection):
 	"""
 	
 	def __init__(self):
-		pass
+		super(Photos, self).__init__()
 	
 	
 	def __unicode__(self):
@@ -2185,7 +2184,7 @@ class Tags(SocialObjects.Collection):
 	"""
 	
 	def __init__(self):
-		pass
+		super(Tags, self).__init__()
 	
 	
 	def __unicode__(self):
@@ -2265,7 +2264,7 @@ class Checkins(SocialObjects.Collection):
 	"""
 	
 	def __init__(self):
-		pass
+		super(Checkins, self).__init__()
 	
 	
 	def __unicode__(self):

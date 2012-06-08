@@ -10,6 +10,9 @@
 			<attribute type="id">
 				<attribute-policy allow="retrieve"></attribute-policy>
 			</attribute>
+			<attribute type="author">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
 			<attribute type="displayName">
 				<attribute-policy allow="retrieve"></attribute-policy>
 			</attribute>
@@ -97,6 +100,9 @@
 			<attribute type="id">
 				<attribute-policy allow="retrieve"></attribute-policy>
 			</attribute>
+			<attribute type="author">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
 			<attribute type="content">
 				<attribute-policy allow="retrieve"></attribute-policy>
 			</attribute>
@@ -107,6 +113,150 @@
 				<attribute-policy allow="retrieve"></attribute-policy>
 			</attribute>
 			<attribute type="privacy">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="likes">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="comments">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+		</attributes>
+		
+		<object-policy allow="retrieve">
+			<object-criteria>
+				<and-match>
+					<attribute-match match="author.id" on_object="session:Facebook.id" />
+				</and-match>
+			</object-criteria>	
+		</object-policy>
+	</policy>
+	
+	<policy for="Facebook:Album">
+		<attributes>
+			<attribute type="id">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="author">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="displayName">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="summary">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="published">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="updated">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="url">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="coverPhoto">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="location">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="privacy">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="count">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="albumType">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="likes">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="comments">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+		</attributes>
+		
+		<object-policy allow="retrieve">
+			<object-criteria>
+				<and-match>
+					<attribute-match match="author.id" on_object="session:Facebook.id" />
+				</and-match>
+			</object-criteria>	
+		</object-policy>
+	</policy>
+	
+	<policy for="Facebook:Checkin">
+		<attributes>
+			<attribute type="id">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="author">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="checkinType">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="published">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="location">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="tags">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+		</attributes>
+		
+		<object-policy allow="retrieve">
+			<object-criteria>
+				<and-match>
+					<attribute-match match="author.id" on_object="session:Facebook.id" />
+				</and-match>
+			</object-criteria>	
+		</object-policy>
+	</policy>
+	
+	<policy for="Facebook:Photo">
+		<attributes>
+			<attribute type="id">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="author">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="displayName">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="published">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="updated">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="url">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="position">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="image">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="thumbnail">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="width">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="height">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="location">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="tags">
 				<attribute-policy allow="retrieve"></attribute-policy>
 			</attribute>
 			<attribute type="likes">
@@ -183,6 +333,25 @@
 		</object-policy>
 	</policy>
 	
+	<policy for="Location">
+		<attributes>
+			<attribute type="id">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="displayName">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+		</attributes>
+		
+		<object-policy allow="retrieve">
+			<object-criteria>
+				<and-match>
+					<attribute-match match="author.id" on_object="session:Facebook.id" />
+				</and-match>
+			</object-criteria>	
+		</object-policy>
+	</policy>
+	
 	<policy for="Facebook:Friends">
 		<object-policy allow="retrieve">
 			<object-criteria>
@@ -204,6 +373,26 @@
 	</policy>
 	
 	<policy for="Facebook:StatusList">
+		<object-policy allow="retrieve">
+			<object-criteria>
+				<and-match>
+					<attribute-match match="author.id" on_object="session:Facebook.id" />
+				</and-match>
+			</object-criteria>	
+		</object-policy>
+	</policy>
+	
+	<policy for="Facebook:Checkins">
+		<object-policy allow="retrieve">
+			<object-criteria>
+				<and-match>
+					<attribute-match match="author.id" on_object="session:Facebook.id" />
+				</and-match>
+			</object-criteria>	
+		</object-policy>
+	</policy>
+	
+	<policy for="Facebook:Photos">
 		<object-policy allow="retrieve">
 			<object-criteria>
 				<and-match>

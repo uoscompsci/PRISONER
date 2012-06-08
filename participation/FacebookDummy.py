@@ -11,114 +11,93 @@ If its various bits work, it's a good indication you've set it up right.
 import SocialObjects
 from gateway import FacebookGateway
 from workflow import ExperimentBuilder, SocialObjectGateway
+import random
 
 
 def do_experiment():
 	""" Call this after consent completed to do object calls """
 
 	print "\n-----"
-	print "Start experiment..."
+	print "Start experiment"
+	print "-----"
 	
 	# Create user for experimemt.
-	print "- Creating person object with ID..."
 	me = SocialObjects.Person()
 	me.id = "532336768"
-	print "- Done!"
+	print "\n" + "Experiment user: " + me.id
 	
-	# Get user's profile info.
-	print "- GetObject() :: User"
+	# Grab data.
+	print "Retrieving profile information..."
 	person_obj = expBuilder.sog.GetObject("Facebook","User", me)
 	print "- Done!"
 	
-	# Print profile info.
-	print "- ID: " + str(person_obj.id)
-	print "- First Name: " + str(person_obj.firstName)
-	print "- Middle Name: " + str(person_obj.middleName)
-	print "- Last Name: " + str(person_obj.lastName)
-	print "- Display Name: " + str(person_obj.displayName)
-	print "- Username: " + str(person_obj.username)
-	print "- Gender: " + str(person_obj.gender)
-	print "- Birthday: " + str(person_obj.birthday)
-	print "- Profile Pic: " + str(person_obj.image.fullImage)
-	print "- Email Address: " + str(person_obj.email)
-	print "- Bio: " + str(person_obj.bio)
-	print "- Languages: " + str(person_obj.languages)
-	print "- Last Update: " + str(person_obj.updatedTime)
-	print "- Timezone: " + str(person_obj.timezone)
-	print "- Location: " + str(person_obj.location.displayName)
-	print "- Hometown: " + str(person_obj.hometown.displayName)
-	print "- Education: " + str(person_obj.education)
-	print "- Work: " + str(person_obj.work)
-	print "- Politcs: " + str(person_obj.politicalViews)
-	print "- Religion: " + str(person_obj.religion)
-	print "- Relationship Status: " + str(person_obj.relationshipStatus)
-	print "- Significant Other: " + str(person_obj.significantOther)
-	
-	# Get user's friends list.
-	print "- GetObject() :: FriendsList"
+	print "Retrieving friends list..."
 	friends_list = expBuilder.sog.GetObject("Facebook","Friends", me)
 	print "- Done!"
 	
-	# Print friends list.
-	print "- Friends list: " + str(friends_list)
-	print "- Number of friends: " + str(len(friends_list.objects))
-	
-	for friend in friends_list.objects:
-		print "  - " + unicode(friend.displayName)
-	
-	# Get user's music interests.
-	print "- GetObject() :: Music"
+	print "Retrieving favourite bands..."
 	fav_music = expBuilder.sog.GetObject("Facebook","Music", me)
 	print "- Done!"
 	
-	# Print favourite music.
-	print "- Favourite bands: " + str(fav_music)
-	print "- Number of bands: " + str(len(fav_music.objects))
-	
-	for band in fav_music.objects:
-		print "  - " + unicode(band.displayName)
-	
-	# Get user's movie interests.
-	print "- GetObject() :: Movies"
+	print "Retrieving favourite movies..."
 	fav_movies = expBuilder.sog.GetObject("Facebook","Movie", me)
 	print "- Done!"
 	
-	# Print favourite movies.
-	print "- Favourite movies: " + str(fav_movies)
-	print "- Number of movies: " + str(len(fav_movies.objects))
-	
-	for movie in fav_movies.objects:
-		print "  - " + unicode(movie.displayName)
-	
-	# Get user's literature interests.
-	print "- GetObject() :: Books"
+	print "Retrieving favourite books and authors..."
 	fav_books = expBuilder.sog.GetObject("Facebook","Book", me)
 	print "- Done!"
 	
-	# Print favourite books / authors.
-	print "- Favourite books: " + str(fav_books)
-	print "- Number of books: " + str(len(fav_books.objects))
-	
-	for book in fav_books.objects:
-		print "  - " + unicode(book.displayName)
-	
-	# Get user's statuses.
-	print "- GetObject() :: Statuses"
+	print "Retrieving a list of your status updates..."
 	statuses = expBuilder.sog.GetObject("Facebook","Status", me)
 	print "- Done!"
 	
-	# Print status history
-	print "- Statuses: " + str(statuses)
-	print "- Number of status updates: " + str(len(statuses.objects))
+	print "Retrieving your photo albums..."
+	albums = expBuilder.sog.GetObject("Facebook","Album", me)
+	print "- Done!"
 	
-	for status in statuses.objects:
-		print "  - ID: " + unicode(status.id)
-		print "  - Content: " + unicode(status.content)
-		print "  - Privacy: " + unicode(status.privacy)
-		print "  - Permalink: " + unicode(status.url)
-		print "  - Likes: " + unicode(len(status.likes.objects))
-		print "  - Comments: " + unicode(len(status.comments.objects))
-
+	print "Populating photo albums..."
+	for album in albums.objects:
+		album = expBuilder.sog.GetObject("Facebook","Photo", album)
+	print "- Done!"
+	
+	print "Retrieving photos of you..."
+	photos_of = expBuilder.sog.GetObject("Facebook","Photo", me)
+	print "- Done!"
+	
+	print "Retrieving your check-ins..."
+	checkins = expBuilder.sog.GetObject("Facebook","Checkin", me)
+	print "- Done!"
+	
+	print "Finished retrieving data from Facebook. \n"
+	
+	# Pick some information to display.
+	first_name = unicode(person_obj.firstName)
+	last_name = unicode(person_obj.lastName)
+	profile_pic = unicode(person_obj.image.fullImage)
+	rand_photo = unicode(random.choice(photos_of.objects).image.fullImage)
+	rand_band = unicode(random.choice(fav_music.objects).displayName)
+	rand_place = random.choice(checkins.objects)
+	print checkins.objects
+	print "*****"
+	print rand_place
+	rand_album = random.choice(albums.objects)
+	rand_upload = unicode(random.choice(rand_album.photos.objects).image.fullImage)
+	
+	print "Your name: " + first_name + " " + last_name
+	print "Your current profile picture: " + profile_pic
+	print "Random photo of you: " + rand_photo
+	print "You like: " + rand_band
+	print "You've been at " + str(rand_place.displayName) + " recently with around " + str(len(rand_place.tags.objects)) + " people"
+	print "Random album you've uploaded: " + rand_album.displayName
+	print "Random image from that album: " + rand_upload
+	
+	print "\n-----"
+	print "End experiment"
+	print "-----"
+	
+	return
+	
+	
 
 if __name__ == "__main__":
 	privacy_policy = "../lib/fb_privacy_policy_test.xml"
