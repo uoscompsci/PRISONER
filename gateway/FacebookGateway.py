@@ -205,7 +205,7 @@ class FacebookServiceGateway(ServiceGateway):
 				timestamp = self.str_to_time(updated_time_str)
 				user.updatedTime = timestamp
 				
-				user.bio = self.get_value(user_details, "about")
+				user.bio = self.get_value(user_details, "bio")
 				
 				# Parse the user's birthday.
 				birthday_str = self.get_value(user_details, "birthday")
@@ -342,6 +342,10 @@ class FacebookServiceGateway(ServiceGateway):
 				# Get user ID and query Facebook for their info.
 				user_id = payload.id
 				
+				# Create author object.
+				author = SocialObjects.Person()
+				author.id = user_id
+				
 				# Get the initial result set.
 				result_set = self.get_graph_data("/" + user_id + "/music")
 				band_obj_list = []
@@ -358,12 +362,21 @@ class FacebookServiceGateway(ServiceGateway):
 				bands = []
 				
 				for band in band_obj_list:
-					bands.append(self.get_value(band, "name"))
+					# Create an object for this band.
+					this_band = Music()
+					this_band.displayName = self.get_value(band, "name")
+					this_band.author = author
+					bands.append(this_band)
 				
-				# Return a sorted list.
-				return sorted(bands)
+				# Create a collection object to hold the list.
+				bands_coll = SocialObjects.Collection()
+				bands_coll.author = author
+				bands_coll.provider = "Facebook"
+				bands_coll.objects = bands
 				
-			
+				# Return.
+				return bands_coll
+
 			except:
 				return []
 		
@@ -371,7 +384,7 @@ class FacebookServiceGateway(ServiceGateway):
 			raise NotImplementedException("Operation not supported.")
 	
 	
-	def Movies(self, operation, payload):
+	def Movie(self, operation, payload):
 		"""
 		Performs operations relating to people's taste in films.
 		Currently only supports GET operations. This lets us retrieve the movies / films people like.
@@ -387,6 +400,10 @@ class FacebookServiceGateway(ServiceGateway):
 			try:
 				# Get user ID and query Facebook for their info.
 				user_id = payload.id
+				
+				# Create author object.
+				author = SocialObjects.Person()
+				author.id = user_id
 				
 				# Get the initial result set.
 				result_set = self.get_graph_data("/" + user_id + "/movies")
@@ -404,12 +421,21 @@ class FacebookServiceGateway(ServiceGateway):
 				movies = []
 				
 				for movie in movie_obj_list:
-					movies.append(self.get_value(movie, "name"))
+					# Create an object for this movie.
+					this_movie = Movie()
+					this_movie.displayName = self.get_value(movie, "name")
+					this_movie.author = author
+					movies.append(this_movie)
 				
-				# Return a sorted list.
-				return sorted(movies)
+				# Create a collection object to hold the list.
+				movies_coll = SocialObjects.Collection()
+				movies_coll.author = author
+				movies_coll.provider = "Facebook"
+				movies_coll.objects = movies
 				
-			
+				# Return.
+				return movies_coll
+
 			except:
 				return []
 		
@@ -417,7 +443,7 @@ class FacebookServiceGateway(ServiceGateway):
 			raise NotImplementedException("Operation not supported.")
 	
 	
-	def Books(self, operation, payload):
+	def Book(self, operation, payload):
 		"""
 		Performs operations relating to people's taste in books and literature.
 		Currently only supports GET operations. This lets us get the books / authors people are into.
@@ -433,6 +459,10 @@ class FacebookServiceGateway(ServiceGateway):
 			try:
 				# Get user ID and query Facebook for their info.
 				user_id = payload.id
+				
+				# Create author object.
+				author = SocialObjects.Person()
+				author.id = user_id
 				
 				# Get the initial result set.
 				result_set = self.get_graph_data("/" + user_id + "/books")
@@ -450,12 +480,21 @@ class FacebookServiceGateway(ServiceGateway):
 				books = []
 				
 				for book in book_obj_list:
-					books.append(self.get_value(book, "name"))
+					# Create an object for this book.
+					this_book = Book()
+					this_book.displayName = self.get_value(book, "name")
+					this_book.author = author
+					books.append(this_book)
 				
-				# Return a sorted list.
-				return sorted(books)
+				# Create a collection object to hold the list.
+				books_coll = SocialObjects.Collection()
+				books_coll.author = author
+				books_coll.provider = "Facebook"
+				books_coll.objects = books
 				
-			
+				# Return.
+				return books_coll
+
 			except:
 				return []
 		
@@ -463,7 +502,7 @@ class FacebookServiceGateway(ServiceGateway):
 			raise NotImplementedException("Operation not supported.")
 		
 		
-	def Statuses(self, operation, payload):
+	def Status(self, operation, payload):
 		"""
 		Performs operations on a user's status updates.
 		Currently only supports GET operations. This lets us retrieve a user's entire backlog of status updates.
@@ -490,8 +529,12 @@ class FacebookServiceGateway(ServiceGateway):
 				# Get the initial result set.
 				result_set = self.get_graph_data("/" + user_id + "/feed")
 				
+				# Page limit for testing.
+				page_limit = 2
+				page = 0
+				
 				# So long as there's data, parse it.
-				while ((result_set.has_key("data")) and (len(result_set["data"]) > 0)):
+				while ((result_set.has_key("data")) and (len(result_set["data"]) > 0) and (page < page_limit)):
 					# Get status updates in this batch.
 					this_data = result_set["data"]
 					
@@ -537,6 +580,7 @@ class FacebookServiceGateway(ServiceGateway):
 								status_list.append(this_status)
 													
 					# Compose next address.
+					page += 1
 					next_address = result_set["paging"]["next"]
 					result_set = self.get_graph_data(next_address)
 				
@@ -572,7 +616,7 @@ class FacebookServiceGateway(ServiceGateway):
 				# Get user ID and query Facebook for their friends.
 				user_id = payload.id
 				result_set = self.get_graph_data("/" + user_id + "/friends")
-				friend_coll = FriendsList()
+				friend_coll = Friends()
 				friend_obj_list = []
 				
 				# Create author object for this collection.
@@ -590,7 +634,13 @@ class FacebookServiceGateway(ServiceGateway):
 						# Get basic info for this friend.
 						this_friend = User()
 						this_friend.id = self.get_value(friend, "id")
-						this_friend.displayName = self.get_value(friend, "name") 
+						this_friend.displayName = self.get_value(friend, "name")
+						
+						# Create author object for this friend. (User "has" their friends)
+						author = SocialObjects.Person()
+						author.id = user_id
+						this_friend.author = author
+						
 						
 						# Compose profile pic address.
 						profile_pic = SocialObjects.Image()
@@ -1203,11 +1253,13 @@ class FacebookServiceGateway(ServiceGateway):
 		else:
 			return datetime.datetime.strptime(time, "%m/%d/%Y")
 		
+
 class User(SocialObjects.Person):
 	"""
-	A Facebook user object. Contains details such as name, email address and other personal information.
-	Could probably be used in place of a Person object in some cases, as a User object has an id which can 
-	be used to query Facebook.
+	Representation of a user object on Facebook.
+	Users are essentially the backbone of the Facebook service and such objects can contain a great deal of information.
+	User objects will not always have values for all their attributes, as Facebook does not require users to provide 
+	allthis information.
 	"""
 	
 	def __init__(self):
@@ -1552,7 +1604,11 @@ class User(SocialObjects.Person):
 		return str_rep
 
 
-class FriendsList(SocialObjects.Collection):
+class Friends(SocialObjects.Collection):
+	"""
+	Lightweight collection class for representing collections of users / friends.
+	"""
+	
 	def __init__(self):
 		pass
 	
@@ -1579,8 +1635,10 @@ class FriendsList(SocialObjects.Collection):
 
 class Status(SocialObjects.Note):
 	"""
-	A Facebook Status object. Contains details such as content, location, number of likes and
-	so on.
+	Representation of a status object on Facebook.
+	Status updates are short posts by Facebook users. They can either be entirely textual or contain a link or a photo.
+	As well as the basic attributes, status updates also contain a privacy setting as well as a collection of likes and 
+	comments.
 	"""
 	
 	def __init__(self):
@@ -1659,6 +1717,10 @@ class Status(SocialObjects.Note):
 
 
 class StatusList(SocialObjects.Collection):
+	"""
+	Lightweight collection class for representing collections of statuses.
+	"""
+	
 	def __init__(self):
 		pass
 	
@@ -1684,6 +1746,10 @@ class StatusList(SocialObjects.Collection):
 
 
 class Likes(SocialObjects.Collection):
+	"""
+	Lightweight collection class for representing collections of likes.
+	"""
+	
 	def __init__(self):
 		pass
 	
@@ -1709,6 +1775,12 @@ class Likes(SocialObjects.Collection):
 
 
 class Comment(SocialObjects.Note):
+	"""
+	Representation of a comment object on Facebook.
+	Comments are typically short replies / notes on objects such as statuses, photos, check-ins or just about any 
+	other Facebook object. Comments consist of their content, an author a published date and a permalink.
+	"""
+	
 	def __init__(self):
 		super(Comment, self).__init__()
 		self._provider = "Facebook"	# String
@@ -1738,6 +1810,10 @@ class Comment(SocialObjects.Note):
 
 
 class Comments(SocialObjects.Collection):
+	"""
+	Lightweight collection class for representing collections of comments.
+	"""
+	
 	def __init__(self):
 		pass
 	
@@ -1763,6 +1839,13 @@ class Comments(SocialObjects.Collection):
 
 
 class Album(SocialObjects.SocialObject):
+	"""
+	Representation of an album object on Facebook.
+	Albums are created by users or apps and have a number of key attributes such as privacy and count.
+	Albums also have a cover photo and a type. Once you have an album's ID, you can then use Photo() to retreive
+	the photos it contains.
+	"""
+	
 	def __init__(self):
 		super(Album, self).__init__()
 		self._provider = "Facebook"	# String
@@ -1892,6 +1975,10 @@ class Album(SocialObjects.SocialObject):
 
 
 class Albums(SocialObjects.Collection):
+	"""
+	Lightweight collection class for representing collections of albums.
+	"""
+	
 	def __init__(self):
 		pass
 	
@@ -1917,6 +2004,13 @@ class Albums(SocialObjects.Collection):
 
 
 class Photo(SocialObjects.Image):
+	"""
+	Representation of a photo object on Facebook.
+	Photos are images uploaded by users or applications. As well as the standard attributes inherited from SocialObject,
+	a photo also has additional specialised attributes such as position, width and height.
+	A photo also contains Image() objects to represent both the full-size image as well as thumbnails.
+	"""
+	
 	def __init__(self):
 		super(Photo, self).__init__()
 		self._provider = "Facebook"	# String
@@ -2056,6 +2150,10 @@ class Photo(SocialObjects.Image):
 
 
 class Photos(SocialObjects.Collection):
+	"""
+	Lightweight collection class for representing collections of photos.
+	"""
+	
 	def __init__(self):
 		pass
 	
@@ -2081,6 +2179,11 @@ class Photos(SocialObjects.Collection):
 
 
 class Tags(SocialObjects.Collection):
+	"""
+	Lightweight collection class for representing collections of tags.
+	Tags are simply User() objects that have been tagged in a photo or status.
+	"""
+	
 	def __init__(self):
 		pass
 	
@@ -2106,6 +2209,14 @@ class Tags(SocialObjects.Collection):
 
 
 class Checkin(SocialObjects.SocialObject):
+	"""
+	Representation of a check-in.
+	A Facebook user can be determined to have been somewhere if they explicitly said they were there in a status, 
+	or have been tagged in a photo that is also tagged with that location.
+	As well as containing basic information such as where the check-in is for and who the user was with, a check-in object
+	also contains a "Type" attribute that specifies how the check-in was determined. (Eg: Status, Photo...)
+	"""
+	
 	def __init__(self):
 		super(Checkin, self).__init__()
 		self._provider = "Facebook"	# String
@@ -2149,6 +2260,10 @@ class Checkin(SocialObjects.SocialObject):
 
 
 class Checkins(SocialObjects.Collection):
+	"""
+	Lightweight collection class for representing collections of check-ins.
+	"""
+	
 	def __init__(self):
 		pass
 	
@@ -2171,6 +2286,44 @@ class Checkins(SocialObjects.Collection):
 		# Finish up and return.
 		str_rep += "</Check-ins>"
 		return str_rep
+
+
+class Page(SocialObjects.SocialObject):
+	"""
+	Representation of a generic Facebook page / object.
+	Pages are used to represent entities like bands, books, films and so on.
+	"""
+	
+	def __init__(self):
+		super(Page, self).__init__()
+		self._provider = "Facebook"
+
+
+class Music(Page):
+	"""
+	Stub for representing music.
+	"""
+	
+	def __init__(self):
+		super(Music, self).__init__()
+
+
+class Movie(Page):
+	"""
+	Stub for representing music.
+	"""
+	
+	def __init__(self):
+		super(Movie, self).__init__()
+
+
+class Book(Page):
+	"""
+	Stub for representing music.
+	"""
+	
+	def __init__(self):
+		super(Book, self).__init__()
 
 
 def check_none(value):

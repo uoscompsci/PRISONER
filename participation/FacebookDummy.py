@@ -7,27 +7,30 @@ various features of PRISONER.
 If its various bits work, it's a good indication you've set it up right.
 """
 
+
 import SocialObjects
-from gateway import LastfmServiceGateway
+from gateway import FacebookGateway
 from workflow import ExperimentBuilder, SocialObjectGateway
 
 
 def do_experiment():
 	""" Call this after consent completed to do object calls """
 
-	print "\n"
-	print "-----"
+	print "\n-----"
 	print "Start experiment..."
 	
+	# Create user for experimemt.
 	print "- Creating person object with ID..."
 	me = SocialObjects.Person()
 	me.id = "532336768"
 	print "- Done!"
 	
+	# Get user's profile info.
 	print "- GetObject() :: User"
 	person_obj = expBuilder.sog.GetObject("Facebook","User", me)
 	print "- Done!"
 	
+	# Print profile info.
 	print "- ID: " + str(person_obj.id)
 	print "- First Name: " + str(person_obj.firstName)
 	print "- Middle Name: " + str(person_obj.middleName)
@@ -50,6 +53,71 @@ def do_experiment():
 	print "- Religion: " + str(person_obj.religion)
 	print "- Relationship Status: " + str(person_obj.relationshipStatus)
 	print "- Significant Other: " + str(person_obj.significantOther)
+	
+	# Get user's friends list.
+	print "- GetObject() :: FriendsList"
+	friends_list = expBuilder.sog.GetObject("Facebook","Friends", me)
+	print "- Done!"
+	
+	# Print friends list.
+	print "- Friends list: " + str(friends_list)
+	print "- Number of friends: " + str(len(friends_list.objects))
+	
+	for friend in friends_list.objects:
+		print "  - " + unicode(friend.displayName)
+	
+	# Get user's music interests.
+	print "- GetObject() :: Music"
+	fav_music = expBuilder.sog.GetObject("Facebook","Music", me)
+	print "- Done!"
+	
+	# Print favourite music.
+	print "- Favourite bands: " + str(fav_music)
+	print "- Number of bands: " + str(len(fav_music.objects))
+	
+	for band in fav_music.objects:
+		print "  - " + unicode(band.displayName)
+	
+	# Get user's movie interests.
+	print "- GetObject() :: Movies"
+	fav_movies = expBuilder.sog.GetObject("Facebook","Movie", me)
+	print "- Done!"
+	
+	# Print favourite movies.
+	print "- Favourite movies: " + str(fav_movies)
+	print "- Number of movies: " + str(len(fav_movies.objects))
+	
+	for movie in fav_movies.objects:
+		print "  - " + unicode(movie.displayName)
+	
+	# Get user's literature interests.
+	print "- GetObject() :: Books"
+	fav_books = expBuilder.sog.GetObject("Facebook","Book", me)
+	print "- Done!"
+	
+	# Print favourite books / authors.
+	print "- Favourite books: " + str(fav_books)
+	print "- Number of books: " + str(len(fav_books.objects))
+	
+	for book in fav_books.objects:
+		print "  - " + unicode(book.displayName)
+	
+	# Get user's statuses.
+	print "- GetObject() :: Statuses"
+	statuses = expBuilder.sog.GetObject("Facebook","Status", me)
+	print "- Done!"
+	
+	# Print status history
+	print "- Statuses: " + str(statuses)
+	print "- Number of status updates: " + str(len(statuses.objects))
+	
+	for status in statuses.objects:
+		print "  - ID: " + unicode(status.id)
+		print "  - Content: " + unicode(status.content)
+		print "  - Privacy: " + unicode(status.privacy)
+		print "  - Permalink: " + unicode(status.url)
+		print "  - Likes: " + unicode(len(status.likes.objects))
+		print "  - Comments: " + unicode(len(status.comments.objects))
 
 
 if __name__ == "__main__":
