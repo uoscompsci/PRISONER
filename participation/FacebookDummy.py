@@ -25,7 +25,7 @@ def do_experiment():
 	# Me: 532336768
 	# Ben: 100001427539048
 	me = SocialObjects.Person()
-	me.id = "100001427539048"
+	me.id = "532336768"
 	print "\n" + "Experiment user: " + me.id
 	
 	# Grab data.
