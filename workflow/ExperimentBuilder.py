@@ -160,7 +160,7 @@ class CompleteConsentHandler(tornado.web.RequestHandler):
 
 		self.write("Thanks. Now ready to start the experiment...")
 		# evoke callback
-		builder.exp_callback()
+		return builder.exp_callback
 
 
 class ConsentFlowHandler(tornado.web.RequestHandler):
