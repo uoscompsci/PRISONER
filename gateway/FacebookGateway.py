@@ -40,10 +40,16 @@ class FacebookServiceGateway(ServiceGateway):
 		r = random.random()
 		self.state = md5.new(str(r)).hexdigest()
 		
-		# Permissions. (Horribly hacky for now)
-		user_permissions = "user_about_me,user_activities,user_birthday,user_checkins,user_education_history,user_events,user_groups,user_hometown,user_interests,user_likes,user_location,user_notes,user_photos,user_questions,user_relationships,user_relationship_details,user_religion_politics,user_status,user_subscriptions,user_videos,user_website,user_work_history,email"
-		friend_permissions = "friends_about_me,friends_activities,friends_birthday,friends_checkins,friends_education_history,friends_events,friends_groups,friends_hometown,friends_interests,friends_likes,friends_location,friends_notes,friends_photos,friends_questions,friends_relationships,friends_relationship_details,friends_religion_politics,friends_status,friends_subscriptions,friends_videos,friends_website,friends_work_history"
-		extended_permissions = "read_friendlists,read_insights,read_mailbox,read_requests,read_stream,xmpp_login,ads_management,create_event,manage_friendlists,manage_notifications,user_online_presence,friends_online_presence,publish_checkins,publish_stream,rsvp_event"
+		# Permissions. (We'll ask for them ALL for now)
+		user_permissions = "user_about_me,user_activities,user_birthday,user_checkins,user_education_history,user_events," +\
+		"user_groups,user_hometown,user_interests,user_likes,user_location,user_notes,user_photos,user_questions,user_relationships," +\
+		"user_relationship_details,user_religion_politics,user_status,user_subscriptions,user_videos,user_website,user_work_history,email"
+		friend_permissions = "friends_about_me,friends_activities,friends_birthday,friends_checkins,friends_education_history," +\
+		"friends_events,friends_groups,friends_hometown,friends_interests,friends_likes,friends_location,friends_notes,friends_photos," +\
+		"friends_questions,friends_relationships,friends_relationship_details,friends_religion_politics,friends_status,friends_subscriptions," +\
+		"friends_videos,friends_website,friends_work_history"
+		extended_permissions = "read_friendlists,read_insights,read_mailbox,read_requests,read_stream,xmpp_login,ads_management,create_event," +\
+		"manage_friendlists,manage_notifications,user_online_presence,friends_online_presence,publish_checkins,publish_stream,rsvp_event"
 		
 		# Set the scope for our app. (What permissions do we need?)
 		self.scope = user_permissions + "," + friend_permissions + "," + extended_permissions
@@ -75,8 +81,10 @@ class FacebookServiceGateway(ServiceGateway):
 		params["scope"] = self.scope
 		params["state"] = self.state
 		
+		# Compose request URI.
 		uri = self.auth_request_uri + urllib.urlencode(params)
 		print "Request URI: " + uri
+		
 		return uri
 	
 	
@@ -152,9 +160,9 @@ class FacebookServiceGateway(ServiceGateway):
 	
 	def User(self, operation, payload):
 		"""
-		Performs operations on a User object.
-		Takes a Person object as a payload and returns a new object populated with that person's profile information.
-		Only supports GET operations as you can only get a user's details, not change them.
+		Performs operations relating to people's profile information.
+		Currently only supports GET operations. This allows us to, given a suitable payload such as a Person() or
+		User() object, retrieve the information they have added to Facebook. (Eg: Full name, education, religion...)
 		
 		:param operation: The operation to perform. (GET)
 		:type operation: str
@@ -169,8 +177,14 @@ class FacebookServiceGateway(ServiceGateway):
 				user_id = payload.id
 				user_details = self.get_graph_data("/" + user_id)
 				
-				# Create and populate person object.
+				# Create user object.
 				user = User()
+				
+				# Create author object for future use.
+				author = SocialObjects.Person()
+				author.id = user_id
+				
+				# Basic information.
 				user.id = self.get_value(user_details, "id")
 				user.firstName = self.get_value(user_details, "first_name")
 				user.middleName = self.get_value(user_details, "middle_name")
@@ -178,11 +192,12 @@ class FacebookServiceGateway(ServiceGateway):
 				user.username = self.get_value(user_details, "username")
 				user.displayName = self.get_value(user_details, "name")
 				user.gender = self.get_value(user_details, "gender")
+				user.email = self.get_value(user_details, "email")
 				
 				# Get a list of the user's languages.
 				languages = self.get_value(user_details, "languages")
 				
-				# Info exists.
+				# Language info was supplied.
 				if ((languages) and (len(languages)) > 0):
 					# Create list to hold languages.
 					lang_list = []
@@ -198,6 +213,7 @@ class FacebookServiceGateway(ServiceGateway):
 				else:
 					user.languages = None
 				
+				# Timezone.
 				user.timezone = self.get_value(user_details, "timezone")
 				
 				# Parse the user's last update time.
@@ -205,6 +221,7 @@ class FacebookServiceGateway(ServiceGateway):
 				timestamp = self.str_to_time(updated_time_str)
 				user.updatedTime = timestamp
 				
+				# About / short biography.
 				user.bio = self.get_value(user_details, "bio")
 				
 				# Parse the user's birthday.
@@ -214,12 +231,12 @@ class FacebookServiceGateway(ServiceGateway):
 				
 				# Get a list detailing the user's education history.
 				education_list = self.get_value(user_details, "education")
+				edu_coll = SocialObjects.Collection()
+				edu_coll.author = author
 				
-				# Info exists.
+				# Education information exists.
 				if ((education_list) and (len(education_list) > 0)):
-					# Create Collection object to hold education history.
-					edu_coll = SocialObjects.Collection()
-					edu_coll.author = user.id
+					# Create list to hold places.
 					edu_list = []
 					
 					# Loop through places and add to list.
@@ -230,14 +247,9 @@ class FacebookServiceGateway(ServiceGateway):
 						edu_list.append(this_place)
 					
 					edu_coll.objects = edu_list
-					user.education = edu_coll
-						
 				
-				# No info.
-				else:
-					user.education = None
-				
-				user.email = self.get_value(user_details, "email")
+				# Add education info to User object.
+				user.education = edu_coll
 				
 				# Make a Place object for the user's hometown.
 				hometown_place = SocialObjects.Place()
@@ -249,9 +261,9 @@ class FacebookServiceGateway(ServiceGateway):
 					hometown_place.displayName = hometown_info["name"]
 					user.hometown = hometown_place
 				
-				# Not supplied.
+				# Not supplied, so use an empty Place object.
 				else:
-					user.hometown = None
+					user.hometown = SocialObjects.Place()
 				
 				# Make a Place object for the user's current location.
 				location_place = SocialObjects.Place()
@@ -265,8 +277,9 @@ class FacebookServiceGateway(ServiceGateway):
 				
 				# Location not supplied.
 				else:
-					user.location = None
+					user.location = SocialObjects.Place()
 				
+				# Additional info.
 				user.interestedIn = self.get_value(user_details, "interested_in")
 				user.politicalViews = self.get_value(user_details, "political")
 				user.religion = self.get_value(user_details, "religion")
@@ -284,7 +297,7 @@ class FacebookServiceGateway(ServiceGateway):
 				
 				# No info.
 				else:
-					user.significantOther = None
+					user.significantOther = User()
 				
 				# Get a list detailing the user's work history.
 				work_history = self.get_value(user_details, "work")
@@ -293,7 +306,7 @@ class FacebookServiceGateway(ServiceGateway):
 				if ((work_history) and (len(work_history) > 0)):
 					# Create Collection object to hold work history.
 					work_coll = SocialObjects.Collection()
-					work_coll.author = user.id
+					work_coll.author = author
 					work_list = []
 					
 					# Loop through places and add to list.
@@ -304,12 +317,9 @@ class FacebookServiceGateway(ServiceGateway):
 						work_list.append(this_place)
 					
 					work_coll.objects = work_list
-					user.work = work_coll
-						
 				
-				# No info.
-				else:
-					user.work = None
+				# Add work info to User object.
+				user.work = work_coll
 				
 				# Get the user's profile picture.
 				img = SocialObjects.Image()
