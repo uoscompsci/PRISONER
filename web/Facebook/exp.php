@@ -73,23 +73,14 @@
  		echo "<p>You haven't added your musical preferences to Facebook.</p>";
  	}
  	
- 	// Get the returned array of books.
- 	$books_array = $book_info["_objects"];
- 	if (sizeof($books_array) > 0) {
- 		$rand_keys = array_rand($books_array, 5);
- 			
- 		echo "<p>You like:</p><ul>";
- 			
- 		foreach ($rand_keys as $key) {
- 			echo "<li>" . $books_array[$key]["_displayName"] . "</li>";
- 		}
- 			
- 		echo "</ul>";
- 	}
  	
- 	else {
- 		echo "<p>You haven't added your literature preferences to Facebook.</p>";
- 	}
-	
+ 	// Get a random friend's ID.
+ 	$rand_friend = array_rand($friends_array);
+ 	$rand_id = $friends_array[$rand_friend]["_id"];
+ 	echo "<p>Random friend ID: " . $rand_id . "</p>";
+ 	
+ 	// Get info for random friend.
+ 	$profile_info = get_response("/get/Facebook/User/literal:" . $rand_id, $session_cookie);	# Profile.
+ 	var_dump($profile_info);
 
 ?>
