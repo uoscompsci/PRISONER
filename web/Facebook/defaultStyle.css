@@ -1,0 +1,70 @@
+@CHARSET "UTF-8";
+
+/** Fonts */
+@font-face {
+	font-family: 'Aller';
+	src: url('fonts/aller.eot');
+	src: url('fonts/aller.eot?#iefix') format('embedded-opentype'), 
+	url('fonts/aller.woff') format('woff'), 
+	url('fonts/aller.ttf') format('truetype'), 
+	url('fonts/aller.svg#webfont') format('svg');
+}
+
+
+/** Tag Styles */
+* {
+	border: 0px;
+	margin: 0px;
+	outline: 0px;
+	padding: 0px;
+}
+
+a img {
+	border: none;
+	outline: none;
+}
+
+body {
+	background-color: #EEEEEE;
+	font-family: "Aller", Sans-Serif;
+	font-size: 12pt;
+	line-height: 25px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-weight: normal;
+	letter-spacing: -1px;
+	text-transform: uppercase;
+}
+
+h1 {
+	font-size: 27pt;
+	margin-bottom: 5px;
+}
+
+img {
+	float: right;
+}
+
+p {
+	color: #000000;
+	margin-bottom: 10px;
+}
+
+ul {
+	color: #212121;
+	margin-bottom: 25px;
+	padding-left: 20px;
+}
+
+
+/** Class styles */
+.content {
+	background-color: #FFFFFF;
+	padding: 20px;
+}
+
+.wrapper {
+	margin: 0px auto;
+	width: 950px;
+}

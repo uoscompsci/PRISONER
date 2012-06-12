@@ -11,9 +11,22 @@
 	$session_id = $session_results[0];
 	$participation_url = $session_results[1];
 	
-	// Print info to the web page.
-	echo "<h1>PRISONER - Hello World</h1>" .
-	"<p>This is a 'Hello World' example to demonstrate PRISONER's Facebook gateway. <br />" .
-	"To get started, you'll need to click <a href='" . $participation_url . "' title='Get started'>here</a> and sign in to Facebook.</p>";
-	
 ?>
+
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<?php include_once("prisoner.include.head.php"); ?>
+		<title>PRISONER - Hello World Example</title>
+	</head>
+	
+	<body>
+		<div class="wrapper">
+			<div class="content">
+				<h1>PRISONER - Hello World</h1>
+				<p>This is a 'Hello World' example to demonstrate PRISONER's Facebook gateway. <br />
+				To get started, click <a href="<?php echo $participation_url; ?>" title="Get started">here</a>.</p>
+			</div>
+		</div>
+	</body>
+</html>
