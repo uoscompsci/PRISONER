@@ -193,6 +193,7 @@ class FacebookServiceGateway(ServiceGateway):
 				user.displayName = self.get_value(user_details, "name")
 				user.gender = self.get_value(user_details, "gender")
 				user.email = self.get_value(user_details, "email")
+				user.author = author
 				
 				# Get a list of the user's languages.
 				languages = self.get_value(user_details, "languages")
@@ -300,13 +301,13 @@ class FacebookServiceGateway(ServiceGateway):
 					user.significantOther = User()
 				
 				# Get a list detailing the user's work history.
+				work_coll = SocialObjects.Collection()
+				work_coll.author = author
 				work_history = self.get_value(user_details, "work")
 				
 				# Info exists.
 				if ((work_history) and (len(work_history) > 0)):
 					# Create Collection object to hold work history.
-					work_coll = SocialObjects.Collection()
-					work_coll.author = author
 					work_list = []
 					
 					# Loop through places and add to list.
@@ -317,6 +318,7 @@ class FacebookServiceGateway(ServiceGateway):
 						work_list.append(this_place)
 					
 					work_coll.objects = work_list
+					
 				
 				# Add work info to User object.
 				user.work = work_coll

@@ -1,79 +1,19 @@
 <?php
 	
-	
-	/**
-	 * Takes a URL as a string and accesses it, returning the response.
-	 * Any cookies returned are also included in the response.
-	 * @param String $url
-	 * @return String
-	 */	
-	function get_data($url) {
-		// Initialise cURL.
-		$ch = curl_init();
-		
-		// Set options.
-		curl_setopt($ch, CURLOPT_HEADER, 1);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_URL, $url);
-		
-		// Access address and close connection.
-		$data = curl_exec($ch);
-		curl_close($ch);
-		
-		return $data;
-	}
-	
+	// Start a session on the server.
 	session_start();
 	
-	// Set some initial constants and variables.
-	$PRISONER_ADDRESS = "http://127.0.0.1:5000";
+	// Include any required components.
+	include_once("prisoner.authentication.php");
 	
-	// Get initial response from PRISONER.
-	$pri_response = get_data($PRISONER_ADDRESS);
+	// Create a new PRISONER session and grab the results.
+	$session_results = start_prisoner_session();
+	$session_id = $session_results[0];
+	$participation_url = $session_results[1];
 	
-	// Use RegEx to parse response for the session cookie.
-	$matches = NULL;
-	$cookie_regex = "/^Set-Cookie: (.*?);/m";
-	preg_match($cookie_regex, $pri_response, $matches);
-	
-	// Extract session ID.
-	$session_cookie = $matches[1];
-	$session_cookie_array = explode("=", $session_cookie);
-	$session_id = $session_cookie_array[1];
-	$_SESSION["PRISession"] = $session_cookie;
-	
-	// Set cookie.
-	setcookie("PRISession", $session_id);
-	
-	// Output confirmation.
-	echo "<p>Performed initial handshake with PRISONER.</p>";
-	echo "<p>Retrieved and set session ID: " . $session_id . "</p>";
-	
-	// Try and initiate experiment.
-	echo "<p>Executing POST request.</p>";
-	$ch = curl_init();
-	
-	// Set POST data.
-	$post_data["policy"] = "http://localhost/prisoner/xml/fb_privacy_policy_test.xml";
-	$post_data["design"] = "http://localhost/prisoner/xml/fb_exp_design_test.xml";
-	$post_data["participant"] = "1";
-	$post_data["providers"] = "Facebook";
-	
-	// Set options.
-	curl_setopt($ch, CURLOPT_COOKIE, $session_cookie);
-	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($ch, CURLOPT_URL, $PRISONER_ADDRESS . "/begin?callback=localhost/prisoner/exp.php");
-	
-	// Access address and close connection.
-	$data = curl_exec($ch);
-	curl_close($ch);
-	
-	// Returned data will be URL the participant must go to. Append callback and print.
-	$callback_uri = "http://localhost/prisoner/exp.php";
-	$callback_uri = urlencode($callback_uri);
-	$data = $data . "&callback=" . $callback_uri;
-	echo "<p>Sign in here: <a href=\"" . $data . "\">Facebook</a></p>";
+	// Print info to the web page.
+	echo "<h1>PRISONER - Hello World</h1>" .
+	"<p>This is a 'Hello World' example to demonstrate PRISONER's Facebook gateway. <br />" .
+	"To get started, you'll need to click <a href='" . $participation_url . "' title='Get started'>here</a> and sign in to Facebook.</p>";
 	
 ?>
