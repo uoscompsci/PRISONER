@@ -1,3 +1,5 @@
+import jsonpickle
+
 """
 PRISONER - Core Social Objects
 ==============================
@@ -11,6 +13,18 @@ class InvalidTransformationLevelError(Exception):
 		self.level = value
 	def __str__(self):
 		return "Object can not be transformed to level: %s" % self.level
+
+class DateTimeJSONHandler(jsonpickle.handlers.BaseHandler):
+	def flatten(self, obj, data):
+		# "2012-06-12T12:23:35+0000"
+		data = "%s-%s-%sT%s:%s:%s+0000" % (obj.year,
+		obj.month, obj.day, obj.hour, obj.minute, obj.second)
+		return data
+
+	def restore(self, data):
+		return datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S+0000")
+
+	
 
 class SocialObject(object):
 	""" SocialObjects are representations of social data, consumed and
