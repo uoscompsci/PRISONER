@@ -5,6 +5,7 @@ import datetime	# Used for creating standardised date / time objects from Facebo
 import json	# Used for parsing responses from Facebook.
 import md5	# Used for generating unique state.
 import random	# Used for generating unique state.
+import sys
 import urllib2	# Used for formatting URI params, reading web addresses, etc.
 import urllib	# Used for formatting URI params, reading web addresses, etc.
 import urlparse	# Used for reading Facebook access token.
@@ -183,6 +184,7 @@ class FacebookServiceGateway(ServiceGateway):
 				# Create author object for future use.
 				author = SocialObjects.Person()
 				author.id = user_id
+				user.author = author
 				
 				# Basic information.
 				user.id = self.get_value(user_details, "id")
@@ -193,7 +195,6 @@ class FacebookServiceGateway(ServiceGateway):
 				user.displayName = self.get_value(user_details, "name")
 				user.gender = self.get_value(user_details, "gender")
 				user.email = self.get_value(user_details, "email")
-				user.author = author
 				
 				# Get a list of the user's languages.
 				languages = self.get_value(user_details, "languages")
@@ -252,6 +253,29 @@ class FacebookServiceGateway(ServiceGateway):
 				# Add education info to User object.
 				user.education = edu_coll
 				
+				# Get a list detailing the user's work history.
+				work_coll = SocialObjects.Collection()
+				work_coll.author = author
+				work_history = self.get_value(user_details, "work")
+				
+				# Info exists.
+				if ((work_history) and (len(work_history) > 0)):
+					# Create Collection object to hold work history.
+					work_list = []
+					
+					# Loop through places and add to list.
+					for place in work_history:
+						this_place = SocialObjects.Place()
+						this_place.id = place["employer"]["id"]
+						this_place.displayName = place["employer"]["name"]
+						work_list.append(this_place)
+					
+					work_coll.objects = work_list
+					
+				
+				# Add work info to User object.
+				user.work = work_coll
+				
 				# Make a Place object for the user's hometown.
 				hometown_place = SocialObjects.Place()
 				hometown_info = self.get_value(user_details, "hometown")
@@ -300,29 +324,6 @@ class FacebookServiceGateway(ServiceGateway):
 				else:
 					user.significantOther = User()
 				
-				# Get a list detailing the user's work history.
-				work_coll = SocialObjects.Collection()
-				work_coll.author = author
-				work_history = self.get_value(user_details, "work")
-				
-				# Info exists.
-				if ((work_history) and (len(work_history) > 0)):
-					# Create Collection object to hold work history.
-					work_list = []
-					
-					# Loop through places and add to list.
-					for place in work_history:
-						this_place = SocialObjects.Place()
-						this_place.id = place["employer"]["id"]
-						this_place.displayName = place["employer"]["name"]
-						work_list.append(this_place)
-					
-					work_coll.objects = work_list
-					
-				
-				# Add work info to User object.
-				user.work = work_coll
-				
 				# Get the user's profile picture.
 				img = SocialObjects.Image()
 				img.fullImage = self.graph_uri + "/me/picture?type=normal" + "&access_token=" + self.access_token
@@ -332,7 +333,8 @@ class FacebookServiceGateway(ServiceGateway):
 				return user
 				
 			except:
-				print "User() function exception."
+				print "User() function exception:"
+				print sys.exc_info()[0]
 				return User()
 		
 		else:
@@ -1270,8 +1272,12 @@ class FacebookServiceGateway(ServiceGateway):
 		:returns: A Date/Time object.
 		"""
 		
+		# Check none.
+		if (time == None):
+			return None
+		
 		# ISO 8601
-		if (len(time) > 10):
+		elif (len(time) > 10):
 			return datetime.datetime.strptime(time, "%Y-%m-%dT%H:%M:%S+0000")
 		
 		# MM/DD/YYYY
