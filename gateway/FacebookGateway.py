@@ -328,9 +328,11 @@ class FacebookServiceGateway(ServiceGateway):
 				img.fullImage = self.graph_uri + "/me/picture?type=normal" + "&access_token=" + self.access_token
 				user.image = img
 				
+				print "User() function returned successfully."
 				return user
 				
 			except:
+				print "User() function exception."
 				return User()
 		
 		else:
@@ -387,9 +389,11 @@ class FacebookServiceGateway(ServiceGateway):
 				bands_coll.objects = bands
 				
 				# Return.
+				print "Music() function returned successfully."
 				return bands_coll
 
 			except:
+				print "Music() function exception."
 				return []
 		
 		else:
@@ -446,10 +450,12 @@ class FacebookServiceGateway(ServiceGateway):
 				movies_coll.objects = movies
 				
 				# Return.
+				print "Movie() function returned successfully."
 				return movies_coll
 
 			except:
-				return []
+				print "Movie() function exception."
+				return SocialObjects.Collection()
 		
 		else:
 			raise NotImplementedException("Operation not supported.")
@@ -508,7 +514,8 @@ class FacebookServiceGateway(ServiceGateway):
 				return books_coll
 
 			except:
-				return []
+				print "Movie() function exception."
+				return SocialObjects.Collection()
 		
 		else:
 			raise NotImplementedException("Operation not supported.")
@@ -600,11 +607,12 @@ class FacebookServiceGateway(ServiceGateway):
 				status_coll.objects = status_list
 				
 				# Return statuses.
+				print "Status() function returned successfully."
 				return status_coll
 				
 			
 			except:
-				raise
+				print "Status() function exception."
 				return StatusList()
 		
 		else:
@@ -669,10 +677,11 @@ class FacebookServiceGateway(ServiceGateway):
 				
 				# Add friend list to collection and return.
 				friend_coll.objects = friend_obj_list
+				print "Friends() function returned successfully."
 				return friend_coll
 				
 			except:
-				raise
+				print "Friends() function exception."
 				return FriendsList()
 		
 		else:
@@ -766,10 +775,11 @@ class FacebookServiceGateway(ServiceGateway):
 				
 				# Populate and return our album collection.
 				album_coll.objects = album_obj_list
+				print "Album() function returned successfully."
 				return album_coll
 				
 			except:
-				raise
+				print "Album() function exception."
 				return Albums()
 		
 		else:
@@ -878,14 +888,17 @@ class FacebookServiceGateway(ServiceGateway):
 				
 				# If the payload was a photo album, add the photos into it.
 				if (type(payload) is Album):
+					print "Photo() function returned successfully."
 					payload.photos = photo_album
 					return payload
 				
 				# Otherwise return the collection object.
 				else:
+					print "Photo() function returned successfully."
 					return photo_album
 			
 			except:
+				print "Photo() function exception."
 				return Photos()
 		
 		else:
@@ -949,9 +962,11 @@ class FacebookServiceGateway(ServiceGateway):
 				checkins_coll.objects = checkin_obj_list
 				checkins_coll.author = author
 				
+				print "Checkin() function returned successfully."
 				return checkins_coll
 			
 			except:
+				print "Checkin() function exception."
 				return Checkins()
 		
 		else:
@@ -1515,103 +1530,6 @@ class User(SocialObjects.Person):
 	@work.setter
 	def work(self, value):
 		self._work = value
-	
-	
-	def __unicode__(self):
-		"""
-		Returns a string representation of this object.
-		Mainly used for testing purposes.
-		
-		:returns: A string representation of this object.
-		"""
-		
-		# Start off the string representation...
-		str_rep =  "<User>" + "\n"
-		
-		# Single value.
-		str_rep += "- ID: " + check_none(self.id) + "\n"
-		str_rep += "- Display Name: " + unicode((check_none(self.displayName))) + "\n"
-		str_rep += "- Profile Picture: " + check_none(self.image.fullImage) + "\n"
-		str_rep += "- Username: " + check_none(self.username) + "\n"
-		str_rep += "- First Name: " + unicode(check_none(self.firstName)) + "\n"
-		str_rep += "- Middle Name: " + unicode(check_none(self.middleName)) + "\n"
-		str_rep += "- Last Name: " + unicode(check_none(self.lastName)) + "\n"
-		str_rep += "- Gender: " + check_none(self.gender) + "\n"
-		str_rep += "- Last Update: " + str(check_none(self.updatedTime)) + "\n"
-		str_rep += "- Birthday: " + str(check_none(self.birthday)) + "\n"
-		
-		# Multi value.
-		user_langs = check_none(self.languages)
-		str_rep += "- Language: " + str(user_langs) + "\n"
-		
-		# Single value.
-		str_rep += "- Timezone: " + check_none(str(self.timezone)) + "\n"
-		str_rep += "- Bio: " + unicode(check_none(self.bio)) + "\n"
-		
-		# Multi value.
-		user_education = check_none(self.education)
-		
-		if (not (user_education == "None")):
-			for place in user_education.objects:
-				str_rep += "- Education: " + unicode(place.displayName) + "\n"
-		
-		else:
-			str_rep += "- Education: " + user_education + "\n"
-		
-		# Single value.
-		str_rep += "- Email: " + check_none(self.email) + "\n"
-		
-		# Single value.
-		hometown = check_none(self.hometown)
-		
-		if (not (hometown == "None")):
-			str_rep += "- Hometown: " + unicode(hometown.displayName) + "\n"
-		
-		else:
-			str_rep += "- Hometown: " + hometown + "\n"
-		
-		# Single value.
-		location = check_none(self.location)
-		
-		if (not (location == "None")):
-			str_rep += "- Location: " + unicode(location.displayName) + "\n"
-		
-		else:
-			str_rep += "- Hometown: " + location + "\n"
-		
-		# Single value.
-		str_rep += "- Political Views: " + unicode(check_none(self.politicalViews)) + "\n"
-		str_rep += "- Religion: " + unicode(check_none(self.religion)) + "\n"
-		
-		# Multi value.
-		interested_in = check_none(self.interestedIn)
-		str_rep += "- Interested In: " + str(interested_in) + "\n"
-		
-		# Single value.
-		str_rep += "- Relationship Status: " + check_none(self.relationshipStatus) + "\n"
-		
-		# Single value.
-		significant_other = check_none(self.significantOther)
-		
-		if (not (significant_other == "None")):
-			str_rep += "- Significant Other: " + unicode(significant_other.displayName) + "\n"
-		
-		else:
-			str_rep += "- Significant Other: " + significant_other + "\n"
-		
-		# Multi value.
-		user_work = check_none(self.work)
-		
-		if (not (user_work == "None")):
-			for place in user_work.objects:
-				str_rep += "- Work: " + unicode(place.displayName) + "\n"
-		
-		else:
-			str_rep += "- Work: " + user_work + "\n"
-		
-		# Finish off and return.
-		str_rep += "</User>"
-		return str_rep
 
 
 class Friends(SocialObjects.Collection):
@@ -1621,26 +1539,6 @@ class Friends(SocialObjects.Collection):
 	
 	def __init__(self):
 		super(Friends, self).__init__()
-	
-	
-	def __unicode__(self):
-		"""
-		Returns a unicode representation of this object.
-		Mainly used for testing purposes.
-		
-		:returns: A unicode representation of this object.
-		"""
-		
-		# Start off string representation.
-		str_rep =  "<Friends>" + "\n"
-		
-		# Loop through the objects attribute. (Should be a list of User() objects)
-		for user in self.objects:
-			str_rep += unicode(user) + "\n"
-		
-		# Finish off and return.
-		str_rep += "</Friends>"
-		return str_rep
 			
 
 class Status(SocialObjects.Note):
@@ -1690,40 +1588,6 @@ class Status(SocialObjects.Note):
 	@comments.setter
 	def comments(self, value):
 		self._comments = value
-	
-	
-	def __unicode__(self):
-		"""
-		Returns a string representation of this object.
-		Mainly used for testing purposes.
-		
-		:returns: A string representation of this object.
-		"""
-		
-		# Start off string representation.
-		str_rep =  "<Status>" + "\n"
-		
-		# Basic info.
-		str_rep += "- ID: " + check_none(self.id) + "\n"
-		str_rep += "- Author: " + unicode(check_none(self.author.id)) + "\n"
-		str_rep += "- Privacy: " + check_none(self.privacy) + "\n"
-		str_rep += "- Content: " + unicode(check_none(self.content)) + "\n"
-		str_rep += "- Published: " + str(check_none(self.published)) + "\n"
-		str_rep += "- URL: " + check_none(self.url) + "\n"
-		
-		# Location.
-		location = check_none(self.location.displayName)
-		str_rep += "- Location: " + unicode(location) + "\n"
-		
-		# Likes
-		str_rep += unicode(self.likes)
-		
-		# Comments
-		str_rep += unicode(self.comments)
-		
-		# Finish up and return.
-		str_rep +=  "</Status>" + "\n"
-		return str_rep
 
 
 class StatusList(SocialObjects.Collection):
@@ -1733,26 +1597,6 @@ class StatusList(SocialObjects.Collection):
 	
 	def __init__(self):
 		super(StatusList, self).__init__()
-	
-	
-	def __unicode__(self):
-		"""
-		Returns a string representation of this object.
-		Mainly used for testing purposes.
-		
-		:returns: A string representation of this object.
-		"""
-		
-		# Start off string representation.
-		str_rep =  "<Statuses>" + "\n"
-		
-		# Loop through the objects attribute. (Should be a list of Status() objects)
-		for status in self.objects:
-			str_rep += unicode(status)
-		
-		# Finish up and return.
-		str_rep += "</Statuses>"
-		return str_rep
 
 
 class Likes(SocialObjects.Collection):
@@ -1762,26 +1606,6 @@ class Likes(SocialObjects.Collection):
 	
 	def __init__(self):
 		super(Likes, self).__init__()
-	
-	
-	def __unicode__(self):
-		"""
-		Returns a string representation of this object.
-		Mainly used for testing purposes.
-		
-		:returns: A string representation of this object.
-		"""
-		
-		# Start off string representation.
-		str_rep =  "<Likes: " + str(len(self.objects)) + ">" + "\n"
-		
-		# Loop through the objects attribute. (Should be a list of User() objects)
-		for user in self.objects:
-			str_rep += "- " + unicode(user.displayName) + "\n"
-		
-		# Finish up and return.
-		str_rep += "</Likes>" + "\n"
-		return str_rep
 
 
 class Comment(SocialObjects.Note):
@@ -1794,29 +1618,6 @@ class Comment(SocialObjects.Note):
 	def __init__(self):
 		super(Comment, self).__init__()
 		self._provider = "Facebook"	# String
-	
-	
-	def __unicode__(self):
-		"""
-		Returns a string representation of this object.
-		Mainly used for testing purposes.
-		
-		:returns: A string representation of this object.
-		"""
-		
-		# Start off string representation.
-		str_rep =  "<Comment>" + "\n"
-		
-		# Basic info.
-		str_rep += "- ID: " + check_none(self.id) + "\n"
-		str_rep += unicode("- Author: " + check_none(self.author.id) + "\n")
-		str_rep += unicode("- Content: " + check_none(self.content) + "\n")
-		str_rep += "- Published: " + str(check_none(self.published)) + "\n"
-		str_rep += "- URL: " + check_none(self.url) + "\n"
-		
-		# Finish up and return.
-		str_rep += "</Comment>" + "\n"
-		return str_rep
 
 
 class Comments(SocialObjects.Collection):
@@ -1826,26 +1627,6 @@ class Comments(SocialObjects.Collection):
 	
 	def __init__(self):
 		super(Comments, self).__init__()
-	
-	
-	def __unicode__(self):
-		"""
-		Returns a string representation of this object.
-		Mainly used for testing purposes.
-		
-		:returns: A string representation of this object.
-		"""
-		
-		# Start off string representation.
-		str_rep =  "<Comments: " + str(len(self.objects)) + ">" + "\n"
-		
-		# Loop through the objects attribute. (Should be a list of Comment() objects)
-		for comment in self.objects:
-			str_rep += unicode(comment)
-		
-		# Finish up and return.
-		str_rep += "</Comments>" + "\n"
-		return str_rep
 
 
 class Album(SocialObjects.SocialObject):
@@ -1943,45 +1724,6 @@ class Album(SocialObjects.SocialObject):
 	@comments.setter
 	def comments(self, value):
 		self._comments = value
-	
-	
-	def __unicode__(self):
-		"""
-		Returns a string representation of this object.
-		Mainly used for testing purposes.
-		
-		:returns: A string representation of this object.
-		"""
-		
-		# Start off string representation.
-		str_rep =  "<Album>" + "\n"
-		
-		# Basic info.
-		str_rep += "- ID: " + check_none(self.id) + "\n"
-		str_rep += "- Author: " + unicode(check_none(self.author.id)) + "\n"
-		str_rep += "- Name: " + unicode(check_none(self.displayName)) + "\n"
-		str_rep += "- Summary: " + unicode(check_none(self.summary)) + "\n"
-		str_rep += "- Published: " + str(check_none(self.published)) + "\n"
-		str_rep += "- Updated: " + str(check_none(self.updated)) + "\n"
-		str_rep += "- URL: " + check_none(self.url) + "\n"
-		str_rep += "- Location: " + unicode(check_none(self.location.displayName)) + "\n"
-		str_rep += "- Cover Photo: " + check_none(self.coverPhoto.fullImage) + "\n"
-		str_rep += "- Privacy: " + check_none(self.privacy) + "\n"
-		str_rep += "- Number Of Photos: " + str(check_none(self.count)) + "\n"
-		str_rep += "- Type: " + check_none(self.albumType) + "\n"
-		
-		# Likes
-		str_rep += unicode(self.likes)
-		
-		# Comments
-		str_rep += unicode(self.comments)
-		
-		# Photos
-		str_rep += unicode(self.photos) + "\n"
-		
-		# Finish up and return.
-		str_rep += "</Album>"
-		return str_rep
 
 
 class Albums(SocialObjects.Collection):
@@ -1991,26 +1733,6 @@ class Albums(SocialObjects.Collection):
 	
 	def __init__(self):
 		super(Albums, self).__init__()
-	
-	
-	def __unicode__(self):
-		"""
-		Returns a string representation of this object.
-		Mainly used for testing purposes.
-		
-		:returns: A string representation of this object.
-		"""
-		
-		# Start off string representation.
-		str_rep =  "<Albums: " + str(len(self.objects)) + ">" + "\n"
-		
-		# Loop through the objects attribute. (Should be a list of Album objects)
-		for album in self.objects:
-			str_rep += unicode(album) + "\n"
-		
-		# Finish up and return.
-		str_rep += "</Albums>"
-		return str_rep
 
 
 class Photo(SocialObjects.Image):
@@ -2120,43 +1842,6 @@ class Photo(SocialObjects.Image):
 	@comments.setter
 	def comments(self, value):
 		self._comments = value
-	
-	
-	def __unicode__(self):
-		"""
-		Returns a string representation of this object.
-		Mainly used for testing purposes.
-		
-		:returns: A string representation of this object.
-		"""
-		
-		# Start off string representation.
-		str_rep =  "<Photo>" + "\n"
-		
-		# Basic info.
-		str_rep += "- ID: " + check_none(self.id) + "\n"
-		str_rep += "- Author: " + unicode(check_none(self.author.id)) + "\n"
-		str_rep += "- Name: " + unicode(check_none(self.displayName)) + "\n"
-		str_rep += "- Published: " + str(check_none(self.published)) + "\n"
-		str_rep += "- Updated: " + str(check_none(self.updated)) + "\n"
-		str_rep += "- URL: " + check_none(self.url) + "\n"
-		str_rep += "- Position: " + str(check_none(self.position)) + "\n"
-		str_rep += "- Image: " + check_none(self.image.fullImage) + "\n"
-		str_rep += "- Thumbnail: " + check_none(self.thumbnail.fullImage) + "\n"
-		str_rep += "- Location: " + unicode(check_none(self.location.displayName)) + "\n"
-		
-		# Tags
-		str_rep += unicode(self.tags)
-		
-		# Likes
-		str_rep += unicode(self.likes)
-		
-		# Comments
-		str_rep += unicode(self.comments)
-		
-		# Finish up and return.
-		str_rep += "</Photo>" + "\n"
-		return str_rep
 
 
 class Photos(SocialObjects.Collection):
@@ -2166,26 +1851,6 @@ class Photos(SocialObjects.Collection):
 	
 	def __init__(self):
 		super(Photos, self).__init__()
-	
-	
-	def __unicode__(self):
-		"""
-		Returns a string representation of this object.
-		Mainly used for testing purposes.
-		
-		:returns: A string representation of this object.
-		"""
-		
-		# Start off string representation.
-		str_rep =  "<Photos: " + str(len(self.objects)) + ">" + "\n"
-		
-		# Loop through the objects attribute. (Should be a list of Album objects)
-		for photo in self.objects:
-			str_rep += unicode(photo)
-		
-		# Finish up and return.
-		str_rep += "</Photos>"
-		return str_rep
 
 
 class Tags(SocialObjects.Collection):
@@ -2196,26 +1861,6 @@ class Tags(SocialObjects.Collection):
 	
 	def __init__(self):
 		super(Tags, self).__init__()
-	
-	
-	def __unicode__(self):
-		"""
-		Returns a string representation of this object.
-		Mainly used for testing purposes.
-		
-		:returns: A string representation of this object.
-		"""
-		
-		# Start off string representation.
-		str_rep =  "<Tags: " + str(len(self.objects)) + ">" + "\n"
-		
-		# Loop through the objects attribute. (Should be a list of User objects)
-		for user in self.objects:
-			str_rep += "- " + unicode(user.displayName) + "\n"
-		
-		# Finish up and return.
-		str_rep += "</Tags>" + "\n"
-		return str_rep
 
 
 class Checkin(SocialObjects.SocialObject):
@@ -2242,31 +1887,6 @@ class Checkin(SocialObjects.SocialObject):
 	@checkinType.setter
 	def checkinType(self, value):
 		self._checkinType = value
-	
-	
-	def __unicode__(self):
-		"""
-		Returns a string representation of this object.
-		Mainly used for testing purposes.
-		
-		:returns: A string representation of this object.
-		"""
-		
-		# Start off string representation.
-		str_rep =  "<Check-in>" + "\n"
-		
-		# Basic info.
-		str_rep += "- ID: " + check_none(self.id) + "\n"
-		str_rep += "- Author: " + unicode(check_none(self.author.id)) + "\n"
-		str_rep += "- Published: " + str(check_none(self.published)) + "\n"
-		str_rep += "- Location: " + unicode(check_none(self.location.displayName)) + "\n"
-		
-		# Tags
-		str_rep += unicode(self.tags)
-		
-		# Finish up and return.
-		str_rep += "</Check-in>" + "\n"
-		return str_rep
 
 
 class Checkins(SocialObjects.Collection):
@@ -2276,26 +1896,6 @@ class Checkins(SocialObjects.Collection):
 	
 	def __init__(self):
 		super(Checkins, self).__init__()
-	
-	
-	def __unicode__(self):
-		"""
-		Returns a string representation of this object.
-		Mainly used for testing purposes.
-		
-		:returns: A string representation of this object.
-		"""
-		
-		# Start off string representation.
-		str_rep =  "<Check-ins>: " + str(len(self.objects)) + ">" + "\n"
-		
-		# Loop through the objects attribute. (Should be a list of Checkin objects)
-		for checkin in self.objects:
-			str_rep += unicode(checkin)
-		
-		# Finish up and return.
-		str_rep += "</Check-ins>"
-		return str_rep
 
 
 class Page(SocialObjects.SocialObject):
