@@ -40,7 +40,7 @@ class LastFmExperimentClient(object):
 		
 		post_data = {"policy": "http://pvnets.cs.st-andrews.ac.uk/prisoner/demo/lastfm_privacy_policy_test.xml",
 		"design": "http://pvnets.cs.st-andrews.ac.uk/prisoner/demo/lastfm_exp_design_test.xml",
-		"participant": "1",
+		"participant": "2",
 		"providers": "Lastfm"
 		}
 

@@ -214,8 +214,11 @@ class SocialObjectsGateway(object):
 		ret_object = self.GetObject(provider, object_type, eval_payload_obj,
 		criteria)
 		# cache the object under a unique id, JSONify, return
-		ident = self.cache_object(ret_object)
-		return jsonpickle.encode(self.cached_objects[ident])
+		if ret_object != None:
+			ident = self.cache_object(ret_object)
+			return jsonpickle.encode(self.cached_objects[ident])
+		else:
+			return None
 		
 	def GetObject(self, provider, object_type, payload, allow_many=False,
 	criteria = None):
