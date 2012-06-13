@@ -5,7 +5,7 @@ import datetime	# Used for creating standardised date / time objects from Facebo
 import json	# Used for parsing responses from Facebook.
 import md5	# Used for generating unique state.
 import random	# Used for generating unique state.
-import sys
+import sys	# Used for displaying error message names and descriptions.
 import urllib2	# Used for formatting URI params, reading web addresses, etc.
 import urllib	# Used for formatting URI params, reading web addresses, etc.
 import urlparse	# Used for reading Facebook access token.
@@ -395,8 +395,9 @@ class FacebookServiceGateway(ServiceGateway):
 				return bands_coll
 
 			except:
-				print "Music() function exception."
-				return []
+				print "Music() function exception:"
+				print sys.exc_info()[0]
+				return SocialObjects.Collection()
 		
 		else:
 			raise NotImplementedException("Operation not supported.")
@@ -456,7 +457,8 @@ class FacebookServiceGateway(ServiceGateway):
 				return movies_coll
 
 			except:
-				print "Movie() function exception."
+				print "Movie() function exception:"
+				print sys.exc_info()[0]
 				return SocialObjects.Collection()
 		
 		else:
@@ -516,7 +518,8 @@ class FacebookServiceGateway(ServiceGateway):
 				return books_coll
 
 			except:
-				print "Movie() function exception."
+				print "Book() function exception:"
+				print sys.exc_info()[0]
 				return SocialObjects.Collection()
 		
 		else:
@@ -614,7 +617,8 @@ class FacebookServiceGateway(ServiceGateway):
 				
 			
 			except:
-				print "Status() function exception."
+				print "Status() function exception:"
+				print sys.exc_info()[0]
 				return StatusList()
 		
 		else:
@@ -683,7 +687,8 @@ class FacebookServiceGateway(ServiceGateway):
 				return friend_coll
 				
 			except:
-				print "Friends() function exception."
+				print "Friends() function exception:"
+				print sys.exc_info()[0]
 				return FriendsList()
 		
 		else:
@@ -781,7 +786,8 @@ class FacebookServiceGateway(ServiceGateway):
 				return album_coll
 				
 			except:
-				print "Album() function exception."
+				print "Album() function exception:"
+				print sys.exc_info()[0]
 				return Albums()
 		
 		else:
@@ -900,7 +906,8 @@ class FacebookServiceGateway(ServiceGateway):
 					return photo_album
 			
 			except:
-				print "Photo() function exception."
+				print "Photo() function exception:"
+				print sys.exc_info()[0]
 				return Photos()
 		
 		else:
@@ -968,7 +975,8 @@ class FacebookServiceGateway(ServiceGateway):
 				return checkins_coll
 			
 			except:
-				print "Checkin() function exception."
+				print "Checkin() function exception:"
+				print sys.exc_info()[0]
 				return Checkins()
 		
 		else:

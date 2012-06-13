@@ -6,4 +6,8 @@
 	$PRIVACY_POLICY_URL = "http://localhost/prisoner/xml/fb_privacy_policy_test.xml";
 	$EXP_DESIGN_URL = "http://localhost/prisoner/xml/fb_exp_design_test.xml";
 	
+	// Definitions.
+	define("GROUP_1", 1);
+	define("GROUP_2", 2);
+	
 ?>

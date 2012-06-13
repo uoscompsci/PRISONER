@@ -1,3 +1,5 @@
+<!DOCTYPE HTML>
+
 <?php
 	
 	// Start a session on the server.
@@ -5,27 +7,135 @@
 	
 	// Include any required components.
 	include_once("prisoner.authentication.php");
+	include_once("prisoner.constants.php");
+	include_once("prisoner.logging.php");
 	
-	// Create a new PRISONER session and grab the results.
-	$session_results = start_prisoner_session();
-	$session_id = $session_results[0];
-	$participation_url = $session_results[1];
+	// Content for group 1. (Health and social networks)
+	$GROUP_1_ABOUT = "We invite you to participate in a research project about the social factors that affect your health and health care. " .
+	"We are interested in understanding how health behaviours spread through friends and social networks. For instance, if one member of your " .
+	"social network has a very healthy lifestyle, does this mean that other members of your social network will also have a healthy lifestyle? " .
+	"Similarly, if one member is depressed, does that depression spread through to other friends?";
+	$GROUP_1_TITLE = "Social Networks &amp; Health";
+	
+	// Content for group 2. (Information dessimination)
+	$GROUP_2_ABOUT = "We invite you to participate in a research project that will help to build the next generation of mobile and wireless " .
+	"networks. We are interested in understanding how information spreads through social networks. This will help us design new networks that " .
+	"can exploit this behaviour. For instance, if we know that most information is spread (or “gossiped”) through a small number of people, " .
+	"then we can optimise our systems to take advantage of these people.";
+	$GROUP_2_TITLE = "Information Dissemination In Mobile Social Networks";
+	
+	// Assign the user to a group.
+	$rand_number = rand(0, 10);
+	$user_group = NULL;
+	$survey_title = "";
+	$about_message = "";
+	
+	// Assign to group 1.
+	if ($rand_number >= 5) {
+		$user_group = GROUP_1;
+		$survey_title = $GROUP_1_TITLE;
+		$about_message = $GROUP_1_ABOUT;
+	}
+	
+	// Assign to group 2.
+	else {
+		$user_group = GROUP_2;
+		$survey_title = $GROUP_2_TITLE;
+		$about_message = $GROUP_2_ABOUT;
+	}
+	
+	// Save group info in session.
+	$_SESSION["Group"] = $user_group;	
+	log_msg("Participant assigned to group " . $user_group);
 	
 ?>
 
-<!DOCTYPE HTML>
 <html>
 	<head>
 		<?php include_once("prisoner.include.head.php"); ?>
-		<title>PRISONER - Hello World Example</title>
+		<title><?php echo $survey_title; ?> - University Of St Andrews</title>
 	</head>
 	
 	<body>
 		<div class="wrapper">
-			<div class="content">
-				<h1>PRISONER - Hello World</h1>
-				<p>This is a 'Hello World' example to demonstrate PRISONER's Facebook gateway. <br />
-				To get started, click <a href="<?php echo $participation_url; ?>" title="Get started">here</a>.</p>
+			<div class="content-container">
+				<div class="content">
+					<div class="info">
+						<form name="participant_info" method="post" action="participation_consent.php">
+							<h1><?php echo $survey_title; ?></h1>
+							
+							<h2>1. What is the study about?</h2>
+							<p><?php echo $about_message; ?> <br />
+							This study is being conducted as part of my research in the <a href="http://www.cs.st-andrews.ac.uk/" target="_blank">School 
+							of Computer Science</a>.</p>
+						
+							<h2>2. Do I have to take part?</h2>
+							<p>Participation is completely voluntary. You should read the information on this page and then decide 
+							whether or not to take part. If you do decide to take part you will be free to withdraw at any 
+							time without providing a reason. You can do so by closing your web browser. 
+							All of your personal data will then be deleted.</p>
+						
+							<h2>3. What would I be required to do?</h2>
+							<p>You will be asked to complete a questionnaire in your browser. We anticipate that this will 
+							take 30 minutes to complete. You will be presented with data from your Facebook social network that we 
+							require for our research. You will then be asked whether you are willing to share these data with us. 
+							It is completely up to you whether to share your data with us or not. If you do agree, then your data 
+							will be stored and processed for the purposes of our research.</p>
+						
+							<h2>4. Will my participation be anonymous and confidential?</h2>
+							<p>For the purposes of our research, we need to know your name and institution (e.g., university attended). 
+							We would also like to have similar information for other members of your social network. It is up to you 
+							whether to share these data or not. <br />
+							All data will be stored by the researcher in a secure fashion. We would like to share these data with 
+							other researchers to be used for future scholarly purposes. Again, this is up to you. You should 
+							indicate whether you are willing to do so in the following questionnaire.</p>
+						
+							<h2>5. Storage and destruction of data collected</h2>
+							<p>The data we collect will be accessible by the researcher(s) and supervisor(s) involved in this study only, 
+							unless explicit consent for wider access is given by means of the consent form. Your data will be stored 
+							for a period of at least 10 years before being destroyed, in an unanonymised format on a secure server in 
+							our University.</p>
+						
+							<h2>6. What will happen to the results of the research study?</h2>
+							<p>We expect to have the results of this study ready by the end of 2012. They will be published in various 
+							journal papers. If you wish to know more about the research or have copies of the papers sent to you, then please 
+							indicate this here.</p>
+							
+							<div class="further_info_check">
+								<input type="checkbox" name="store_email" id="store_email">
+								<label for="store_email">I wish to know more about this research</label>
+							</div>
+						
+							<h2>7. Reward</h2>
+							<p>You will receive a £5 Amazon.co.uk gift voucher for successfully completing this survey.</p>
+						
+							<h2>8. Are there any potential risks to taking part?</h2>
+							<p>The risks of taking part involve sharing your online social network data with us. As part of the questionnaire, 
+							you will tell us what data you are willing to share. This gives you the ability to manage these risks. If there are 
+							any data that you do not wish to share, then please indicate as such in the questionnaire.</p>
+						
+							<h2>9. Consent and approval</h2>
+							<p>This research proposal has been scrutinised and been granted Ethical Approval through the University ethical 
+							approval process.</p>
+						
+							<h2>10. What should I do if I have concerns about this study?</h2>
+							<p>A full outline of the procedures governed by the University Teaching and Research Ethical Committee is 
+							available at 
+							<a href="http://www.st-andrews.ac.uk/utrec/complaints/" target="_blank">http://www.st-andrews.ac.uk/utrec/complaints/</a></p>
+						
+							<h2>11. Contact details</h2>
+							<p>Researcher: Dr Tristan Henderson <br />
+							Email: <a href="mailto:tnhh@st-andrews.ac.uk">tnhh@st-andrews.ac.uk</a><br />
+							Phone: 01334 461637</p>
+							
+							<div class="next_submit">
+								<input name="submit" type="submit" value="Next">
+							</div>
+							
+							<div class="clear"></div>
+						</form>
+					</div>
+				</div>
 			</div>
 		</div>
 	</body>
