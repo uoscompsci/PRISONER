@@ -26,18 +26,20 @@ a img {
 
 body {
 	background-color: #FFFFFF;
+	color: #444444;
 	font-family: Arial, Helvetica, Sans-Serif;
-	font-size: 12pt;
+	font-size: 11pt;
 	line-height: 25px;
 }
 
 h1, h2, h3, h4, h5, h6 {
+	color: #000000;
 	font-weight: normal;
 }
 
 h1 {
 	font-size: 27pt;
-	line-height: 30px;
+	line-height: 35px;
 	margin-bottom: 10px;
 	text-transform: uppercase;
 }
@@ -64,8 +66,46 @@ ul {
 
 
 /** Class styles */
+.button_green {
+	background: #009900;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	color: #FFFFFF;
+	cursor: pointer;
+	float: right;
+	font-size: 16px;
+	font-weight: bold;
+	height: 30px;
+	line-height: 30px;
+	text-align: center;
+	text-transform: uppercase;
+	width: 100px;
+}
+
 .clear {
 	clear: both;
+}
+
+.consent_check input {
+	margin-right: 5px;
+}
+
+.consent_check label {
+	margin-left: 15px;
+}
+
+.consent_check table {
+	border: none;
+	width: 100%;
+}
+
+.consent_check td {
+	padding-bottom: 10px;
+}
+
+.consent_info {
+	width: 750px;
 }
 
 .content-container {
@@ -83,6 +123,33 @@ ul {
 	padding: 10px;
 }
 
+.email_input {
+	background-color: #EEEEEE;
+	margin-bottom: 20px;
+	margin-top: -20px;
+	padding: 10px;
+}
+
+.email_input label {
+	margin-left: 0px;
+}
+
+.email_input input[type=text] {
+	border: solid;
+	border-color: #999999;
+	border-radius: 3px;
+	border-width: 1px;
+	box-shadow: 0px 0px 5px #444444;
+	height: 30px;
+	margin-left: 5px;
+	margin-right: 5px;
+	width: 250px;
+}
+
+.error_message {
+	color: #990000;
+}
+
 .further_info_check {
 	clear: both;
 	float: none;
@@ -93,7 +160,7 @@ ul {
 	margin-top: -15px;
 }
 
-.further_info_check input {
+.further_info_check input[type=checkbox] {
 	position: absolute;
 	top: 6px;
 }
@@ -108,15 +175,19 @@ ul {
 	margin-bottom: 20px;
 }
 
+.info table {
+	margin-bottom: 20px;
+}
+
 .next_submit input {
 	background: #009900;
+	border-radius: 5px;
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
-	border-radius: 5px;
 	color: #FFFFFF;
 	cursor: pointer;
 	float: right;
-	font-size: 17px;
+	font-size: 16px;
 	font-weight: bold;
 	height: 30px;
 	line-height: 30px;
@@ -147,4 +218,13 @@ ul {
 .content a:active {
 	color: #0066CC;
 	text-decoration: none;
+}
+
+.button_green a:link, .button_green a:visited, .button_green a:hover, .button_green a:active {
+	color: #FFFFFF;
+	text-decoration: none;
+}
+
+.info h2 a:hover {
+	color: #000000;
 }

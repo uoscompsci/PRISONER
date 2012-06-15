@@ -5,64 +5,101 @@
 	// Start a session on the server.
 	session_start();
 	
+	// Session / cache control.
+	header("Cache-Control: max-age=" . $CACHE_STAY_ALIVE);
+	
 	// Include any required components.
 	include_once("prisoner.authentication.php");
 	include_once("prisoner.constants.php");
+	include_once("prisoner.core.php");
+	include_once("prisoner.database.php");
 	include_once("prisoner.logging.php");
 	
-	// Content for group 1. (Health and social networks)
-	$GROUP_1_ABOUT = "We invite you to participate in a research project about the social factors that affect your health and health care. " .
-	"We are interested in understanding how health behaviours spread through friends and social networks. For instance, if one member of your " .
-	"social network has a very healthy lifestyle, does this mean that other members of your social network will also have a healthy lifestyle? " .
-	"Similarly, if one member is depressed, does that depression spread through to other friends?";
-	$GROUP_1_TITLE = "Social Networks &amp; Health";
-	
-	// Content for group 2. (Information dessimination)
-	$GROUP_2_ABOUT = "We invite you to participate in a research project that will help to build the next generation of mobile and wireless " .
-	"networks. We are interested in understanding how information spreads through social networks. This will help us design new networks that " .
-	"can exploit this behaviour. For instance, if we know that most information is spread (or “gossiped”) through a small number of people, " .
-	"then we can optimise our systems to take advantage of these people.";
-	$GROUP_2_TITLE = "Information Dissemination In Mobile Social Networks";
-	
-	// Assign the user to a group.
-	$rand_number = rand(0, 10);
+	// Participant info variables.
 	$user_group = NULL;
+	$wants_further_emails = NULL;
 	$survey_title = "";
 	$about_message = "";
+	$checkbox_value = "";
+	$email_validation_message = "";
+	$email_address = "";
 	
-	// Assign to group 1.
-	if ($rand_number >= 5) {
-		$user_group = GROUP_1;
+	// Check to see if this participant has already been assigned a group. (Eg: Pressed "Back")
+	if (!empty($_SESSION["Group"])) {
+		$user_group = $_SESSION["Group"];
+		$wants_further_emails = $_SESSION["FurtherEmails"];
+		$email_validation_message = $_SESSION["EmailValidationMessage"];
+		$email_address = $_SESSION["EmailAddress"];
+		$checkbox_value = "checked='checked'";
+		log_msg("Participant has already been assigned a group - " . $user_group);
+	}
+	
+	// If not, assign a group.
+	else {
+		$user_group = assign_group();
+	}
+	
+	// Group 1.
+	if ($user_group == GROUP_1) {
 		$survey_title = $GROUP_1_TITLE;
 		$about_message = $GROUP_1_ABOUT;
 	}
 	
-	// Assign to group 2.
+	// Group 2.
 	else {
-		$user_group = GROUP_2;
 		$survey_title = $GROUP_2_TITLE;
 		$about_message = $GROUP_2_ABOUT;
 	}
 	
 	// Save group info in session.
-	$_SESSION["Group"] = $user_group;	
-	log_msg("Participant assigned to group " . $user_group);
+	$_SESSION["Group"] = $user_group;
+	$_SESSION["Title"] = $survey_title;
 	
 ?>
 
 <html>
 	<head>
 		<?php include_once("prisoner.include.head.php"); ?>
-		<title><?php echo $survey_title; ?> - University Of St Andrews</title>
+		<title><?php echo $survey_title; ?> - Information - University Of St Andrews</title>
 	</head>
 	
 	<body>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				// Hide the email input div if it isn't checked. (Eg: On page load)
+				if (!$("#store_email").attr("checked")) {
+					$(".email_input").hide();
+				}
+				
+				// When the "Want further info" checkbox is checked, display the input div.
+				$("#store_email").click(function(){
+					if (this.checked) {
+						$(".email_input").fadeIn(250);
+					}
+					else {
+						$(".email_input").fadeOut(200);
+					}
+				});
+				
+				// Visual feedback.
+				$("#email_address").focusin(function() {
+					$(this).css("border-color","#666666");
+
+				});
+				
+				// Visual feedback.
+				$("#email_address").focusout(function() {
+					$(this).css("border-color","#999999");
+				});
+
+			});
+		</script>
 		<div class="wrapper">
 			<div class="content-container">
 				<div class="content">
 					<div class="info">
 						<form name="participant_info" method="post" action="participation_consent.php">
-							<h1><?php echo $survey_title; ?></h1>
+							<h1><?php echo $survey_title; ?> - Survey Information</h1>
 							
 							<h2>1. What is the study about?</h2>
 							<p><?php echo $about_message; ?> <br />
@@ -96,14 +133,19 @@
 							for a period of at least 10 years before being destroyed, in an unanonymised format on a secure server in 
 							our University.</p>
 						
-							<h2>6. What will happen to the results of the research study?</h2>
+							<h2><a id="further_info">6. What will happen to the results of the research study?</a></h2>
 							<p>We expect to have the results of this study ready by the end of 2012. They will be published in various 
 							journal papers. If you wish to know more about the research or have copies of the papers sent to you, then please 
 							indicate this here.</p>
 							
 							<div class="further_info_check">
-								<input type="checkbox" name="store_email" id="store_email">
+								<input type="checkbox" name="store_email" id="store_email" <?php echo $checkbox_value; ?>>
 								<label for="store_email">I wish to know more about this research</label>
+							</div>
+							<div class="email_input">
+								<label for="email_address">Email address: </label>
+								<input type="text" name="email_address" id="email_address" value="<?php echo $email_address; ?>">
+								<label class="error_message" for="email_address"><?php echo $email_validation_message; ?></label>
 							</div>
 						
 							<h2>7. Reward</h2>

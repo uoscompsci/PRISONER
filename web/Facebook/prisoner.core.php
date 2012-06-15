@@ -32,4 +32,29 @@
 		return json_decode($from_prisoner, true);
 	}
 	
+	
+	/**
+	 * Used to assign users to a group.
+	 * We want a 50/50 distribution for each of the two groups. To do this, we look for a .group file
+	 * on the server. If it does not exist, the participant is assigned to group 1 and a .group file is created. If the file
+	 * already exists, the participant is assigned to group 2 and the file is deleted.
+	 * @return A number representing the participant's group.
+	 */
+	function assign_group() {		
+		// Check if the group file exists.
+		$exists = file_exists(GROUP_FILE_LOCATION);
+		
+		if ($exists) {
+			log_msg("Assigning participant to group 2.");
+			$deleted_ok = unlink(GROUP_FILE_LOCATION);
+			return GROUP_2;
+		}
+		
+		else {
+			log_msg("Assigning participant to group 1.");
+			$created_ok = fopen(GROUP_FILE_LOCATION, "w");
+			return GROUP_1;
+		}
+	}
+	
 ?>
