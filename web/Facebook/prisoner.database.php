@@ -2,9 +2,9 @@
 	
 	// Include any required components.
 	include_once("prisoner.constants.php");
-	include_once("prisoner.logging.php");
+	include_once("prisoner.core.php");
 	
-	$db = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
+	$db = mysqli_connect(DATABASE_HOST, DATABASE_USER, DATABASE_PASS, DATABASE_NAME);
 	
 	// Connection error.
 	if (!$db) {

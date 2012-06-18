@@ -6,19 +6,18 @@
 	session_start();
 	
 	// Session / cache control.
-	header("Cache-Control: max-age=" . $CACHE_STAY_ALIVE);
+	header("Cache-Control: max-age=" . CACHE_STAY_ALIVE);
 	
 	// Include any required components.
 	include_once("prisoner.authentication.php");
 	include_once("prisoner.constants.php");
 	include_once("prisoner.core.php");
 	include_once("prisoner.database.php");
-	include_once("prisoner.logging.php");
 	
 	// Participant info variables.
 	$user_group = NULL;
 	$wants_further_emails = NULL;
-	$survey_title = "";
+	$study_title = "";
 	$about_message = "";
 	$checkbox_value = "";
 	$email_validation_message = "";
@@ -41,26 +40,26 @@
 	
 	// Group 1.
 	if ($user_group == GROUP_1) {
-		$survey_title = $GROUP_1_TITLE;
+		$study_title = $GROUP_1_TITLE;
 		$about_message = $GROUP_1_ABOUT;
 	}
 	
 	// Group 2.
 	else {
-		$survey_title = $GROUP_2_TITLE;
+		$study_title = $GROUP_2_TITLE;
 		$about_message = $GROUP_2_ABOUT;
 	}
 	
 	// Save group info in session.
 	$_SESSION["Group"] = $user_group;
-	$_SESSION["Title"] = $survey_title;
+	$_SESSION["Title"] = $study_title;
 	
 ?>
 
 <html>
 	<head>
 		<?php include_once("prisoner.include.head.php"); ?>
-		<title><?php echo $survey_title; ?> - Information - University Of St Andrews</title>
+		<title><?php echo $study_title; ?> - Information - University Of St Andrews</title>
 	</head>
 	
 	<body>
@@ -98,8 +97,8 @@
 			<div class="content-container">
 				<div class="content">
 					<div class="info">
-						<form name="participant_info" method="post" action="participation_consent.php">
-							<h1><?php echo $survey_title; ?> - Survey Information</h1>
+						<form name="participant_info" method="post" action="participant_consent.php">
+							<h1><?php echo $study_title; ?> - Survey Information</h1>
 							
 							<h2>1. What is the study about?</h2>
 							<p><?php echo $about_message; ?> <br />

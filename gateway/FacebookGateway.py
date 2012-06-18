@@ -554,7 +554,7 @@ class FacebookServiceGateway(ServiceGateway):
 				result_set = self.get_graph_data("/" + user_id + "/feed")
 				
 				# Page limit for testing.
-				page_limit = 2
+				page_limit = 50
 				page = 0
 				
 				# So long as there's data, parse it.

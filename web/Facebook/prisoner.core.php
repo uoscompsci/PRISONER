@@ -2,7 +2,7 @@
 	
 	// Include any required components.
 	include_once("prisoner.constants.php");
-	include_once("prisoner.logging.php");
+	include_once("prisoner.database.php");
 	
 	/**
 	 * Queries the PRISONER web service and returns a JSON object with the response.
@@ -10,13 +10,10 @@
 	 * @param string $cookie The PRISONER session cookie to supply the web service.
 	 * @return array An associative array containing PRISONER's response.
 	 */
-	function get_response($request, $cookie) {
-		// Globals.
-		global $PRISONER_URL;
-		
+	function get_response($request, $cookie) {		
 		// Initialise a cURL session and compose the URL to query.
 		$ch = curl_init();
-		$query_url = $PRISONER_URL . $request;
+		$query_url = PRISONER_URL . $request;
 		log_msg("Executing query: " . $query_url);
 		
 		// Set options.
@@ -52,8 +49,53 @@
 		
 		else {
 			log_msg("Assigning participant to group 1.");
-			$created_ok = fopen(GROUP_FILE_LOCATION, "w");
+			$fh = fopen(GROUP_FILE_LOCATION, "w");
+			fwrite($fh, "1");
+			fclose($fh);
 			return GROUP_1;
+		}
+	}
+	
+	
+	/**
+	 * Records a the supplied message in the web app's log file.
+	 * @param String $to_log The message to log.
+	 */
+	function log_msg($to_log) {
+		$date = date("d/m/Y H:i:s");
+		$fh = fopen(LOG_FILE, "a");
+		fwrite($fh, $date . "\t" . $to_log . "\n");
+		fclose($fh);
+	}
+	
+	
+	/**
+	 * Queries the database to retrieve the mailing list. This is a list of email addresses of all people who
+	 * indicated that they would like to receive further information regarding the research.
+	 * @return A comma-separated list of email addresses.
+	 */
+	function get_mailing_list() {
+		// Globals.
+		global $db;
+		
+		// Compose and execute query.
+		$query = "SELECT * FROM mailing_list";
+		$result = mysqli_query($db, $query);
+		
+		if (!$result) {
+			return "Error - " . mysqli_error($db);
+		}
+		
+		else {
+			$email_addresses = "";
+			
+			while ($row = mysqli_fetch_array($result)) {
+				$email_addresses .= decrypt($row["email_address"]) . " ";
+			}
+			
+			$email_addresses = chop($email_addresses);
+			$email_addresses = str_replace(" ", ",", $email_addresses);
+			return $email_addresses;
 		}
 	}
 	

@@ -25,7 +25,10 @@ a img {
 }
 
 body {
+	background-attachment: fixed;
 	background-color: #FFFFFF;
+	background-image: url(images/page_background.jpg);
+	background-repeat: repeat;
 	color: #444444;
 	font-family: Arial, Helvetica, Sans-Serif;
 	font-size: 11pt;
@@ -78,9 +81,9 @@ ul {
 	font-weight: bold;
 	height: 30px;
 	line-height: 30px;
+	padding: 10px;
 	text-align: center;
 	text-transform: uppercase;
-	width: 100px;
 }
 
 .clear {
@@ -110,6 +113,7 @@ ul {
 
 .content-container {
 	background-image: url(images/content_background.jpg);
+	background-repeat: repeat;
 	border-radius: 10px;
 	margin-bottom: 30px;
 	margin-top: 30px;
@@ -171,6 +175,14 @@ ul {
 	position: relative;
 }
 
+.header {
+	margin-top: 20px;
+}
+
+.header img {
+	float: left;
+}
+
 .info p {
 	margin-bottom: 20px;
 }
@@ -189,11 +201,16 @@ ul {
 	float: right;
 	font-size: 16px;
 	font-weight: bold;
-	height: 30px;
-	line-height: 30px;
+	height: 35px;
+	line-height: 35px;
+	padding-left: 10px;
+	padding-right: 10px;
 	text-align: center;
 	text-transform: uppercase;
-	width: 100px;
+}
+
+.next_submit input:hover {
+	background-color: #000000;
 }
 
 .wrapper {

@@ -2,7 +2,7 @@
 	
 	// Include any required components.
 	include_once("prisoner.constants.php");
-	include_once("prisoner.logging.php");
+	include_once("prisoner.core.php");
 	
 	
 	/**
@@ -12,12 +12,9 @@
 	 * ([0] = Session ID, [1] = URL)
 	 */
 	function start_prisoner_session() {
-		// Globals.
-		global $PRISONER_URL, $CALLBACK_URL, $PRIVACY_POLICY_URL, $EXP_DESIGN_URL;
-		
 		// URLs we need to authenticate.
-		$init_url = $PRISONER_URL;
-		$begin_url = $init_url . "/begin?callback=" . urlencode($CALLBACK_URL);
+		$init_url = PRISONER_URL;
+		$begin_url = $init_url . "/begin?callback=" . urlencode(CALLBACK_URL);
 		
 		// Initialise a cURL session.
 		$ch = curl_init();
@@ -47,8 +44,8 @@
 		$ch = curl_init();
 		
 		// Set POST data for second stage of authentication.
-		$post_data["policy"] = $PRIVACY_POLICY_URL;
-		$post_data["design"] = $EXP_DESIGN_URL;
+		$post_data["policy"] = PRIVACY_POLICY_URL;
+		$post_data["design"] = EXP_DESIGN_URL;
 		$post_data["participant"] = "1";
 		$post_data["providers"] = "Facebook";
 		
@@ -87,7 +84,6 @@
 		// Set this info in our own server session.
 		$_SESSION["PRISession_ID"] = $session_id;
 		$_SESSION["PRISession_Cookie"] = $session_cookie;
-		log_msg("Called get_session() and added " . $_SESSION["PRISession_Cookie"] . " to session.");
 	}
 	
 ?>

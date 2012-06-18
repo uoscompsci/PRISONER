@@ -1,21 +1,66 @@
 <?php
 	
-	// Global variables.
-	$PRISONER_URL = "http://127.0.0.1:5000";
-	$CALLBACK_URL = "http://localhost/prisoner/exp_01.php";
-	$PRIVACY_POLICY_URL = "http://localhost/prisoner/xml/fb_privacy_policy_test.xml";
-	$EXP_DESIGN_URL = "http://localhost/prisoner/xml/fb_exp_design_test.xml";
+	// Database config.
+	define("DATABASE_HOST", "localhost");
+	define("DATABASE_USER", "sam");
+	define("DATABASE_PASS", "hE&rezeprestAsed");
+	define("DATABASE_NAME", "prisoner");
+	define("MYSQLI_ERROR_DUPLICATE", 1062);
 	
-	// Database.
-	$DATABASE_HOST = "localhost";
-	$DATABASE_USER = "sam";
-	$DATABASE_PASS = "hE&rezeprestAsed";
-	$DATABASE_NAME = "prisoner";
+	// Validation and security.
+	define("EMAIL_ADDRESS_REGEX", "/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b/i");
+	define("SALT", "Oh Scotty doesn't know! So Don't Tell Scotty! Scotty doesn't know! Scotty doesn't know! So Don't Tell Scotty!");
 	
-	$EMAIL_ADDRESS_REGEX = "/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b/i";
+	// PRISONER config.
+	define("PRISONER_URL", "http://127.0.0.1:5000");
+	define("CALLBACK_URL", "http://localhost/prisoner/research_questionnaire.php");
+	define("PRIVACY_POLICY_URL", "http://localhost/prisoner/xml/fb_privacy_policy_test.xml");
+	define("EXP_DESIGN_URL", "http://localhost/prisoner/xml/fb_exp_design_test.xml");
 	
-	// Max age for a browser's cache. (User will be able to go back and change answers.)
-	$CACHE_STAY_ALIVE = 60 * 30;	# 60 * 30 = 30 minutes = anticipated length of survey.
+	// Study constants.
+	define("GROUP_1", 1);
+	define("GROUP_2", 2);
+	define("GROUP_FILE_LOCATION", ".group");
+	define("NUM_QUESIONS", 60);
+	define("NUM_PROFILE_QUESIONS", 10);
+	define("NUM_FRIENDS_QUESIONS", 10);
+	define("NUM_LIKES_QUESIONS", 10);
+	define("NUM_STATUS_QUESIONS", 10);
+	define("NUM_CHECKIN_QUESIONS", 10);
+	define("NUM_PHOTO_QUESIONS", 10);
+	define("NUM_PRIVACY_FRIENDS", 0);
+	define("NUM_PRIVACY_CUSTOM", 0);
+	define("NUM_PRIVACY_PUBLIC", 0);
+	define("DEBRIEFING_URL", "participant_debriefing.php");
+	
+	// Key names for Facebook profile information.
+	$PROFILE_INFO_KEYS = array();
+	$PROFILE_INFO_KEYS[] = "_username";
+	$PROFILE_INFO_KEYS[] = "_displayName";
+	$PROFILE_INFO_KEYS[] = "_firstName";
+	$PROFILE_INFO_KEYS[] = "_middleName";
+	$PROFILE_INFO_KEYS[] = "_lastName";
+	$PROFILE_INFO_KEYS[] = "_gender";
+	$PROFILE_INFO_KEYS[] = "_email";
+	$PROFILE_INFO_KEYS[] = "_languages";
+	$PROFILE_INFO_KEYS[] = "_timezone";
+	$PROFILE_INFO_KEYS[] = "_updatedTime";
+	$PROFILE_INFO_KEYS[] = "_bio";
+	$PROFILE_INFO_KEYS[] = "_birthday";
+	$PROFILE_INFO_KEYS[] = "_education";
+	$PROFILE_INFO_KEYS[] = "_work";
+	$PROFILE_INFO_KEYS[] = "_hometown";
+	$PROFILE_INFO_KEYS[] = "_location";
+	$PROFILE_INFO_KEYS[] = "_interestedIn";
+	$PROFILE_INFO_KEYS[] = "_politicalViews";
+	$PROFILE_INFO_KEYS[] = "_religion";
+	$PROFILE_INFO_KEYS[] = "_relationshipStatus";
+	$PROFILE_INFO_KEYS[] = "_significantOther";
+	$PROFILE_INFO_KEYS[] = "_image";
+	
+	// Misc.
+	define("CACHE_STAY_ALIVE", 60 * 30);	# 60 * 30 = 30 minutes = anticipated length of study.
+	define("LOG_FILE", "prisoner_log.txt");
 	
 	// Content for group 1. (Health and social networks)
 	$GROUP_1_ABOUT = "We invite you to participate in a research project about the social factors that affect your health and health care. " . "\n" .
@@ -38,13 +83,6 @@
 	"(Do not just close this tab)</p>" . "\n";
 	
 	$STUDY_START_MESSAGE = "<p>Thank you for agreeing to take part in this study. To get started, please click the <strong>Begin</strong> " . "\n" .
-	"button below.</p>" . "\n";
-	
-	// Definitions.
-	define("GROUP_1", 1);
-	define("GROUP_2", 2);
-	define("SALT", "Oh Scotty doesn't know! So Don't Tell Scotty! Scotty doesn't know! Scotty doesn't know! So Don't Tell Scotty!");
-	define("MYSQLI_ERROR_DUPLICATE", 1062);
-	define("GROUP_FILE_LOCATION", ".group");
+	"button below.</p>" . "\n";	
 	
 ?>
