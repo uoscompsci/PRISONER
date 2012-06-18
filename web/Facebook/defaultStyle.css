@@ -75,15 +75,20 @@ ul {
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
 	color: #FFFFFF;
-	cursor: pointer;
+	display: block;
 	float: right;
 	font-size: 16px;
 	font-weight: bold;
-	height: 30px;
-	line-height: 30px;
-	padding: 10px;
+	height: 35px;
+	line-height: 35px;
+	padding-left: 10px;
+	padding-right: 10px;
 	text-align: center;
 	text-transform: uppercase;
+}
+
+.button_green:hover {
+	background-color: #000000;
 }
 
 .clear {

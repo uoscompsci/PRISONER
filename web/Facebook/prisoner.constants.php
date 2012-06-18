@@ -32,6 +32,7 @@
 	define("NUM_PRIVACY_CUSTOM", 0);
 	define("NUM_PRIVACY_PUBLIC", 0);
 	define("DEBRIEFING_URL", "participant_debriefing.php");
+	define("SCREENED_OUT_URL", "screened_out.php");
 	
 	// Key names for Facebook profile information.
 	$PROFILE_INFO_KEYS = array();
