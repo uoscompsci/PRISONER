@@ -34,6 +34,15 @@
 	define("DEBRIEFING_URL", "participant_debriefing.php");
 	define("SCREENED_OUT_URL", "screened_out.php");
 	
+	// Facebook data types.
+	define("TYPE_PROFILE", 0);
+	define("TYPE_FRIEND", 1);
+	define("TYPE_LIKE", 2);
+	define("TYPE_CHECKIN", 3);
+	define("TYPE_STATUS", 4);
+	define("TYPE_ALBUM", 5);
+	define("TYPE_PHOTO", 6);
+	
 	// Key names for Facebook profile information.
 	$PROFILE_INFO_KEYS = array();
 	$PROFILE_INFO_KEYS[] = "_username";

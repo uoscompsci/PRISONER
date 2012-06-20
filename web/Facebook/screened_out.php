@@ -15,8 +15,8 @@
 	include_once("prisoner.database.php");
 		
 	// Retrieve info from session.
-	$user_group = $_SESSION["Group"];
-	$study_title = $_SESSION["Title"];
+	$user_group = $_SESSION["group"];
+	$study_title = $_SESSION["study_title"];
 	$info_message = $_SESSION["info_message"];
 	
 ?>

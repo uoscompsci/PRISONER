@@ -15,10 +15,10 @@
 	include_once("prisoner.database.php");
 	
 	// Retrieve info from session.
-	$user_group = $_SESSION["Group"];
-	$survey_title = $_SESSION["Title"];
-	$participant_wants_info = $_SESSION["FurtherEmails"];
-	$consent_granted = $_SESSION["Consent"];
+	$user_group = $_SESSION["group"];
+	$survey_title = $_SESSION["study_title"];
+	$participant_wants_info = $_SESSION["wants_further_emails"];
+	$consent_granted = $_SESSION["participant_consent"];
 	
 	// Variables for later.
 	$prisoner_session_id = NULL;
@@ -55,7 +55,7 @@
 	// If the user gave consent, create a session with PRISONER.
 	if ($consent_granted) {
 		// Set session info and start PRISONER.
-		$_SESSION["Consent"] = true;
+		$_SESSION["participant_consent"] = true;
 		$session_results = start_prisoner_session();
 		$prisoner_session_id = $session_results[0];
 		$participation_url = $session_results[1];

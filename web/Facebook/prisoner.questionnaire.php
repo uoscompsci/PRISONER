@@ -1,6 +1,7 @@
 <?php
 	
 	// Include any required components.
+	include_once("prisoner.classes.php");
 	include_once("prisoner.constants.php");
 	include_once("prisoner.database.php");
 	
@@ -81,11 +82,11 @@
 		global $PROFILE_INFO_KEYS;
 		
 		// Create objects to hold info about question numbers.
-		$profile_info_obj = new InfoType("Profile");
-		$friends_info_obj = new InfoType("Friends ");
-		$likes_info_obj = new InfoType("Likes");
-		$checkins_info_obj = new InfoType("Check-ins");
-		$statuses_info_obj = new InfoType("Statuses");
+		$profile_info_obj = new InfoType("Profile", TYPE_PROFILE);
+		$friends_info_obj = new InfoType("Friends", TYPE_FRIEND);
+		$likes_info_obj = new InfoType("Likes", TYPE_LIKE);
+		$checkins_info_obj = new InfoType("Check-ins", TYPE_CHECKIN);
+		$statuses_info_obj = new InfoType("Statuses", TYPE_STATUS);
 		
 		// Retrieve the guideline amounts for each item.
 		$num_questions = NUM_QUESIONS;
@@ -203,16 +204,7 @@
 				}
 			}
 			
-			// Create array we'll use to return results.
-			$to_return = array();
-			
-			// Loop through info types array and add the number of questions for each type
-			// to the results array.
-			foreach ($info_array as $info_type) {
-				$to_return[] = $info_type->num_want;
-			}
-			
-			return $to_return;
+			return $info_array;
 		}
 	}
 	
@@ -273,26 +265,125 @@
 	
 	
 	/**
-	 * Simple class to hold information about a type / category of Facebook information. (Eg: Profile info, Check-ins)
-	 * Records the number of pieces of that info we want, the number we have, and any spare.
-	 * Used mainly internally to divide up questions between categories in the event some category doesn't have enough
-	 * items.
+	 * Generates the questions to ask the participant based on the supplied array that defines the number of
+	 * questions per type we need to ask. Returns an array of Question() objects in a random order.
+	 * @param array $num_questions_per_type An array of InfoType() objects.
+	 * @return An array of Question() objects.
 	 */
-	class InfoType {
-		var $name = "";
-		var $num_want = 0;
-		var $num_have = 0;
-		var $num_spare = 0;
-		var $mismatch = 0;
+	function generate_questions($question_info_array) {
+		// How many questions of each type do we need?
+		$num_profile_questions = get_num_questions_for(TYPE_PROFILE, $question_info_array);
+		$num_friends_questions = get_num_questions_for(TYPE_FRIEND, $question_info_array);
+		$num_like_questions = get_num_questions_for(TYPE_LIKE, $question_info_array);
+		$num_checkin_questions = get_num_questions_for(TYPE_CHECKIN, $question_info_array);
+		$num_status_questions = get_num_questions_for(TYPE_STATUS, $question_info_array);
+		$num_album_questions = get_num_questions_for(TYPE_ALBUM, $question_info_array);
+		$num_photo_questions = get_num_questions_for(TYPE_PHOTO, $question_info_array);
 		
+		// Get Facebook info from session.
+		$profile_info = $_SESSION["profile_info"];
+		$friends = $_SESSION["friends_list"];
+		$likes = $_SESSION["likes_info"];
+		$checkins = $_SESSION["checkin_info"];
+		$status_updates = $_SESSION["status_update_info"];
+		$photo_albums = $_SESSION["photo_album_info"];
+		$photos = $_SESSION["photo_info"];
 		
-		/**
-		 * Constructs a new InfoType object with the supplied name.
-		 * @param string $name_to_set The InfoType's name.
-		 */
-		function __construct($name_to_set) {
-			$this->name = $name_to_set;
+		// What are we going to show to the user?
+		$profile_questions = array_rand($profile_info, $num_profile_questions);
+		$friend_questions = array_rand($friends, $num_friends_questions);
+		$like_questions = array_rand($likes, $num_like_questions);
+		$checkin_questions = array_rand($checkins, $num_checkin_questions);
+		$status_questions = array_rand($status_updates, $num_status_questions);
+		$photo_album_questions = array_rand($photo_albums, $num_album_questions);
+		$photo_questions = array_rand($photos, $num_photo_questions);
+				
+		// Array to hold our questions.
+		log_msg("Generating questions to display.");
+		$questions = array();
+		
+		// Questions about the participant's personal profile info.
+		foreach ($profile_questions as $key) {
+			log_msg("- Profile and personal info: " . $key);
 		}
+		
+		// Questions about the participant's friends.
+		foreach ($friend_questions as $key) {
+			// Get info about this friend.
+			$friend_name = $friends[$key]["_displayName"];
+			$friend_pic = $friends[$key]["_image"]["_fullImage"];
+			
+			// Info to populate question with.
+			$question_text = "You are friends with";
+			$data_to_display = $friend_name;
+			$privacy_of_data = "";
+			
+			// Create question object and add it to our list.
+			$this_question = new Question(TYPE_PROFILE, $question_text, $data_to_display, $privacy_of_data);
+			$questions[] = $this_question;
+		}
+		
+		// Questions about the pariticpant's interests.
+		foreach ($like_questions as $key) {
+			// Get info about this interest.
+			$like_name = $likes[$key]["_displayName"];
+			
+			// Info to populate question with.
+			$question_text = "You like";
+			$data_to_display = $like_name;
+			$privacy_of_data = "";
+			
+			// Create question object and add it to our list.
+			$this_question = new Question(TYPE_PROFILE, $question_text, $data_to_display, $privacy_of_data);
+			$questions[] = $this_question;
+		}
+		
+		// Questions about places the participant has been.
+		foreach ($checkin_questions as $key) {
+			log_msg("- Locations.");
+		}
+		
+		// Questions about the pariticpant's status updates.
+		foreach ($status_questions as $key) {
+			log_msg("- Status updates.");
+		}
+		
+		// Questions about the pariticpant's photo albums.
+		foreach ($photo_album_questions as $key) {
+			log_msg("- Photo albums.");
+		}
+		
+		// Questions about the pariticpant's photos.
+		foreach ($photo_questions as $key) {
+			log_msg("- Photos.");
+		}
+		
+		// Randomise array and return.
+		log_msg("- Generated " . count($questions) . " questions for the participant.");
+		shuffle($questions);
+		return $questions;
+	}
+	
+	
+	/**
+	 * Loops through the supplied haystack (Probably an array) and returns the number of questions that need to be
+	 * asked for the supplied question type.
+	 * @param int $question_type Question type to find.
+	 * @param array $haystack Array of InfoType() objects.
+	 * @return The number of questions to ask of the supplied type. (0 if type not found)
+	 */
+	function get_num_questions_for($question_type, $haystack) {
+		foreach ($haystack as $question) {
+			// We've found a match, so return how many questions to ask.
+			if ($question->type == $question_type) {
+				log_msg("Want " . $question->num_want . " questions of type " . $question->type . ".");
+				return $question->num_want;
+			}
+		}
+		
+		// No match was found, return 0.
+		log_msg("No questions of type " . $question->type . " found.");
+		return 0;
 	}
 	
 ?>

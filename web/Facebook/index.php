@@ -26,9 +26,9 @@
 	// Check to see if this participant has already been assigned a group. (Eg: Pressed "Back")
 	if (!empty($_SESSION["Group"])) {
 		$user_group = $_SESSION["Group"];
-		$wants_further_emails = $_SESSION["FurtherEmails"];
-		$email_validation_message = $_SESSION["EmailValidationMessage"];
-		$email_address = $_SESSION["EmailAddress"];
+		$wants_further_emails = $_SESSION["wants_further_emails"];
+		$email_validation_message = $_SESSION["email_validation_message"];
+		$email_address = $_SESSION["email_address"];
 		$checkbox_value = "checked='checked'";
 		log_msg("Participant has already been assigned a group - " . $user_group);
 	}
@@ -51,8 +51,8 @@
 	}
 	
 	// Save group info in session.
-	$_SESSION["Group"] = $user_group;
-	$_SESSION["Title"] = $study_title;
+	$_SESSION["group"] = $user_group;
+	$_SESSION["study_title"] = $study_title;
 	
 ?>
 

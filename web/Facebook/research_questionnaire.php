@@ -2,46 +2,74 @@
 
 <?php
 	
+	// Include any required components.
+	include_once("prisoner.authentication.php");
+	include_once("prisoner.classes.php");
+	include_once("prisoner.constants.php");
+	include_once("prisoner.core.php");
+	include_once("prisoner.database.php");
+	include_once("prisoner.questionnaire.php");
+	
 	// Start a session on the server.
 	session_start();
 	
 	// Session / cache control.
 	header("Cache-Control: max-age=" . CACHE_STAY_ALIVE);
 	
-	// Include any required components.
-	include_once("prisoner.authentication.php");
-	include_once("prisoner.constants.php");
-	include_once("prisoner.core.php");
-	include_once("prisoner.database.php");
-	include_once("prisoner.questionnaire.php");
-	
 	// Retrieve info from session.
-	set_session();	# Retrieve info from PRISONER.
+	set_session();
 	$session_cookie = $_SESSION["PRISession_Cookie"];
-	$user_group = $_SESSION["Group"];
-	$study_title = $_SESSION["Title"];
-	$question_num = 1;
+	$user_group = $_SESSION["group"];
+	$study_title = $_SESSION["study_title"];
+	$question_num = $_SESSION["question_number"];
+	$questions = $_SESSION["questions"];
 	
 	// Get participant's Facebook info.
 	get_facebook_data($session_cookie);
-	$enough_info = calculate_num_info_types();
+	$num_questions_per_type = calculate_num_info_types();
 	
-	if ($enough_info == false) {
+	// Profile does not contain enough info for the study. Screen out.
+	if (!$num_questions_per_type) {
 		$_SESSION["info_message"] = "<strong>your Facebook profile does not contain enough information.</strong>";
 		header("Location: " . SCREENED_OUT_URL);
 	}
 	
-	$profile_info = $_SESSION["profile_info"];
-	$likes_info = $_SESSION["likes_info"];
-	$friends_info = $_SESSION["friends_list"];
-	$checkin_info = $_SESSION["checkin_info"];
-	$status_update_info = $_SESSION["status_update_info"];
-	
-	$to_display = "Your name is <strong>" . $profile_info["_firstName"] . "</strong> and you are " . $profile_info["_relationshipStatus"] . ".";
-	
-	if ($question_num >= NUM_QUESIONS) {
-		//header("Location: " . DEBRIEFING_URL);
+	// Generate questions if necessary.
+	else {
+		if (empty($_SESSION["questions"])) {
+			$questions = generate_questions($num_questions_per_type);
+			$_SESSION["questions"] = $questions;
+		}
 	}
+	
+	// Retrieve info from POST.
+	$question_id = $_POST["question_id"];
+	$question_num = NULL;
+	
+	// This is the participant's first question.
+	// We don't want to do anything other than display the first question to them.
+	if (empty($question_id)) {
+		$question_num = 1;
+		log_msg("No question ID detected, assuming first question.");
+	}
+	
+	// Get the participant's response and display the next question.
+	else {
+		$question_num = str_replace(SALT, "", base64_decode($question_id));
+		$question_num += 1;
+		log_msg("Question ID detected (" . $question_id . "), decoded and set next question to " . $question_num . ".");
+		
+		// Participant has answered all questions. Redirect to debriefing.
+		if ($question_num >= NUM_QUESIONS) {
+			header("Location: " . DEBRIEFING_URL);
+		}
+	}
+	
+	$question_id = base64_encode(SALT + $question_num);
+	$question_id_field = "<input type='hidden' name='question_id' id='question_id' value='" . $question_id . "'>";
+	
+	$this_question = $questions[$question_num];
+	$to_display = $this_question->question_text . " " . $this_question->data_to_display;
 		
 ?>
 
@@ -65,6 +93,7 @@
 							
 							<p><?php echo $to_display; ?></p>
 							
+							<?php echo $question_id_field; ?>
 							<div class="next_submit">
 								<input name="submit" type="submit" value="Next Question">
 							</div>

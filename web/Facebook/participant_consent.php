@@ -15,8 +15,8 @@
 	include_once("prisoner.database.php");
 		
 	// Retrieve info from session.
-	$user_group = $_SESSION["Group"];
-	$study_title = $_SESSION["Title"];
+	$user_group = $_SESSION["group"];
+	$study_title = $_SESSION["study_title"];
 	
 	// Retrieve info from POST.
 	$participant_wants_info = $_POST["store_email"];
@@ -24,7 +24,7 @@
 	// Participant has not indicated they want further info.
 	if (empty($participant_wants_info)) {
 		log_msg("Participant does not want further emails.");
-		$_SESSION["FurtherEmails"] = false;
+		$_SESSION["wants_further_emails"] = false;
 	}
 	
 	// Participant wants further info.
@@ -32,19 +32,19 @@
 		// Debug info.
 		log_msg("Participant wants further emails.");
 		$email_address = $_POST["email_address"];
-		$_SESSION["FurtherEmails"] = true;
-		$_SESSION["EmailAddress"] = $email_address;
+		$_SESSION["wants_further_emails"] = true;
+		$_SESSION["email_address"] = $email_address;
 		
 		// Email address doesn't validate.
 		if (!preg_match(EMAIL_ADDRESS_REGEX, $email_address)) {
-			$_SESSION["EmailValidationMessage"] = "<strong>Error -</strong> Please enter a valid email address.";
+			$_SESSION["email_validation_message"] = "<strong>Error -</strong> Please enter a valid email address.";
 			log_msg("Error - Email address failed validation.");
 			header("Location: index.php#further_info");
 		}
 		
 		// Email address ok.
 		else {
-			$_SESSION["EmailValidationMessage"] = "";
+			$_SESSION["email_validation_message"] = "";
 			log_msg("Email address validated. Adding to mailing list.");
 			
 			// Encrypt email address and store in database.
