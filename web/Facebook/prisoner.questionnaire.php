@@ -81,130 +81,139 @@
 		// Globals.
 		global $PROFILE_INFO_KEYS;
 		
-		// Create objects to hold info about question numbers.
-		$profile_info_obj = new InfoType("Profile", TYPE_PROFILE);
-		$friends_info_obj = new InfoType("Friends", TYPE_FRIEND);
-		$likes_info_obj = new InfoType("Likes", TYPE_LIKE);
-		$checkins_info_obj = new InfoType("Check-ins", TYPE_CHECKIN);
-		$statuses_info_obj = new InfoType("Statuses", TYPE_STATUS);
-		
-		// Retrieve the guideline amounts for each item.
-		$num_questions = NUM_QUESIONS;
-		$profile_info_obj->num_want = NUM_PROFILE_QUESIONS;
-		$friends_info_obj->num_want = NUM_FRIENDS_QUESIONS;
-		$likes_info_obj->num_want = NUM_LIKES_QUESIONS;
-		$checkins_info_obj->num_want = NUM_CHECKIN_QUESIONS;
-		$statuses_info_obj->num_want = NUM_STATUS_QUESIONS;
-		log_msg("Guideline numbers obtained. (Profile: " . $profile_info_obj->num_want . ", Friends: " . $friends_info_obj->num_want . 
-		", Likes: " . $likes_info_obj->num_want .  ", Check-ins " . $checkins_info_obj->num_want . ", Statuses: " . $statuses_info_obj->num_want . ")");
-		
-		// How many of each info type do we have?
-		$num_infos = 0;
-		$num_need_extra = 0;
-		
-		// How much profile info do we have?
-		foreach ($PROFILE_INFO_KEYS as $key) {
-			if (!empty($_SESSION["profile_info"][$key])) {
-				// Special case for education / work.
-				if (($key == "_education") || ($key == "_work")) {
-					if (assert_has_objects($_SESSION["profile_info"][$key])) {
+		// If we haven't already counted the question types...
+		if (!$_SESSION["counted_question_types"]) {
+			// Create objects to hold info about question numbers.
+			$profile_info_obj = new InfoType("Profile", TYPE_PROFILE);
+			$friends_info_obj = new InfoType("Friends", TYPE_FRIEND);
+			$likes_info_obj = new InfoType("Likes", TYPE_LIKE);
+			$checkins_info_obj = new InfoType("Check-ins", TYPE_CHECKIN);
+			$statuses_info_obj = new InfoType("Statuses", TYPE_STATUS);
+			
+			// Retrieve the guideline amounts for each item.
+			$num_questions = NUM_QUESIONS;
+			$profile_info_obj->num_want = NUM_PROFILE_QUESIONS;
+			$friends_info_obj->num_want = NUM_FRIENDS_QUESIONS;
+			$likes_info_obj->num_want = NUM_LIKES_QUESIONS;
+			$checkins_info_obj->num_want = NUM_CHECKIN_QUESIONS;
+			$statuses_info_obj->num_want = NUM_STATUS_QUESIONS;
+			log_msg("Guideline numbers obtained. (Profile: " . $profile_info_obj->num_want . ", Friends: " . $friends_info_obj->num_want .
+					", Likes: " . $likes_info_obj->num_want .  ", Check-ins " . $checkins_info_obj->num_want . ", Statuses: " . $statuses_info_obj->num_want . ")");
+			
+			// How many of each info type do we have?
+			$num_infos = 0;
+			$num_need_extra = 0;
+			
+			// How much profile info do we have?
+			foreach ($PROFILE_INFO_KEYS as $key) {
+				if (!empty($_SESSION["profile_info"][$key])) {
+					// Special case for education / work.
+					if (($key == "_education") || ($key == "_work")) {
+						if (assert_has_objects($_SESSION["profile_info"][$key])) {
+							$profile_info_obj->num_have += 1;
+						}
+					}
+			
+					// Special case for hometown / location / signigicant other.
+					else if (($key == "_hometown") || ($key == "_location") || ($key == "_significantOther")) {
+						if (assert_has_name($_SESSION["profile_info"][$key])) {
+							$profile_info_obj->num_have += 1;
+						}
+					}
+			
+					// General case.
+					else {
 						$profile_info_obj->num_have += 1;
 					}
-				}
-				
-				// Special case for hometown / location / signigicant other.
-				else if (($key == "_hometown") || ($key == "_location") || ($key == "_significantOther")) {
-					if (assert_has_name($_SESSION["profile_info"][$key])) {
-						$profile_info_obj->num_have += 1;
-					}
-				}
-				
-				// General case.
-				else {
-					$profile_info_obj->num_have += 1;
 				}
 			}
+			
+			log_msg("Participant has " . $profile_info_obj->num_have . " pieces of profile info.");
+			
+			// How much friend info do we have?
+			$friends_info_obj->num_have = count($_SESSION["friends_list"]);
+			log_msg("Participant has " . $friends_info_obj->num_have . " pieces of friend info.");
+			
+			// How much likes / interests  info do we have?
+			$likes_info_obj->num_have = count($_SESSION["likes_info"]);
+			log_msg("Participant has " . $likes_info_obj->num_have . " pieces of likes and interests info.");
+			
+			// How much check-in info do we have?
+			$checkins_info_obj->num_have = count($_SESSION["checkin_info"]);
+			log_msg("Participant has " . $checkins_info_obj->num_have . " pieces of check-in info.");
+			
+			// How much status update info do we have?
+			$statuses_info_obj->num_have = count($_SESSION["status_update_info"]);
+			log_msg("Participant has " . $statuses_info_obj->num_have . " status updates available.");
+			
+			// How much info do we have in total?
+			$num_infos = $profile_info_obj->num_have + $friends_info_obj->num_have + $likes_info_obj->num_have + $checkins_info_obj->num_have
+			+ $statuses_info_obj->num_have;
+			log_msg("Total pieces of info available: " . $num_infos);
+			
+			// We don't have enough info for the study.
+			if ($num_infos < $num_questions) {
+				log_msg("Insufficient info available to complete study. (Have " . $num_infos . ", need " . $num_questions . ")");
+				return false;
+			}
+			
+			// Otherwise, check we have enough of each type.
+			else {
+				// Calculate total amount of compensation required.
+				$profile_info_obj = get_extra_needed($profile_info_obj);
+				$friends_info_obj = get_extra_needed($friends_info_obj);
+				$likes_info_obj = get_extra_needed($likes_info_obj);
+				$checkins_info_obj = get_extra_needed($checkins_info_obj);
+				$statuses_info_obj = get_extra_needed($statuses_info_obj);
+					
+				// Add our info objects into an array we can iterate over.
+				$info_array = array();
+				$info_array[] = $profile_info_obj;
+				$info_array[] = $friends_info_obj;
+				$info_array[] = $likes_info_obj;
+				$info_array[] = $checkins_info_obj;
+				$info_array[] = $statuses_info_obj;
+					
+				// Calculate amount of type compensation needed.
+				foreach ($info_array as $info_type) {
+					if ($info_type->mismatch > 0) {
+						$num_need_extra += $info_type->mismatch;
+					}
+				}
+					
+				log_msg("Need to compensate for " . $num_need_extra . " pieces of info.");
+					
+				// We need to compensate for a lack of one or more types of info.
+				if ($num_need_extra > 0) {
+					$num_category_types = count($info_array);
+					$j = 0;
+			
+					for ($i = 0; $i < $num_need_extra; $i ++) {
+						// Hit limit of category types, reset index.
+						if ($j == $num_category_types) {
+							$j = 0;
+						}
+							
+						// If this info type has spare capacity, use it.
+						if ($info_array[$j]->num_spare > 0) {
+							$info_array[$j]->num_want += 1;
+							$info_array[$j]->num_spare -= 1;
+							log_msg("- Assigning extra from " . $info_array[$j]->name . ". (Will ask: " . $info_array[$j]->num_want .
+									", New spare capacity: " . $info_array[$j]->num_spare . ")");
+						}
+							
+						$j ++;
+					}
+				}
+					
+				$_SESSION["counted_question_types"] = true;
+				return $info_array;
+			}
 		}
-				
-		log_msg("Participant has " . $profile_info_obj->num_have . " pieces of profile info.");
 		
-		// How much friend info do we have?
-		$friends_info_obj->num_have = count($_SESSION["friends_list"]);
-		log_msg("Participant has " . $friends_info_obj->num_have . " pieces of friend info.");
-		
-		// How much likes / interests  info do we have?
-		$likes_info_obj->num_have = count($_SESSION["likes_info"]);
-		log_msg("Participant has " . $likes_info_obj->num_have . " pieces of likes and interests info.");
-		
-		// How much check-in info do we have?
-		$checkins_info_obj->num_have = count($_SESSION["checkin_info"]);
-		log_msg("Participant has " . $checkins_info_obj->num_have . " pieces of check-in info.");
-		
-		// How much status update info do we have?
-		$statuses_info_obj->num_have = count($_SESSION["status_update_info"]);
-		log_msg("Participant has " . $statuses_info_obj->num_have . " status updates available.");
-		
-		// How much info do we have in total?
-		$num_infos = $profile_info_obj->num_have + $friends_info_obj->num_have + $likes_info_obj->num_have + $checkins_info_obj->num_have 
-		+ $statuses_info_obj->num_have;
-		log_msg("Total pieces of info available: " . $num_infos);
-		
-		// We don't have enough info for the study.
-		if ($num_infos < $num_questions) {
-			log_msg("Insufficient info available to complete study. (Have " . $num_infos . ", need " . $num_questions . ")");
-			return false;
-		}
-		
-		// Otherwise, check we have enough of each type.
+		// If we've already done this, just return true.
 		else {
-			// Calculate total amount of compensation required.
-			$profile_info_obj = get_extra_needed($profile_info_obj);
-			$friends_info_obj = get_extra_needed($friends_info_obj);
-			$likes_info_obj = get_extra_needed($likes_info_obj);
-			$checkins_info_obj = get_extra_needed($checkins_info_obj);
-			$statuses_info_obj = get_extra_needed($statuses_info_obj);
-			
-			// Add our info objects into an array we can iterate over.
-			$info_array = array();
-			$info_array[] = $profile_info_obj;
-			$info_array[] = $friends_info_obj;
-			$info_array[] = $likes_info_obj;
-			$info_array[] = $checkins_info_obj;
-			$info_array[] = $statuses_info_obj;
-			
-			// Calculate amount of type compensation needed.
-			foreach ($info_array as $info_type) {
-				if ($info_type->mismatch > 0) {
-					$num_need_extra += $info_type->mismatch;
-				}
-			}
-			
-			log_msg("Need to compensate for " . $num_need_extra . " pieces of info.");
-			
-			// We need to compensate for a lack of one or more types of info.
-			if ($num_need_extra > 0) {
-				$num_category_types = count($info_array);
-				$j = 0;
-				
-				for ($i = 0; $i < $num_need_extra; $i ++) {
-					// Hit limit of category types, reset index.
-					if ($j == $num_category_types) {
-						$j = 0;
-					}
-					
-					// If this info type has spare capacity, use it.
-					if ($info_array[$j]->num_spare > 0) {
-						$info_array[$j]->num_want += 1;
-						$info_array[$j]->num_spare -= 1;
-						log_msg("- Assigning extra from " . $info_array[$j]->name . ". (Will ask: " . $info_array[$j]->num_want .
-						", New spare capacity: " . $info_array[$j]->num_spare . ")");
-					}
-					
-					$j ++;
-				}
-			}
-			
-			return $info_array;
+			return true;
 		}
 	}
 	
@@ -304,7 +313,6 @@
 		
 		// Questions about the participant's personal profile info.
 		foreach ($profile_questions as $key) {
-			log_msg("- Profile and personal info: " . $key);
 		}
 		
 		// Questions about the participant's friends.
@@ -319,7 +327,7 @@
 			$privacy_of_data = "";
 			
 			// Create question object and add it to our list.
-			$this_question = new Question(TYPE_PROFILE, $question_text, $data_to_display, $privacy_of_data);
+			$this_question = new Question(TYPE_FRIEND, $question_text, $data_to_display, $privacy_of_data);
 			$questions[] = $this_question;
 		}
 		
@@ -334,28 +342,24 @@
 			$privacy_of_data = "";
 			
 			// Create question object and add it to our list.
-			$this_question = new Question(TYPE_PROFILE, $question_text, $data_to_display, $privacy_of_data);
+			$this_question = new Question(TYPE_LIKE, $question_text, $data_to_display, $privacy_of_data);
 			$questions[] = $this_question;
 		}
 		
 		// Questions about places the participant has been.
 		foreach ($checkin_questions as $key) {
-			log_msg("- Locations.");
 		}
 		
 		// Questions about the pariticpant's status updates.
 		foreach ($status_questions as $key) {
-			log_msg("- Status updates.");
 		}
 		
 		// Questions about the pariticpant's photo albums.
 		foreach ($photo_album_questions as $key) {
-			log_msg("- Photo albums.");
 		}
 		
 		// Questions about the pariticpant's photos.
 		foreach ($photo_questions as $key) {
-			log_msg("- Photos.");
 		}
 		
 		// Randomise array and return.
@@ -384,6 +388,80 @@
 		// No match was found, return 0.
 		log_msg("No questions of type " . $question->type . " found.");
 		return 0;
+	}
+	
+	
+	/**
+	 * Returns the HTML markup that should be used to display the supplied question.
+	 * Takes a Question object as a parameter.
+	 * @param Question $question The question to generate markup for.
+	 * @return string A string representation of the markup that should be used to display this question.
+	 */
+	function get_question_markup($question, $question_number) {
+		// Get question info.
+		$type = $question->type;
+		$question_text = $question->question_text;
+		$data_to_display = $question->data_to_display;
+		$response = $question->response;
+		
+		// Generate markup.
+		$markup = "<div class='question'>";
+		$markup .= "<div class='question_info'><p>Question #" . $question_number . ", Category: " . get_friendly_type($type) . "</p></div>" . "\n";
+		
+		switch ($type) {
+			case TYPE_FRIEND:
+				$markup .= "<p>You are friends with <strong>" . $data_to_display . "</strong>.</p>";
+				break;
+			
+			case TYPE_LIKE:
+				$markup .= "<p>You like <strong>" . $data_to_display . "</strong>.</p>";
+				break;
+		}
+		
+		$markup .= "</div>";
+		return $markup;
+	}
+	
+	
+	/**
+	 * Returns a friendly string representation of a question's type. Helpful for clarifying what is being
+	 * asked of a user.
+	 * @param int $type_id A valid type ID.
+	 * @return string A friendly name for the supplied type ID.
+	 */
+	function get_friendly_type($type_id) {
+		switch ($type_id) {
+			case TYPE_PROFILE:
+				return "Profile and personal information";
+				break;
+			
+			case TYPE_FRIEND:
+				return "Friends and acquaintances";
+				break;
+			
+			case TYPE_LIKE:
+				return "Likes and interests";
+				break;
+			
+			case TYPE_CHECKIN:
+				return "Check-ins and places you've been";
+				break;
+			
+			case TYPE_STATUS:
+				return "Status updates";
+				break;
+			
+			case TYPE_ALBUM:
+				return "Photos and photo albums";
+				break;
+				
+			case TYPE_PHOTO:
+				return "Photos and photo albums";
+				break;
+				
+			default:
+				return "General";
+		}
 	}
 	
 ?>

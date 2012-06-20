@@ -24,7 +24,7 @@
 	$question_num = $_SESSION["question_number"];
 	$questions = $_SESSION["questions"];
 	
-	// Get participant's Facebook info.
+	// Get participant's Facebook info if necessary.
 	get_facebook_data($session_cookie);
 	$num_questions_per_type = calculate_num_info_types();
 	
@@ -57,7 +57,7 @@
 	else {
 		$question_num = str_replace(SALT, "", base64_decode($question_id));
 		$question_num += 1;
-		log_msg("Question ID detected (" . $question_id . "), decoded and set next question to " . $question_num . ".");
+		log_msg("Question ID detected. Decoded and set next to " . $question_num . ".");
 		
 		// Participant has answered all questions. Redirect to debriefing.
 		if ($question_num >= NUM_QUESIONS) {
@@ -65,11 +65,15 @@
 		}
 	}
 	
-	$question_id = base64_encode(SALT + $question_num);
+	// Encode question number for markup.
+	$question_id = base64_encode(SALT . $question_num);
 	$question_id_field = "<input type='hidden' name='question_id' id='question_id' value='" . $question_id . "'>";
 	
-	$this_question = $questions[$question_num];
-	$to_display = $this_question->question_text . " " . $this_question->data_to_display;
+	// Get the question. (Remember to -1 for the right index)
+	$this_question = $questions[($question_num - 1)];
+		
+	// Get the question's markup.
+	$to_display = get_question_markup($this_question, $question_num);
 		
 ?>
 

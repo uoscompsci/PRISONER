@@ -24,8 +24,8 @@
 	$email_address = "";
 	
 	// Check to see if this participant has already been assigned a group. (Eg: Pressed "Back")
-	if (!empty($_SESSION["Group"])) {
-		$user_group = $_SESSION["Group"];
+	if (!empty($_SESSION["group"])) {
+		$user_group = $_SESSION["group"];
 		$wants_further_emails = $_SESSION["wants_further_emails"];
 		$email_validation_message = $_SESSION["email_validation_message"];
 		$email_address = $_SESSION["email_address"];
