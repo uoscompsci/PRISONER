@@ -60,7 +60,7 @@
 		log_msg("Question ID detected. Decoded and set next to " . $question_num . ".");
 		
 		// Participant has answered all questions. Redirect to debriefing.
-		if ($question_num >= NUM_QUESIONS) {
+		if ($question_num > NUM_QUESIONS) {
 			header("Location: " . DEBRIEFING_URL);
 		}
 	}
@@ -95,9 +95,9 @@
 						<form name="questionnaire" method="post" action="research_questionnaire.php">
 							<h1><?php echo $study_title; ?></h1>
 							
-							<p><?php echo $to_display; ?></p>
+							<p><?php echo $to_display . "\n"; ?></p>
 							
-							<?php echo $question_id_field; ?>
+							<?php echo $question_id_field . "\n"; ?>
 							<div class="next_submit">
 								<input name="submit" type="submit" value="Next Question">
 							</div>

@@ -21,16 +21,19 @@
 	define("GROUP_1", 1);
 	define("GROUP_2", 2);
 	define("GROUP_FILE_LOCATION", ".group");
-	define("NUM_QUESIONS", 60);
+	
+	define("NUM_QUESIONS", 50);
 	define("NUM_PROFILE_QUESIONS", 10);
 	define("NUM_FRIENDS_QUESIONS", 10);
 	define("NUM_LIKES_QUESIONS", 10);
 	define("NUM_STATUS_QUESIONS", 10);
 	define("NUM_CHECKIN_QUESIONS", 10);
-	define("NUM_PHOTO_QUESIONS", 10);
+	define("NUM_PHOTO_QUESIONS", 0);
+	
 	define("NUM_PRIVACY_FRIENDS", 0);
 	define("NUM_PRIVACY_CUSTOM", 0);
 	define("NUM_PRIVACY_PUBLIC", 0);
+	
 	define("DEBRIEFING_URL", "participant_debriefing.php");
 	define("SCREENED_OUT_URL", "screened_out.php");
 	

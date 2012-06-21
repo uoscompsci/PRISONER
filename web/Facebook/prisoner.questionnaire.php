@@ -13,23 +13,25 @@
 	 * and we don't want to hinder performance.
 	 */
 	function get_facebook_data($session_cookie) {
-		if (empty($_SESSION["profile_info"])) {
+		if (!($_SESSION["got_profile_info"])) {
 			$profile_info = get_response("/get/Facebook/User/session:Facebook.id", $session_cookie);	# Profile.
 			log_msg("Retrieved profile info from Facebook");
 			
 			// Add JSON data to the session.
 			$_SESSION["profile_info"] = $profile_info;
+			$_SESSION["got_profile_info"] = true;
 		}
 		
-		if (empty($_SESSION["friends_list"])) {
+		if (!($_SESSION["got_friends_list"])) {
 			$friends_info = get_response("/get/Facebook/Friends/session:Facebook.id", $session_cookie);	# Friends.
 			log_msg("Retrieved friends list from Facebook");
 			
 			// Add JSON data to the session.
 			$_SESSION["friends_list"] = $friends_info["_objects"];
+			$_SESSION["got_friends_list"] = true;
 		}
 		
-		if (empty($_SESSION["likes_info"])) {
+		if (!($_SESSION["got_likes_info"])) {
 			$music_info = get_response("/get/Facebook/Music/session:Facebook.id", $session_cookie);	# Favourite bands.
 			log_msg("Retrieved favourite bands from Facebook");
 			$movie_info = get_response("/get/Facebook/Movie/session:Facebook.id", $session_cookie);	# Favourite movies.
@@ -49,22 +51,25 @@
 			
 			// Add JSON data to the session.
 			$_SESSION["likes_info"] = $likes_array;
+			$_SESSION["got_likes_info"] = true;
 		}
 		
-		if (empty($_SESSION["checkin_info"])) {
+		if (!($_SESSION["got_checkin_info"])) {
 			$checkin_info = get_response("/get/Facebook/Checkin/session:Facebook.id", $session_cookie);	# Check-ins.
 			log_msg("Retrieved check-in info from Facebook");
 			
 			// Add JSON data to the session.
 			$_SESSION["checkin_info"] = $checkin_info["_objects"];
+			$_SESSION["got_checkin_info"] = true;
 		}
 		
-		if (empty($_SESSION["status_update_info"])) {
+		if (!($_SESSION["got_status_update_info"])) {
 			$status_update_info = get_response("/get/Facebook/Status/session:Facebook.id", $session_cookie);	# Status updates.
 			log_msg("Retrieved status update info from Facebook");
 			
 			// Add JSON data to the session.
 			$_SESSION["status_update_info"] = $status_update_info["_objects"];
+			$_SESSION["got_status_update_info"] = true;
 		}
 	}
 	
@@ -280,6 +285,9 @@
 	 * @return An array of Question() objects.
 	 */
 	function generate_questions($question_info_array) {
+		// Globals.
+		global $PROFILE_INFO_KEYS;
+		
 		// How many questions of each type do we need?
 		$num_profile_questions = get_num_questions_for(TYPE_PROFILE, $question_info_array);
 		$num_friends_questions = get_num_questions_for(TYPE_FRIEND, $question_info_array);
@@ -298,8 +306,7 @@
 		$photo_albums = $_SESSION["photo_album_info"];
 		$photos = $_SESSION["photo_info"];
 		
-		// What are we going to show to the user?
-		$profile_questions = array_rand($profile_info, $num_profile_questions);
+		// What are we going to show to the user? (Profile info is a special case)
 		$friend_questions = array_rand($friends, $num_friends_questions);
 		$like_questions = array_rand($likes, $num_like_questions);
 		$checkin_questions = array_rand($checkins, $num_checkin_questions);
@@ -312,7 +319,34 @@
 		$questions = array();
 		
 		// Questions about the participant's personal profile info.
+		$profile_info_keys = $PROFILE_INFO_KEYS;
+		$questions[] = get_profile_question($profile_info, "_gender");	# Required.
+		$num_profile_questions -= 1;
+		unset($profile_info_keys[array_search("_gender", $profile_info_keys)]);
+		$questions[] = get_profile_question($profile_info, "_updatedTime");	# Required.
+		$num_profile_questions -= 1;
+		unset($profile_info_keys[array_search("_updatedTime", $profile_info_keys)]);
+		$questions[] = get_profile_question($profile_info, "_image");	# Required.
+		$num_profile_questions -= 1;
+		unset($profile_info_keys[array_search("_image", $profile_info_keys)]);
+		$questions[] = get_profile_question($profile_info, "_hometown");	# Required.
+		$num_profile_questions -= 1;
+		unset($profile_info_keys[array_search("_hometown", $profile_info_keys)]);
+		$questions[] = get_profile_question($profile_info, "_education");	# Required.
+		$num_profile_questions -= 1;
+		unset($profile_info_keys[array_search("_education", $profile_info_keys)]);
+		$questions[] = get_profile_question($profile_info, "_work");	# Required.
+		$num_profile_questions -= 1;
+		unset($profile_info_keys[array_search("_work", $profile_info_keys)]);
+		log_msg("There are now " . count($profile_info_keys) . " available for use.");
+		
+		// Now we've got the required info, select the keys we'll ask questions for.
+		$profile_questions = array_rand($profile_info_keys, $num_profile_questions);
+		
 		foreach ($profile_questions as $key) {
+			$key = $profile_info_keys[$key];
+			log_msg("Getting question for key " . $key);
+			$questions[] = get_profile_question($profile_info, $key);
 		}
 		
 		// Questions about the participant's friends.
@@ -321,13 +355,9 @@
 			$friend_name = $friends[$key]["_displayName"];
 			$friend_pic = $friends[$key]["_image"]["_fullImage"];
 			
-			// Info to populate question with.
-			$question_text = "You are friends with";
-			$data_to_display = $friend_name;
-			$privacy_of_data = "";
-			
 			// Create question object and add it to our list.
-			$this_question = new Question(TYPE_FRIEND, $question_text, $data_to_display, $privacy_of_data);
+			$this_question = new Question(TYPE_FRIEND, $friend_name);
+			$this_question->image = $friend_pic;
 			$questions[] = $this_question;
 		}
 		
@@ -336,22 +366,37 @@
 			// Get info about this interest.
 			$like_name = $likes[$key]["_displayName"];
 			
-			// Info to populate question with.
-			$question_text = "You like";
-			$data_to_display = $like_name;
-			$privacy_of_data = "";
-			
 			// Create question object and add it to our list.
-			$this_question = new Question(TYPE_LIKE, $question_text, $data_to_display, $privacy_of_data);
+			$this_question = new Question(TYPE_LIKE, $like_name);
 			$questions[] = $this_question;
 		}
 		
 		// Questions about places the participant has been.
 		foreach ($checkin_questions as $key) {
+			// Get info about this check-in.
+			$place_name = $checkins[$key]["_location"]["_displayName"];
+			$time = $checkins[$key]["_published"];
+			$timestamp = parse_prisoner_time($time);
+			
+			// Create question object and add it to our list.
+			$this_question = new Question(TYPE_CHECKIN, $place_name);
+			$this_question->timestamp = $timestamp;
+			$questions[] = $this_question;
 		}
 		
 		// Questions about the pariticpant's status updates.
 		foreach ($status_questions as $key) {
+			// Get info about the status update.
+			$update_text = $status_updates[$key]["_content"];
+			$privacy = $status_updates[$key]["_privacy"];
+			$time = $status_updates[$key]["_published"];
+			$timestamp = parse_prisoner_time($time);
+			
+			// Create question object and add it to our list.
+			$this_question = new Question(TYPE_STATUS, $update_text);
+			$this_question->timestamp = $timestamp;
+			$this_question->privacy_of_data = $privacy;
+			$questions[] = $this_question;
 		}
 		
 		// Questions about the pariticpant's photo albums.
@@ -366,6 +411,319 @@
 		log_msg("- Generated " . count($questions) . " questions for the participant.");
 		shuffle($questions);
 		return $questions;
+	}
+	
+	
+	function get_profile_question($profile_info, $data_key) {
+		switch ($data_key) {
+			// Username.
+			case "_username":
+				return get_profile_question_obj($profile_info, $data_key, "Your Facebook username is");
+				break;
+			
+			// Display name.
+			case "_displayName":
+				return get_profile_question_obj($profile_info, $data_key, "Your Facebook display name is");
+				break;
+			
+			// First name.
+			case "_firstName":
+				return get_profile_question_obj($profile_info, $data_key, "Your first name is");
+				break;
+				
+			// Middle name.
+			case "_middleName":
+				$this_question = get_profile_question_obj($profile_info, $data_key, "Your middle name is");
+				
+				if (!$this_question) {
+					$this_question = new Question(TYPE_PROFILE, "");
+					$this_question->custom_question_text = "You either do not have a middle name or have not added it to Facebook";
+				}
+				
+				return $this_question;
+				break;
+			
+			// Last name.
+			case "_lastName":
+				return get_profile_question_obj($profile_info, $data_key, "Your last name is");
+				break;
+			
+			// Birthday.
+			case "_birthday":
+				$this_question = get_profile_question_obj($profile_info, $data_key, "Your birthday is");
+				
+				// No info.
+				if (!$this_question) {
+					$this_question = new Question(TYPE_PROFILE, "");
+					$this_question->custom_question_text = "You have not added your date of birth to Facebook";
+				}
+				
+				// If birthday info exists, remember to format it correctly.
+				else {
+					$birthday_timestamp = parse_prisoner_time($this_question->text_data);
+					$birthday = date("d/m/Y", $birthday_timestamp);
+					$this_question->text_data = $birthday;
+				}
+				
+				return $this_question;
+				break;
+			
+			// Gender.
+			case "_gender":
+				return get_profile_question_obj($profile_info, $data_key, "You are");
+				break;
+			
+			// Bio.
+			case "_bio":
+				$this_question = get_profile_question_obj($profile_info, $data_key, "Your Facebook bio / about section is");
+				
+				if (!$this_question) {
+					$this_question = new Question(TYPE_PROFILE, "");
+					$this_question->custom_question_text = "You have not added a bio / about section to Facebook";
+				}
+				
+				return $this_question;
+				break;
+			
+			// Political views.
+			case "_politicalViews":
+				$this_question = get_profile_question_obj($profile_info, $data_key, "Your political alignment is");
+				
+				if (!$this_question) {
+					$this_question = new Question(TYPE_PROFILE, "");
+					$this_question->custom_question_text = "You have not added information about your political alignment to Facebook";
+				}
+				
+				return $this_question;
+				break;
+			
+			// Religious views.
+			case "_religion":
+				$this_question = get_profile_question_obj($profile_info, $data_key, "Your religion is");
+				
+				if (!$this_question) {
+					$this_question = new Question(TYPE_PROFILE, "");
+					$this_question->custom_question_text = "You have not added information about your religion to Facebook";
+				}
+				
+				return $this_question;
+				break;
+			
+			// Relationship status.
+			case "_relationshipStatus":
+				$this_question = get_profile_question_obj($profile_info, $data_key, "You are");
+				
+			if (!$this_question) {
+				$this_question = new Question(TYPE_PROFILE, "");
+				$this_question->custom_question_text = "Information about your relationship status is not available.";
+			}
+				
+			return $this_question;
+			break;
+		
+			// Interested in.
+			case "_interestedIn":
+				$this_question = get_profile_question_obj($profile_info, $data_key, "You are interested in");
+			
+				if (!$this_question) {
+					$this_question = new Question(TYPE_PROFILE, "");
+					$this_question->custom_question_text = "Information about your sexual orientation is not available.";
+				}
+				
+				else {
+					$friendly_list = get_friendly_list($this_question->text_data, true);
+					$this_question->text_data = $friendly_list;
+				}
+			
+				return $this_question;
+				break;
+			
+			// Languages.
+			case "_languages":
+				$this_question = get_profile_question_obj($profile_info, $data_key, "You know");
+						
+				if (!$this_question) {
+					$this_question = new Question(TYPE_PROFILE, "");
+					$this_question->custom_question_text = "Information about the languages you know is not available.";
+				}
+				
+				else {
+					$friendly_list = get_friendly_list($this_question->text_data, true);
+					$this_question->text_data = $friendly_list;
+				}
+						
+				return $this_question;
+				break;
+			
+			// Timezone.
+			case "_timezone":
+				return get_profile_question_obj($profile_info, $data_key, "Your timezone is");
+				break;
+			
+			// Email address.
+			case "_email":
+				return get_profile_question_obj($profile_info, $data_key, "Your email address is");
+				break;
+			
+			// Last Facebook update.
+			case "_updatedTime":
+				$last_update = parse_prisoner_time($profile_info[$data_key]);
+				$last_update = date("d/m/Y @ H:i:s", $last_update);
+				$this_question = new Question(TYPE_PROFILE, $last_update);
+				$this_question->custom_question_text = "You last updated your Facebook profile on";
+				return $this_question;
+				break;
+			
+			// Profile picture.
+			case "_image":
+				$profile_pic = $profile_info[$data_key]["_fullImage"];
+				$profile_pic = "<img alt='Profile Picture' src='" . $profile_pic . "' />";
+				$this_question = new Question(TYPE_PROFILE, $profile_pic);
+				$this_question->custom_question_text = "Your current profile picture can be seen on the right";
+				return $this_question;
+				break;
+			
+			// Hometown.
+			case "_hometown":
+				$hometown = $profile_info[$data_key];
+				
+				// If hometown information is available.
+				if (assert_has_name($hometown)) {
+					$place_name = $hometown["_displayName"];
+					$this_question = new Question(TYPE_PROFILE, $place_name);
+					$this_question->custom_question_text = "You are from";
+					return $this_question;
+				}
+				
+				// No info available.
+				else {
+					$this_question = new Question(TYPE_PROFILE, "");
+					$this_question->custom_question_text = "You have not added information about your hometown to Facebook.";
+					return $this_question;
+				}
+				
+				break;
+			
+			// Current location.
+			case "_location":
+				$location = $profile_info[$data_key];
+				
+				// If location information is available.
+				if (assert_has_name($location)) {
+					$place_name = $location["_displayName"];
+					$this_question = new Question(TYPE_PROFILE, $place_name);
+					$this_question->custom_question_text = "You are currently at";
+					return $this_question;
+				}
+				
+				// No info available.
+				else {
+					$this_question = new Question(TYPE_PROFILE, "");
+					$this_question->custom_question_text = "You have not added information about your current location to Facebook";
+					return $this_question;
+				}
+				
+				break;
+				
+			// Significant other.
+			case "_significantOther":
+				$significant_other = $profile_info[$data_key];
+				
+				// If location information is available.
+				if (assert_has_name($significant_other)) {
+					$name = $location["_displayName"];
+					$this_question = new Question(TYPE_PROFILE, $name);
+					$this_question->custom_question_text = "Your significant other is";
+					return $this_question;
+				}
+				
+				// No info available.
+				else {
+					$this_question = new Question(TYPE_PROFILE, "");
+					$this_question->custom_question_text = "Information about your significant other is not available on Facebook";
+					return $this_question;
+				}
+				
+				break;
+			
+			// Education history.
+			case "_education":
+				$education_history = $profile_info[$data_key];
+				
+				// If the user has education history available.
+				if (assert_has_objects($education_history)) {
+					$education_history = $education_history["_objects"];
+					$place_list = get_friendly_list($education_history);
+					
+					// Create and return question object.
+					$this_question = new Question(TYPE_PROFILE, $place_list);
+					$this_question->custom_question_text = "Your education history includes places such as";
+					return $this_question;
+				}
+				
+				// No info available.
+				else {
+					$this_question = new Question(TYPE_PROFILE, "");
+					$this_question->custom_question_text = "You have not added information about your education history to Facebook";
+					return $this_question;
+				}
+				
+				break;
+				
+				// Employment history.
+				case "_work":
+					$work_history = $profile_info[$data_key];
+				
+					// If the user has work history available.
+					if (assert_has_objects($work_history)) {
+						$work_history = $work_history["_objects"];
+						$place_list = get_friendly_list($work_history);
+						
+						// Create and return question object.
+						$this_question = new Question(TYPE_PROFILE, $place_list);
+						$this_question->custom_question_text = "You have worked for employers such as";
+						return $this_question;
+					}
+				
+					// No info available.
+					else {
+						$this_question = new Question(TYPE_PROFILE, "");
+						$this_question->custom_question_text = "You have not added information about your work history to Facebook";
+						return $this_question;
+					}
+				
+					break;
+		}
+	}
+	
+	
+	/**
+	 * Simple function to generate a question object for a piece of profile information. This function exists because
+	 * profile and personal information often has context and so we can't simply use generic question text. (Eg: You live in St Andrews, 
+	 * You were born on 01/01/1970)
+	 * This function will only work for simple types where the data key directly accesses a piece of text.
+	 * @param array $profile_info Array of profile information.
+	 * @param string $data_key Key to access.
+	 * @param string $question_text Custom text for this question.
+	 * @return Question A Question object.
+	 */
+	function get_profile_question_obj($profile_info, $data_key, $question_text) {
+		// Get the value associated with the supplied key.
+		$data_value = $profile_info[$data_key];
+		
+		// No data exists.
+		if (empty($data_value)) {
+			return false;
+		}
+		
+		// Data exists.
+		else {
+			// Create and return question object.
+			$this_question = new Question(TYPE_PROFILE, $data_value);
+			$this_question->custom_question_text = $question_text;
+			
+			return $this_question;
+		}
 	}
 	
 	
@@ -400,8 +758,7 @@
 	function get_question_markup($question, $question_number) {
 		// Get question info.
 		$type = $question->type;
-		$question_text = $question->question_text;
-		$data_to_display = $question->data_to_display;
+		$text_data = $question->text_data;
 		$response = $question->response;
 		
 		// Generate markup.
@@ -409,12 +766,31 @@
 		$markup .= "<div class='question_info'><p>Question #" . $question_number . ", Category: " . get_friendly_type($type) . "</p></div>" . "\n";
 		
 		switch ($type) {
+			case TYPE_PROFILE:
+				$data_item = $question->text_data;
+				$question_text = $question->custom_question_text;
+				$markup .= "<p>" . $question_text . " <strong>" . $data_item . "</strong>.</p>";
+				break;
+			
 			case TYPE_FRIEND:
-				$markup .= "<p>You are friends with <strong>" . $data_to_display . "</strong>.</p>";
+				$friend_pic = $question->image;
+				$markup .= "<p>You are friends with <strong>" . $text_data . "</strong>.</p>";
 				break;
 			
 			case TYPE_LIKE:
-				$markup .= "<p>You like <strong>" . $data_to_display . "</strong>.</p>";
+				$markup .= "<p>You like <strong>" . $text_data . "</strong>.</p>";
+				break;
+			
+			case TYPE_CHECKIN:
+				$date = date("l j F Y", $question->timestamp);
+				$markup .= "<p>You were tagged at <strong>" . $text_data . "</strong> on <strong>" . $date . "</strong>.</p>";
+				break;
+			
+			case TYPE_STATUS:
+				$date = date("l j F Y", $question->timestamp);
+				$time = date("H:i", $question->timestamp);
+				$markup .= "<p>You posted saying <em>&quot;" . $text_data . "&quot;</em> on <strong>" . $date . "</strong> at <strong>" .
+				$time . "</strong>.</p>";
 				break;
 		}
 		
@@ -462,6 +838,67 @@
 			default:
 				return "General";
 		}
+	}
+	
+	
+	/**
+	 * Returns a user-friendly comma-separated list for collection items.
+	 * The display name for each object will be used to represent it in the list.
+	 * @param array collection An array of objects.
+	 * @return string A comma-separated list that can be used to displau info to users.
+	 */
+	function get_friendly_list($collection, $is_array = false) {
+		$num_items = count($collection);
+		$friendly_list = "";
+		
+		for ($i = 0; $i < $num_items; $i ++) {
+			if (!$is_array) {
+				$friendly_list .= ucwords($collection[$i]["_displayName"]);
+			}
+			
+			else {
+				$friendly_list .= ucwords($collection[$i]);
+			}
+			
+			if ($num_items > 1) {
+				if ($i == ($num_items - 2)) {
+					$friendly_list .= " and ";
+				}
+					
+				else if ($i < ($num_items - 1)) {
+					$friendly_list .= ", ";
+				}
+			}
+		}
+		
+		return $friendly_list;
+	}
+	
+	
+	/**
+	 * Parses a date / time object returned by PRISONER and returns a timestamp.
+	 * @param array $time_obj
+	 * @return number
+	 */
+	function parse_prisoner_time($time_obj) {
+		$time_obj = str_replace("datetime/datetime.datetime(", "", $time_obj["py/repr"]);
+		$time_obj = str_replace(")", "", $time_obj);
+		log_msg("Parsed PRISONER time: " . $time_obj);
+		
+		// Indices will be of the following order: YYYY MM DD HH II SS
+		$time_array = explode(", ", $time_obj);
+		
+		// Seconds seem to disappear if they're exactly 00. This breaks strtotime(), so add seconds in.
+		if (!$time_array[5]) {
+			$time_array[5] = 00;
+		}
+		
+		// Compose a string and parse it.
+		$time_str = $time_array[0] . "-" . $time_array[1] . "-" . $time_array[2] . " " . $time_array[3] . ":" . $time_array[4] . ":" . $time_array[5];
+		$timestamp = strtotime($time_str);
+		log_msg("Returning: " . $timestamp);
+		
+		return $timestamp;
 	}
 	
 ?>
