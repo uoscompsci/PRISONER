@@ -8,8 +8,11 @@ from werkzeug.wsgi import SharedDataMiddleware
 from werkzeug.utils import redirect, cached_property
 
 from workflow import PolicyProcessor, SocialObjectGateway, ExperimentBuilder
+import SocialObjects
 
 import csv
+import datetime
+import jsonpickle
 import os
 
 class PRISONER(object):
@@ -111,7 +114,6 @@ class PRISONER(object):
 	def on_begin(self, request):
 		builder = self.set_builder_reference(request,ExperimentBuilder.ExperimentBuilder())
 	
-
 		# test with hard-coded
 		"""
 		privacy_policy = "../lib/lastfm_privacy_policy_test.xml"
@@ -126,6 +128,7 @@ class PRISONER(object):
 		exp_design = request.form["design"]
 		builder.provide_privacy_policy(privacy_policy)
 		builder.provide_experimental_design(exp_design)
+
 		participant = builder.authenticate_participant("participant",request.form["participant"])	
 	
 		providers = request.form["providers"].strip().split(",")
@@ -151,12 +154,18 @@ class PRISONER(object):
 
 	def on_get_object(self, request, provider, object_name, payload,
 	criteria=None):
-		
+		jsonpickle.handlers.registry.register(datetime.datetime,
+		SocialObjects.DateTimeJSONHandler)
+	
 		builder = self.get_builder_reference(request)
 		response = builder.sog.GetObjectJSON(provider, object_name, payload,
 		criteria)
 
-		return Response(response)
+		resp = Response(response)
+		resp.headers["Content-Type"] = "application/json"
+
+		#return Response(response)
+		return resp
 
 
 	def dispatch_request(self, request):

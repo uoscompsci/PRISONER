@@ -1,4 +1,7 @@
-import unittest2 as unittest
+try:
+	import unittest2 as unittest
+except:
+	import unittest
 from gateway import LastfmServiceGateway
 import SocialObjects
 

@@ -1,6 +1,8 @@
 from ServiceGateway import ServiceGateway
 import SocialObjects
 
+import datetime
+
 import pylast # wrapper for last.fm API
 
 class Track(SocialObjects.SocialObject):
@@ -45,6 +47,7 @@ class Track(SocialObjects.SocialObject):
 	def tag(self):
 		""" Set of tags associated with this track """
 		return self._tag
+		#return datetime.datetime.now()
 
 	@tag.setter
 	def tag(self, value):

@@ -1,79 +1,183 @@
+<!DOCTYPE HTML>
+
 <?php
 	
-	
-	/**
-	 * Takes a URL as a string and accesses it, returning the response.
-	 * Any cookies returned are also included in the response.
-	 * @param String $url
-	 * @return String
-	 */	
-	function get_data($url) {
-		// Initialise cURL.
-		$ch = curl_init();
-		
-		// Set options.
-		curl_setopt($ch, CURLOPT_HEADER, 1);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_URL, $url);
-		
-		// Access address and close connection.
-		$data = curl_exec($ch);
-		curl_close($ch);
-		
-		return $data;
-	}
-	
+	// Start a session on the server.
 	session_start();
 	
-	// Set some initial constants and variables.
-	$PRISONER_ADDRESS = "http://127.0.0.1:5000";
+	// Session / cache control.
+	header("Cache-Control: max-age=" . CACHE_STAY_ALIVE);
 	
-	// Get initial response from PRISONER.
-	$pri_response = get_data($PRISONER_ADDRESS);
+	// Include any required components.
+	include_once("prisoner.authentication.php");
+	include_once("prisoner.constants.php");
+	include_once("prisoner.core.php");
+	include_once("prisoner.database.php");
 	
-	// Use RegEx to parse response for the session cookie.
-	$matches = NULL;
-	$cookie_regex = "/^Set-Cookie: (.*?);/m";
-	preg_match($cookie_regex, $pri_response, $matches);
+	// Participant info variables.
+	$user_group = NULL;
+	$wants_further_emails = NULL;
+	$study_title = "";
+	$about_message = "";
+	$checkbox_value = "";
+	$email_validation_message = "";
+	$email_address = "";
 	
-	// Extract session ID.
-	$session_cookie = $matches[1];
-	$session_cookie_array = explode("=", $session_cookie);
-	$session_id = $session_cookie_array[1];
-	$_SESSION["PRISession"] = $session_cookie;
+	// Check to see if this participant has already been assigned a group. (Eg: Pressed "Back")
+	if (!empty($_SESSION["group"])) {
+		$user_group = $_SESSION["group"];
+		$wants_further_emails = $_SESSION["wants_further_emails"];
+		$email_validation_message = $_SESSION["email_validation_message"];
+		$email_address = $_SESSION["email_address"];
+		$checkbox_value = "checked='checked'";
+		log_msg("Participant has already been assigned a group - " . $user_group);
+	}
 	
-	// Set cookie.
-	setcookie("PRISession", $session_id);
+	// If not, assign a group.
+	else {
+		$user_group = assign_group();
+	}
 	
-	// Output confirmation.
-	echo "<p>Performed initial handshake with PRISONER.</p>";
-	echo "<p>Retrieved and set session ID: " . $session_id . "</p>";
+	// Group 1.
+	if ($user_group == GROUP_1) {
+		$study_title = $GROUP_1_TITLE;
+		$about_message = $GROUP_1_ABOUT;
+	}
 	
-	// Try and initiate experiment.
-	echo "<p>Executing POST request.</p>";
-	$ch = curl_init();
+	// Group 2.
+	else {
+		$study_title = $GROUP_2_TITLE;
+		$about_message = $GROUP_2_ABOUT;
+	}
 	
-	// Set POST data.
-	$post_data["policy"] = "http://localhost/prisoner/xml/fb_privacy_policy_test.xml";
-	$post_data["design"] = "http://localhost/prisoner/xml/fb_exp_design_test.xml";
-	$post_data["participant"] = "1";
-	$post_data["providers"] = "Facebook";
-	
-	// Set options.
-	curl_setopt($ch, CURLOPT_COOKIE, $session_cookie);
-	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($ch, CURLOPT_URL, $PRISONER_ADDRESS . "/begin?callback=localhost/prisoner/exp.php");
-	
-	// Access address and close connection.
-	$data = curl_exec($ch);
-	curl_close($ch);
-	
-	// Returned data will be URL the participant must go to. Append callback and print.
-	$callback_uri = "http://localhost/prisoner/exp.php";
-	$callback_uri = urlencode($callback_uri);
-	$data = $data . "&callback=" . $callback_uri;
-	echo "<p>Sign in here: <a href=\"" . $data . "\">Facebook</a></p>";
+	// Save group info in session.
+	$_SESSION["group"] = $user_group;
+	$_SESSION["study_title"] = $study_title;
 	
 ?>
+
+<html>
+	<head>
+		<?php include_once("prisoner.include.head.php"); ?>
+		<title><?php echo $study_title; ?> - Information - University Of St Andrews</title>
+	</head>
+	
+	<body>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				// Hide the email input div if it isn't checked. (Eg: On page load)
+				if (!$("#store_email").attr("checked")) {
+					$(".email_input").hide();
+				}
+				
+				// When the "Want further info" checkbox is checked, display the input div.
+				$("#store_email").click(function(){
+					if (this.checked) {
+						$(".email_input").fadeIn(250);
+					}
+					else {
+						$(".email_input").fadeOut(200);
+					}
+				});
+				
+				// Visual feedback.
+				$("#email_address").focusin(function() {
+					$(this).css("border-color","#666666");
+
+				});
+				
+				// Visual feedback.
+				$("#email_address").focusout(function() {
+					$(this).css("border-color","#999999");
+				});
+
+			});
+		</script>
+		<div class="wrapper">
+			<div class="content-container">
+				<div class="content">
+					<div class="info">
+						<form name="participant_info" method="post" action="participant_consent.php">
+							<h1><?php echo $study_title; ?> - Survey Information</h1>
+							
+							<h2>1. What is the study about?</h2>
+							<p><?php echo $about_message; ?> <br />
+							This study is being conducted as part of my research in the <a href="http://www.cs.st-andrews.ac.uk/" target="_blank">School 
+							of Computer Science</a>.</p>
+						
+							<h2>2. Do I have to take part?</h2>
+							<p>Participation is completely voluntary. You should read the information on this page and then decide 
+							whether or not to take part. If you do decide to take part you will be free to withdraw at any 
+							time without providing a reason. You can do so by closing your web browser. 
+							All of your personal data will then be deleted.</p>
+						
+							<h2>3. What would I be required to do?</h2>
+							<p>You will be asked to complete a questionnaire in your browser. We anticipate that this will 
+							take 30 minutes to complete. You will be presented with data from your Facebook social network that we 
+							require for our research. You will then be asked whether you are willing to share these data with us. 
+							It is completely up to you whether to share your data with us or not. If you do agree, then your data 
+							will be stored and processed for the purposes of our research.</p>
+						
+							<h2>4. Will my participation be anonymous and confidential?</h2>
+							<p>For the purposes of our research, we need to know your name and institution (e.g., university attended). 
+							We would also like to have similar information for other members of your social network. It is up to you 
+							whether to share these data or not. <br />
+							All data will be stored by the researcher in a secure fashion. We would like to share these data with 
+							other researchers to be used for future scholarly purposes. Again, this is up to you. You should 
+							indicate whether you are willing to do so in the following questionnaire.</p>
+						
+							<h2>5. Storage and destruction of data collected</h2>
+							<p>The data we collect will be accessible by the researcher(s) and supervisor(s) involved in this study only, 
+							unless explicit consent for wider access is given by means of the consent form. Your data will be stored 
+							for a period of at least 10 years before being destroyed, in an unanonymised format on a secure server in 
+							our University.</p>
+						
+							<h2><a id="further_info">6. What will happen to the results of the research study?</a></h2>
+							<p>We expect to have the results of this study ready by the end of 2012. They will be published in various 
+							journal papers. If you wish to know more about the research or have copies of the papers sent to you, then please 
+							indicate this here.</p>
+							
+							<div class="further_info_check">
+								<input type="checkbox" name="store_email" id="store_email" <?php echo $checkbox_value; ?>>
+								<label for="store_email">I wish to know more about this research</label>
+							</div>
+							<div class="email_input">
+								<label for="email_address">Email address: </label>
+								<input type="text" name="email_address" id="email_address" value="<?php echo $email_address; ?>">
+								<label class="error_message" for="email_address"><?php echo $email_validation_message; ?></label>
+							</div>
+						
+							<h2>7. Reward</h2>
+							<p>You will receive a £5 Amazon.co.uk gift voucher for successfully completing this survey.</p>
+						
+							<h2>8. Are there any potential risks to taking part?</h2>
+							<p>The risks of taking part involve sharing your online social network data with us. As part of the questionnaire, 
+							you will tell us what data you are willing to share. This gives you the ability to manage these risks. If there are 
+							any data that you do not wish to share, then please indicate as such in the questionnaire.</p>
+						
+							<h2>9. Consent and approval</h2>
+							<p>This research proposal has been scrutinised and been granted Ethical Approval through the University ethical 
+							approval process.</p>
+						
+							<h2>10. What should I do if I have concerns about this study?</h2>
+							<p>A full outline of the procedures governed by the University Teaching and Research Ethical Committee is 
+							available at 
+							<a href="http://www.st-andrews.ac.uk/utrec/complaints/" target="_blank">http://www.st-andrews.ac.uk/utrec/complaints/</a></p>
+						
+							<h2>11. Contact details</h2>
+							<p>Researcher: Dr Tristan Henderson <br />
+							Email: <a href="mailto:tnhh@st-andrews.ac.uk">tnhh@st-andrews.ac.uk</a><br />
+							Phone: 01334 461637</p>
+							
+							<div class="next_submit">
+								<input name="submit" type="submit" value="Next">
+							</div>
+							
+							<div class="clear"></div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

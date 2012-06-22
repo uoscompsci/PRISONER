@@ -1,6 +1,9 @@
 from datetime import datetime
 import os
-import unittest2 as unittest
+try:
+	import unittest2 as unittest
+except:
+	import unittest
 
 from gateway import *
 import SocialObjects
