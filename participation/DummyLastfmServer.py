@@ -50,14 +50,15 @@ class LastFmExperimentClient(object):
 		start_request = urllib2.Request(url_fix(request_url),
 		data=urllib.urlencode(post_data))
 		start_response = urllib2.urlopen(start_request)
-		
+	
+		print "re: %s" % start_response.read()	
 		return redirect(start_response.read())
 
 	def on_auth_done(self, request):
 		""" Run the dummy experiment here """
 		
-		request_url = "%s/get/%s/%s/%s" % (PRISONER_URI, "Lastfm", "Track",
-		"session:Lastfm.id")
+		request_url = "%s/get/%s/%s/%s/%s" % (PRISONER_URI, "Lastfm", "Track",
+		"session:Lastfm.id",'x.artist=="Cajun Dance Party"')
 		request = urllib2.Request(url_fix(request_url))
 
 	

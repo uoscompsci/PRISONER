@@ -207,15 +207,14 @@ class SocialObjectsGateway(object):
 		attempts to retrieve the cached object are subject to the privacy policy
 		sanitisation process of the *original* request.
 		""" 
-
 		# evaluate payload
 		eval_payload = self.policy_processor._infer_object(payload)
 		eval_payload_obj = SocialObjects.SocialObject()
 		eval_payload_obj.id = eval_payload
 
 		# call getobject with cleaned object
-		ret_object = self.GetObject(provider, object_type, eval_payload_obj,
-		criteria)
+		ret_object = self.GetObject(provider, object_type,
+		eval_payload_obj, True, criteria)
 		# cache the object under a unique id, JSONify, return
 		if ret_object != None:
 			ident = self.cache_object(ret_object)
@@ -285,6 +284,7 @@ class SocialObjectsGateway(object):
 			new_coll = response
 			if criteria:
 				lambda_func = eval("lambda x: %s" % criteria)
+				print lambda_func
 				response.objects = filter(lambda_func, response.objects)				
 			for resp in response.objects:
 				resp.provider = provider

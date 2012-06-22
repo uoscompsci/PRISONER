@@ -28,11 +28,11 @@ class Track(SocialObjects.SocialObject):
 	@property
 	def title(self):
 		""" The title of this track. """
-		return self._track
+		return self._title
 
 	@title.setter
 	def title(self, value):
-		self._track = value
+		self._title = value
 
 	@property
 	def artist(self):
