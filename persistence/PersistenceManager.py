@@ -1,3 +1,4 @@
+import json
 import lxml.etree as etree
 from sqlalchemy import *
 import urllib2
@@ -214,11 +215,39 @@ class PersistenceManager(object):
 		else:
 			return None
 		
+
+	def post_response_json(self, sog, schema, response):
+		""" Wrapper to post_response for use by web services.
+
+		:param schema: Name of response schema to write to
+		:type schema: str
+		:param response:
+			JSON object corresponding to the response schema.
+			References to SocialObjects must consist of its prisoner_id (as originally
+			received)
+		:type response: JSON object as str.
+		"""
+		if schema not in self.response_tables:
+			raise Exception("Schema not found")
 	
-	"""
-	Writes response to the given schema
-	"""
+		xpath = "//table[@name='%s']" % schema
+		columns = self.experimental_design.xpath(xpath)
+		response_out = {}
+		
+		json_obj = json.loads(response)
+
+		for column in columns[0]:
+			mapTo = column.get("mapTo")
+			if mapTo:
+				obj_id = json_obj[column.get("name")]
+				mapped_obj = sog.cached_objects[obj_id]
+				json_obj[column.get("name")] = mapped_obj
+
+		print json_obj
+		return self.post_response(schema, json_obj)		
+	
 	def post_response(self, schema, response):
+		""" Writes response to given schema. """
 		if not self.experimental_design:
 			raise Exception("No experimental design")
 
@@ -239,15 +268,17 @@ class PersistenceManager(object):
 			mapTo = column.get("mapTo")
 			if mapTo:
 				headers = SARHeaders("PUT",
-				None,
+				response[column.get("name")].provider,
 				type(response[column.get("name")]).__name__, None)
 				response = SocialActivityResponse(response[column.get("name")], headers)
-
+				
 				san_obj = self.policy_processor._sanitise_object_request(response)
 				# insert object to corresponding table
 				mapTable = self.object_tables[mapTo.split(":")[1]]
 				obj_to_insert = {}
 				for mapCol in mapTable.columns:
+					if mapCol.name == "id":
+						continue
 					mapCol = mapCol.name
 					obj_to_insert[mapCol] = getattr(san_obj, mapCol)
 				# place id of inserted object in map column

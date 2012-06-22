@@ -11,6 +11,8 @@ from gateway import LastfmServiceGateway
 from workflow import ExperimentBuilder, SocialObjectGateway
 
 import cookielib
+import json
+import requests
 import urllib
 import urllib2
 
@@ -61,7 +63,21 @@ class LastFmExperimentClient(object):
 	
 		api_response = urllib2.urlopen(request)
 		resp = api_response.read()
-		return Response(resp)
+
+		json_resp = json.loads(resp)
+
+		# publish a dummy response based on this
+		req_url = "%s/post" % PRISONER_URI
+		po_data =  {"answer": "Test",
+		"track": (json_resp['_objects'][0]['prisoner_id'])}
+
+		post_full = {'schema': "response", "response":
+		json.dumps(po_data)}
+
+		post_request = urllib2.Request(url_fix(req_url),
+		data = urllib.urlencode(post_full))
+		post_response = urllib2.urlopen(post_request)
+
 	
 
 		

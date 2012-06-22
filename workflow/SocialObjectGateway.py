@@ -46,7 +46,9 @@ class SocialObjectsGateway(object):
 		self.participant = None	
 	
 		# stores instances of SocialObjects under a unique id so clients
-		# can refer to previous instances
+		# can refer to previous instances. TODO: this needs a simple
+		# layer of authentication. is the current user the owner of this
+		# cached object?
 		self.cached_objects = {}
 
 	def cache_object(self, object_to_cache):
@@ -187,7 +189,8 @@ class SocialObjectsGateway(object):
 		This differs from GetObject in some fundamental ways. GetObject
 		is more pythonic - you request objects by supplying relevant SocialObjects, and
 		you get SocialObject instances in return. This method however, receives
-		plain-text responses, and returns JSON objects. Whereas GetObject expects a
+		plain-text responses, and returns 
+				mapped_obj = sog.get_cachJSON objects. Whereas GetObject expects a
 		semantically-appropriate SocialObject as the payload (eg. supply an instance of Person to
 		receive objects of a given type owned by that Person), this method expects a
 		payload expressed as a query string, using the namespaced syntax found in the
@@ -284,8 +287,10 @@ class SocialObjectsGateway(object):
 				resp.provider = provider
 				response_obj = SocialActivityResponse(resp, headers)
 				sanitised_response = processor._sanitise_object_request(response_obj)
+				sanitised_response.prisoner_id = self.cache_object(sanitised_response)
 				sanitised_set.append(sanitised_response)
 			new_coll.objects = sanitised_set
+			new_coll.prisoner_id = self.cache_object(new_coll)
 			return new_coll
 		else:
 			if criteria:
@@ -295,6 +300,7 @@ class SocialObjectsGateway(object):
 			response.provider = provider
 			response_obj = SocialActivityResponse(response, headers)
 			sanitised_response = processor._sanitise_object_request(response_obj)
+			sanitised_response.prisoner_id = self.cache_object(sanitised_response)
 			return sanitised_response
 
 	def get_service_gateway(self, provider):

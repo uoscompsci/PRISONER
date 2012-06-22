@@ -275,7 +275,7 @@ class PolicyProcessor(object):
 		criteria_stack = []
 		last_element = None
 		last_parent = None
-
+		
 		criteria_type = None
 		if tree.tag == "attribute-criteria":
 			criteria_type = "attribute"
@@ -451,6 +451,7 @@ class PolicyProcessor(object):
 		else:
 			object_type = response.headers.object_type
 
+		print xpath
 		valid_object_policy = self.__validate_criteria(response,
 		xpath_res[0])
 
@@ -522,6 +523,8 @@ class PolicyProcessor(object):
 			on_object_obj = self._infer_object(on_object)
 			to_match_obj =	self._infer_attributes(to_match,
 			response.content)
+			#print "does %s equal %s?" % (to_match_obj,
+			#on_object_obj)
 			if to_match_obj == on_object_obj:
 				return True
 			else:

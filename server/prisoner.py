@@ -81,7 +81,10 @@ class PRISONER(object):
 			Rule('/get/<string:provider>/<string:object_name>/<string:payload>/<string:criteria>',
 			endpoint="get_object"),
 			Rule('/get/<string:provider>/<string:object_name>/<string:payload>',
-			endpoint="get_object")
+			endpoint="get_object"),
+			Rule('/post', endpoint="post_response"),
+			Rule('/publish', endpoint="publish_object")
+			
 
 		])
 		self.session_store = FilesystemSessionStore()
@@ -134,7 +137,17 @@ class PRISONER(object):
 		return Response(consent_url)
 		#return redirect(consent_url)
 	
+	def on_post_response(self, request):
+		builder = self.get_builder_reference(request)
+		schema = request.form["schema"]
+		response = request.form["response"]
+		post_response = builder.sog.persistence.post_response_json(builder.sog, schema,
+		response)
 
+		return Response(post_response)	
+
+	def on_publish_object(self, request):
+		pass
 
 	def on_get_object(self, request, provider, object_name, payload,
 	criteria=None):

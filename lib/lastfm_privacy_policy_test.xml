@@ -33,7 +33,12 @@
 			</attribute-policy>
 		</attribute>
 		<attribute type="title">
-			<attribute-policy allow="retrieve" />
+			<attribute-policy allow="retrieve">
+				<attribute-criteria>
+					<attribute-match match="artist"
+					on_object="literal:Cajun Dance Party" />
+				</attribute-criteria>
+			</attribute-policy>
 		</attribute>
 		<attribute type="tag">
 			<attribute-policy allow="retrieve" />
