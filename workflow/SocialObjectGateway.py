@@ -50,6 +50,11 @@ class SocialObjectsGateway(object):
 		# layer of authentication. is the current user the owner of this
 		# cached object?
 		self.cached_objects = {}
+		# internal cache used to store *unsanitised*
+		# responses to avoid making duplicate network
+		# requests. ONLY for internal use, NEVER directly
+		# access the cache
+		self.internal_cache = {}
 
 	def cache_object(self, object_to_cache):
 		""" Generates a unique identifier for this object, caches it,
@@ -209,8 +214,9 @@ class SocialObjectsGateway(object):
 		""" 
 		# evaluate payload
 		eval_payload = self.policy_processor._infer_object(payload)
-		eval_payload_obj = SocialObjects.SocialObject()
-		eval_payload_obj.id = eval_payload
+		#eval_payload_obj = SocialObjects.SocialObject()
+		#eval_payload_obj.id = eval_payload
+		eval_payload_obj = eval_payload
 
 		# call getobject with cleaned object
 		ret_object = self.GetObject(provider, object_type,
@@ -273,11 +279,15 @@ class SocialObjectsGateway(object):
 
 		object_type = processor._validate_object_request("GET",
 		provider, object_type, payload)
-			
-		# TODO: reconcile with session
-		
-		gateway_attr = getattr(provider_gateway,object_type)
-		response = gateway_attr("GET",payload)		
+	
+		if "%s_%s" % (object_type, payload) not in self.internal_cache:		
+			gateway_attr = getattr(provider_gateway,object_type)
+			response = gateway_attr("GET",payload)		
+			self.internal_cache["%s_%s" % (object_type,
+			payload)] = response
+		else:
+			response = self.internal_cache["%s_%s" %
+			(object_type, payload)]
 
 		sanitised_set = []
 		if hasattr(response, "objects"): #is a Collection

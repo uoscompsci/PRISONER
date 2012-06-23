@@ -121,7 +121,7 @@ class LastfmServiceGateway(ServiceGateway):
 		:returns: list[track] - set of tracks matching criteria
 		"""
 		if(operation == "GET"):
-			user = self.network.get_user(payload.id)
+			user = self.network.get_user(payload)
 			tracks = user.get_loved_tracks(limit=10)
 			track_coll = Playlist()
 			track_coll.author = payload
@@ -172,7 +172,7 @@ class LastfmServiceGateway(ServiceGateway):
 		"""
 		if (operation == "GET"):
 			try:
-				user = self.network.get_user(payload.id)
+				user = self.network.get_user(payload)
 				user_image = user.get_image()
 				img_object = SocialObjects.Image()
 				img_object.fullImage = user_image
