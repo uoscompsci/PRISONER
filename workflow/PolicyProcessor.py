@@ -258,6 +258,8 @@ class PolicyProcessor(object):
 			if not parse_rec:
 				parse_rec = getattr(source, meth)
 			else:
+				print "get attr %s from %s" % (meth,
+				parse_rec)
 				parse_rec = getattr(parse_rec,meth)
 		return parse_rec
 

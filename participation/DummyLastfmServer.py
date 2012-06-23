@@ -51,7 +51,6 @@ class LastFmExperimentClient(object):
 		data=urllib.urlencode(post_data))
 		start_response = urllib2.urlopen(start_request)
 	
-		print "re: %s" % start_response.read()	
 		return redirect(start_response.read())
 
 	def on_auth_done(self, request):
@@ -78,6 +77,8 @@ class LastFmExperimentClient(object):
 		post_request = urllib2.Request(url_fix(req_url),
 		data = urllib.urlencode(post_full))
 		post_response = urllib2.urlopen(post_request)
+		
+		return Response("Done")
 
 	
 

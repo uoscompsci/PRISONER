@@ -96,6 +96,17 @@ class LastfmServiceGateway(ServiceGateway):
 		
 		self.session = None
 
+	def __get_author_from_username(self, username):
+		""" Returns a simple Person object whose ID is the
+		given username
+
+		:param username: username to return a Person object for
+		:type username: str
+		:returns: Person - id is given username """
+		auth = SocialObjects.Person()
+		auth.id = username
+		return auth
+
 	def Session(self):
 		""" The Last.fm session exposes the authenticated
 		user as a Person instance
@@ -124,12 +135,13 @@ class LastfmServiceGateway(ServiceGateway):
 			user = self.network.get_user(payload)
 			tracks = user.get_loved_tracks(limit=10)
 			track_coll = Playlist()
-			track_coll.author = payload
+			track_coll.author = self.__get_author_from_username(payload)
 
 			track_set = []
 			for track in tracks:
 				this_track = Track()
-				this_track.author = payload
+				#this_track.author = payload
+				this_track.author = track_coll.author
 				this_track.artist = track.track.artist.name
 				this_track.title = track.track.title
 				#this_track.tag = track.track.get_top_tags(limit=1)[0].item.name

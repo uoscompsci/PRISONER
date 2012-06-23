@@ -214,8 +214,11 @@ class SocialObjectsGateway(object):
 		""" 
 		# evaluate payload
 		eval_payload = self.policy_processor._infer_object(payload)
-		#eval_payload_obj = SocialObjects.SocialObject()
-		#eval_payload_obj.id = eval_payload
+		eval_payload_obj = SocialObjects.SocialObject()
+		eval_payload_obj.id = eval_payload
+		
+		# use this to passthrough original object, not wrapped
+		# as a dumb SocialObject
 		eval_payload_obj = eval_payload
 
 		# call getobject with cleaned object
