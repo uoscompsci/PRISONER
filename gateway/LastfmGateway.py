@@ -224,7 +224,7 @@ class LastfmServiceGateway(ServiceGateway):
 		:type request: HTTPRequest
 		:returns: Session key to persist for this user
 		"""
-		access_token = request.arguments['token'][0]
+		access_token = request.args['token']
 	#	print "Last.fm access token: %s" % access_token
 		session_key = self.session_manager.get_web_auth_session_key_verbose(access_token)
 		self.session_key = session_key

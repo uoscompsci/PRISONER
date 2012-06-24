@@ -117,7 +117,7 @@ class SocialObjectsGateway(object):
 		:param request: The request received from the provider when it
 		called the PRISONER callback. This should contain any parameters needed to
 		complete authentication 
-		:type request: tornado.httpserver.HTTPRequest
+		:type request: werkzeug Request
 		"""
 		gateway = self.__getServiceGateway(provider)
 		ret_access_token = gateway.complete_authentication(request)
@@ -288,9 +288,12 @@ class SocialObjectsGateway(object):
 			response = gateway_attr("GET",payload)		
 			self.internal_cache["%s_%s" % (object_type,
 			payload)] = response
+			print "pushing response to cache under %s_%s" % (object_type, payload)
 		else:
 			response = self.internal_cache["%s_%s" %
 			(object_type, payload)]
+			print "cache hit on %s_%s" % (object_type,
+			payload)
 
 		sanitised_set = []
 		if hasattr(response, "objects"): #is a Collection

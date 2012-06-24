@@ -10,6 +10,7 @@ import SocialObjects
 from gateway import LastfmServiceGateway
 from workflow import ExperimentBuilder, SocialObjectGateway
 
+import Cookie
 import cookielib
 import json
 import requests
@@ -37,6 +38,12 @@ class LastFmExperimentClient(object):
 		# initial handshake - get session cookie
 		handshake = urllib2.urlopen(url_fix(PRISONER_URI))
 		resp_info = handshake.info()
+		try:
+			cookies = Cookie.SimpleCookie()
+			cookies.load(resp_info["Set-Cookie"])
+			no_cookie = False
+		except:
+			no_cookie = True
 
 		request_url = "%s/begin?callback=%s/start" % (PRISONER_URI, SELF_URI)
 		
@@ -50,21 +57,35 @@ class LastFmExperimentClient(object):
 		start_request = urllib2.Request(url_fix(request_url),
 		data=urllib.urlencode(post_data))
 		start_response = urllib2.urlopen(start_request)
-	
-		return redirect(start_response.read())
+		#return redirect(start_response.read())
+
+			
+		#re = Response(start_response.read())
+		re = redirect(start_response.read())
+		print re.headers
+		if not no_cookie:
+			re.headers["Set-Cookie"] = "PRISession=%s" % cookies["PRISession"].value
+		re.content_type = "text/html"
+		return re
 
 	def on_auth_done(self, request):
 		""" Run the dummy experiment here """
-		
+		# get tracks matching criteria	
 		request_url = "%s/get/%s/%s/%s/%s" % (PRISONER_URI, "Lastfm", "Track",
 		"session:Lastfm.id",'x.artist=="Cajun Dance Party"')
 		request = urllib2.Request(url_fix(request_url))
-
-	
 		api_response = urllib2.urlopen(request)
 		resp = api_response.read()
-
 		json_resp = json.loads(resp)
+
+		# repeat that to test caching
+		request_url = "%s/get/%s/%s/%s/%s" % (PRISONER_URI, "Lastfm", "Track",
+		"session:Lastfm.id",'x.artist=="Cajun Dance Party"')
+		request = urllib2.Request(url_fix(request_url))
+		api_response = urllib2.urlopen(request)
+		resp = api_response.read()
+		json_resp = json.loads(resp)
+
 
 		# publish a dummy response based on this
 		req_url = "%s/post" % PRISONER_URI

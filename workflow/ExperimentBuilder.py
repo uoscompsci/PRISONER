@@ -124,11 +124,16 @@ class ExperimentBuilder(object):
 		# no providers to authenticate
 		if not self.providers:
 			#callback()
+			print "no authent! go to %s" % callback_url
 			return callback_url
 
-		# start server
+		# indicate server needs to do a consent flow
 		self.exp_callback = callback_url
+		return True
 
+		# start server
+		# DEPRECATED: No more ad-hoc server - this is handled
+		# by the PRISONER WS server now!
 		application = tornado.web.Application([
 		(r"/", ConsentFlowHandler),
 		(r"/confirm", ProviderAuthentHandler),

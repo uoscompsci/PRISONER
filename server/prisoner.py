@@ -14,6 +14,10 @@ import csv
 import datetime
 import jsonpickle
 import os
+import urllib
+import urllib2
+
+SERVER_URL = "http://127.0.0.1:5000"
 
 class PRISONER(object):
 	""" PRISONER Web Service
@@ -86,7 +90,12 @@ class PRISONER(object):
 			Rule('/get/<string:provider>/<string:object_name>/<string:payload>',
 			endpoint="get_object"),
 			Rule('/post', endpoint="post_response"),
-			Rule('/publish', endpoint="publish_object")
+			Rule('/publish', endpoint="publish_object"),
+			# start old ExpBuilder server migration
+			Rule('/start_consent', endpoint="consent"),
+			Rule('/confirm', endpoint="confirm"),
+			Rule('/complete', endpoint="complete"),
+			Rule('/<string:wildcard>', endpoint="fallback")
 			
 
 		])
@@ -137,7 +146,14 @@ class PRISONER(object):
 		callback = request.args["callback"]
 
 		consent_url = builder.build(callback)	
-		return Response(consent_url)
+	
+		if consent_url != True: # we got a callback url
+			re = Response(consent_url)
+			return re
+		else:
+			#return self.consent_flow_handler(request, callback)
+			#return redirect("start_consent?pctoken=%s" % builder.token)
+			return Response("%s/start_consent?pctoken=%s" % (SERVER_URL, builder.token))
 		#return redirect(consent_url)
 	
 	def on_post_response(self, request):
@@ -167,6 +183,82 @@ class PRISONER(object):
 		#return Response(response)
 		return resp
 
+	""" START server handlers migrated from ExpBuilder """
+	def on_consent(self, request):
+		builder = self.get_builder_reference(request)
+		token = request.args["pctoken"]
+		#token = builder.token
+		resp = "Stand back. We're doing science.<br />"
+		if(token != builder.token):
+			resp += "Token %s is not %s" % (token, builder.token)
+			return Response(resp)
+		else:
+			resp += "(human readable consent here) <br/><br />" +\
+			"Go <a href='%s/confirm?pctoken=%s'>here</a> if you agree to " % (SERVER_URL, builder.token) +\
+			"the invisible information here."
+			#return Response(resp)
+			re = Response(resp)
+			re.content_type = "text/html"
+			return re
+
+
+	def on_confirm(self, request):
+		print "in confirm"	
+		builder = self.get_builder_reference(request)
+		token = request.args["pctoken"]
+		providers = builder.providers
+		try:
+			current_provider = request.args["provider"]
+			if current_provider not in providers:
+				resp = "Invalid provider."
+				return Response(resp)
+			providers.pop()
+		except:
+			current_provider = None
+			resp = "For this experiment, we need you to login to some services.<br />"
+			provider = providers[len(providers)-1]
+			resp += "<a href='%s/confirm?provider=%s&pctoken=%s'>Login to"%(SERVER_URL, provider, token)+\
+			 " %s</a>" % provider
+			re = Response(resp)
+			re.content_type = "text/html"
+			return re
+
+		if providers:
+			callback = "%s/confirm?pctoken=%s&provider=%s&cbprovider=%s" % (SERVER_URL, token,
+			providers[len(providers)-1], current_provider)
+		else:
+			callback = "%s/complete?pctoken=%s&cbprovider=%s" % (SERVER_URL, token,
+			current_provider)
+		
+		try:
+			callback_provider = request.args["cbprovider"]
+			builder.sog.complete_authentication(callback_provider,
+			self.request)
+		except:
+			pass
+
+		url = builder.sog.request_authentication(current_provider,
+		callback=urllib.quote(callback,safe=":/"))
+		return redirect(url)		
+	
+	def on_complete(self, request):
+		builder = self.get_builder_reference(request)
+
+		callback_provider = request.args["cbprovider"]
+		builder.sog.complete_authentication(callback_provider,
+		request)
+
+		# evoke callback
+		return redirect(builder.exp_callback)
+
+	def on_fallback(self, request, wildcard):
+		url = urllib.unquote(request.url)
+		url = url.replace("?token","&token") # this is an insane shim for a bug in LFM
+		url = url.replace("?state","&state") # temp FB shim
+		return redirect(url)
+	
+	
+	""" END ExpBuilder migration"""
 
 	def dispatch_request(self, request):
 		adapter = self.url_map.bind_to_environ(request.environ)
@@ -193,6 +285,7 @@ class PRISONER(object):
 
 		response = self.dispatch_request(request)
 		if request.session.should_save:
+			print "saving session"
 			self.session_store.save(request.session)
 			response.set_cookie("PRISession", request.session.sid)
 		return response(environ, start_response)
