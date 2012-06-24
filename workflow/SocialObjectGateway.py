@@ -3,6 +3,7 @@ from PolicyProcessor import PolicyProcessor
 import SocialObjects
 from persistence import PersistenceManager
 
+import copy
 import json
 import jsonpickle
 import uuid
@@ -230,7 +231,10 @@ class SocialObjectsGateway(object):
 			return jsonpickle.encode(self.cached_objects[ident])
 		else:
 			return None
-		
+	
+	def __add_to_cache(self, key, to_cache):
+		self.internal_cache[key] = copy.deepcopy(to_cache)
+	
 	def GetObject(self, provider, object_type, payload, allow_many=False,
 	criteria = None):
 		"""
@@ -286,8 +290,8 @@ class SocialObjectsGateway(object):
 		if "%s_%s" % (object_type, payload) not in self.internal_cache:		
 			gateway_attr = getattr(provider_gateway,object_type)
 			response = gateway_attr("GET",payload)		
-			self.internal_cache["%s_%s" % (object_type,
-			payload)] = response
+			self.__add_to_cache("%s_%s" % (object_type,
+			payload), response)
 			print "pushing response to cache under %s_%s" % (object_type, payload)
 		else:
 			response = self.internal_cache["%s_%s" %
