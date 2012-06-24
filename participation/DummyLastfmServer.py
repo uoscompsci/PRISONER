@@ -52,14 +52,10 @@ class LastFmExperimentClient(object):
 		"participant": "2",
 		"providers": "Lastfm"
 		}
-
-		
+	
 		start_request = urllib2.Request(url_fix(request_url),
 		data=urllib.urlencode(post_data))
 		start_response = urllib2.urlopen(start_request)
-		#return redirect(start_response.read())
-
-			
 		#re = Response(start_response.read())
 		re = redirect(start_response.read())
 		print re.headers
@@ -85,7 +81,18 @@ class LastFmExperimentClient(object):
 		api_response = urllib2.urlopen(request)
 		resp = api_response.read()
 		json_resp = json.loads(resp)
-		
+	
+		# test writing and reading session
+		post_session = {"key": "test", "data": "session test"}
+		session_url = "%s/session/write" % PRISONER_URI
+		session_request = urllib2.Request(url_fix(session_url),
+		data=urllib.urlencode(post_session))
+		session_response = urllib2.urlopen(session_request)
+
+		session_read_url = "%s/session/read?key=test" % PRISONER_URI
+		session_read_req = urllib2.Request(url_fix(session_read_url))
+		session_read_resp = urllib2.urlopen(session_read_req)
+		session_text = session_read_resp.read()
 
 		# publish a dummy response based on this
 		req_url = "%s/post" % PRISONER_URI
@@ -99,7 +106,7 @@ class LastFmExperimentClient(object):
 		data = urllib.urlencode(post_full))
 		post_response = urllib2.urlopen(post_request)
 		
-		return Response("Done")
+		return Response("Done. got from session: %s" % session_text)
 
 	
 

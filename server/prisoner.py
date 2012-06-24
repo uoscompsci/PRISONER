@@ -91,6 +91,10 @@ class PRISONER(object):
 			endpoint="get_object"),
 			Rule('/post', endpoint="post_response"),
 			Rule('/publish', endpoint="publish_object"),
+			Rule('/session/write',
+			endpoint="session_write"),
+			Rule('/session/read',
+			endpoint="session_read"),
 			# start old ExpBuilder server migration
 			Rule('/start_consent', endpoint="consent"),
 			Rule('/confirm', endpoint="confirm"),
@@ -112,6 +116,26 @@ class PRISONER(object):
 		self.session_internals[request.cookies.get("PRISession")] = builder
 		print "set session for %s" % request.cookies.get("PRISession")
 		return self.get_builder_reference(request)
+
+	def on_session_write(self, request):
+		""" Writes arbitrary data to a temporary session. A
+		session is bound to a PRISession, and is intended to retain state data
+		during an experiment before committing to database.
+		There is no guarantee how long the session will be
+		valid for, so gracefully handle instances where expected data cannot
+		be retrieved.
+
+		To write session data, provide a POST form with a
+		"key" value (used to retrieve the data later) and
+		"data" (the arbitrary session data to store).
+		"""
+		builder = self.get_builder_reference(request)
+		builder.session[request.cookies.get("PRISession")][request.form["key"]] = request.form["data"]	
+		return Response()
+
+	def on_session_read(self, request):
+		builder = self.get_builder_reference(request)
+		return Response(builder.session[request.cookies.get("PRISession")][request.args["key"]])
 
 	def on_handshake(self, request):
 		""" This initial call provides the client with their session

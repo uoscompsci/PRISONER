@@ -1,3 +1,4 @@
+from collections import defaultdict
 import sys
 import threading
 import tornado.ioloop
@@ -31,6 +32,7 @@ class ExperimentBuilder(object):
 		self.participant = None
 		self.providers = None
 		self.token = str(uuid.uuid4())
+		self.session = defaultdict(dict)
 
 	def provide_privacy_policy(self, policy):
 		""" Provide the privacy policy for this experiment.
