@@ -110,11 +110,13 @@ class PRISONER(object):
 		""" Each session has its own instance of PRISONER's internals,
 		keyed on the session cookie.
 		"""
-		return self.session_internals[request.cookies.get("PRISession")]
+		#return self.session_internals[request.cookies.get("PRISession")]
+		return self.session_internals[request.args["PRISession"]]
 
 	def set_builder_reference(self, request, builder):
-		self.session_internals[request.cookies.get("PRISession")] = builder
-		print "set session for %s" % request.cookies.get("PRISession")
+		prisession = request.args["PRISession"]
+		self.session_internals[prisession] = builder
+		print "set session for %s" % prisession
 		return self.get_builder_reference(request)
 
 	def on_session_write(self, request):
@@ -130,12 +132,12 @@ class PRISONER(object):
 		"data" (the arbitrary session data to store).
 		"""
 		builder = self.get_builder_reference(request)
-		builder.session[request.cookies.get("PRISession")][request.form["key"]] = request.form["data"]	
+		builder.session[request.args["PRISession"]][request.form["key"]] = request.form["data"]	
 		return Response()
 
 	def on_session_read(self, request):
 		builder = self.get_builder_reference(request)
-		return Response(builder.session[request.cookies.get("PRISession")][request.args["key"]])
+		return Response(builder.session[request.args["PRISession"]][request.args["key"]])
 
 	def on_handshake(self, request):
 		""" This initial call provides the client with their session
@@ -177,7 +179,8 @@ class PRISONER(object):
 		else:
 			#return self.consent_flow_handler(request, callback)
 			#return redirect("start_consent?pctoken=%s" % builder.token)
-			return Response("%s/start_consent?pctoken=%s" % (SERVER_URL, builder.token))
+			return Response("%s/start_consent?pctoken=%s&PRISession=%s" % (SERVER_URL,
+			builder.token, request.args["PRISession"]))
 		#return redirect(consent_url)
 	
 	def on_post_response(self, request):
@@ -217,8 +220,10 @@ class PRISONER(object):
 			resp += "Token %s is not %s" % (token, builder.token)
 			return Response(resp)
 		else:
+			confirm_url = "%s/confirm?pctoken=%s&PRISession=%s" % (SERVER_URL,
+			builder.token, request.args["PRISession"])
 			resp += "(human readable consent here) <br/><br />" +\
-			"Go <a href='%s/confirm?pctoken=%s'>here</a> if you agree to " % (SERVER_URL, builder.token) +\
+			"Go <a href='%s'>here</a> if you agree to " % confirm_url+\
 			"the invisible information here."
 			#return Response(resp)
 			re = Response(resp)
@@ -241,18 +246,20 @@ class PRISONER(object):
 			current_provider = None
 			resp = "For this experiment, we need you to login to some services.<br />"
 			provider = providers[len(providers)-1]
-			resp += "<a href='%s/confirm?provider=%s&pctoken=%s'>Login to"%(SERVER_URL, provider, token)+\
+			confirm_url = "%s/confirm?provider=%s&pctoken=%s&PRISession=%s" % (SERVER_URL, provider,
+			token, request.args["PRISession"])
+			resp += "<a href='%s'>Login to" % confirm_url+\
 			 " %s</a>" % provider
 			re = Response(resp)
 			re.content_type = "text/html"
 			return re
 
 		if providers:
-			callback = "%s/confirm?pctoken=%s&provider=%s&cbprovider=%s" % (SERVER_URL, token,
-			providers[len(providers)-1], current_provider)
+			callback = "%s/confirm?pctoken=%s&provider=%s&cbprovider=%s&PRISession=%s" % (SERVER_URL, token,
+			providers[len(providers)-1], current_provider, request.args["PRISession"])
 		else:
-			callback = "%s/complete?pctoken=%s&cbprovider=%s" % (SERVER_URL, token,
-			current_provider)
+			callback = "%s/complete?pctoken=%s&cbprovider=%s&PRISession=%s" % (SERVER_URL, token,
+			current_provider, request.args["PRISession"])
 		
 		try:
 			callback_provider = request.args["cbprovider"]
@@ -295,7 +302,12 @@ class PRISONER(object):
 	
 	def wsgi_app(self, environ, start_response):
 		request = Request(environ)
-		sid = request.cookies.get("PRISession")
+		#sid = request.cookies.get("PRISession")
+		print "args: %s" % request.args
+		try:
+			sid = request.args["PRISession"]
+		except:
+			sid = None
 		print "sid: %s" % sid
 		if not sid:
 			request.session = self.session_store.new()
@@ -311,7 +323,8 @@ class PRISONER(object):
 		if request.session.should_save:
 			print "saving session"
 			self.session_store.save(request.session)
-			response.set_cookie("PRISession", request.session.sid)
+			#response.set_cookie("PRISession", request.session.sid)
+			response.headers.add("PRISession", request.session.sid)
 		return response(environ, start_response)
 
 	def __call__(self, environ, start_response):
