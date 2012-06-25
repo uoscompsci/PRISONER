@@ -14,6 +14,7 @@ import Cookie
 import cookielib
 import json
 import requests
+import time
 import urllib
 import urllib2
 import urlparse
@@ -71,7 +72,7 @@ class LastFmExperimentClient(object):
 		""" Run the dummy experiment here """
 		prisession = request.args["PRISession"]
 		# get tracks matching criteria	
-		request_url = "%s/get/%s/%s/%s/%s" % (PRISONER_URI, "Lastfm", "Track",
+		request_url = "%s/get/%s/%s/%s/%s?async" % (PRISONER_URI, "Lastfm", "Track",
 		"session:Lastfm.id",'x.artist=="Cajun Dance Party"')
 		request_url = self.__append_session_to_url(request_url, prisession)
 		request = urllib2.Request(url_fix(request_url))
@@ -79,14 +80,17 @@ class LastFmExperimentClient(object):
 		resp = api_response.read()
 		json_resp = json.loads(resp)
 
+		time.sleep(1)
+
 		# repeat that to test caching
-		request_url = "%s/get/%s/%s/%s/%s" % (PRISONER_URI, "Lastfm", "Track",
+		request_url = "%s/get/%s/%s/%s/%s?isready" % (PRISONER_URI, "Lastfm", "Track",
 		"session:Lastfm.id",'x.artist=="Cajun Dance Party"')
 		request_url = self.__append_session_to_url(request_url,
 		prisession)
 		request = urllib2.Request(url_fix(request_url))
 		api_response = urllib2.urlopen(request)
 		resp = api_response.read()
+		print "cache resp: %s" % resp
 		json_resp = json.loads(resp)
 	
 		# test writing and reading session

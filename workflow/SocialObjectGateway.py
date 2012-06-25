@@ -304,7 +304,6 @@ class SocialObjectsGateway(object):
 			new_coll = response
 			if criteria:
 				lambda_func = eval("lambda x: %s" % criteria)
-				print lambda_func
 				response.objects = filter(lambda_func, response.objects)				
 			for resp in response.objects:
 				resp.provider = provider
@@ -377,5 +376,4 @@ class SocialObjectsGateway(object):
 		response_obj = SocialActivityResponse(response, headers)
 		
 		sanitised_response = processor._sanitise_object_request(response_obj)
-		print sanitised_response
 		

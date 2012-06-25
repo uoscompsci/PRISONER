@@ -14,6 +14,7 @@ import csv
 import datetime
 import jsonpickle
 import os
+import thread
 import urllib
 import urllib2
 
@@ -195,8 +196,58 @@ class PRISONER(object):
 	def on_publish_object(self, request):
 		pass
 
+	def threaded_get_object(self, request, provider, object_name, payload,
+	criteria=None):
+		jsonpickle.handlers.registry.register(datetime.datetime,
+		SocialObjects.DateTimeJSONHandler)
+
+		builder = self.get_builder_reference(request)
+		response = builder.sog.GetObjectJSON(provider, object_name, payload,
+		criteria)
+
+		resp = Response(response)
+		resp.headers["Content-Type"] = "application/json"
+
+		#return Response(response)
+		return resp
+
 	def on_get_object(self, request, provider, object_name, payload,
 	criteria=None):
+		""" Returns a SocialObject of given type (object_name) from a
+		given provider. 
+		The payload is the primary criteria for evaluating a request for
+		the object, and must be interpretable by the receiving ServiceGateway. For
+		example, providing a user ID may return instances of objects created by that
+		user. Provide a lambda expression (criteria) to filter this
+		request further (eg. only return objects matching a certain
+		attribute value).
+
+		For larger requests, an asynchronous request pattern is also
+		provided (for AJAX calls). Make your request as usual, but
+		append the argument 'async'. This will immediately return if
+		your request was valid. Periodically, call your request URL
+		again, instead with the additional argument 'isready'. This will
+		return an empty response if the request has not been completed, or the full
+		response object when it is. 
+		"""
+		builder = self.get_builder_reference(request)
+		if "async" in request.args:
+			thread.start_new_thread(self.threaded_get_object, (request,
+			provider, object_name, payload, criteria))
+			return Response("{}")
+		elif "isready" in request.args:
+			payload_key = builder.sog.policy_processor._infer_object(payload)
+			key = "%s_%s" % (object_name, payload_key)
+			try:
+				cache_obj = builder.sog.internal_cache[key]
+			except:
+				raise
+				return Response("{}")	
+	
+		return self.threaded_get_object(request, provider, object_name,
+		payload, criteria)
+		
+		"""
 		jsonpickle.handlers.registry.register(datetime.datetime,
 		SocialObjects.DateTimeJSONHandler)
 	
@@ -209,6 +260,7 @@ class PRISONER(object):
 
 		#return Response(response)
 		return resp
+		"""
 
 	""" START server handlers migrated from ExpBuilder """
 	def on_consent(self, request):
@@ -232,7 +284,6 @@ class PRISONER(object):
 
 
 	def on_confirm(self, request):
-		print "in confirm"	
 		builder = self.get_builder_reference(request)
 		token = request.args["pctoken"]
 		providers = builder.providers
@@ -303,7 +354,6 @@ class PRISONER(object):
 	def wsgi_app(self, environ, start_response):
 		request = Request(environ)
 		#sid = request.cookies.get("PRISession")
-		print "args: %s" % request.args
 		try:
 			sid = request.args["PRISession"]
 		except:
