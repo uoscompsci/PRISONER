@@ -4,6 +4,7 @@
 	include_once("prisoner.classes.php");
 	include_once("prisoner.constants.php");
 	include_once("prisoner.database.php");
+	include_once("prisoner.image.php");
 	
 	
 	/**
@@ -71,6 +72,35 @@
 			$_SESSION["status_update_info"] = $status_update_info["_objects"];
 			$_SESSION["got_status_update_info"] = true;
 		}
+		
+		if (!($_SESSION["got_photo_album_info"])) {
+			$photo_album_info = get_response("/get/Facebook/Album/session:Facebook.id", $session_cookie);	# Photo album.
+			log_msg("Retrieved photo album info from Facebook");
+				
+			// Add JSON data to the session.
+			$_SESSION["photo_album_info"] = $photo_album_info["_objects"];
+			$_SESSION["got_photo_album_info"] = true;
+		}
+		
+		if (!($_SESSION["got_photo_info"])) {
+			$photo_info = get_response("/get/Facebook/Photo/session:Facebook.id", $session_cookie);	# Photos of.
+			log_msg("Retrieved photo info from Facebook");
+		
+			// Add JSON data to the session.
+			$_SESSION["photo_info"] = $photo_info["_objects"];
+			$_SESSION["got_photo_info"] = true;
+		}
+	}
+	
+	function load_profile_info($session_cookie) {
+		if (!($_SESSION["got_profile_info"])) {
+			$profile_info = get_response("/get/Facebook/User/session:Facebook.id", $session_cookie);
+			log_msg("Retrieved profile info from Facebook");
+				
+			// Add JSON data to the session.
+			$_SESSION["profile_info"] = $profile_info;
+			$_SESSION["got_profile_info"] = true;
+		}
 	}
 	
 	
@@ -94,6 +124,8 @@
 			$likes_info_obj = new InfoType("Likes", TYPE_LIKE);
 			$checkins_info_obj = new InfoType("Check-ins", TYPE_CHECKIN);
 			$statuses_info_obj = new InfoType("Statuses", TYPE_STATUS);
+			$albums_info_obj = new InfoType("Albums", TYPE_ALBUM);
+			$photos_info_obj = new InfoType("Photos", TYPE_PHOTO);
 			
 			// Retrieve the guideline amounts for each item.
 			$num_questions = NUM_QUESIONS;
@@ -102,8 +134,11 @@
 			$likes_info_obj->num_want = NUM_LIKES_QUESIONS;
 			$checkins_info_obj->num_want = NUM_CHECKIN_QUESIONS;
 			$statuses_info_obj->num_want = NUM_STATUS_QUESIONS;
+			$albums_info_obj->num_want = NUM_PHOTO_ALBUM_QUESIONS;
+			$photos_info_obj->num_want = NUM_PHOTO_QUESIONS;
 			log_msg("Guideline numbers obtained. (Profile: " . $profile_info_obj->num_want . ", Friends: " . $friends_info_obj->num_want .
-					", Likes: " . $likes_info_obj->num_want .  ", Check-ins " . $checkins_info_obj->num_want . ", Statuses: " . $statuses_info_obj->num_want . ")");
+			", Likes: " . $likes_info_obj->num_want .  ", Check-ins " . $checkins_info_obj->num_want . ", Statuses: " . $statuses_info_obj->num_want .
+			", Albums: " . $albums_info_obj->num_want . ", Photos: " . $photos_info_obj->num_want . ")");
 			
 			// How many of each info type do we have?
 			$num_infos = 0;
@@ -151,9 +186,17 @@
 			$statuses_info_obj->num_have = count($_SESSION["status_update_info"]);
 			log_msg("Participant has " . $statuses_info_obj->num_have . " status updates available.");
 			
+			// How many photo albums do we have?
+			$albums_info_obj->num_have = count($_SESSION["photo_album_info"]);
+			log_msg("Participant has " . $albums_info_obj->num_have . " photo albums available.");
+			
+			// How many photos do we have?
+			$photos_info_obj->num_have = count($_SESSION["photo_info"]);
+			log_msg("Participant has " . $photos_info_obj->num_have . " photos available.");
+			
 			// How much info do we have in total?
 			$num_infos = $profile_info_obj->num_have + $friends_info_obj->num_have + $likes_info_obj->num_have + $checkins_info_obj->num_have
-			+ $statuses_info_obj->num_have;
+			+ $statuses_info_obj->num_have + $albums_info_obj->num_have;
 			log_msg("Total pieces of info available: " . $num_infos);
 			
 			// We don't have enough info for the study.
@@ -170,6 +213,8 @@
 				$likes_info_obj = get_extra_needed($likes_info_obj);
 				$checkins_info_obj = get_extra_needed($checkins_info_obj);
 				$statuses_info_obj = get_extra_needed($statuses_info_obj);
+				$albums_info_obj = get_extra_needed($albums_info_obj);
+				$photos_info_obj = get_extra_needed($photos_info_obj);
 					
 				// Add our info objects into an array we can iterate over.
 				$info_array = array();
@@ -178,6 +223,8 @@
 				$info_array[] = $likes_info_obj;
 				$info_array[] = $checkins_info_obj;
 				$info_array[] = $statuses_info_obj;
+				$info_array[] = $albums_info_obj;
+				$info_array[] = $photos_info_obj;
 					
 				// Calculate amount of type compensation needed.
 				foreach ($info_array as $info_type) {
@@ -338,14 +385,13 @@
 		$questions[] = get_profile_question($profile_info, "_work");	# Required.
 		$num_profile_questions -= 1;
 		unset($profile_info_keys[array_search("_work", $profile_info_keys)]);
-		log_msg("There are now " . count($profile_info_keys) . " available for use.");
 		
 		// Now we've got the required info, select the keys we'll ask questions for.
 		$profile_questions = array_rand($profile_info_keys, $num_profile_questions);
 		
 		foreach ($profile_questions as $key) {
 			$key = $profile_info_keys[$key];
-			log_msg("Getting question for key " . $key);
+			log_msg("- Profile info: Getting question for key " . $key);
 			$questions[] = get_profile_question($profile_info, $key);
 		}
 		
@@ -399,12 +445,39 @@
 			$questions[] = $this_question;
 		}
 		
-		// Questions about the pariticpant's photo albums.
+		// Questions about the participant's photo albums.
 		foreach ($photo_album_questions as $key) {
+			// Get info about the album.
+			$album_name = $photo_albums[$key]["_displayName"];
+			$privacy = $photo_albums[$key]["_privacy"];
+			$time = $photo_albums[$key]["_published"];
+			$timestamp = parse_prisoner_time($time);
+			$extra_info = array();
+			$extra_info["num_photos"] = $photo_albums[$key]["_count"];
+				
+			// Create question object and add it to our list.
+			$this_question = new Question(TYPE_ALBUM, $album_name);
+			$this_question->timestamp = $timestamp;
+			$this_question->privacy_of_data = $privacy;
+			$this_question->additional_info = $extra_info;
+			$questions[] = $this_question;
 		}
 		
 		// Questions about the pariticpant's photos.
 		foreach ($photo_questions as $key) {
+			// Get info about the album.
+			$photo_name = $photos[$key]["_displayName"];
+			$photo = $photos[$key]["_image"]["_fullImage"];
+			$time = $photos[$key]["_published"];
+			$timestamp = parse_prisoner_time($time);
+			$extra_info = array();
+			
+			// Create question object and add it to our list.
+			$this_question = new Question(TYPE_PHOTO, $photo_name);
+			$this_question->timestamp = $timestamp;
+			$this_question->image = $photo;
+			$this_question->additional_info = $extra_info;
+			$questions[] = $this_question;
 		}
 		
 		// Randomise array and return.
@@ -414,6 +487,14 @@
 	}
 	
 	
+	/**
+	 * Given a valid key, this function will return a question object for that piece of information.
+	 * This function is necessary because, unlike data such as photo albums and status updates, profile information
+	 * has a certain amount of context. For example, we cannot use generic phrases for the questions.
+	 * This function therefore creates questions that have appropriate preambles and so on.
+	 * @param array $profile_info Array of profile information.
+	 * @param string $data_key Key to generate question for.
+	 */
 	function get_profile_question($profile_info, $data_key) {
 		switch ($data_key) {
 			// Username.
@@ -499,7 +580,7 @@
 			
 			// Religious views.
 			case "_religion":
-				$this_question = get_profile_question_obj($profile_info, $data_key, "Your religion is");
+				$this_question = get_profile_question_obj($profile_info, $data_key, "You are");
 				
 				if (!$this_question) {
 					$this_question = new Question(TYPE_PROFILE, "");
@@ -570,7 +651,7 @@
 				$last_update = parse_prisoner_time($profile_info[$data_key]);
 				$last_update = date("d/m/Y @ H:i:s", $last_update);
 				$this_question = new Question(TYPE_PROFILE, $last_update);
-				$this_question->custom_question_text = "You last updated your Facebook profile on";
+				$this_question->custom_question_text = "You last updated your Facebook profile (From Facebook itself, not via an app) on";
 				return $this_question;
 				break;
 			
@@ -631,7 +712,7 @@
 				
 				// If location information is available.
 				if (assert_has_name($significant_other)) {
-					$name = $location["_displayName"];
+					$name = $significant_other["_displayName"];
 					$this_question = new Question(TYPE_PROFILE, $name);
 					$this_question->custom_question_text = "Your significant other is";
 					return $this_question;
@@ -744,7 +825,7 @@
 		}
 		
 		// No match was found, return 0.
-		log_msg("No questions of type " . $question->type . " found.");
+		log_msg("No questions of type " . $question_type . " found.");
 		return 0;
 	}
 	
@@ -762,8 +843,8 @@
 		$response = $question->response;
 		
 		// Generate markup.
-		$markup = "<div class='question'>";
-		$markup .= "<div class='question_info'><p>Question #" . $question_number . ", Category: " . get_friendly_type($type) . "</p></div>" . "\n";
+		$markup = "<div class='statement'>";
+		$markup .= "<div class='statement_info'><p>Question #" . $question_number . ", Category: " . get_friendly_type($type) . "</p></div>" . "\n";
 		
 		switch ($type) {
 			case TYPE_PROFILE:
@@ -791,6 +872,34 @@
 				$time = date("H:i", $question->timestamp);
 				$markup .= "<p>You posted saying <em>&quot;" . $text_data . "&quot;</em> on <strong>" . $date . "</strong> at <strong>" .
 				$time . "</strong>.</p>";
+				break;
+			
+			case TYPE_ALBUM:
+				$date = date("l j F Y", $question->timestamp);
+				$num_photos = $question->additional_info["num_photos"];
+				$markup .= "<p>You added photos to an album called <strong>" . $text_data . "</strong> on <strong>" . $date . "</strong>. " .
+				"There are <strong>" . $num_photos . "</strong> photos in the album.</p>";
+				break;
+			
+			case TYPE_PHOTO:
+				$date = date("l j F Y", $question->timestamp);
+				$filename = rand() . ".jpg";
+				$image_address = $question->image;
+				$image_info = getimagesize($image_address);
+				$image_width = $image_info["width"];
+				$image_height = $image_info["height"];
+				$landscape = true;
+				
+				if ($image_height > $image_width) {
+					$landscape = false;
+				}
+				
+				$image_adjuster = new resize($image_address);
+				$image_adjuster->resizeImage(500, 500);
+				$image_adjuster->saveImage($filename, 100);
+				
+				$markup .= "<p>A photo you are tagged in can be seen below.</p>";
+				$markup .= "<img alt='Facebook Photo' src='" . $filename . "' />";
 				break;
 		}
 		
@@ -883,7 +992,6 @@
 	function parse_prisoner_time($time_obj) {
 		$time_obj = str_replace("datetime/datetime.datetime(", "", $time_obj["py/repr"]);
 		$time_obj = str_replace(")", "", $time_obj);
-		log_msg("Parsed PRISONER time: " . $time_obj);
 		
 		// Indices will be of the following order: YYYY MM DD HH II SS
 		$time_array = explode(", ", $time_obj);
@@ -896,7 +1004,6 @@
 		// Compose a string and parse it.
 		$time_str = $time_array[0] . "-" . $time_array[1] . "-" . $time_array[2] . " " . $time_array[3] . ":" . $time_array[4] . ":" . $time_array[5];
 		$timestamp = strtotime($time_str);
-		log_msg("Returning: " . $timestamp);
 		
 		return $timestamp;
 	}

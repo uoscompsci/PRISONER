@@ -1,11 +1,14 @@
 <?php
 	
+	// User settings.
+	$user_settings = parse_ini_file("config.ini");
+	
 	// Database config.
-	define("DATABASE_HOST", "localhost");
-	define("DATABASE_USER", "sam");
-	define("DATABASE_PASS", "hE&rezeprestAsed");
-	define("DATABASE_NAME", "prisoner");
-	define("MYSQLI_ERROR_DUPLICATE", 1062);
+	define("DATABASE_HOST", $user_settings["DATABASE_HOST"]);
+	define("DATABASE_USER", $user_settings["DATABASE_USER"]);
+	define("DATABASE_PASS", $user_settings["DATABASE_PASS"]);
+	define("DATABASE_NAME", $user_settings["DATABASE_NAME"]);
+	define("MYSQLI_ERROR_DUPLICATE", $user_settings["MYSQLI_ERROR_DUPLICATE"]);
 	
 	// Validation and security.
 	define("EMAIL_ADDRESS_REGEX", "/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b/i");
@@ -22,20 +25,26 @@
 	define("GROUP_2", 2);
 	define("GROUP_FILE_LOCATION", ".group");
 	
-	define("NUM_QUESIONS", 50);
-	define("NUM_PROFILE_QUESIONS", 10);
-	define("NUM_FRIENDS_QUESIONS", 10);
-	define("NUM_LIKES_QUESIONS", 10);
-	define("NUM_STATUS_QUESIONS", 10);
-	define("NUM_CHECKIN_QUESIONS", 10);
-	define("NUM_PHOTO_QUESIONS", 0);
+	define("NUM_QUESIONS", $user_settings["NUM_QUESIONS"]);
+	define("NUM_PROFILE_QUESIONS", $user_settings["NUM_PROFILE_QUESIONS"]);
+	define("NUM_FRIENDS_QUESIONS", $user_settings["NUM_FRIENDS_QUESIONS"]);
+	define("NUM_LIKES_QUESIONS", $user_settings["NUM_LIKES_QUESIONS"]);
+	define("NUM_CHECKIN_QUESIONS", $user_settings["NUM_CHECKIN_QUESIONS"]);
+	define("NUM_STATUS_QUESIONS", $user_settings["NUM_STATUS_QUESIONS"]);
+	define("NUM_PHOTO_ALBUM_QUESIONS", $user_settings["NUM_PHOTO_ALBUM_QUESIONS"]);
+	define("NUM_PHOTO_QUESIONS", $user_settings["NUM_PHOTO_QUESIONS"]);
 	
-	define("NUM_PRIVACY_FRIENDS", 0);
-	define("NUM_PRIVACY_CUSTOM", 0);
-	define("NUM_PRIVACY_PUBLIC", 0);
+	define("NUM_PRIVACY_FRIENDS", $user_settings["NUM_PRIVACY_FRIENDS"]);
+	define("NUM_PRIVACY_CUSTOM", $user_settings["NUM_PRIVACY_CUSTOM"]);
+	define("NUM_PRIVACY_PUBLIC", $user_settings["NUM_PRIVACY_PUBLIC"]);
 	
 	define("DEBRIEFING_URL", "participant_debriefing.php");
 	define("SCREENED_OUT_URL", "screened_out.php");
+	
+	define("STAGE_CONSENT_PAGE", 1);
+	define("STAGE_NO_CONSENT", 2);
+	define("STAGE_GIVEN_CONSENT", 3);
+	define("STAGE_IN_STUDY", 4);
 	
 	// Facebook data types.
 	define("TYPE_PROFILE", 0);
@@ -72,7 +81,7 @@
 	$PROFILE_INFO_KEYS[] = "_image";
 	
 	// Misc.
-	define("CACHE_STAY_ALIVE", 60 * 30);	# 60 * 30 = 30 minutes = anticipated length of study.
+	define("CACHE_STAY_ALIVE", (60 * 60) * 60);	# 24 hours.
 	define("LOG_FILE", "prisoner_log.txt");
 	
 	// Content for group 1. (Health and social networks)

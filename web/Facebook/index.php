@@ -14,45 +14,95 @@
 	include_once("prisoner.core.php");
 	include_once("prisoner.database.php");
 	
-	// Participant info variables.
-	$user_group = NULL;
-	$wants_further_emails = NULL;
-	$study_title = "";
-	$about_message = "";
-	$checkbox_value = "";
-	$email_validation_message = "";
-	$email_address = "";
+	// Start a PRISONER session.
+	$session_results = start_prisoner_session();
+	$prisoner_session_id = $session_results[0];
+	$participation_url = $session_results[1];
+	setcookie("PRISession", $prisoner_session_id);	# PRISONER queries need this as a cookie.
+	$_SESSION["PRISession"] = $prisoner_session_id;	# Save for our benefit.
+	$_SESSION["participation_url"] = $participation_url;
 	
-	// Check to see if this participant has already been assigned a group. (Eg: Pressed "Back")
-	if (!empty($_SESSION["group"])) {
-		$user_group = $_SESSION["group"];
+	// Participant info.
+	$participant_id = NULL;
+	$participant_group = NULL;
+	$wants_further_emails = NULL;	# Not saved with participant data.
+	
+	// Study content.
+	$study_title = NULL;
+	$about_message = NULL;
+	
+	// Markup info.
+	$checkbox_value = NULL;
+	$email_validation_message = NULL;
+	$email_address = NULL;
+	
+	
+	// New participant! Assign them an ID and group.
+	if (empty($_SESSION["participant_id"])) {
+		$participant_id = $prisoner_session_id;
+		$participant_group = assign_group();
+		
+		// Get the title for the study.
+		if ($participant_group == GROUP_1) {
+			$study_title = $GROUP_1_TITLE;
+			$about_message = $GROUP_1_ABOUT;
+		}
+		
+		else {
+			$study_title = $GROUP_2_TITLE;
+			$about_message = $GROUP_2_ABOUT;
+		}
+		
+		// Save this info in session.
+		$_SESSION["participant_id"] = $participant_id;
+		$_SESSION["group"] = $participant_group;
+		$_SESSION["study_title"] = $study_title;
+		$_SESSION["participant_stage"] = STAGE_CONSENT_PAGE;	# Next stop.
+		
+		log_msg("Created new participant.");
+		log_msg(" - ID set to: " . $participant_id);
+		log_msg(" - Group set to: " . $participant_group);
+		
+		// Create a database entry for the new participant.
+		$query = "INSERT INTO participant (id, group_id) VALUES ('$participant_id', $participant_group)";
+		$result = mysqli_query($db, $query);
+			
+		// Storing participant info failed.
+		if (!$result) {
+			log_msg("Error - Failed to store participant info: " . mysqli_error($db));
+		}
+			
+		// Success.
+		else {
+			log_msg("Saved participant info in database.");
+		}
+	}
+	
+	// This participant has been here before. Query session for their info.
+	else {
+		$participant_id = $_SESSION["participant_id"];
+		$participant_group = $_SESSION["group"];
 		$wants_further_emails = $_SESSION["wants_further_emails"];
 		$email_validation_message = $_SESSION["email_validation_message"];
 		$email_address = $_SESSION["email_address"];
-		$checkbox_value = "checked='checked'";
-		log_msg("Participant has already been assigned a group - " . $user_group);
+		$study_title = $_SESSION["study_title"];
+		
+		if ($wants_further_emails) {
+			$checkbox_value = "checked='checked'";
+		}
+		
+		log_msg("Detected participant " . $participant_id . ".");
+		log_msg(" - Group: " . $participant_group);
+		
+		// Get the about message.
+		if ($participant_group == GROUP_1) {
+			$about_message = $GROUP_1_ABOUT;
+		}
+		
+		else {
+			$about_message = $GROUP_2_ABOUT;
+		}
 	}
-	
-	// If not, assign a group.
-	else {
-		$user_group = assign_group();
-	}
-	
-	// Group 1.
-	if ($user_group == GROUP_1) {
-		$study_title = $GROUP_1_TITLE;
-		$about_message = $GROUP_1_ABOUT;
-	}
-	
-	// Group 2.
-	else {
-		$study_title = $GROUP_2_TITLE;
-		$about_message = $GROUP_2_ABOUT;
-	}
-	
-	// Save group info in session.
-	$_SESSION["group"] = $user_group;
-	$_SESSION["study_title"] = $study_title;
 	
 ?>
 
@@ -98,7 +148,7 @@
 				<div class="content">
 					<div class="info">
 						<form name="participant_info" method="post" action="participant_consent.php">
-							<h1><?php echo $study_title; ?> - Survey Information</h1>
+							<h1><?php echo $study_title; ?> - Information</h1>
 							
 							<h2>1. What is the study about?</h2>
 							<p><?php echo $about_message; ?> <br />

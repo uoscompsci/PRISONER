@@ -2,21 +2,29 @@
 
 <?php
 	
-	// Start a session on the server.
-	session_start();
-	
-	// Session / cache control.
-	header("Cache-Control: max-age=" . CACHE_STAY_ALIVE);
-	
 	// Include any required components.
 	include_once("prisoner.authentication.php");
 	include_once("prisoner.constants.php");
 	include_once("prisoner.core.php");
 	include_once("prisoner.database.php");
 	
+	// Start a session on the server.
+	session_start();
+		
+	// Session / cache control.
+	header("Cache-Control: max-age=" . CACHE_STAY_ALIVE);
+	
+	// Should the participant be here?
+	$can_view = assert_can_view(STAGE_CONSENT_PAGE);
+	
+	// No. Take them back to the index / landing page.
+	if (!$can_view) {
+		log_msg("Caught bad participant. Redirecting to landing page.");
+		header("Location: index.php");
+	}
+	
 	// Retrieve info from session.
-	$user_group = $_SESSION["group"];
-	$survey_title = $_SESSION["study_title"];
+	$study_title = $_SESSION["study_title"];
 	$participant_wants_info = $_SESSION["wants_further_emails"];
 	$consent_granted = $_SESSION["participant_consent"];
 	
@@ -41,24 +49,23 @@
 		
 		// Default to true.
 		$consent_granted = true;
+		$_SESSION["participant_stage"] = STAGE_GIVEN_CONSENT;
 		
 		// Loop through consent info array and check values.
 		foreach ($consent_info as $item) {
 			// Participant must have agreed to ALL terms to continue.
 			if (empty($item)) {
 				$consent_granted = false;
+				$_SESSION["participant_stage"] = STAGE_NO_CONSENT;
 				break;
 			}
 		}
 	}
 	
-	// If the user gave consent, create a session with PRISONER.
+	// Consent was granted.
 	if ($consent_granted) {
-		// Set session info and start PRISONER.
 		$_SESSION["participant_consent"] = true;
-		$session_results = start_prisoner_session();
-		$prisoner_session_id = $session_results[0];
-		$participation_url = $session_results[1];
+		$participation_url = $_SESSION["participation_url"];	# From earlier.
 		
 		// Compose messages to display.
 		$message_to_display = $STUDY_START_MESSAGE;
@@ -79,7 +86,7 @@
 <html>
 	<head>
 		<?php include_once("prisoner.include.head.php"); ?>
-		<title><?php echo $survey_title; ?> - University Of St Andrews</title>
+		<title><?php echo $study_title; ?> - University Of St Andrews</title>
 	</head>
 	
 	<body>
