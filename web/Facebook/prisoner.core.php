@@ -10,14 +10,18 @@
 	 * @param string $cookie The PRISONER session cookie to supply the web service.
 	 * @return array An associative array containing PRISONER's response.
 	 */
-	function get_response($request, $cookie) {		
+	function get_response($request, $session_id, $async = false) {		
 		// Initialise a cURL session and compose the URL to query.
 		$ch = curl_init();
-		$query_url = PRISONER_URL . $request;
+		$query_url = PRISONER_URL . $request . "?PRISession=" . $session_id;
+		
+		if ($async) {
+			$query_url .= "&async";
+		}
+		
 		log_msg("Executing query: " . $query_url);
 		
 		// Set options.
-		curl_setopt($ch, CURLOPT_COOKIE, $cookie);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_URL, $query_url);
 		

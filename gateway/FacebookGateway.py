@@ -113,6 +113,7 @@ class FacebookServiceGateway(ServiceGateway):
 		# Load the token request URI and get its response parameters.
 		token_request_uri = self.auth_token_uri + urllib.urlencode(params)
 		response = urlparse.parse_qs(urllib.urlopen(token_request_uri).read())
+		print "Response: " + str(response)
 		
 		# Parse response to get access token and expiry date.
 		self.access_token = response["access_token"][0]

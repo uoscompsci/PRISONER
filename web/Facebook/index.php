@@ -18,9 +18,8 @@
 	$session_results = start_prisoner_session();
 	$prisoner_session_id = $session_results[0];
 	$participation_url = $session_results[1];
-	setcookie("PRISession", $prisoner_session_id);	# PRISONER queries need this as a cookie.
-	$_SESSION["PRISession"] = $prisoner_session_id;	# Save for our benefit.
-	$_SESSION["participation_url"] = $participation_url;
+	$_SESSION["prisoner_session_id"] = $prisoner_session_id;	# This needs to be used for requests.
+	$_SESSION["participation_url"] = $participation_url;	# We'll need this later.
 	
 	// Participant info.
 	$participant_id = NULL;

@@ -13,10 +13,10 @@
 	 * exist in the session. This is because calls to get Facebook data through PRISONER can often be expensive
 	 * and we don't want to hinder performance.
 	 */
-	function get_facebook_data($session_cookie) {
+	function get_facebook_data($session_id) {
 		if (!($_SESSION["got_profile_info"])) {
-			$profile_info = get_response("/get/Facebook/User/session:Facebook.id", $session_cookie);	# Profile.
-			log_msg("Retrieved profile info from Facebook");
+			$profile_info = get_response("/get/Facebook/User/session:Facebook.id", $session_id);	# Profile.
+			log_msg("Retrieved profile info from Facebook.");
 			
 			// Add JSON data to the session.
 			$_SESSION["profile_info"] = $profile_info;
@@ -24,8 +24,8 @@
 		}
 		
 		if (!($_SESSION["got_friends_list"])) {
-			$friends_info = get_response("/get/Facebook/Friends/session:Facebook.id", $session_cookie);	# Friends.
-			log_msg("Retrieved friends list from Facebook");
+			$friends_info = get_response("/get/Facebook/Friends/session:Facebook.id", $session_id);	# Friends.
+			log_msg("Retrieved friends list from Facebook.");
 			
 			// Add JSON data to the session.
 			$_SESSION["friends_list"] = $friends_info["_objects"];
@@ -33,12 +33,12 @@
 		}
 		
 		if (!($_SESSION["got_likes_info"])) {
-			$music_info = get_response("/get/Facebook/Music/session:Facebook.id", $session_cookie);	# Favourite bands.
-			log_msg("Retrieved favourite bands from Facebook");
-			$movie_info = get_response("/get/Facebook/Movie/session:Facebook.id", $session_cookie);	# Favourite movies.
-			log_msg("Retrieved favourite movies from Facebook");
-			$book_info = get_response("/get/Facebook/Book/session:Facebook.id", $session_cookie);	# Favourite books.
-			log_msg("Retrieved favourite books from Facebook");
+			$music_info = get_response("/get/Facebook/Music/session:Facebook.id", $session_id, true);	# Favourite bands.
+			log_msg("Sent async request for favourite bands.");
+			$movie_info = get_response("/get/Facebook/Movie/session:Facebook.id", $session_id, true);	# Favourite movies.
+			log_msg("Sent async request for favourite movies.");
+			$book_info = get_response("/get/Facebook/Book/session:Facebook.id", $session_id, true);	# Favourite books.
+			log_msg("Sent async request for favourite books.");
 			
 			// Combine music, movies and books into one object. (Likes)
 			$music_array = $music_info["_objects"];
@@ -56,8 +56,8 @@
 		}
 		
 		if (!($_SESSION["got_checkin_info"])) {
-			$checkin_info = get_response("/get/Facebook/Checkin/session:Facebook.id", $session_cookie);	# Check-ins.
-			log_msg("Retrieved check-in info from Facebook");
+			$checkin_info = get_response("/get/Facebook/Checkin/session:Facebook.id", $session_id);	# Check-ins.
+			log_msg("Retrieved check-in info from Facebook.");
 			
 			// Add JSON data to the session.
 			$_SESSION["checkin_info"] = $checkin_info["_objects"];
@@ -65,8 +65,8 @@
 		}
 		
 		if (!($_SESSION["got_status_update_info"])) {
-			$status_update_info = get_response("/get/Facebook/Status/session:Facebook.id", $session_cookie);	# Status updates.
-			log_msg("Retrieved status update info from Facebook");
+			$status_update_info = get_response("/get/Facebook/Status/session:Facebook.id", $session_id, true);	# Status updates.
+			log_msg("Sent async request for status updates.");
 			
 			// Add JSON data to the session.
 			$_SESSION["status_update_info"] = $status_update_info["_objects"];
@@ -74,8 +74,8 @@
 		}
 		
 		if (!($_SESSION["got_photo_album_info"])) {
-			$photo_album_info = get_response("/get/Facebook/Album/session:Facebook.id", $session_cookie);	# Photo album.
-			log_msg("Retrieved photo album info from Facebook");
+			$photo_album_info = get_response("/get/Facebook/Album/session:Facebook.id", $session_id, true);	# Photo album.
+			log_msg("Sent async request for photo albums.");
 				
 			// Add JSON data to the session.
 			$_SESSION["photo_album_info"] = $photo_album_info["_objects"];
@@ -83,8 +83,8 @@
 		}
 		
 		if (!($_SESSION["got_photo_info"])) {
-			$photo_info = get_response("/get/Facebook/Photo/session:Facebook.id", $session_cookie);	# Photos of.
-			log_msg("Retrieved photo info from Facebook");
+			$photo_info = get_response("/get/Facebook/Photo/session:Facebook.id", $session_id, true);	# Photos of.
+			log_msg("Sent async request for photos.");
 		
 			// Add JSON data to the session.
 			$_SESSION["photo_info"] = $photo_info["_objects"];
@@ -92,15 +92,22 @@
 		}
 	}
 	
-	function load_profile_info($session_cookie) {
+	function load_profile_info($session_id) {
 		if (!($_SESSION["got_profile_info"])) {
-			$profile_info = get_response("/get/Facebook/User/session:Facebook.id", $session_cookie);
+			$profile_info = get_response("/get/Facebook/User/session:Facebook.id", $session_id);
 			log_msg("Retrieved profile info from Facebook");
 				
 			// Add JSON data to the session.
 			$_SESSION["profile_info"] = $profile_info;
 			$_SESSION["got_profile_info"] = true;
 		}
+	}
+	
+	
+	function check_data_availability($data_type_str, $session_id) {
+		// Globals.
+		$response = get_response("/get/Facebook/" . $data_type_str . "/session:Facebook.id", $session_id);
+		log_msg($response);
 	}
 	
 	
@@ -253,6 +260,10 @@
 							log_msg("- Assigning extra from " . $info_array[$j]->name . ". (Will ask: " . $info_array[$j]->num_want .
 									", New spare capacity: " . $info_array[$j]->num_spare . ")");
 						}
+						
+						else {
+							$i -= 1;
+						}
 							
 						$j ++;
 					}
@@ -318,7 +329,8 @@
 		
 		// This item has a mismatch and will require compensating.
 		if ($difference < 0) {
-			$info_obj->mismatch = ($difference - $difference);
+			$info_obj->num_want = $info_obj->num_have;
+			$info_obj->mismatch = abs($difference);
 		}
 		
 		return $info_obj;

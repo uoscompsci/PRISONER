@@ -26,7 +26,6 @@
 	}
 	
 	// Retrieve info from session.
-	set_session();
 	$participant_id = $_SESSION["participant_id"];
 	$participant_group = $_SESSION["group"];
 	$session_cookie = $_SESSION["PRISession_Cookie"];
@@ -36,7 +35,7 @@
 	$questions = $_SESSION["questions"];
 	
 	// Load the participant's profile information into the session and get their Facebook ID.
-	load_profile_info($session_cookie);	
+	load_profile_info($_SESSION["prisoner_session_id"]);
 	$participant_fb_id = $_SESSION["profile_info"]["_id"];
 	
 	// Check if this is a returning participant. (Do we need to restore their session?)
@@ -62,6 +61,7 @@
 			// Restore the participant's session.
 			$participant_session_data = $row["session_data"];
 			$success = session_decode($participant_session_data);
+			load_notice("It looks like you have already started this study. We've restored your answers from before so you don't have to go through them again.");
 			log_msg("Session restored: " . $success);
 			
 			// Store the fact we checked for a restore and redirect. (To reload session)
@@ -84,7 +84,7 @@
 			}
 			
 			// Load Facebook data and questions.
-			get_facebook_data($session_cookie);
+			get_facebook_data($_SESSION["prisoner_session_id"]);
 			$num_questions_per_type = calculate_num_info_types();
 		
 			// Profile does not contain enough info for the study. Screen out.
@@ -105,6 +105,12 @@
 		// Store the fact we checked for a restore.
 		$_SESSION["checked_restore"] = true;
 	}
+	
+	// Check data availability.
+	check_data_availability("Music", $_SESSION["prisoner_session_id"]);
+	check_data_availability("Movie", $_SESSION["prisoner_session_id"]);
+	check_data_availability("Book", $_SESSION["prisoner_session_id"]);
+	check_data_availability("Checkin", $_SESSION["prisoner_session_id"]);
 	
 	// Save current session state in database.
 	$session_str = mysqli_real_escape_string($db, session_encode());
@@ -235,7 +241,7 @@
 							?>
 							
 							<div class="question">
-								<p>Would you be willing to share this piece of information with us?</p>
+								<p>Will you share this piece of information with us?</p>
 								<label><input type="radio" name="agree_to_share" value="Y" id="agree_to_share_1" <?php echo $check_yes; ?>>Yes</label>
 								<label><input type="radio" name="agree_to_share" value="N" id="agree_to_share_0" <?php echo $check_no; ?>>No</label>
 							</div>
