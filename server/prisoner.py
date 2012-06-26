@@ -18,7 +18,7 @@ import thread
 import urllib
 import urllib2
 
-SERVER_URL = "http://127.0.0.1:5000"
+SERVER_URL = "http://localhost:5000"
 
 class PRISONER(object):
 	""" PRISONER Web Service

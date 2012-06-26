@@ -107,7 +107,7 @@
 	function check_data_availability($data_type_str, $session_id) {
 		// Globals.
 		$response = get_response("/get/Facebook/" . $data_type_str . "/session:Facebook.id", $session_id);
-		log_msg($response);
+		var_dump($response);
 	}
 	
 	
