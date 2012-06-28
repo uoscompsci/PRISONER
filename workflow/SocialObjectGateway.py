@@ -233,6 +233,14 @@ class SocialObjectsGateway(object):
 			return None
 	
 	def __add_to_cache(self, key, to_cache):
+		""" Make a deep copy of the given object and write it to the
+		internal cache.
+
+		:param key: Key to cache object under
+		:type key: str
+		:param to_cache: Object to cache
+		:type to_cache: object
+		"""
 		self.internal_cache[key] = copy.deepcopy(to_cache)
 	
 	def GetObject(self, provider, object_type, payload, allow_many=False,

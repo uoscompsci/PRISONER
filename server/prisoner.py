@@ -12,6 +12,7 @@ import SocialObjects
 
 import csv
 import datetime
+import json
 import jsonpickle
 import os
 import thread
@@ -27,8 +28,8 @@ class PRISONER(object):
 
 	The PRISONER web service requires the following flow:
 
-	1) Call / to handshake with PRISONER. Use returned PRISession cookie
-	in future requests
+	1) Call / to handshake with PRISONER. Returns a PRISession header whose
+	value must be passed to all future requests as a PRISession argument
 
 	2) Call /begin with the following POST payload:
 		'policy': URL to your experiment's privacy policy
@@ -51,6 +52,11 @@ class PRISONER(object):
 		(for readability we have not escaped this query string - this
 		must be safely encoded before making requests!)
 
+		Append a '?async' parameter to perform this request
+		asynchronously.
+		Call the same URL, but with a '?isready' parameter to get the
+		result (if it's not ready yet, expect blank response)
+
 	  To publish objects:
 		/post/<provider>/<object_name>
 		with a form-encoded payload of the data to publish.
@@ -65,13 +71,27 @@ class PRISONER(object):
 		/response
 		with a form-encoded payload matching the response schema in your
 		experimental design.
-	
+
 		eg. to publish a response to a question about a favourite track,
 		we query:
 		/response
-		{'track': 246746,
+		{'track': 5343gt32-g43519500-223f,
 		'answer': "My response",
-		}	
+		}
+
+	5) PRISONER provides a simple session layer for *temporarily* storing
+	state information (eg. one set of responses by a participant in a multi-step
+	form). To write to the session store call:
+		/session/write/
+		with a form-encoded 'key' and 'data' (any arbitrary data can be
+		stored)
+		
+	Later, to retrieve session data, call:
+		/session/read/<key>
+
+	Note that the session store is *not* persistent, and there are no
+	guarantees how long this data will be accessible. For permanent data, use the
+	experiment response interface.
 
 	Note that the PRISONER Web Service returns JSON objects corresponding to
 	instances of Social Objects. Each object in a JSON response includes a "prisoner_id"
@@ -86,6 +106,7 @@ class PRISONER(object):
 		self.url_map = Map([
 			Rule('/', endpoint="handshake"),
 			Rule('/begin', endpoint="begin"),
+			Rule('/register', endpoint="register"),
 			Rule('/get/<string:provider>/<string:object_name>/<string:payload>/<string:criteria>',
 			endpoint="get_object"),
 			Rule('/get/<string:provider>/<string:object_name>/<string:payload>',
@@ -120,6 +141,33 @@ class PRISONER(object):
 		print "set session for %s" % prisession
 		return self.get_builder_reference(request)
 
+	def on_register(self, request):
+		""" Register a participant. Requires a URL for the experimental
+		design and privacy policy, and a form of columns to insert about this participant.
+		"""	
+		builder = self.set_builder_reference(request,
+		ExperimentBuilder.ExperimentBuilder())
+		
+		exp_design = request.form["design"]
+		policy = request.form["policy"]
+
+		builder.provide_privacy_policy(policy)
+		builder.provide_experimental_design(exp_design)
+	
+		schema = request.form["schema"]
+
+		write_out = {}
+		for key in request.form.keys():
+			if key not in ["design","policy","schema"]:
+				write_out[key] = request.form[key]
+		participant = builder.sog.register_participant(schema,
+		write_out)
+		print "PRISONER registered participant %s" % participant
+		return Response(str(participant[0]))
+		
+
+
+
 	def on_session_write(self, request):
 		""" Writes arbitrary data to a temporary session. A
 		session is bound to a PRISession, and is intended to retain state data
@@ -137,29 +185,22 @@ class PRISONER(object):
 		return Response()
 
 	def on_session_read(self, request):
+		""" Read the session data corresponding to the given key
+		parameter. Session data is bound to the active PRISession. """
 		builder = self.get_builder_reference(request)
 		return Response(builder.session[request.args["PRISession"]][request.args["key"]])
 
 	def on_handshake(self, request):
 		""" This initial call provides the client with their session
-		token. If response is good, call /begin with cookie set
+		token. If response is good, call /begin providing the given
+		PRISession value.
 		"""
 		return Response("Welcome to PRISONER. Now call /begin to "+\
-		"initialise your experiment, supplying the PRISession cookie.")		
+		"initialise your experiment, supplying the PRISession parameter.")		
 
 	def on_begin(self, request):
 		builder = self.set_builder_reference(request,ExperimentBuilder.ExperimentBuilder())
 	
-		# test with hard-coded
-		"""
-		privacy_policy = "../lib/lastfm_privacy_policy_test.xml"
-		exp_design = "../lib/lastfm_exp_design_test.xml"
-
-		builder.provide_privacy_policy(privacy_policy)
-		builder.provide_experimental_design(exp_design)
-		participant = builder.authenticate_participant("participant",1)
-		builder.authenticate_providers(["Lastfm"])
-		"""
 		privacy_policy = request.form["policy"]
 		exp_design = request.form["design"]
 		builder.provide_privacy_policy(privacy_policy)

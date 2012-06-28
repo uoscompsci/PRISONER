@@ -42,19 +42,33 @@ class LastFmExperimentClient(object):
 			return "%s?PRISession=%s" % (url, session)
 
 	def on_start(self, request):
-
 		# initial handshake - get session cookie
 		handshake = urllib2.urlopen(url_fix(PRISONER_URI))
 		resp_info = handshake.info()
 		print "handshake: %s" % resp_info
 		prisession = resp_info["PRISession"]		
+
+		# test register
+		# TODO: security check - each app has a secure token they must
+		# pass to be allowed to register
+		register_data = {"name": "Bob", "gender": "male",
+		"serviceGroup": "Lastfm", "schema":"participant",
+		"policy": "http://prisoner.cs.st-andrews.ac.uk/prisoner/demo/lastfm_privacy_policy_test.xml",
+		"design": "http://prisoner.cs.st-andrews.ac.uk/prisoner/demo/lastfm_exp_design_test.xml"}
+		reg_url = "%s/register?PRISession=%s" % (PRISONER_URI,
+		prisession)
+		reg_req = urllib2.Request(url_fix(reg_url),
+		data=urllib.urlencode(register_data))
+		reg_resp = urllib2.urlopen(reg_req)
+		print reg_resp.read()
+
 	
 		request_url = self.__append_session_to_url("%s/begin?callback=%s/start?PRISession=%s" % (PRISONER_URI,
 		SELF_URI, prisession), prisession)
 		print request_url
 		
-		post_data = {"policy": "http://pvnets.cs.st-andrews.ac.uk/prisoner/demo/lastfm_privacy_policy_test.xml",
-		"design": "http://pvnets.cs.st-andrews.ac.uk/prisoner/demo/lastfm_exp_design_test.xml",
+		post_data = {"policy": "http://prisoner.cs.st-andrews.ac.uk/prisoner/demo/lastfm_privacy_policy_test.xml",
+		"design": "http://prisoner.cs.st-andrews.ac.uk/prisoner/demo/lastfm_exp_design_test.xml",
 		"participant": "2",
 		"providers": "Lastfm"
 		}
