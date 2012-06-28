@@ -1,27 +1,37 @@
 <!DOCTYPE HTML>
 
 <?php
-
-	// Start a session on the server.
-	session_start();
-	
-	// Session / cache control.
-	header("Cache-Control: max-age=" . CACHE_STAY_ALIVE);
 	
 	// Include any required components.
 	include_once("prisoner.authentication.php");
 	include_once("prisoner.constants.php");
 	include_once("prisoner.core.php");
 	include_once("prisoner.database.php");
+
+	// Start a session on the server.
+	session_start();
 		
-	// Retrieve info from session.
-	$user_group = $_SESSION["group"];
+	// Session / cache control.
+	header("Cache-Control: max-age=" . CACHE_STAY_ALIVE);
+	
+	// Should the participant be here?
+	$can_view = assert_can_view(STAGE_CONSENT_PAGE);
+	
+	// No. Take them back to the index / landing page.
+	if (!$can_view) {
+		log_msg("Caught bad participant. Redirecting to landing page.");
+		header("Location: index.php");
+	}
+		
+	// Retrieve info about participant from session.
+	$participant_group = $_SESSION["group"];
 	$study_title = $_SESSION["study_title"];
+	
 	
 	// Retrieve info from POST.
 	$participant_wants_info = $_POST["store_email"];
 	
-	// Participant has not indicated they want further info.
+	// Participant doesn't want follow-up emails.
 	if (empty($participant_wants_info)) {
 		log_msg("Participant does not want further emails.");
 		$_SESSION["wants_further_emails"] = false;
@@ -29,7 +39,6 @@
 	
 	// Participant wants further info.
 	else {
-		// Debug info.
 		log_msg("Participant wants further emails.");
 		$email_address = $_POST["email_address"];
 		$_SESSION["wants_further_emails"] = true;

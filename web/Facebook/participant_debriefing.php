@@ -32,7 +32,7 @@
 				<div class="content">
 					<div class="info">
 						<form name="participant_info" method="post" action="check_participation_consent.php">
-							<h1><?php echo $study_title; ?> - Debriefing</h1>
+							<h1>Debriefing</h1>
 							
 							<h2>1. Actual project title</h2>
 							<p>Ethics in online social network research.</p>

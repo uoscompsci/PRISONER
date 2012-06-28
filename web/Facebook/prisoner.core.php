@@ -10,14 +10,18 @@
 	 * @param string $cookie The PRISONER session cookie to supply the web service.
 	 * @return array An associative array containing PRISONER's response.
 	 */
-	function get_response($request, $cookie) {		
+	function get_response($request, $session_id, $async = false) {		
 		// Initialise a cURL session and compose the URL to query.
 		$ch = curl_init();
-		$query_url = PRISONER_URL . $request;
+		$query_url = PRISONER_URL . $request . "?PRISession=" . $session_id;
+		
+		if ($async) {
+			$query_url .= "&async";
+		}
+		
 		log_msg("Executing query: " . $query_url);
 		
 		// Set options.
-		curl_setopt($ch, CURLOPT_COOKIE, $cookie);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_URL, $query_url);
 		
@@ -97,6 +101,37 @@
 			$email_addresses = str_replace(" ", ",", $email_addresses);
 			return $email_addresses;
 		}
+	}
+	
+
+	/**
+	 * Checks whether or not a participant can view the requested resource.
+	 * Grabs the participant's current stage from the session and checks it against the supplied stage needed.
+	 * @param int $stage_needed The stage required to access this resource.
+	 * @return boolean True if the participant is at the required stage.
+	 */
+	function assert_can_view($stage_needed) {
+		$participant_stage = $_SESSION["participant_stage"];
+		
+		if ($participant_stage >= $stage_needed) {
+			return true;
+		}
+		
+		else {
+			return false;
+		}
+	}
+	
+	
+	function load_notice($message) {
+		$markup = "<div class='notice'><p><strong>Notice: </strong>" . $message . "</p></div>";
+		$_SESSION["notice"] = $markup;
+	}
+	
+	
+	function get_notice() {
+		return $_SESSION["notice"];
+		$_SESSION["notice"] = "";
 	}
 	
 ?>

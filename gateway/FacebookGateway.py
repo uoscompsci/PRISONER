@@ -113,6 +113,7 @@ class FacebookServiceGateway(ServiceGateway):
 		# Load the token request URI and get its response parameters.
 		token_request_uri = self.auth_token_uri + urllib.urlencode(params)
 		response = urlparse.parse_qs(urllib.urlopen(token_request_uri).read())
+		print "Response: " + str(response)
 		
 		# Parse response to get access token and expiry date.
 		self.access_token = response["access_token"][0]
@@ -175,7 +176,7 @@ class FacebookServiceGateway(ServiceGateway):
 		if (operation == "GET"):
 			try:
 				# Get user ID and query Facebook for their info.
-				user_id = payload.id
+				user_id = payload
 				user_details = self.get_graph_data("/" + user_id)
 				
 				# Create user object.
@@ -356,7 +357,7 @@ class FacebookServiceGateway(ServiceGateway):
 		if (operation == "GET"):
 			try:
 				# Get user ID and query Facebook for their info.
-				user_id = payload.id
+				user_id = payload
 				
 				# Create author object.
 				author = SocialObjects.Person()
@@ -418,7 +419,7 @@ class FacebookServiceGateway(ServiceGateway):
 		if (operation == "GET"):
 			try:
 				# Get user ID and query Facebook for their info.
-				user_id = payload.id
+				user_id = payload
 				
 				# Create author object.
 				author = SocialObjects.Person()
@@ -480,7 +481,7 @@ class FacebookServiceGateway(ServiceGateway):
 		if (operation == "GET"):
 			try:
 				# Get user ID and query Facebook for their info.
-				user_id = payload.id
+				user_id = payload
 				
 				# Create author object.
 				author = SocialObjects.Person()
@@ -541,7 +542,7 @@ class FacebookServiceGateway(ServiceGateway):
 		if (operation == "GET"):
 			try:
 				# Get user ID and query Facebook for their info.
-				user_id = payload.id
+				user_id = payload
 				status_coll = StatusList()
 				status_list = []
 				
@@ -640,7 +641,7 @@ class FacebookServiceGateway(ServiceGateway):
 		if (operation == "GET"):
 			try:
 				# Get user ID and query Facebook for their friends.
-				user_id = payload.id
+				user_id = payload
 				result_set = self.get_graph_data("/" + user_id + "/friends")
 				friend_coll = Friends()
 				friend_obj_list = []
@@ -711,7 +712,7 @@ class FacebookServiceGateway(ServiceGateway):
 		if (operation == "GET"):
 			try:
 				# Get the object's ID from the payload and query for albums.
-				obj_id = payload.id
+				obj_id = payload
 				result_set = self.get_graph_data("/" + obj_id + "/albums")
 				album_coll = Albums()
 				album_obj_list = []
@@ -811,20 +812,13 @@ class FacebookServiceGateway(ServiceGateway):
 		if (operation == "GET"):
 			try:
 				# Get the payload object's ID.
-				obj_id = str(payload.id)
+				obj_id = payload
 				result_set = self.get_graph_data("/" + obj_id + "/photos")
 				photo_obj_list = []
 				
 				# Author info for individual photos and the collection.
 				author = SocialObjects.Person()
-				
-				# If the payload was an album, the author of the photos should match the album's author.
-				if (type(payload) is Album):
-					author = payload.author
-				
-				# Otherwise, just use the object's ID as author.
-				else:
-					author.id = obj_id
+				author.id = obj_id
 				
 				# While there is still data available...
 				while ((result_set.has_key("data")) and (len(result_set["data"]) > 0)):
@@ -846,7 +840,7 @@ class FacebookServiceGateway(ServiceGateway):
 						# Get image info.
 						img_normal = SocialObjects.Image()
 						img_normal.id = this_photo.id
-						img_normal.author = this_photo.author
+						img_normal.author = author
 						img_normal.fullImage = self.get_value(photo["images"][0], "source")
 						this_photo.image = img_normal
 						
@@ -857,7 +851,7 @@ class FacebookServiceGateway(ServiceGateway):
 						# Thumbnail info.
 						img_small = SocialObjects.Image()
 						img_small.id = this_photo.id
-						img_small.author = this_photo.author
+						img_small.author = author
 						img_small.fullImage = self.get_value(photo, "picture")
 						this_photo.thumbnail = img_small
 						
@@ -894,16 +888,8 @@ class FacebookServiceGateway(ServiceGateway):
 				photo_album.objects = photo_obj_list
 				photo_album.author = author
 				
-				# If the payload was a photo album, add the photos into it.
-				if (type(payload) is Album):
-					print "Photo() function returned successfully."
-					payload.photos = photo_album
-					return payload
-				
-				# Otherwise return the collection object.
-				else:
-					print "Photo() function returned successfully."
-					return photo_album
+				print "Photo() function returned successfully."
+				return photo_album
 			
 			except:
 				print "Photo() function exception:"
@@ -930,7 +916,7 @@ class FacebookServiceGateway(ServiceGateway):
 		if (operation == "GET"):
 			try:
 				# Get user ID from payload and query for initial result set.
-				user_id = payload.id
+				user_id = payload
 				result_set = self.get_graph_data("/" + user_id + "/locations")
 				checkin_obj_list = []
 				

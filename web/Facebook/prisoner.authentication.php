@@ -19,29 +19,13 @@
 		// Initialise a cURL session.
 		$ch = curl_init();
 		
-		// Set options for initial handshake.
-		curl_setopt($ch, CURLOPT_HEADER, 1);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_URL, $init_url);
-		
 		// Perform initial handshake.
-		$from_prisoner = curl_exec($ch);
-		curl_close($ch);
-		
-		// Use RegEx to extract the session ID from PRISONER's response.
-		$matches = NULL;
-		$cookie_regex = "/^Set-Cookie: (.*?);/m";
-		preg_match($cookie_regex, $from_prisoner, $matches);
-		
-		// Grab ID from cookie and add it to the session. (And assign it to a cookie)
-		$session_cookie = $matches[1];
-		$session_cookie_array = explode("=", $session_cookie);
-		$session_id = $session_cookie_array[1];
-		$_SESSION["PRISession"] = $session_cookie;
-		setcookie("PRISession", $session_id);
+		$response_headers = get_headers($init_url, 1);
+		$session_id = $response_headers["PRISession"];
 		
 		// Get a new cURL session for the next stage.
 		$ch = curl_init();
+		$begin_url .= "&PRISession=" . $session_id;
 		
 		// Set POST data for second stage of authentication.
 		$post_data["policy"] = PRIVACY_POLICY_URL;
@@ -50,7 +34,6 @@
 		$post_data["providers"] = "Facebook";
 		
 		// Set cURL options.
-		curl_setopt($ch, CURLOPT_COOKIE, $session_cookie);
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -67,23 +50,6 @@
 		log_msg("Created new PRISONER session. (ID: " . $to_return[0] . ")");
 		
 		return $to_return;
-	}
-	
-	
-	/**
-	 * This function sets a session on *our* end using the information provided by PRISONER.
-	 * This function is needed because our local session will get destroyed when the user is redirected to the
-	 * PRISONER web app to sign into services.
-	 * This should be called on the first page PRISONER redirects to.
-	 */
-	function set_session() {
-		// Grab data from the cookie PRISONER returned.
-		$session_id = $_COOKIE["PRISession"];
-		$session_cookie = "PRISession=" . $session_id;
-		
-		// Set this info in our own server session.
-		$_SESSION["PRISession_ID"] = $session_id;
-		$_SESSION["PRISession_Cookie"] = $session_cookie;
 	}
 	
 ?>
