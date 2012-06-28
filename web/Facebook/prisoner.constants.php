@@ -15,10 +15,10 @@
 	define("SALT", "Oh Scotty doesn't know! So Don't Tell Scotty! Scotty doesn't know! Scotty doesn't know! So Don't Tell Scotty!");
 	
 	// PRISONER config.
-	define("PRISONER_URL", "http://localhost:5000");
+	define("PRISONER_URL", "http://prisoner.cs.st-andrews.ac.uk/prisoner");
 	define("CALLBACK_URL", "http://localhost/prisoner/research_questionnaire.php");
-	define("PRIVACY_POLICY_URL", "http://localhost/prisoner/xml/fb_privacy_policy_test.xml");
-	define("EXP_DESIGN_URL", "http://localhost/prisoner/xml/fb_exp_design_test.xml");
+	define("PRIVACY_POLICY_URL", "https://dl.dropbox.com/u/4741516/fb_privacy_policy_test.xml");
+	define("EXP_DESIGN_URL", "https://dl.dropbox.com/u/4741516/fb_exp_design_test.xml");
 	
 	// Study constants.
 	define("GROUP_1", 1);

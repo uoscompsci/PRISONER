@@ -8,10 +8,7 @@
 	
 	
 	/**
-	 * Uses PRISONER to get the participant's Facebook information and saves it in a session on our end.
-	 * Before requesting any information, this function first checks to make sure that it doesn't already
-	 * exist in the session. This is because calls to get Facebook data through PRISONER can often be expensive
-	 * and we don't want to hinder performance.
+	 * Sends async re
 	 */
 	function load_additional_data($session_id) {
 		// Send async requests to PRISONER for the rest of the data.
