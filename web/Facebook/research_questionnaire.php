@@ -25,22 +25,48 @@
 		header("Location: index.php");
 	}
 	
+	// Populate question info array if necessary.
+	if (empty($_SESSION["question_info"])) {
+		$question_info = array();
+		$question_info[TYPE_PROFILE] = new QuestionType("Profile Info", TYPE_PROFILE, "User", "profile_data");	# We'll already have this info.
+		$question_info[TYPE_PROFILE]->num_want = NUM_PROFILE_QUESTIONS;
+		$question_info[TYPE_FRIEND] = new QuestionType("Friend Info", TYPE_FRIEND, "Friends", "friend_data");
+		$question_info[TYPE_FRIEND]->num_want = NUM_FRIENDS_QUESTIONS;
+		$question_info[TYPE_LIKE] = new QuestionType("Likes / Interests Info", TYPE_LIKE, NULL, "like_data");	# A collection of 3 different types.
+		$question_info[TYPE_LIKE]->num_want = NUM_LIKES_QUESTIONS;
+		$question_info[TYPE_CHECKIN] = new QuestionType("Check-in Info", TYPE_CHECKIN, "Checkin", "checkin_data");
+		$question_info[TYPE_CHECKIN]->num_want = NUM_CHECKIN_QUESTIONS;
+		$question_info[TYPE_STATUS] = new QuestionType("Status Update Info", TYPE_STATUS, "Status", "status_data");
+		$question_info[TYPE_STATUS]->num_want = NUM_STATUS_QUESTIONS;
+		$question_info[TYPE_ALBUM] = new QuestionType("Album Info", TYPE_ALBUM, "Album", "album_data");
+		$question_info[TYPE_ALBUM]->num_want = NUM_PHOTO_ALBUM_QUESTIONS;
+		$question_info[TYPE_PHOTO] = new QuestionType("Photo Info", TYPE_PHOTO, "Photo", "photo_data");
+		$question_info[TYPE_PHOTO]->num_want = NUM_PHOTO_QUESTIONS;
+		
+		$_SESSION["question_info"] = $question_info;	# Question type data.
+		$_SESSION["compensation_needed"] = 0;	# Number of extra questions we'll have to ask.
+		$_SESSION["questions"] = array();	# Question objects.
+	}
+	
 	// Retrieve info from session.
 	$participant_id = $_SESSION["participant_id"];
 	$participant_group = $_SESSION["group"];
-	$session_cookie = $_SESSION["PRISession_Cookie"];
 	$study_title = $_SESSION["study_title"];
 	$checked_for_restore = $_SESSION["checked_restore"];
+	$prisoner_session_id = $_SESSION["prisoner_session_id"];
+	$determined_all_questions = $_SESSION["determined_all_questions"];
 	$question_num = $_SESSION["question_number"];
-	$questions = $_SESSION["questions"];
+	$questions = &$_SESSION["questions"];
 	
-	// Load the participant's profile information into the session and get their Facebook ID.
-	load_profile_info($_SESSION["prisoner_session_id"]);
-	$participant_fb_id = $_SESSION["profile_info"]["_id"];
+	// Load initial data.
+	load_init_data($prisoner_session_id);
+	$participant_fb_id = $_SESSION["question_info"][TYPE_PROFILE]->data["_id"];
+	$enc_facebook_id = encrypt($participant_fb_id);	# Sensitive data is encrypted.
+	$loaded_all_data = true;	# Will be set to false if necessary.
 	
 	// Check if this is a returning participant. (Do we need to restore their session?)
 	if (!$checked_for_restore) {
-		$query = "SELECT * FROM participant WHERE facebook_id = '$participant_fb_id'";
+		$query = "SELECT * FROM participant WHERE facebook_id = '$enc_facebook_id'";
 		$result = mysqli_query($db, $query);
 		$row = mysqli_fetch_array($result);
 
@@ -58,21 +84,33 @@
 				log_msg("Removed old data ok.");
 			}
 			
-			// Restore the participant's session.
-			$participant_session_data = $row["session_data"];
-			$success = session_decode($participant_session_data);
-			load_notice("It looks like you have already started this study. We've restored your answers from before so you don't have to go through them again.");
-			log_msg("Session restored: " . $success);
+			// Has this person already finished the study?
+			$is_finished = $row["is_finished"];
 			
-			// Store the fact we checked for a restore and redirect. (To reload session)
-			$_SESSION["checked_restore"] = true;
-			header("Location: research_questionnaire.php");
+			if ($is_finished) {
+				$_SESSION["info_message"] = "<strong>you have already completed this study</strong>";
+				log_msg("Notice: Screening participant out as they've already completed the study.");
+				header("Location: " . SCREENED_OUT_URL);
+			}
+			
+			else {
+				// Restore the participant's session.
+				$participant_session_data = $row["session_data"];
+				$participant_session_data = $participant_session_data;
+				$success = session_decode($participant_session_data);
+				load_notice("Welcome back. We have restored your answers so you can pick up from where you left off.");
+				log_msg("Session restored: " . $success);
+					
+				// Store the fact we checked for a restore and redirect. (To reload session)
+				$_SESSION["checked_restore"] = true;
+				header("Location: research_questionnaire.php");
+			}
 		}
 		
 		// This isn't a returner. Populate session with Facebook data and questions.
 		else {
-			// Link participant ID with Facebook ID.
-			$query = "UPDATE participant SET facebook_id = '$participant_fb_id' WHERE id = '$participant_id'";
+			// Link participant ID with Facebook ID. (Encrypted)
+			$query = "UPDATE participant SET facebook_id = '$enc_facebook_id' WHERE id = '$participant_id'";
 			$result = mysqli_query($db, $query);
 			
 			if (!$result) {
@@ -83,34 +121,115 @@
 				log_msg("Linked participant ID with Facebook ID.");
 			}
 			
-			// Load Facebook data and questions.
-			get_facebook_data($_SESSION["prisoner_session_id"]);
-			$num_questions_per_type = calculate_num_info_types();
-		
-			// Profile does not contain enough info for the study. Screen out.
-			if (!$num_questions_per_type) {
-				$_SESSION["info_message"] = "<strong>your Facebook profile does not contain enough information.</strong>";
-				header("Location: " . SCREENED_OUT_URL);
-			}
-		
-			// Generate questions if necessary.
-			else {
-				if (empty($_SESSION["questions"])) {
-					$questions = generate_questions($num_questions_per_type);
-					$_SESSION["questions"] = $questions;
-				}
-			}
+			// Store the fact we checked for a restore.
+			$_SESSION["checked_restore"] = true;
 		}
-		
-		// Store the fact we checked for a restore.
-		$_SESSION["checked_restore"] = true;
 	}
 	
-	// Check data availability.
-	check_data_availability("Music", $_SESSION["prisoner_session_id"]);
-	check_data_availability("Movie", $_SESSION["prisoner_session_id"]);
-	check_data_availability("Book", $_SESSION["prisoner_session_id"]);
-	check_data_availability("Checkin", $_SESSION["prisoner_session_id"]);
+	// We still need to work out the questions we'll ask.
+	if (count($questions) < NUM_QUESTIONS) {
+		load_additional_data($prisoner_session_id);	# Rest of data not included in init.
+		$questions_to_add = array();
+		
+		// For each type of question. (Profile, friends, interests...)
+		foreach ($_SESSION["question_info"] as &$question_info_obj) {
+			log_msg("Checking " . $question_info_obj->friendly_name . ".");
+			
+			// We've already loaded the data and generated questions.
+			if ($question_info_obj->generated_questions) {
+				log_msg(" - Questions already generated for this type.");
+			}
+			
+			// Load data (If necessary) and generate questions.
+			else {
+				if (!$question_info_obj->loaded_data) {
+					$data = check_data_availability($question_info_obj->prisoner_name, $prisoner_session_id);
+					
+					if ($data !== false) {
+						log_msg(" - Data is now available.");
+						$question_info_obj->data = $data["_objects"];
+						$question_info_obj->loaded_data = true;
+					}
+					
+					else {
+						$loaded_all_data = false;
+						log_msg(" - Data is not yet available.");
+					}
+				}
+				
+				if ($question_info_obj->loaded_data) {
+					// Calculate new amount of compensation needed.
+					$compensation_needed = &$_SESSION["compensation_needed"];
+					$compensation_needed += calculate_available_data($question_info_obj->type);
+					
+					// Load new questions into the session.
+					$new_questions = get_questions($question_info_obj->type);
+					$questions_to_add = array_merge($questions_to_add, $new_questions);
+				}
+			}
+			
+			log_msg(" - Done.");
+		}
+		
+		// Add any questions to the session.
+		shuffle($questions_to_add);
+		$questions = array_merge($questions, $questions_to_add);
+		log_msg("Appending any new questions to session. (New size: " . count($_SESSION["questions"]) . ")");
+	}
+		
+	// Once we've loaded all the data, check to make sure there's enough.
+	if ($loaded_all_data) {
+		$question_info = &$_SESSION["question_info"];
+		$compensation_needed = &$_SESSION["compensation_needed"];
+		$total_data_available = calculate_total_data();
+		
+		// Participant doesn't have enough data available.
+		if ($total_data_available < NUM_QUESTIONS) {
+			$_SESSION["info_message"] = "your Facebook profile does not contain enough information";
+			log_msg("Notice: Screening participant out. Only " . calculate_total_data() . " pieces of data available.");
+			header("Location: " . SCREENED_OUT_URL);
+		}
+		
+		// Compensation is necessary.
+		else if ($compensation_needed > 0) {
+			log_msg("Data compensation is required. (Need " . $compensation_needed . " more items)");
+			
+			$num_question_types = count($_SESSION["question_info"]);
+			$type_index = 0;
+				
+			for ($i = 0; $i < $compensation_needed; $i ++) {
+				// Hit limit of category types, reset index.
+				if ($type_index == $num_question_types) {
+					$type_index = 0;
+				}
+					
+				// If this info type has spare capacity, use it.
+				if ($question_info[$type_index]->num_spare > 0) {
+					$question_info[$type_index]->num_want += 1;
+					$question_info[$type_index]->num_spare -= 1;
+					log_msg("- Assigning extra from " . $question_info[$type_index]->friendly_name . ". (Will ask: " . $question_info[$type_index]->num_want .
+					", New spare capacity: " . $question_info[$type_index]->num_spare . ")");
+				}
+			
+				else {
+					$i -= 1;
+				}
+					
+				$type_index ++;
+			}
+			
+			// Get the extra questions.
+			$extra_questions = array();
+			
+			foreach ($question_info as &$question_info_obj) {
+				$extra_questions = array_merge($extra_questions, get_questions($question_info_obj->type));
+			}
+			
+			log_msg("Adding " . count($extra_questions) . " into session.");
+			shuffle($extra_questions);
+			$questions = array_merge($questions, $extra_questions);
+		}
+	}
 	
 	// Save current session state in database.
 	$session_str = mysqli_real_escape_string($db, session_encode());
@@ -156,7 +275,6 @@
 		
 		// Store response in session.
 		$questions[($question_num - 1)]->response = $response;
-		$_SESSION["questions"] = $questions;
 		log_msg("Question #" . $question_num . ": " . $response);
 		
 		// Increment question pointer.
@@ -164,7 +282,7 @@
 		log_msg("Question ID detected. Decoded and set next to " . $question_num . ".");
 		
 		// Participant has answered all questions. Redirect to debriefing.
-		if ($question_num > NUM_QUESIONS) {
+		if ($question_num > NUM_QUESTIONS) {
 			header("Location: " . DEBRIEFING_URL);
 		}
 	}
@@ -199,24 +317,44 @@
 	$check_no = NULL;
 	$check_yes = NULL;
 	$this_question = $questions[($question_num - 1)];
-	$response = $this_question->response;
 	
-	if ($response == true) {
-		$check_yes = "checked='checked'";
+	// Check question availability.
+	$question_available = true;
+	$meta_redirect = NULL;
+	
+	if (empty($this_question)) {
+		$meta_redirect = "<meta http-equiv='Refresh' content='10;url=research_questionnaire.php' />";
+		$question_available = false;
 	}
 	
-	else if ($response === false) {
-		$check_no = "checked='checked'";
-	}
+	// If the question exists.
+	if ($question_available) {
+		$response = $this_question->response;
 		
-	// Get the question's markup.
-	$to_display = get_question_markup($this_question, $question_num);
+		if ($response == true) {
+			$check_yes = "checked='checked'";
+		}
+		
+		else if ($response === false) {
+			$check_no = "checked='checked'";
+		}
+		
+		// Get the question's markup.
+		$to_display = get_question_markup($this_question, $question_num);
+	}
+	
+	else {
+		
+	}
 		
 ?>
 
 <html>
 	<head>
-		<?php include_once("prisoner.include.head.php"); ?>
+		<?php 
+			include_once("prisoner.include.head.php");
+			echo $meta_redirect;
+		?>
 		<title><?php echo $study_title; ?> - University Of St Andrews</title>
 	</head>
 	
@@ -235,27 +373,34 @@
 							
 							<?php
 								
-								echo get_notice();
+								echo display_notice() . "\n";
 								echo $to_display . "\n";
-								 
+								
+								if ($question_available) {
+									echo "<div class='question'>" .
+									"<p>Will you share this piece of information with us?</p>" . "\n" .
+									"<label><input type='radio' name='agree_to_share' value='Y' id='agree_to_share_1'" . $check_yes . ">Yes</label>" . "\n" .
+									"<label><input type='radio' name='agree_to_share' value='N' id='agree_to_share_0'" . $check_no . ">No</label>" . "\n" .
+									"</div>" . "\n";
+									
+									echo $question_id_field;
+									
+									echo "<div class='navigation'>" . "\n";
+									
+									if ($question_num > 1) {
+										echo "<ul><li><a href='research_questionnaire.php?previous=1'>Previous Question</a></li></ul>";
+									}
+									
+									echo "<div class='next_submit'><input name='submit' type='submit' value='Next Question'></div>" . "\n" .
+									"</div>" . "\n";
+								}
+								
+								else {
+									echo get_notice("We are still waiting for some of your Facebook data to load. Please be patient. This page will " .
+									"refresh automatically. (And may do so several times)", $is_error);
+								}
+							
 							?>
-							
-							<div class="question">
-								<p>Will you share this piece of information with us?</p>
-								<label><input type="radio" name="agree_to_share" value="Y" id="agree_to_share_1" <?php echo $check_yes; ?>>Yes</label>
-								<label><input type="radio" name="agree_to_share" value="N" id="agree_to_share_0" <?php echo $check_no; ?>>No</label>
-							</div>
-							
-							<?php echo $question_id_field . "\n"; ?>
-							
-							<div class="navigation">
-								<?php
-									// If this isn't the first question, display the "Previous" link.
-									if ($question_num > 1) { echo "<ul><li><a href='research_questionnaire.php?previous=1'>Previous Question</a></li></ul>"; }
-								?>
-								<div class="next_submit"><input name="submit" type="submit" value="Next Question"></div>
-							</div>
-							
 							
 						</form>
 						<div class="clear"></div>

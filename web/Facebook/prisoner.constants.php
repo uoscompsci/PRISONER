@@ -15,7 +15,7 @@
 	define("SALT", "Oh Scotty doesn't know! So Don't Tell Scotty! Scotty doesn't know! Scotty doesn't know! So Don't Tell Scotty!");
 	
 	// PRISONER config.
-	define("PRISONER_URL", "http://127.0.0.1:5000");
+	define("PRISONER_URL", "http://localhost:5000");
 	define("CALLBACK_URL", "http://localhost/prisoner/research_questionnaire.php");
 	define("PRIVACY_POLICY_URL", "http://localhost/prisoner/xml/fb_privacy_policy_test.xml");
 	define("EXP_DESIGN_URL", "http://localhost/prisoner/xml/fb_exp_design_test.xml");
@@ -25,14 +25,14 @@
 	define("GROUP_2", 2);
 	define("GROUP_FILE_LOCATION", ".group");
 	
-	define("NUM_QUESIONS", $user_settings["NUM_QUESIONS"]);
-	define("NUM_PROFILE_QUESIONS", $user_settings["NUM_PROFILE_QUESIONS"]);
-	define("NUM_FRIENDS_QUESIONS", $user_settings["NUM_FRIENDS_QUESIONS"]);
-	define("NUM_LIKES_QUESIONS", $user_settings["NUM_LIKES_QUESIONS"]);
-	define("NUM_CHECKIN_QUESIONS", $user_settings["NUM_CHECKIN_QUESIONS"]);
-	define("NUM_STATUS_QUESIONS", $user_settings["NUM_STATUS_QUESIONS"]);
-	define("NUM_PHOTO_ALBUM_QUESIONS", $user_settings["NUM_PHOTO_ALBUM_QUESIONS"]);
-	define("NUM_PHOTO_QUESIONS", $user_settings["NUM_PHOTO_QUESIONS"]);
+	define("NUM_QUESTIONS", $user_settings["NUM_QUESTIONS"]);
+	define("NUM_PROFILE_QUESTIONS", $user_settings["NUM_PROFILE_QUESTIONS"]);
+	define("NUM_FRIENDS_QUESTIONS", $user_settings["NUM_FRIENDS_QUESTIONS"]);
+	define("NUM_LIKES_QUESTIONS", $user_settings["NUM_LIKES_QUESTIONS"]);
+	define("NUM_CHECKIN_QUESTIONS", $user_settings["NUM_CHECKIN_QUESTIONS"]);
+	define("NUM_STATUS_QUESTIONS", $user_settings["NUM_STATUS_QUESTIONS"]);
+	define("NUM_PHOTO_ALBUM_QUESTIONS", $user_settings["NUM_PHOTO_ALBUM_QUESTIONS"]);
+	define("NUM_PHOTO_QUESTIONS", $user_settings["NUM_PHOTO_QUESTIONS"]);
 	
 	define("NUM_PRIVACY_FRIENDS", $user_settings["NUM_PRIVACY_FRIENDS"]);
 	define("NUM_PRIVACY_CUSTOM", $user_settings["NUM_PRIVACY_CUSTOM"]);
@@ -65,7 +65,6 @@
 	$PROFILE_INFO_KEYS[] = "_gender";
 	$PROFILE_INFO_KEYS[] = "_email";
 	$PROFILE_INFO_KEYS[] = "_languages";
-	$PROFILE_INFO_KEYS[] = "_timezone";
 	$PROFILE_INFO_KEYS[] = "_updatedTime";
 	$PROFILE_INFO_KEYS[] = "_bio";
 	$PROFILE_INFO_KEYS[] = "_birthday";
