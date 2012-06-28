@@ -282,7 +282,6 @@ class PRISONER(object):
 			try:
 				cache_obj = builder.sog.internal_cache[key]
 			except:
-				raise
 				return Response("{}")	
 	
 		return self.threaded_get_object(request, provider, object_name,
