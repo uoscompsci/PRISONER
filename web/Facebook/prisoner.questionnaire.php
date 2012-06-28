@@ -451,6 +451,8 @@
 		// Get required info from session.
 		$participant_id = $_SESSION["participant_id"];
 		$participant_group = $_SESSION["group"];
+		$prisoner_participant_id = $_SESSION["prisoner_participant_id"];
+		$prisoner_session_id = $_SESSION["prisoner_session_id"];
 		$questions = $_SESSION["questions"];
 		log_msg("Commiting participant results.");
 		
@@ -492,6 +494,9 @@
 		}
 		
 		// Commit results to PRISONER database.
+		$init_url = PRISONER_URL;
+		$post_url = $init_url . "/post" . "?PRISession=" . $prisoner_session_id;
+		
 		foreach ($questions as $question) {
 			$type = $question->type;
 			$privacy = $question->privacy_of_data;
@@ -501,7 +506,26 @@
 				$privacy = "N/A";
 			}
 			
-			log_msg("Commit question response. (Type: " . $type . ", Privacy: " . $privacy . ", Response: " . $response . ")");
+			// Build response data.
+			$question_response["participant_id"] = $prisoner_participant_id;
+			$question_response["group_id"] = $participant_group;
+			$question_response["info_type"] = $type;
+			$question_response["privacy"] = $privacy;
+			$question_response["response"] = $response;
+			
+			$post_data["schema"] = "response";
+			$post_data["response"] = json_encode($question_response);
+			
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($ch, CURLOPT_URL, $post_url);
+			$post_response = curl_exec($ch);
+			curl_close($ch);
+			
+			log_msg("Commit question response. (Participant: " . $prisoner_participant_id . ", Group: " . $participant_group . 
+			", Type: " . $type . ", Privacy: " . $privacy . ", Response: " . $response . ")");
 		}
 	}
 	
