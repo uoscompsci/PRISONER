@@ -58,7 +58,7 @@ p {
 }
 
 ul {
-	color: #212121;
+	color: #444444;
 	margin-bottom: 25px;
 	padding-left: 20px;
 }
@@ -213,8 +213,10 @@ ul {
 
 .info img {
 	display: block;
+	margin-bottom: 5px;
     margin-left: auto;
-    margin-right: auto
+    margin-right: auto;
+    margin-top: -15px;
 }
 
 .info p {
@@ -286,18 +288,25 @@ ul {
 	background-color: #000000;
 }
 
-.notice {
+.notice_normal {
 	background-color: #FFFF99;
 	border: solid;
 	border-color: #FFCC00;
 	border-radius: 3px;
 	border-width: 1px;
-	font-size: 9.5pt;
+	font-size: 10pt;
 	margin-bottom: 10px;
 	padding: 5px;
 }
 
-.notice p {
+.notice_normal img {
+	float: left;
+	padding-right: 5px;
+	padding-top: 15px;
+}
+
+.notice_normal p {
+	line-height: 20px;
 	margin-bottom: 0px;
 }
 
@@ -335,6 +344,16 @@ ul {
 
 .question label {
 	margin-left: 25px;
+}
+
+.statement_info {
+}
+
+.statement_info p {
+	color: #999999;
+	font-size: 13pt;
+	margin-bottom: 0px;
+	margin-top: -5px;
 }
 
 .wrapper {

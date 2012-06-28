@@ -8,275 +8,540 @@
 	
 	
 	/**
-	 * Uses PRISONER to get the participant's Facebook information and saves it in a session on our end.
-	 * Before requesting any information, this function first checks to make sure that it doesn't already
-	 * exist in the session. This is because calls to get Facebook data through PRISONER can often be expensive
-	 * and we don't want to hinder performance.
+	 * Sends async re
 	 */
-	function get_facebook_data($session_id) {
-		if (!($_SESSION["got_profile_info"])) {
-			$profile_info = get_response("/get/Facebook/User/session:Facebook.id", $session_id);	# Profile.
-			log_msg("Retrieved profile info from Facebook.");
-			
-			// Add JSON data to the session.
-			$_SESSION["profile_info"] = $profile_info;
-			$_SESSION["got_profile_info"] = true;
-		}
-		
-		if (!($_SESSION["got_friends_list"])) {
-			$friends_info = get_response("/get/Facebook/Friends/session:Facebook.id", $session_id);	# Friends.
-			log_msg("Retrieved friends list from Facebook.");
-			
-			// Add JSON data to the session.
-			$_SESSION["friends_list"] = $friends_info["_objects"];
-			$_SESSION["got_friends_list"] = true;
-		}
-		
-		if (!($_SESSION["got_likes_info"])) {
-			$music_info = get_response("/get/Facebook/Music/session:Facebook.id", $session_id, true);	# Favourite bands.
-			log_msg("Sent async request for favourite bands.");
-			$movie_info = get_response("/get/Facebook/Movie/session:Facebook.id", $session_id, true);	# Favourite movies.
-			log_msg("Sent async request for favourite movies.");
-			$book_info = get_response("/get/Facebook/Book/session:Facebook.id", $session_id, true);	# Favourite books.
-			log_msg("Sent async request for favourite books.");
-			
-			// Combine music, movies and books into one object. (Likes)
-			$music_array = $music_info["_objects"];
-			$movie_array = $movie_info["_objects"];
-			$book_array = $book_info["_objects"];
-			log_msg("Likes: " . count($music_array) . " bands, " . count($movie_array) . " movies and " . count($book_array) . " books.");
-			
-			$likes_array = array();
-			$likes_array = array_merge($music_array, $movie_array, $book_array);
-			log_msg("Combined array has " . count($likes_array) . " items.");
-			
-			// Add JSON data to the session.
-			$_SESSION["likes_info"] = $likes_array;
-			$_SESSION["got_likes_info"] = true;
-		}
-		
-		if (!($_SESSION["got_checkin_info"])) {
-			$checkin_info = get_response("/get/Facebook/Checkin/session:Facebook.id", $session_id);	# Check-ins.
-			log_msg("Retrieved check-in info from Facebook.");
-			
-			// Add JSON data to the session.
-			$_SESSION["checkin_info"] = $checkin_info["_objects"];
-			$_SESSION["got_checkin_info"] = true;
-		}
-		
-		if (!($_SESSION["got_status_update_info"])) {
-			$status_update_info = get_response("/get/Facebook/Status/session:Facebook.id", $session_id, true);	# Status updates.
-			log_msg("Sent async request for status updates.");
-			
-			// Add JSON data to the session.
-			$_SESSION["status_update_info"] = $status_update_info["_objects"];
-			$_SESSION["got_status_update_info"] = true;
-		}
-		
-		if (!($_SESSION["got_photo_album_info"])) {
-			$photo_album_info = get_response("/get/Facebook/Album/session:Facebook.id", $session_id, true);	# Photo album.
-			log_msg("Sent async request for photo albums.");
-				
-			// Add JSON data to the session.
-			$_SESSION["photo_album_info"] = $photo_album_info["_objects"];
-			$_SESSION["got_photo_album_info"] = true;
-		}
-		
-		if (!($_SESSION["got_photo_info"])) {
-			$photo_info = get_response("/get/Facebook/Photo/session:Facebook.id", $session_id, true);	# Photos of.
-			log_msg("Sent async request for photos.");
-		
-			// Add JSON data to the session.
-			$_SESSION["photo_info"] = $photo_info["_objects"];
-			$_SESSION["got_photo_info"] = true;
-		}
-	}
-	
-	function load_profile_info($session_id) {
-		if (!($_SESSION["got_profile_info"])) {
-			$profile_info = get_response("/get/Facebook/User/session:Facebook.id", $session_id);
-			log_msg("Retrieved profile info from Facebook");
-				
-			// Add JSON data to the session.
-			$_SESSION["profile_info"] = $profile_info;
-			$_SESSION["got_profile_info"] = true;
-		}
-	}
-	
-	
-	function check_data_availability($data_type_str, $session_id) {
-		// Globals.
-		$response = get_response("/get/Facebook/" . $data_type_str . "/session:Facebook.id", $session_id);
-		var_dump($response);
+	function load_additional_data($session_id) {
+		// Send async requests to PRISONER for the rest of the data.
+		$checkin_info = get_response("/get/Facebook/Checkin/session:Facebook.id", $session_id, true);	# Check-ins.
+		log_msg("Sent async request for check-ins.");
+		$status_update_info = get_response("/get/Facebook/Status/session:Facebook.id", $session_id, true);	# Status updates.
+		log_msg("Sent async request for status updates.");
+		$photo_album_info = get_response("/get/Facebook/Album/session:Facebook.id", $session_id, true);	# Photo album.
+		log_msg("Sent async request for photo albums.");
+		$photo_info = get_response("/get/Facebook/Photo/session:Facebook.id", $session_id, true);	# Photos of.
+		log_msg("Sent async request for photos.");
 	}
 	
 	
 	/**
-	 * Calculates the number of items from each category of information that should be displayed to the user.
-	 * Uses the guideline number for each type as defined in prisoner.constants.php but also adjusts if necessary. (Eg: Not enough check-ins)
-	 * If there is not enough information on this profile, the function returns false.
-	 * @return An array containing the amount of questions that should be asked for each type of data in the following order -
-	 * 1. Profile Info, 2. Friends Info, 3. Likes Info, 4. Check-in Info, 5. Status Update Info.
-	 * If there are not enough pieces of information on the participant's Facebook, FALSE is returned.
+	 * Loads the initial data that is required from Facebook.
+	 * For the experiment to begin, we need to load profile data, friend data and likes / interests data.
+	 * This is so we have enough questions to ask whilst larger data objects are being retrieved from PRISONER
+	 * such as status updates and photos.
+	 * This function is aware of the question_info object in the session and loads data to the correct place.
+	 * @param int $session_id
 	 */
-	function calculate_num_info_types() {
+	function load_init_data($session_id) {
+		$question_info = &$_SESSION["question_info"];
+		
+		// Load profile / personal info if necessary.
+		if (!$question_info[TYPE_PROFILE]->loaded_data) {
+			$profile_data = get_response("/get/Facebook/User/session:Facebook.id", $session_id);
+			$question_info[TYPE_PROFILE]->data = $profile_data;
+			$question_info[TYPE_PROFILE]->loaded_data = true;
+			log_msg("Retrieved profile / personal info from Facebook.");
+		}
+		
+		else {
+			log_msg("Profile / personal info already exists. Ignoring.");
+		}
+		
+		// Load friend data if necessary.
+		if (!$question_info[TYPE_FRIEND]->loaded_data) {
+			$friend_data = get_response("/get/Facebook/Friends/session:Facebook.id", $session_id);
+			$question_info[TYPE_FRIEND]->data = $friend_data["_objects"];
+			$question_info[TYPE_FRIEND]->loaded_data = true;
+			log_msg("Retrieved friend info from Facebook.");
+		}
+		
+		else {
+			log_msg("Friend info already exists. Ignoring.");
+		}
+		
+		// Load likes / interests info if necessary.
+		if (!$question_info[TYPE_LIKE]->loaded_data) {
+			$music_data = get_response("/get/Facebook/Music/session:Facebook.id", $session_id);
+			$movie_data = get_response("/get/Facebook/Movie/session:Facebook.id", $session_id);
+			$book_data = get_response("/get/Facebook/Book/session:Facebook.id", $session_id);
+			
+			$music_array = $music_data["_objects"];
+			$movie_array = $movie_data["_objects"];
+			$book_array = $book_data["_objects"];
+			
+			$likes_array = array();
+			$likes_array = array_merge($music_array, $movie_array, $book_array);
+			
+			$question_info[TYPE_LIKE]->data = $likes_array;
+			$question_info[TYPE_LIKE]->loaded_data = true;
+			log_msg("Retrieved likes / interests info from Facebook.");
+		}
+		
+		else {
+			log_msg("Likes / interests info already exists. Ignoring.");
+		}
+	}
+	
+	
+	function get_questions($question_type) {
 		// Globals.
 		global $PROFILE_INFO_KEYS;
 		
-		// If we haven't already counted the question types...
-		if (!$_SESSION["counted_question_types"]) {
-			// Create objects to hold info about question numbers.
-			$profile_info_obj = new InfoType("Profile", TYPE_PROFILE);
-			$friends_info_obj = new InfoType("Friends", TYPE_FRIEND);
-			$likes_info_obj = new InfoType("Likes", TYPE_LIKE);
-			$checkins_info_obj = new InfoType("Check-ins", TYPE_CHECKIN);
-			$statuses_info_obj = new InfoType("Statuses", TYPE_STATUS);
-			$albums_info_obj = new InfoType("Albums", TYPE_ALBUM);
-			$photos_info_obj = new InfoType("Photos", TYPE_PHOTO);
-			
-			// Retrieve the guideline amounts for each item.
-			$num_questions = NUM_QUESIONS;
-			$profile_info_obj->num_want = NUM_PROFILE_QUESIONS;
-			$friends_info_obj->num_want = NUM_FRIENDS_QUESIONS;
-			$likes_info_obj->num_want = NUM_LIKES_QUESIONS;
-			$checkins_info_obj->num_want = NUM_CHECKIN_QUESIONS;
-			$statuses_info_obj->num_want = NUM_STATUS_QUESIONS;
-			$albums_info_obj->num_want = NUM_PHOTO_ALBUM_QUESIONS;
-			$photos_info_obj->num_want = NUM_PHOTO_QUESIONS;
-			log_msg("Guideline numbers obtained. (Profile: " . $profile_info_obj->num_want . ", Friends: " . $friends_info_obj->num_want .
-			", Likes: " . $likes_info_obj->num_want .  ", Check-ins " . $checkins_info_obj->num_want . ", Statuses: " . $statuses_info_obj->num_want .
-			", Albums: " . $albums_info_obj->num_want . ", Photos: " . $photos_info_obj->num_want . ")");
-			
-			// How many of each info type do we have?
-			$num_infos = 0;
-			$num_need_extra = 0;
-			
-			// How much profile info do we have?
-			foreach ($PROFILE_INFO_KEYS as $key) {
-				if (!empty($_SESSION["profile_info"][$key])) {
-					// Special case for education / work.
-					if (($key == "_education") || ($key == "_work")) {
-						if (assert_has_objects($_SESSION["profile_info"][$key])) {
-							$profile_info_obj->num_have += 1;
-						}
-					}
-			
-					// Special case for hometown / location / signigicant other.
-					else if (($key == "_hometown") || ($key == "_location") || ($key == "_significantOther")) {
-						if (assert_has_name($_SESSION["profile_info"][$key])) {
-							$profile_info_obj->num_have += 1;
-						}
-					}
-			
-					// General case.
-					else {
-						$profile_info_obj->num_have += 1;
+		log_msg(" - Generating questions.");
+		$question_info_obj = &$_SESSION["question_info"][$question_type];
+		$question_info_obj->generated_questions = true;
+		$questions = array();
+		$num_want = &$question_info_obj->num_want;
+		$data_items = &$question_info_obj->data;
+		$data_keys = NULL;
+		
+		if ($question_type != TYPE_PROFILE) {
+			$data_keys = array_rand($data_items, $num_want);
+			log_msg(" - Generated " . count($data_keys) . " random data keys to grab.");
+		}
+		
+		switch ($question_type) {
+			case TYPE_PROFILE:
+				// If we haven't already got these, get the required data items.
+				if (empty($_SESSION["got_required_profile_data"])) {
+					$questions[] = get_profile_question($data_items, "_gender");	# Required.
+					$num_want -= 1;
+					unset($PROFILE_INFO_KEYS[array_search("_gender", $PROFILE_INFO_KEYS)]);
+					$questions[] = get_profile_question($data_items, "_updatedTime");	# Required.
+					$num_want -= 1;
+					unset($PROFILE_INFO_KEYS[array_search("_updatedTime", $PROFILE_INFO_KEYS)]);
+					$questions[] = get_profile_question($data_items, "_image");	# Required.
+					$num_want -= 1;
+					unset($PROFILE_INFO_KEYS[array_search("_image", $PROFILE_INFO_KEYS)]);
+					$questions[] = get_profile_question($data_items, "_hometown");	# Required.
+					$num_want -= 1;
+					unset($PROFILE_INFO_KEYS[array_search("_hometown", $PROFILE_INFO_KEYS)]);
+					$questions[] = get_profile_question($data_items, "_education");	# Required.
+					$num_want -= 1;
+					unset($PROFILE_INFO_KEYS[array_search("_education", $PROFILE_INFO_KEYS)]);
+					$questions[] = get_profile_question($data_items, "_work");	# Required.
+					$num_want -= 1;
+					unset($PROFILE_INFO_KEYS[array_search("_work", $PROFILE_INFO_KEYS)]);
+					
+					$_SESSION["got_required_profile_data"] = true;
+				}
+				
+				// Now we've got the required data, select the keys we'll ask questions for.
+				$data_keys = array_rand($PROFILE_INFO_KEYS, $num_want);
+				
+				// Multiple data keys were returned.
+				if (is_array($data_keys)) {
+					foreach ($data_keys as $key) {
+						$key = $PROFILE_INFO_KEYS[$key];
+						log_msg("- Profile info: Getting question for key " . $key);
+						$questions[] = get_profile_question($data_items, $key);
+						$num_want -= 1;
 					}
 				}
-			}
-			
-			log_msg("Participant has " . $profile_info_obj->num_have . " pieces of profile info.");
-			
-			// How much friend info do we have?
-			$friends_info_obj->num_have = count($_SESSION["friends_list"]);
-			log_msg("Participant has " . $friends_info_obj->num_have . " pieces of friend info.");
-			
-			// How much likes / interests  info do we have?
-			$likes_info_obj->num_have = count($_SESSION["likes_info"]);
-			log_msg("Participant has " . $likes_info_obj->num_have . " pieces of likes and interests info.");
-			
-			// How much check-in info do we have?
-			$checkins_info_obj->num_have = count($_SESSION["checkin_info"]);
-			log_msg("Participant has " . $checkins_info_obj->num_have . " pieces of check-in info.");
-			
-			// How much status update info do we have?
-			$statuses_info_obj->num_have = count($_SESSION["status_update_info"]);
-			log_msg("Participant has " . $statuses_info_obj->num_have . " status updates available.");
-			
-			// How many photo albums do we have?
-			$albums_info_obj->num_have = count($_SESSION["photo_album_info"]);
-			log_msg("Participant has " . $albums_info_obj->num_have . " photo albums available.");
-			
-			// How many photos do we have?
-			$photos_info_obj->num_have = count($_SESSION["photo_info"]);
-			log_msg("Participant has " . $photos_info_obj->num_have . " photos available.");
-			
-			// How much info do we have in total?
-			$num_infos = $profile_info_obj->num_have + $friends_info_obj->num_have + $likes_info_obj->num_have + $checkins_info_obj->num_have
-			+ $statuses_info_obj->num_have + $albums_info_obj->num_have;
-			log_msg("Total pieces of info available: " . $num_infos);
-			
-			// We don't have enough info for the study.
-			if ($num_infos < $num_questions) {
-				log_msg("Insufficient info available to complete study. (Have " . $num_infos . ", need " . $num_questions . ")");
-				return false;
-			}
-			
-			// Otherwise, check we have enough of each type.
-			else {
-				// Calculate total amount of compensation required.
-				$profile_info_obj = get_extra_needed($profile_info_obj);
-				$friends_info_obj = get_extra_needed($friends_info_obj);
-				$likes_info_obj = get_extra_needed($likes_info_obj);
-				$checkins_info_obj = get_extra_needed($checkins_info_obj);
-				$statuses_info_obj = get_extra_needed($statuses_info_obj);
-				$albums_info_obj = get_extra_needed($albums_info_obj);
-				$photos_info_obj = get_extra_needed($photos_info_obj);
-					
-				// Add our info objects into an array we can iterate over.
-				$info_array = array();
-				$info_array[] = $profile_info_obj;
-				$info_array[] = $friends_info_obj;
-				$info_array[] = $likes_info_obj;
-				$info_array[] = $checkins_info_obj;
-				$info_array[] = $statuses_info_obj;
-				$info_array[] = $albums_info_obj;
-				$info_array[] = $photos_info_obj;
-					
-				// Calculate amount of type compensation needed.
-				foreach ($info_array as $info_type) {
-					if ($info_type->mismatch > 0) {
-						$num_need_extra += $info_type->mismatch;
-					}
+				
+				// A single key was returned.
+				else {
+					$key = $PROFILE_INFO_KEYS[$data_keys];
+					log_msg("- Profile info: Getting question for key " . $key);
+					$questions[] = get_profile_question($data_items, $key);
+					$num_want -= 1;
 				}
-					
-				log_msg("Need to compensate for " . $num_need_extra . " pieces of info.");
-					
-				// We need to compensate for a lack of one or more types of info.
-				if ($num_need_extra > 0) {
-					$num_category_types = count($info_array);
-					$j = 0;
+				
+				break;
 			
-					for ($i = 0; $i < $num_need_extra; $i ++) {
-						// Hit limit of category types, reset index.
-						if ($j == $num_category_types) {
-							$j = 0;
-						}
+			case TYPE_FRIEND:
+				if (is_array($data_keys)) {
+					foreach ($data_keys as $key) {
+						// Get required info.
+						$friend_name = $data_items[$key]["_displayName"];
 							
-						// If this info type has spare capacity, use it.
-						if ($info_array[$j]->num_spare > 0) {
-							$info_array[$j]->num_want += 1;
-							$info_array[$j]->num_spare -= 1;
-							log_msg("- Assigning extra from " . $info_array[$j]->name . ". (Will ask: " . $info_array[$j]->num_want .
-									", New spare capacity: " . $info_array[$j]->num_spare . ")");
-						}
+						// Create question object and add it to our list.
+						$this_question = new Question(TYPE_FRIEND, $friend_name);
+						$questions[] = $this_question;
+						$num_want -= 1;
+					}
+				}
+				
+				else {
+					// Get required info.
+					$friend_name = $data_items[$data_keys]["_displayName"];
 						
-						else {
-							$i -= 1;
-						}
-							
-						$j ++;
+					// Create question object and add it to our list.
+					$this_question = new Question(TYPE_FRIEND, $friend_name);
+					$questions[] = $this_question;
+					$num_want -= 1;
+				}
+				
+				break;
+				
+			case TYPE_LIKE:
+				if (is_array($data_keys)) {
+					foreach ($data_keys as $key) {
+						// Get required info.
+						$like_name = $data_items[$key]["_displayName"];
+					
+						// Create question object and add it to our list.
+						$this_question = new Question(TYPE_LIKE, $like_name);
+						$questions[] = $this_question;
+						$num_want -= 1;
 					}
 				}
+				
+				else {
+					// Get required info.
+					$like_name = $data_items[$data_keys]["_displayName"];
+						
+					// Create question object and add it to our list.
+					$this_question = new Question(TYPE_LIKE, $like_name);
+					$questions[] = $this_question;
+					$num_want -= 1;
+				}
+				
+				break;
 					
-				$_SESSION["counted_question_types"] = true;
-				return $info_array;
+			case TYPE_CHECKIN:
+				if (is_array($data_keys)) {
+					foreach ($data_keys as $key) {
+						// Get required info.
+						$place_name = $data_items[$key]["_location"]["_displayName"];
+						$time = $data_items[$key]["_published"];
+						$timestamp = parse_prisoner_time($time);
+							
+						// Create question object and add it to our list.
+						$this_question = new Question(TYPE_CHECKIN, $place_name);
+						$this_question->timestamp = $timestamp;
+						$questions[] = $this_question;
+						$num_want -= 1;
+					}
+				}
+				
+				else {
+					// Get required info.
+					$place_name = $data_items[$data_keys]["_location"]["_displayName"];
+					$time = $data_items[$data_keys]["_published"];
+					$timestamp = parse_prisoner_time($time);
+						
+					// Create question object and add it to our list.
+					$this_question = new Question(TYPE_CHECKIN, $place_name);
+					$this_question->timestamp = $timestamp;
+					$questions[] = $this_question;
+					$num_want -= 1;
+				}
+				
+				break;
+						
+			case TYPE_STATUS:
+				if (is_array($data_keys)) {
+					foreach ($data_keys as $key) {
+						// Get required info.
+						$update_text = $data_items[$key]["_content"];
+						$privacy = $data_items[$key]["_privacy"];
+						$time = $data_items[$key]["_published"];
+						$timestamp = parse_prisoner_time($time);
+					
+						// Create question object and add it to our list.
+						$this_question = new Question(TYPE_STATUS, $update_text);
+						$this_question->timestamp = $timestamp;
+						$this_question->privacy_of_data = strtoupper($privacy);
+						$questions[] = $this_question;
+						$num_want -= 1;
+					}
+				}
+				
+				else {
+					// Get required info.
+					$update_text = $data_items[$data_keys]["_content"];
+					$privacy = $data_items[$data_keys]["_privacy"];
+					$time = $data_items[$data_keys]["_published"];
+					$timestamp = parse_prisoner_time($time);
+						
+					// Create question object and add it to our list.
+					$this_question = new Question(TYPE_STATUS, $update_text);
+					$this_question->timestamp = $timestamp;
+					$this_question->privacy_of_data = strtoupper($privacy);
+					$questions[] = $this_question;
+					$num_want -= 1;
+				}
+				
+				break;
+							
+			case TYPE_ALBUM:
+				if (is_array($data_keys)) {
+					foreach ($data_keys as $key) {
+						// Get required info.
+						$album_name = $data_items[$key]["_displayName"];
+						$privacy = $data_items[$key]["_privacy"];
+						$time = $data_items[$key]["_published"];
+						$timestamp = parse_prisoner_time($time);
+						$extra_info = array();
+						$extra_info["num_photos"] = $data_items[$key]["_count"];
+							
+						// Create question object and add it to our list.
+						$this_question = new Question(TYPE_ALBUM, $album_name);
+						$this_question->timestamp = $timestamp;
+						$this_question->privacy_of_data = strtoupper($privacy);
+						$this_question->additional_info = $extra_info;
+						$questions[] = $this_question;
+						$num_want -= 1;
+					}
+				}
+				
+				else {
+					// Get required info.
+					$album_name = $data_items[$data_keys]["_displayName"];
+					$privacy = $data_items[$data_keys]["_privacy"];
+					$time = $data_items[$data_keys]["_published"];
+					$timestamp = parse_prisoner_time($time);
+					$extra_info = array();
+					$extra_info["num_photos"] = $data_items[$key]["_count"];
+						
+					// Create question object and add it to our list.
+					$this_question = new Question(TYPE_ALBUM, $album_name);
+					$this_question->timestamp = $timestamp;
+					$this_question->privacy_of_data = strtoupper($privacy);
+					$this_question->additional_info = $extra_info;
+					$questions[] = $this_question;
+					$num_want -= 1;
+				}
+				
+				break;
+				
+			case TYPE_PHOTO:
+				if (is_array($data_keys)) {
+					foreach ($data_keys as $key) {
+						// Get required info.
+						$photo_name = $data_items[$key]["_displayName"];
+						$photo = $data_items[$key]["_image"]["_fullImage"];
+						$time = $data_items[$key]["_published"];
+						$timestamp = parse_prisoner_time($time);
+					
+						// Create question object and add it to our list.
+						$this_question = new Question(TYPE_PHOTO, $photo_name);
+						$this_question->timestamp = $timestamp;
+						$this_question->image = $photo;
+						$questions[] = $this_question;
+						$num_want -= 1;
+					}
+				}
+				
+				else {
+					// Get required info.
+					$photo_name = $data_items[$data_keys]["_displayName"];
+					$photo = $data_items[$data_keys]["_image"]["_fullImage"];
+					$time = $data_items[$data_keys]["_published"];
+					$timestamp = parse_prisoner_time($time);
+						
+					// Create question object and add it to our list.
+					$this_question = new Question(TYPE_PHOTO, $photo_name);
+					$this_question->timestamp = $timestamp;
+					$this_question->image = $photo;
+					$questions[] = $this_question;
+					$num_want -= 1;
+				}
+				
+				break;
+		}
+		
+		// General case clean-up.
+		if ($question_type != TYPE_PROFILE) {
+			foreach ($data_keys as $key) {
+				unset($data_items[$key]);
 			}
 		}
 		
-		// If we've already done this, just return true.
+		log_msg(" - Returned " . count($questions) . " questions.");
+		$_SESSION["question_info"][$question_type] = $question_info_obj;
+		return $questions;
+	}
+	
+	
+	/**
+	 * Calculates the data available for the supplied type and returns the amount of compensation that is required.
+	 * If the number of pieces of data we want is greater than the number we have, this means that compensation is
+	 * needed.
+	 * @param int $question_type
+	 * @return int The amount of compensation that is required. (0 if we have more pieces of data than we need)
+	 */
+	function calculate_available_data($question_type) {
+		// Globals.
+		global $PROFILE_INFO_KEYS;
+		
+		$question_info_obj = &$_SESSION["question_info"][$question_type];
+		log_msg("Calculating available data for " . $question_info_obj->friendly_name);
+		
+		// Special case for profile info.
+		if ($question_type == TYPE_PROFILE) {
+			$question_info_obj->num_have = count($PROFILE_INFO_KEYS);
+		}
+		
+		// General case.
 		else {
-			return true;
+			$question_info_obj->num_have = count($question_info_obj->data);
+		}
+		
+		// Calculate difference.
+		$num_want = $question_info_obj->num_want;
+		$num_have = $question_info_obj->num_have;
+		$diff = $num_have - $num_want;
+		$question_info_obj->num_spare = $diff;
+		log_msg(" - Want: " . $num_want . ", Have: " . $num_have . ", Difference: " . $diff);
+		
+		// Return the amount of compensation required.
+		if ($diff < 0) {
+			$question_info_obj->num_want = $num_have;
+			return abs($diff);
+		}
+		
+		// We have plenty of data.
+		else {
+			return 0;
+		}
+	}
+	
+	
+	/**
+	 * Calculates the total number of data items available on the participant's profile.
+	 * @return number The total number of data items available.
+	 */
+	function calculate_total_data() {
+		$total_data_items = 0;
+		
+		foreach ($_SESSION["question_info"] as &$question_info_obj) {
+			$total_data_items += $question_info_obj->num_have;
+		}
+		
+		return $total_data_items;
+	}
+	
+	
+	function get_question_meta_data($question_type) {
+		$questions = $_SESSION["questions"];
+		$num_of_type = 0;
+		$shares = 0;
+		
+		// Loop through each question.
+		foreach ($questions as $question) {
+			if ($question->type == $question_type) {
+				$num_of_type ++;
+				
+				if ($question->response == true) {
+					$shares ++;
+				}
+			}
+		}
+		
+		$percentage_shares = ($shares / $num_of_type) * 100;
+		$percentage_shares = round($percentage_shares, 2);
+		
+		// Return array of results.
+		$to_return = array();
+		$to_return[] = $num_of_type;
+		$to_return[] = $shares;
+		$to_return[] = $percentage_shares;
+		return $to_return;
+	}
+	
+	
+	function commit_participant_results() {
+		// Globals.
+		global $db;
+		
+		// Get required info from session.
+		$participant_id = $_SESSION["participant_id"];
+		$participant_group = $_SESSION["group"];
+		$prisoner_participant_id = $_SESSION["prisoner_participant_id"];
+		$prisoner_session_id = $_SESSION["prisoner_session_id"];
+		$questions = $_SESSION["questions"];
+		log_msg("Commiting participant results.");
+		
+		// Set finished flag in database.
+		$is_finished = true;
+		$query = "UPDATE participant SET is_finished = '$is_finished' WHERE id = '$participant_id'";
+		$result = mysqli_query($db, $query);
+			
+		if (!$result) {
+			log_msg("Error - Failed to set is_finished flag: " . mysqli_error($db));
+		}
+		
+		else {
+			log_msg("Successfully set is_finished flag.");
+		}
+		
+		// Remove any stored session data.
+		$session_data = NULL;
+		$query = "UPDATE participant SET session_data = '$session_data' WHERE id = '$participant_id'";
+		$result = mysqli_query($db, $query);
+			
+		if (!$result) {
+			log_msg("Error - Failed to purge session data: " . mysqli_error($db));
+		}
+		
+		else {
+			log_msg("Successfully purged session data.");
+		}
+		
+		// Reset group assignment.
+		if ($participant_group == GROUP_1) {
+			$fh = fopen(GROUP_FILE_LOCATION, "w");
+ 			fwrite($fh, "1");
+ 			fclose($fh);
+		}
+		
+		else {
+			$deleted_ok = unlink(GROUP_FILE_LOCATION);
+		}
+		
+		// Commit results to PRISONER database.
+		$init_url = PRISONER_URL;
+		$post_url = $init_url . "/post" . "?PRISession=" . $prisoner_session_id;
+		
+		foreach ($questions as $question) {
+			$type = $question->type;
+			$privacy = $question->privacy_of_data;
+			$response = $question->response;
+			
+			if (empty($privacy)) {
+				$privacy = "N/A";
+			}
+			
+			// Build response data.
+			$question_response["participant_id"] = $prisoner_participant_id;
+			$question_response["group_id"] = $participant_group;
+			$question_response["info_type"] = $type;
+			$question_response["privacy"] = $privacy;
+			$question_response["response"] = $response;
+			
+			$post_data["schema"] = "response";
+			$post_data["response"] = json_encode($question_response);
+			
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($ch, CURLOPT_URL, $post_url);
+			$post_response = curl_exec($ch);
+			curl_close($ch);
+			
+			log_msg("Commit question response. (Participant: " . $prisoner_participant_id . ", Group: " . $participant_group . 
+			", Type: " . $type . ", Privacy: " . $privacy . ", Response: " . $response . ")");
+		}
+	}
+	
+	
+	/**
+	 * Checks whether or not the requested data is available from PRISONER yet.
+	 * @param unknown_type $data_type_str
+	 * @param unknown_type $session_id
+	 */
+	function check_data_availability($data_type_str, $session_id) {
+		$response = get_response("/get/Facebook/" . $data_type_str . "/session:Facebook.id", $session_id, false, true);
+		
+		// Is there a JSON object in the response?
+		if (strpos($response, "py/object") === false) {
+			return false;
+		} 
+		
+		else {
+			return $response;
 		}
 	}
 	
@@ -312,190 +577,6 @@
 		else {
 			return false;
 		}
-	}
-	
-	
-	/**
-	 * Calculates the compensation value we'll need to make up later. (If any)
-	 * If we have more info than we have questions for a given type, compensation is not required
-	 * and so 0 is returned.
-	 * @param InfoType $info_obj The info type object to calculate the compensation for.
-	 * @return int The amount we'll need to compensate for this piece of info.
-	 */
-	function get_extra_needed($info_obj) {
-		$difference = $info_obj->num_have - $info_obj->num_want;
-		$info_obj->num_spare = $difference;
-		log_msg("Have " . $info_obj->num_have . ", need " . $info_obj->num_want . ". Difference: " . $difference);
-		
-		// This item has a mismatch and will require compensating.
-		if ($difference < 0) {
-			$info_obj->num_want = $info_obj->num_have;
-			$info_obj->mismatch = abs($difference);
-		}
-		
-		return $info_obj;
-	}
-	
-	
-	/**
-	 * Generates the questions to ask the participant based on the supplied array that defines the number of
-	 * questions per type we need to ask. Returns an array of Question() objects in a random order.
-	 * @param array $num_questions_per_type An array of InfoType() objects.
-	 * @return An array of Question() objects.
-	 */
-	function generate_questions($question_info_array) {
-		// Globals.
-		global $PROFILE_INFO_KEYS;
-		
-		// How many questions of each type do we need?
-		$num_profile_questions = get_num_questions_for(TYPE_PROFILE, $question_info_array);
-		$num_friends_questions = get_num_questions_for(TYPE_FRIEND, $question_info_array);
-		$num_like_questions = get_num_questions_for(TYPE_LIKE, $question_info_array);
-		$num_checkin_questions = get_num_questions_for(TYPE_CHECKIN, $question_info_array);
-		$num_status_questions = get_num_questions_for(TYPE_STATUS, $question_info_array);
-		$num_album_questions = get_num_questions_for(TYPE_ALBUM, $question_info_array);
-		$num_photo_questions = get_num_questions_for(TYPE_PHOTO, $question_info_array);
-		
-		// Get Facebook info from session.
-		$profile_info = $_SESSION["profile_info"];
-		$friends = $_SESSION["friends_list"];
-		$likes = $_SESSION["likes_info"];
-		$checkins = $_SESSION["checkin_info"];
-		$status_updates = $_SESSION["status_update_info"];
-		$photo_albums = $_SESSION["photo_album_info"];
-		$photos = $_SESSION["photo_info"];
-		
-		// What are we going to show to the user? (Profile info is a special case)
-		$friend_questions = array_rand($friends, $num_friends_questions);
-		$like_questions = array_rand($likes, $num_like_questions);
-		$checkin_questions = array_rand($checkins, $num_checkin_questions);
-		$status_questions = array_rand($status_updates, $num_status_questions);
-		$photo_album_questions = array_rand($photo_albums, $num_album_questions);
-		$photo_questions = array_rand($photos, $num_photo_questions);
-				
-		// Array to hold our questions.
-		log_msg("Generating questions to display.");
-		$questions = array();
-		
-		// Questions about the participant's personal profile info.
-		$profile_info_keys = $PROFILE_INFO_KEYS;
-		$questions[] = get_profile_question($profile_info, "_gender");	# Required.
-		$num_profile_questions -= 1;
-		unset($profile_info_keys[array_search("_gender", $profile_info_keys)]);
-		$questions[] = get_profile_question($profile_info, "_updatedTime");	# Required.
-		$num_profile_questions -= 1;
-		unset($profile_info_keys[array_search("_updatedTime", $profile_info_keys)]);
-		$questions[] = get_profile_question($profile_info, "_image");	# Required.
-		$num_profile_questions -= 1;
-		unset($profile_info_keys[array_search("_image", $profile_info_keys)]);
-		$questions[] = get_profile_question($profile_info, "_hometown");	# Required.
-		$num_profile_questions -= 1;
-		unset($profile_info_keys[array_search("_hometown", $profile_info_keys)]);
-		$questions[] = get_profile_question($profile_info, "_education");	# Required.
-		$num_profile_questions -= 1;
-		unset($profile_info_keys[array_search("_education", $profile_info_keys)]);
-		$questions[] = get_profile_question($profile_info, "_work");	# Required.
-		$num_profile_questions -= 1;
-		unset($profile_info_keys[array_search("_work", $profile_info_keys)]);
-		
-		// Now we've got the required info, select the keys we'll ask questions for.
-		$profile_questions = array_rand($profile_info_keys, $num_profile_questions);
-		
-		foreach ($profile_questions as $key) {
-			$key = $profile_info_keys[$key];
-			log_msg("- Profile info: Getting question for key " . $key);
-			$questions[] = get_profile_question($profile_info, $key);
-		}
-		
-		// Questions about the participant's friends.
-		foreach ($friend_questions as $key) {
-			// Get info about this friend.
-			$friend_name = $friends[$key]["_displayName"];
-			$friend_pic = $friends[$key]["_image"]["_fullImage"];
-			
-			// Create question object and add it to our list.
-			$this_question = new Question(TYPE_FRIEND, $friend_name);
-			$this_question->image = $friend_pic;
-			$questions[] = $this_question;
-		}
-		
-		// Questions about the pariticpant's interests.
-		foreach ($like_questions as $key) {
-			// Get info about this interest.
-			$like_name = $likes[$key]["_displayName"];
-			
-			// Create question object and add it to our list.
-			$this_question = new Question(TYPE_LIKE, $like_name);
-			$questions[] = $this_question;
-		}
-		
-		// Questions about places the participant has been.
-		foreach ($checkin_questions as $key) {
-			// Get info about this check-in.
-			$place_name = $checkins[$key]["_location"]["_displayName"];
-			$time = $checkins[$key]["_published"];
-			$timestamp = parse_prisoner_time($time);
-			
-			// Create question object and add it to our list.
-			$this_question = new Question(TYPE_CHECKIN, $place_name);
-			$this_question->timestamp = $timestamp;
-			$questions[] = $this_question;
-		}
-		
-		// Questions about the pariticpant's status updates.
-		foreach ($status_questions as $key) {
-			// Get info about the status update.
-			$update_text = $status_updates[$key]["_content"];
-			$privacy = $status_updates[$key]["_privacy"];
-			$time = $status_updates[$key]["_published"];
-			$timestamp = parse_prisoner_time($time);
-			
-			// Create question object and add it to our list.
-			$this_question = new Question(TYPE_STATUS, $update_text);
-			$this_question->timestamp = $timestamp;
-			$this_question->privacy_of_data = $privacy;
-			$questions[] = $this_question;
-		}
-		
-		// Questions about the participant's photo albums.
-		foreach ($photo_album_questions as $key) {
-			// Get info about the album.
-			$album_name = $photo_albums[$key]["_displayName"];
-			$privacy = $photo_albums[$key]["_privacy"];
-			$time = $photo_albums[$key]["_published"];
-			$timestamp = parse_prisoner_time($time);
-			$extra_info = array();
-			$extra_info["num_photos"] = $photo_albums[$key]["_count"];
-				
-			// Create question object and add it to our list.
-			$this_question = new Question(TYPE_ALBUM, $album_name);
-			$this_question->timestamp = $timestamp;
-			$this_question->privacy_of_data = $privacy;
-			$this_question->additional_info = $extra_info;
-			$questions[] = $this_question;
-		}
-		
-		// Questions about the pariticpant's photos.
-		foreach ($photo_questions as $key) {
-			// Get info about the album.
-			$photo_name = $photos[$key]["_displayName"];
-			$photo = $photos[$key]["_image"]["_fullImage"];
-			$time = $photos[$key]["_published"];
-			$timestamp = parse_prisoner_time($time);
-			$extra_info = array();
-			
-			// Create question object and add it to our list.
-			$this_question = new Question(TYPE_PHOTO, $photo_name);
-			$this_question->timestamp = $timestamp;
-			$this_question->image = $photo;
-			$this_question->additional_info = $extra_info;
-			$questions[] = $this_question;
-		}
-		
-		// Randomise array and return.
-		log_msg("- Generated " . count($questions) . " questions for the participant.");
-		shuffle($questions);
-		return $questions;
 	}
 	
 	
@@ -672,7 +753,7 @@
 				$profile_pic = $profile_info[$data_key]["_fullImage"];
 				$profile_pic = "<img alt='Profile Picture' src='" . $profile_pic . "' />";
 				$this_question = new Question(TYPE_PROFILE, $profile_pic);
-				$this_question->custom_question_text = "Your current profile picture can be seen on the right";
+				$this_question->custom_question_text = "Your current profile picture can be seen below";
 				return $this_question;
 				break;
 			
@@ -862,7 +943,16 @@
 			case TYPE_PROFILE:
 				$data_item = $question->text_data;
 				$question_text = $question->custom_question_text;
-				$markup .= "<p>" . $question_text . " <strong>" . $data_item . "</strong>.</p>";
+				
+				// Is this the user's profile pic?
+				if (strpos($data_item, "<img alt") !== false) {
+					$markup .= "<p>" . $question_text . ".</p>" . $data_item;
+				}
+				
+				// General case.
+				else {
+					$markup .= "<p>" . $question_text . " <strong>" . $data_item . "</strong>.</p>";
+				}
 				break;
 			
 			case TYPE_FRIEND:
@@ -895,20 +985,24 @@
 			
 			case TYPE_PHOTO:
 				$date = date("l j F Y", $question->timestamp);
-				$filename = rand() . ".jpg";
+				$filename = "tmp_images/" . rand() . ".jpg";
 				$image_address = $question->image;
 				$image_info = getimagesize($image_address);
 				$image_width = $image_info["width"];
 				$image_height = $image_info["height"];
 				$landscape = true;
+				$preferred_width = 700;
+				$preferred_height = 700;
 				
 				if ($image_height > $image_width) {
 					$landscape = false;
+					$preferred_width = 350;
+					$preferred_height = 500;
 				}
 				
 				$image_adjuster = new resize($image_address);
-				$image_adjuster->resizeImage(500, 500);
-				$image_adjuster->saveImage($filename, 100);
+				$image_adjuster->resizeImage($preferred_width, $preferred_height);
+				$image_adjuster->saveImage($filename, 60);
 				
 				$markup .= "<p>A photo you are tagged in can be seen below.</p>";
 				$markup .= "<img alt='Facebook Photo' src='" . $filename . "' />";

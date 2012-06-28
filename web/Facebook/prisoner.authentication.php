@@ -14,23 +14,44 @@
 	function start_prisoner_session() {
 		// URLs we need to authenticate.
 		$init_url = PRISONER_URL;
+		$register_url = $init_url . "/register";
 		$begin_url = $init_url . "/begin?callback=" . urlencode(CALLBACK_URL);
 		
-		// Initialise a cURL session.
-		$ch = curl_init();
+		// Generate a random name for this paticipant.
+		$participant_name = rand() . "_" . date("U");
 		
 		// Perform initial handshake.
 		$response_headers = get_headers($init_url, 1);
 		$session_id = $response_headers["PRISession"];
 		
-		// Get a new cURL session for the next stage.
+		// Register this participant.
 		$ch = curl_init();
-		$begin_url .= "&PRISession=" . $session_id;
+		$register_url .= "?PRISession=" . $session_id;
 		
 		// Set POST data for second stage of authentication.
 		$post_data["policy"] = PRIVACY_POLICY_URL;
 		$post_data["design"] = EXP_DESIGN_URL;
-		$post_data["participant"] = "1";
+		$post_data["name"] = $participant_name;
+		$post_data["schema"] = "participant";
+		
+		// Set cURL options.
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_URL, $register_url);
+		
+		// Perform second stage of authentication. (Will return the ID of the participant)
+		$prisoner_participant_id = curl_exec($ch);
+		curl_close($ch);
+		
+		// Get a new cURL session for the next stage. (Begin)
+		$ch = curl_init();
+		$begin_url .= "&PRISession=" . $session_id;
+		
+		// Set POST data for third stage of authentication.
+		$post_data["policy"] = PRIVACY_POLICY_URL;
+		$post_data["design"] = EXP_DESIGN_URL;
+		$post_data["participant"] = $prisoner_participant_id;
 		$post_data["providers"] = "Facebook";
 		
 		// Set cURL options.
@@ -39,14 +60,15 @@
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_URL, $begin_url);
 		
-		// Perform second stage of authentication. (Will return a URL for the user to go to)
-		$from_prisoner = curl_exec($ch);
+		// Perform third stage of authentication. (Will return a URL for the user to go to)
+		$url_to_visit = curl_exec($ch);
 		curl_close($ch);
 		
 		// Create and return response array.
 		$to_return = array();
 		$to_return[] = $session_id;
-		$to_return[] = $from_prisoner;
+		$to_return[] = $url_to_visit;
+		$to_return[] = $prisoner_participant_id;
 		log_msg("Created new PRISONER session. (ID: " . $to_return[0] . ")");
 		
 		return $to_return;

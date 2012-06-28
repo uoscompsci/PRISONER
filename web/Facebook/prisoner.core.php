@@ -10,7 +10,7 @@
 	 * @param string $cookie The PRISONER session cookie to supply the web service.
 	 * @return array An associative array containing PRISONER's response.
 	 */
-	function get_response($request, $session_id, $async = false) {		
+	function get_response($request, $session_id, $async = false, $is_ready = false) {		
 		// Initialise a cURL session and compose the URL to query.
 		$ch = curl_init();
 		$query_url = PRISONER_URL . $request . "?PRISession=" . $session_id;
@@ -19,7 +19,11 @@
 			$query_url .= "&async";
 		}
 		
-		log_msg("Executing query: " . $query_url);
+		if ($is_ready) {
+			$query_url .= "&isready";
+		}
+
+		log_msg("[ " . $query_url . " ]");
 		
 		// Set options.
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -67,8 +71,14 @@
 	 */
 	function log_msg($to_log) {
 		$date = date("d/m/Y H:i:s");
+		$session_id = $_SESSION["prisoner_session_id"];
+		
+		if (empty($session_id)) {
+			$session_id = "No session ID";
+		}
+		
 		$fh = fopen(LOG_FILE, "a");
-		fwrite($fh, $date . "\t" . $to_log . "\n");
+		fwrite($fh, "[" .$date . "]\t[" . $session_id . "]\t" . $to_log . "\n");
 		fclose($fh);
 	}
 	
@@ -123,15 +133,25 @@
 	}
 	
 	
-	function load_notice($message) {
-		$markup = "<div class='notice'><p><strong>Notice: </strong>" . $message . "</p></div>";
-		$_SESSION["notice"] = $markup;
+	function get_notice($message, $is_error) {
+		$notice_class = "notice_normal";
+		$icon_name = "icon_information";
+		$notice_alert = "Notice";
+		
+		$markup = "<div class='" . $notice_class . "'>" . "\n" .
+		"<img alt='Notice Icon' src='images/" . $icon_name . ".png' />" . "\n" .
+		"<p><strong>" . $notice_alert . ": </strong>" . $message . "</p>" . "\n" .
+		"</div>" . "\n";
+		
+		return $markup;
 	}
 	
+	function load_notice($msg) {
+		$_SESSION["notice"] = get_notice($msg, false);
+	}
 	
-	function get_notice() {
-		return $_SESSION["notice"];
-		$_SESSION["notice"] = "";
+	function display_notice() {
+		echo $_SESSION["notice"];
 	}
 	
 ?>

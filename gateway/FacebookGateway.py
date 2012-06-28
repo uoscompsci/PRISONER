@@ -100,7 +100,7 @@ class FacebookServiceGateway(ServiceGateway):
 		"""
 		
 		# Before doing this, could check that our state value matches the state returned by Facebook. (Later addition)
-		facebook_code = request.arguments['code'][0]
+		facebook_code = request.args['code']
 		#facebook_code = request # Uncomment me if testing with a known code.
 		
 		# Parameters for the token request URI.
@@ -327,7 +327,7 @@ class FacebookServiceGateway(ServiceGateway):
 				
 				# Get the user's profile picture.
 				img = SocialObjects.Image()
-				img.fullImage = self.graph_uri + "/me/picture?type=normal" + "&access_token=" + self.access_token
+				img.fullImage = self.graph_uri + "/me/picture?type=large" + "&access_token=" + self.access_token
 				user.image = img
 				
 				print "User() function returned successfully."
