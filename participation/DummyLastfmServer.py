@@ -21,7 +21,8 @@ import urlparse
 
 """ Dummy web-based Last.fm participation client """
 
-PRISONER_URI = "http://127.0.0.1:5000"
+#PRISONER_URI = "http://127.0.0.1:5000"
+PRISONER_URI = "http://prisoner.cs.st-andrews.ac.uk/prisoner"
 SELF_URI = "http://127.0.0.1:1457"
 
 
@@ -53,8 +54,8 @@ class LastFmExperimentClient(object):
 		# pass to be allowed to register
 		register_data = {"name": "Bob", "gender": "male",
 		"serviceGroup": "Lastfm", "schema":"participant",
-		"policy": "http://prisoner.cs.st-andrews.ac.uk/prisoner/demo/lastfm_privacy_policy_test.xml",
-		"design": "http://prisoner.cs.st-andrews.ac.uk/prisoner/demo/lastfm_exp_design_test.xml"}
+		"policy": "http://prisoner.cs.st-andrews.ac.uk/demo/lastfm_privacy_policy_test.xml",
+		"design": "http://prisoner.cs.st-andrews.ac.uk/demo/lastfm_exp_design_test.xml"}
 		reg_url = "%s/register?PRISession=%s" % (PRISONER_URI,
 		prisession)
 		reg_req = urllib2.Request(url_fix(reg_url),
@@ -67,8 +68,8 @@ class LastFmExperimentClient(object):
 		SELF_URI, prisession), prisession)
 		print request_url
 		
-		post_data = {"policy": "http://prisoner.cs.st-andrews.ac.uk/prisoner/demo/lastfm_privacy_policy_test.xml",
-		"design": "http://prisoner.cs.st-andrews.ac.uk/prisoner/demo/lastfm_exp_design_test.xml",
+		post_data = {"policy": "http://prisoner.cs.st-andrews.ac.uk/demo/lastfm_privacy_policy_test.xml",
+		"design": "http://prisoner.cs.st-andrews.ac.uk/demo/lastfm_exp_design_test.xml",
 		"participant": "2",
 		"providers": "Lastfm"
 		}
