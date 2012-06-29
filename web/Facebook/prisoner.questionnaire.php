@@ -6,10 +6,6 @@
 	include_once("prisoner.database.php");
 	include_once("prisoner.image.php");
 	
-	// Start a session on the server.
-	//ob_start();
-	//session_start();
-	
 	
 	/**
 	 * Loads the initial data that is required from Facebook.
@@ -648,7 +644,7 @@
 			
 			// Last name.
 			case "_lastName":
-				return get_profile_question_obj($profile_info, $data_key, "Your last name is");
+				return get_profile_question_obj($profile_info, $data_key, "Your date of birth is");
 				break;
 			
 			// Birthday.
@@ -664,7 +660,7 @@
 				// If birthday info exists, remember to format it correctly.
 				else {
 					$birthday_timestamp = parse_prisoner_time($this_question->text_data);
-					$birthday = date("d/m/Y", $birthday_timestamp);
+					$birthday = date("l j F Y", $birthday_timestamp);
 					$this_question->text_data = $birthday;
 				}
 				
@@ -771,7 +767,9 @@
 			// Last Facebook update.
 			case "_updatedTime":
 				$last_update = parse_prisoner_time($profile_info[$data_key]);
-				$last_update = date("d/m/Y @ H:i:s", $last_update);
+				$date = date("l j F Y", $last_update);
+				$time = date("H:i", $last_update);
+				$last_update = $date . "</strong> at <strong>" . $time;
 				$this_question = new Question(TYPE_PROFILE, $last_update);
 				$this_question->custom_question_text = "You last updated your Facebook profile (From Facebook itself, not via an app) on";
 				return $this_question;
@@ -966,7 +964,7 @@
 		
 		// Generate markup.
 		$markup = "<div class='statement'>";
-		$markup .= "<div class='statement_info'><p>Question #" . $question_number . ", Category: " . get_friendly_type($type) . "</p></div>" . "\n";
+		$markup .= "<div class='statement_info'><p>Question #" . $question_number . " / " . NUM_QUESTIONS . "</p></div>" . "\n";
 		
 		switch ($type) {
 			case TYPE_PROFILE:
@@ -995,7 +993,9 @@
 			
 			case TYPE_CHECKIN:
 				$date = date("l j F Y", $question->timestamp);
-				$markup .= "<p>You were tagged at <strong>" . $text_data . "</strong> on <strong>" . $date . "</strong>.</p>";
+				$time = date("H:i", $question->timestamp);
+				$markup .= "<p>You were tagged at <strong>" . $text_data . "</strong> on <strong>" . $date . "</strong> at <strong>" .
+				$time . "</strong>.</p>";
 				break;
 			
 			case TYPE_STATUS:
@@ -1007,9 +1007,10 @@
 			
 			case TYPE_ALBUM:
 				$date = date("l j F Y", $question->timestamp);
+				$time = date("H:i", $question->timestamp);
 				$num_photos = $question->additional_info["num_photos"];
-				$markup .= "<p>You added photos to an album called <strong>" . $text_data . "</strong> on <strong>" . $date . "</strong>. " .
-				"There are <strong>" . $num_photos . "</strong> photos in the album.</p>";
+				$markup .= "<p>You added photos to an album called <strong>" . $text_data . "</strong> on <strong>" . $date . "</strong> at " .
+				"<strong>" . $time . "</strong>. There are <strong>" . $num_photos . "</strong> photos in the album.</p>";
 				break;
 			
 			case TYPE_PHOTO:

@@ -1,11 +1,7 @@
 <?php
 
-	// Turn off all error reporting.
+	// Turn off error reporting.
 	//error_reporting(0);
-	
-	// Start a session on the server.
-	//ob_start();
-	//session_start();
 	
 	// User settings.
 	$user_settings = parse_ini_file("config.ini");
@@ -113,6 +109,4 @@
 	$STUDY_START_MESSAGE = "<p>Thank you for agreeing to take part in this study. To get started, please click the <strong>Begin</strong> " . "\n" .
 	"button below.</p>" . "\n";
 
-	// Flush output buffers.
-	//ob_end_flush();
 ?>
