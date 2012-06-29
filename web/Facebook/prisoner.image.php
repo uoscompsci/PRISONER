@@ -45,6 +45,7 @@
 			{
 				// *** Get extension
 				$extension = strtolower(strrchr($file, '.'));
+				$extension = ".jpg";
 
 				switch($extension)
 				{

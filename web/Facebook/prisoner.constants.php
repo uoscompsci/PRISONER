@@ -1,7 +1,7 @@
 <?php
 
 	// Turn off error reporting.
-	error_reporting(0);
+	//error_reporting(0);
 	
 	// User settings.
 	$user_settings = parse_ini_file("config.ini");

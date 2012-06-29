@@ -285,6 +285,7 @@
 						$album_name = $data_items[$key]["_displayName"];
 						$privacy = $data_items[$key]["_privacy"];
 						$time = $data_items[$key]["_published"];
+						$cover_photo = $data_items[$key]["_coverPhoto"]["_fullImage"];
 						$timestamp = parse_prisoner_time($time);
 						$extra_info = array();
 						$extra_info["num_photos"] = $data_items[$key]["_count"];
@@ -293,6 +294,7 @@
 						$this_question = new Question(TYPE_ALBUM, $album_name);
 						$this_question->timestamp = $timestamp;
 						$this_question->privacy_of_data = strtoupper($privacy);
+						$this_question->image = $cover_photo;
 						$this_question->additional_info = $extra_info;
 						$questions[] = $this_question;
 						$num_want -= 1;
@@ -304,7 +306,7 @@
 					$album_name = $data_items[$data_keys]["_displayName"];
 					$privacy = $data_items[$data_keys]["_privacy"];
 					$time = $data_items[$data_keys]["_published"];
-					$cover_photo = $data_items[$data_keys]["_coverPhoto"];
+					$cover_photo = $data_items[$data_keys]["_coverPhoto"]["_fullImage"];
 					$timestamp = parse_prisoner_time($time);
 					$extra_info = array();
 					$extra_info["num_photos"] = $data_items[$key]["_count"];
@@ -646,12 +648,12 @@
 			
 			// Last name.
 			case "_lastName":
-				return get_profile_question_obj($profile_info, $data_key, "Your date of birth is");
+				return get_profile_question_obj($profile_info, $data_key, "Your last name is");
 				break;
 			
 			// Birthday.
 			case "_birthday":
-				$this_question = get_profile_question_obj($profile_info, $data_key, "Your birthday is");
+				$this_question = get_profile_question_obj($profile_info, $data_key, "Your date of birth is");
 				
 				// No info.
 				if (!$this_question) {
@@ -1010,23 +1012,12 @@
 			case TYPE_ALBUM:
 				$date = date("l j F Y", $question->timestamp);
 				$time = date("H:i", $question->timestamp);
+				$filename = "tmp_images/" . date("U") . "_" . rand() . ".jpg";
 				$num_photos = $question->additional_info["num_photos"];
 				$image_address = $question->image;
-				$image_info = getimagesize($image_address);
-				$image_width = $image_info["width"];
-				$image_height = $image_info["height"];
-				$landscape = true;
-				$preferred_width = 700;
-				$preferred_height = 700;
-				
-				if ($image_height > $image_width) {
-					$landscape = false;
-					$preferred_width = 350;
-					$preferred_height = 500;
-				}
 				
 				$image_adjuster = new resize($image_address);
-				$image_adjuster->resizeImage($preferred_width, $preferred_height);
+				$image_adjuster->resizeImage(700, 700);
 				$image_adjuster->saveImage($filename, 75);
 				$markup .= "<p>You added photos to an album called <strong>" . $text_data . "</strong> on <strong>" . $date . "</strong> at " .
 				"<strong>" . $time . "</strong>. There are <strong>" . $num_photos . "</strong> photos in the album. The album's cover photo can " .
@@ -1036,7 +1027,7 @@
 			
 			case TYPE_PHOTO:
 				$date = date("l j F Y", $question->timestamp);
-				$filename = "tmp_images/" . rand() . ".jpg";
+				$filename = "tmp_images/" . date("U") . "_" . rand() . ".jpg";
 				$image_address = $question->image;
 				$image_info = getimagesize($image_address);
 				$image_width = $image_info["width"];
