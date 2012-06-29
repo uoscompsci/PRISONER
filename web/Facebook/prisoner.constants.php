@@ -1,13 +1,20 @@
 <?php
+
+	// Turn off all error reporting.
+	//error_reporting(0);
+	
+	// Start a session on the server.
+	//ob_start();
+	//session_start();
 	
 	// User settings.
 	$user_settings = parse_ini_file("config.ini");
 	
 	// Database config.
-	define("DATABASE_HOST", $user_settings["DATABASE_HOST"]);
-	define("DATABASE_USER", $user_settings["DATABASE_USER"]);
-	define("DATABASE_PASS", $user_settings["DATABASE_PASS"]);
-	define("DATABASE_NAME", $user_settings["DATABASE_NAME"]);
+	define("DATABASE_HOST", "localhost");
+	define("DATABASE_USER", "root");
+	define("DATABASE_PASS", "pvnets");
+	define("DATABASE_NAME", "prisoner");
 	define("MYSQLI_ERROR_DUPLICATE", $user_settings["MYSQLI_ERROR_DUPLICATE"]);
 	
 	// Validation and security.
@@ -16,9 +23,9 @@
 	
 	// PRISONER config.
 	define("PRISONER_URL", "http://prisoner.cs.st-andrews.ac.uk/prisoner");
-	define("CALLBACK_URL", "http://localhost/prisoner/research_questionnaire.php");
-	define("PRIVACY_POLICY_URL", "https://dl.dropbox.com/u/4741516/fb_privacy_policy_test.xml");
-	define("EXP_DESIGN_URL", "https://dl.dropbox.com/u/4741516/fb_exp_design_test.xml");
+	define("CALLBACK_URL", "http://prisoner.cs.st-andrews.ac.uk/sharing/research_questionnaire.php");
+	define("PRIVACY_POLICY_URL", "http://sm2269.host.cs.st-andrews.ac.uk/fb_privacy_policy_test.xml");
+	define("EXP_DESIGN_URL", "http://sm2269.host.cs.st-andrews.ac.uk/fb_exp_design_test.xml");
 	
 	// Study constants.
 	define("GROUP_1", 1);
@@ -104,6 +111,8 @@
 	"(Do not just close this tab)</p>" . "\n";
 	
 	$STUDY_START_MESSAGE = "<p>Thank you for agreeing to take part in this study. To get started, please click the <strong>Begin</strong> " . "\n" .
-	"button below.</p>" . "\n";	
-	
+	"button below.</p>" . "\n";
+
+	// Flush output buffers.
+	//ob_end_flush();
 ?>

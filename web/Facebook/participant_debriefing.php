@@ -1,7 +1,10 @@
-<!DOCTYPE HTML>
-
 <?php
-	
+
+// Start a session on the server.
+ob_start();
+include_once("prisoner.classes.php");
+session_start();
+
 	// Include any required components.
 	include_once("prisoner.authentication.php");
 	include_once("prisoner.classes.php");
@@ -9,9 +12,6 @@
 	include_once("prisoner.core.php");
 	include_once("prisoner.database.php");
 	include_once("prisoner.questionnaire.php");
-
-	// Start a session on the server.
-	session_start();
 	
 	// Session / cache control.
 	header("Cache-Control: max-age=" . CACHE_STAY_ALIVE);
@@ -20,8 +20,12 @@
 	$participant_group = $_SESSION["group"];
 	$study_title = $_SESSION["study_title"];
 	
+	// Flush output buffers.
+	ob_end_flush();
+	
 ?>
 
+<!DOCTYPE HTML>
 <html>
 	<head>
 		<?php include_once("prisoner.include.head.php"); ?>

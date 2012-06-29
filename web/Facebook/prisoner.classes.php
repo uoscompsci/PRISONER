@@ -1,10 +1,5 @@
 <?php
 	
-	// Include any required components.
-	include_once("prisoner.constants.php");
-	include_once("prisoner.database.php");
-	
-	
 	/**
 	 * Simple class to hold information about a type / category of Facebook information. (Eg: Profile info, Check-ins)
 	 * Records the number of pieces of that info we want, the number we have, and any spare.
@@ -78,5 +73,4 @@
 			$this->text_data = $text_data;
 		}
 	}
-	
 ?>

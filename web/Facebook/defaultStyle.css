@@ -63,6 +63,12 @@ ul {
 	padding-left: 20px;
 }
 
+table {
+	color: #444444;
+	font-size: 11pt;
+	line-height: 25px;
+}
+
 
 /** Class styles */
 .button_green {

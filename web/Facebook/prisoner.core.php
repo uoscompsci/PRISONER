@@ -1,8 +1,12 @@
 <?php
-	
+
 	// Include any required components.
 	include_once("prisoner.constants.php");
 	include_once("prisoner.database.php");
+	
+	// Start a session on the server.
+	//ob_start();
+	//session_start();
 	
 	/**
 	 * Queries the PRISONER web service and returns a JSON object with the response.
@@ -154,4 +158,6 @@
 		echo $_SESSION["notice"];
 	}
 	
+	// Flush output buffers.
+	//ob_end_flush();
 ?>

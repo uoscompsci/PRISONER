@@ -1,26 +1,14 @@
 <?php
-	
+
 	// Include any required components.
 	include_once("prisoner.classes.php");
 	include_once("prisoner.constants.php");
 	include_once("prisoner.database.php");
 	include_once("prisoner.image.php");
 	
-	
-	/**
-	 * Sends async re
-	 */
-	function load_additional_data($session_id) {
-		// Send async requests to PRISONER for the rest of the data.
-		$checkin_info = get_response("/get/Facebook/Checkin/session:Facebook.id", $session_id, true);	# Check-ins.
-		log_msg("Sent async request for check-ins.");
-		$status_update_info = get_response("/get/Facebook/Status/session:Facebook.id", $session_id, true);	# Status updates.
-		log_msg("Sent async request for status updates.");
-		$photo_album_info = get_response("/get/Facebook/Album/session:Facebook.id", $session_id, true);	# Photo album.
-		log_msg("Sent async request for photo albums.");
-		$photo_info = get_response("/get/Facebook/Photo/session:Facebook.id", $session_id, true);	# Photos of.
-		log_msg("Sent async request for photos.");
-	}
+	// Start a session on the server.
+	//ob_start();
+	//session_start();
 	
 	
 	/**
@@ -82,6 +70,36 @@
 	}
 	
 	
+	/**
+	 * Sends async requests for the rest of that data we need from Facebook.
+	 * Checks the session before requesting anything so we don't spam PRISONER.
+	 */
+	function load_additional_data($session_id) {
+		// Send async requests to PRISONER for the rest of the data.
+		//if (empty($_SESSION["sent_async_requests"])) {
+			$checkin_info = get_response("/get/Facebook/Checkin/session:Facebook.id", $session_id, true);	# Check-ins.
+			log_msg("Sent async request for check-ins.");
+			$status_update_info = get_response("/get/Facebook/Status/session:Facebook.id", $session_id, true);	# Status updates.
+			log_msg("Sent async request for status updates.");
+			$photo_album_info = get_response("/get/Facebook/Album/session:Facebook.id", $session_id, true);	# Photo album.
+			log_msg("Sent async request for photo albums.");
+			$photo_info = get_response("/get/Facebook/Photo/session:Facebook.id", $session_id, true);	# Photos of.
+			log_msg("Sent async request for photos.");
+				
+			$_SESSION["sent_async_requests"] = true;
+		//}
+	}
+	
+	
+	/**
+	 * Gets questions of the supplied type.
+	 * Uses the supplied question type as a key to get info from the session.
+	 * Checks to see how many questions of that type are required and then loops through the necessary
+	 * data, generating questions.
+	 * Questions are returned as an array of question objects.
+	 * @param int $question_type The type of question to get questions for.
+	 * @return array An array of question objects. (May be empty)
+	 */
 	function get_questions($question_type) {
 		// Globals.
 		global $PROFILE_INFO_KEYS;
@@ -358,7 +376,7 @@
 	 * Calculates the data available for the supplied type and returns the amount of compensation that is required.
 	 * If the number of pieces of data we want is greater than the number we have, this means that compensation is
 	 * needed.
-	 * @param int $question_type
+	 * @param int $question_type The question type to get questions for.
 	 * @return int The amount of compensation that is required. (0 if we have more pieces of data than we need)
 	 */
 	function calculate_available_data($question_type) {
@@ -413,6 +431,14 @@
 	}
 	
 	
+	/**
+	 * Gets the meta data associated with the supplied question type.
+	 * This function can be used to help with the "Results" section at the end of the questionnaire.
+	 * Returns an array containing the number of questions of the supplied type, the number of times the participant 
+	 * was willing to share info of the supplied type and, finally, the percentage of shares.
+	 * @param int $question_type The question type to get info about.
+	 * @return array An array of meta data about the question.
+	 */
 	function get_question_meta_data($question_type) {
 		$questions = $_SESSION["questions"];
 		$num_of_type = 0;
@@ -441,6 +467,9 @@
 	}
 	
 	
+	/**
+	 * Commits the results
+	 */
 	function commit_participant_results() {
 		// Globals.
 		global $db;
@@ -1114,4 +1143,6 @@
 		return $timestamp;
 	}
 	
+	// Flush output buffers.
+	//ob_end_flush();
 ?>
