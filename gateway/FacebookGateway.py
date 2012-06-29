@@ -197,7 +197,7 @@ class FacebookServiceGateway(ServiceGateway):
 				user.displayName = self.get_value(user_details, "name")
 				user.gender = self.get_value(user_details, "gender")
 				user.email = self.get_value(user_details, "email")
-				user.url = self.facebook_uri + user.id
+				user.url = self.facebook_uri + user.id + "/info"
 				
 				# Get a list of the user's languages.
 				languages = self.get_value(user_details, "languages")
