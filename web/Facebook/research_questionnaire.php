@@ -394,12 +394,17 @@
 									
 									// Inlcude next / previous buttons.
 									echo "<div class='navigation'>" . "\n";
+									$next_button_text = "Next Question";
 									
 									if ($question_num > 1) {
 										echo "<ul><li><a href='research_questionnaire.php?previous=1'>Previous Question</a></li></ul>";
 									}
 									
-									echo "<div class='next_submit'><input name='submit' type='submit' value='Next Question'></div>" . "\n" .
+									if ($question_num == NUM_QUESTIONS) {
+										$next_button_text = "Finish Study";
+									}
+									
+									echo "<div class='next_submit'><input name='submit' type='submit' value='" . $next_button_text . "'></div>" . "\n" .
 									"</div>" . "\n";
 								}
 								

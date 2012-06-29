@@ -582,7 +582,8 @@ class FacebookServiceGateway(ServiceGateway):
 								this_status.content = self.get_value(status, "message")
 								this_status.id = self.get_value(status, "id")
 								this_status.published = self.str_to_time(self.get_value(status, "created_time"))
-								this_status.url = "https://www.facebook.com/" + user_id + "/posts/" + this_status.id
+								id_components = this_status.id.split("_")
+								this_status.url = "https://www.facebook.com/" + user_id + "/posts/" + id_components[1]
 								
 								# Privacy info. (If available)
 								if (status.has_key("privacy")):
