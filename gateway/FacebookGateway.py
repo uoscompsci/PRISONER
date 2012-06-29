@@ -36,6 +36,7 @@ class FacebookServiceGateway(ServiceGateway):
 		self.auth_request_uri = "https://www.facebook.com/dialog/oauth?"
 		self.auth_token_uri = "https://graph.facebook.com/oauth/access_token?"
 		self.graph_uri = "https://graph.facebook.com"
+		self.facebook_uri = "https://www.facebook.com/";
 		
 		# Generate a unique state. (Required by Facebook for security)
 		r = random.random()
@@ -196,6 +197,7 @@ class FacebookServiceGateway(ServiceGateway):
 				user.displayName = self.get_value(user_details, "name")
 				user.gender = self.get_value(user_details, "gender")
 				user.email = self.get_value(user_details, "email")
+				user.url = self.facebook_uri + user.id
 				
 				# Get a list of the user's languages.
 				languages = self.get_value(user_details, "languages")
@@ -382,6 +384,9 @@ class FacebookServiceGateway(ServiceGateway):
 					# Create an object for this band.
 					this_band = Music()
 					this_band.displayName = self.get_value(band, "name")
+					this_band.id = self.get_value(band, "id")
+					this_band.url = self.facebook_uri + this_band.id
+					
 					this_band.author = author
 					bands.append(this_band)
 				
@@ -444,6 +449,8 @@ class FacebookServiceGateway(ServiceGateway):
 					# Create an object for this movie.
 					this_movie = Movie()
 					this_movie.displayName = self.get_value(movie, "name")
+					this_movie.id = self.get_value(movie, "id")
+					this_movie.url = self.facebook_uri + this_movie.id
 					this_movie.author = author
 					movies.append(this_movie)
 				
@@ -506,6 +513,8 @@ class FacebookServiceGateway(ServiceGateway):
 					# Create an object for this book.
 					this_book = Book()
 					this_book.displayName = self.get_value(book, "name")
+					this_book.id = self.get_value(book, "id")
+					this_book.url = self.facebook_uri + this_book.id
 					this_book.author = author
 					books.append(this_book)
 				
@@ -663,6 +672,7 @@ class FacebookServiceGateway(ServiceGateway):
 						this_friend = User()
 						this_friend.id = self.get_value(friend, "id")
 						this_friend.displayName = self.get_value(friend, "name")
+						this_friend.url = self.facebook_uri + this_friend.id
 						
 						# Create author object for this friend. (User "has" their friends)
 						author = SocialObjects.Person()
@@ -675,6 +685,7 @@ class FacebookServiceGateway(ServiceGateway):
 						profile_pic.fullImage = self.graph_uri + "/" + this_friend.id + "/picture?type=normal" + "&access_token=" + self.access_token
 						profile_pic.author = this_friend.id
 						this_friend.image = profile_pic
+						
 						
 						# Add friend to list.
 						friend_obj_list.append(this_friend)

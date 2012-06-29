@@ -1012,18 +1012,20 @@
 				
 				// General case.
 				else {
-					$markup .= "<p>" . $question_text . " <strong>" . $data_item . "</strong>.</p>";
+					$markup .= "<p>" . $question_text . " <strong>" . $data_item . "</strong>. <br />";
 				}
+				
+				$markup .= "Click <a href='" . $permalink . "' target='_blank'>here</a> to view your Facebook profile.  (Opens in a new tab / window)</p>";
 				break;
 			
 			case TYPE_FRIEND:
 				$markup .= "<p>You are friends with <strong>" . $text_data . "</strong>. <br />" .
-				"Click <a href='" . $permalink . "'>here</a> to view this friend's Facebook profile in a new tab / window.</p>";
+				"Click <a href='" . $permalink . "' target='_blank'>here</a> to view this friend's Facebook profile. (Opens in a new tab / window)</p>";
 				break;
 			
 			case TYPE_LIKE:
 				$markup .= "<p>You like <strong>" . $text_data . "</strong>. <br />" .
-				"Click <a href='" . $permalink . "'>here</a> to view this like / interest in more detail in a new tab / window.</p>";
+				"Click <a href='" . $permalink . "' target='_blank'>here</a> to view this like / interest's Facebook page. (Opens in a new tab / window)</p>";
 				break;
 			
 			case TYPE_CHECKIN:
@@ -1038,7 +1040,7 @@
 				$time = date("H:i", $question->timestamp);
 				$markup .= "<p>You posted saying <em>&quot;" . $text_data . "&quot;</em> on <strong>" . $date . "</strong> at <strong>" .
 				$time . "</strong>. <br />" .
-				"Click <a href='" . $permalink . "'>here</a> to view this status update in a new tab / window.</p>";
+				"Click <a href='" . $permalink . "' target='_blank'>here</a> to view this status update on Facebook. (Opens in a new tab / window)</p>";
 				break;
 			
 			case TYPE_ALBUM:
@@ -1054,7 +1056,7 @@
 				$markup .= "<p>You added photos to an album called <strong>" . $text_data . "</strong> on <strong>" . $date . "</strong> at " .
 				"<strong>" . $time . "</strong>. There are <strong>" . $num_photos . "</strong> photos in the album. The album's cover photo can " .
 				"be seen below. <br />" .
-				"Click <a href='" . $permalink . "'>here</a> to view this album in more detail in a new tab / window.</p>";
+				"Click <a href='" . $permalink . "' target='_blank'>here</a> to see this album on Facebook. (Opens in a new tab / window)</p>";
 				$markup .= "<img alt='Facebook Photo' src='" . $filename . "' />";
 				break;
 			
@@ -1080,7 +1082,7 @@
 				$image_adjuster->saveImage($filename, 75);
 				
 				$markup .= "<p>A photo you are tagged in can be seen below. <br />" .
-				"Click <a href='" . $permalink . "'>here</a> to view this photo in more detail in a new tab / window.</p>";
+				"Click <a href='" . $permalink . "' target='_blank'>here</a> to see at this photo on Facebook. (Opens in a new tab / window)</p>";
 				$markup .= "<img alt='Facebook Photo' src='" . $filename . "' />";
 				break;
 		}
