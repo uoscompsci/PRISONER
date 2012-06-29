@@ -174,6 +174,7 @@
 						// Get required info.
 						$friend_name = $data_items[$key]["_displayName"];
 						$url = $data_items[$key]["_url"];
+						log_msg(var_export($data_items[$key], true));
 							
 						// Create question object and add it to our list.
 						$this_question = new Question(TYPE_FRIEND, $friend_name);
@@ -181,6 +182,7 @@
 						$questions[] = $this_question;
 						$num_want -= 1;
 					}
+					
 				}
 				
 				else {
@@ -589,7 +591,6 @@
 	 */
 	function check_data_availability($data_type_str, $session_id) {
 		$response = get_response("/get/Facebook/" . $data_type_str . "/session:Facebook.id", $session_id, false, true);
-		var_dump($response);
 		
 		// Is there a JSON object in the response?
 		if (empty($response)) {

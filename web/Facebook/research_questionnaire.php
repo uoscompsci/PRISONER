@@ -191,7 +191,7 @@
 		}
 		
 		// Compensation is necessary.
-		else if ($compensation_needed > 0) {
+		else if (($compensation_needed > 0) && (empty($_SESSION["got_compensation"]))) {
 			log_msg("Data compensation is required. (Need " . $compensation_needed . " more items)");
 			
 			$num_question_types = count($_SESSION["question_info"]);
@@ -225,9 +225,10 @@
 				$extra_questions = array_merge($extra_questions, get_questions($question_info_obj->type));
 			}
 			
-			log_msg("Adding " . count($extra_questions) . " into session.");
 			shuffle($extra_questions);
 			$questions = array_merge($questions, $extra_questions);
+			log_msg("Adding " . count($extra_questions) . " questions into session. (New size: " . count($_SESSION["questions"]) . ")");
+			$_SESSION["got_compensation"] = true;
 		}
 	}
 	

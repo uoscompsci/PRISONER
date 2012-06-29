@@ -197,7 +197,7 @@ class FacebookServiceGateway(ServiceGateway):
 				user.displayName = self.get_value(user_details, "name")
 				user.gender = self.get_value(user_details, "gender")
 				user.email = self.get_value(user_details, "email")
-				user.url = self.facebook_uri + user.id + "/info"
+				user.url = "https://www.facebook.com/" + user_id + "/info/"
 				
 				# Get a list of the user's languages.
 				languages = self.get_value(user_details, "languages")
@@ -385,7 +385,7 @@ class FacebookServiceGateway(ServiceGateway):
 					this_band = Music()
 					this_band.displayName = self.get_value(band, "name")
 					this_band.id = self.get_value(band, "id")
-					this_band.url = self.facebook_uri + this_band.id
+					this_band.url = "https://www.facebook.com/" + this_band.id
 					
 					this_band.author = author
 					bands.append(this_band)
@@ -450,7 +450,7 @@ class FacebookServiceGateway(ServiceGateway):
 					this_movie = Movie()
 					this_movie.displayName = self.get_value(movie, "name")
 					this_movie.id = self.get_value(movie, "id")
-					this_movie.url = self.facebook_uri + this_movie.id
+					this_movie.url = "https://www.facebook.com/" + this_movie.id
 					this_movie.author = author
 					movies.append(this_movie)
 				
@@ -514,7 +514,7 @@ class FacebookServiceGateway(ServiceGateway):
 					this_book = Book()
 					this_book.displayName = self.get_value(book, "name")
 					this_book.id = self.get_value(book, "id")
-					this_book.url = self.facebook_uri + this_book.id
+					this_book.url = "https://www.facebook.com/" + this_book.id
 					this_book.author = author
 					books.append(this_book)
 				
@@ -672,7 +672,7 @@ class FacebookServiceGateway(ServiceGateway):
 						this_friend = User()
 						this_friend.id = self.get_value(friend, "id")
 						this_friend.displayName = self.get_value(friend, "name")
-						this_friend.url = self.facebook_uri + this_friend.id
+						this_friend.url = "https://www.facebook.com/" + this_friend.id
 						
 						# Create author object for this friend. (User "has" their friends)
 						author = SocialObjects.Person()
