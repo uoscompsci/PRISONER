@@ -323,7 +323,7 @@
 	$meta_redirect = NULL;
 	
 	if (empty($this_question)) {
-		$meta_redirect = "<meta http-equiv='Refresh' content='10;url=research_questionnaire.php' />";
+		$meta_redirect = "<meta http-equiv='Refresh' content='15;url=research_questionnaire.php' />";
 		$question_available = false;
 	}
 	

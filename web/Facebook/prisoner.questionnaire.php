@@ -108,6 +108,12 @@
 		$data_items = &$question_info_obj->data;
 		$data_keys = NULL;
 		
+		// If we don't need any questions, return an empty array.
+		if ($num_want < 1) {
+			log_msg(" - Returned " . count($questions) . " questions.");
+			return $questions;
+		}
+		
 		if ($question_type != TYPE_PROFILE) {
 			$data_keys = array_rand($data_items, $num_want);
 			log_msg(" - Generated " . count($data_keys) . " random data keys to grab.");
@@ -167,9 +173,11 @@
 					foreach ($data_keys as $key) {
 						// Get required info.
 						$friend_name = $data_items[$key]["_displayName"];
+						$url = $data_items[$key]["_url"];
 							
 						// Create question object and add it to our list.
 						$this_question = new Question(TYPE_FRIEND, $friend_name);
+						$this_question->permalink = $url;
 						$questions[] = $this_question;
 						$num_want -= 1;
 					}
@@ -181,6 +189,7 @@
 						
 					// Create question object and add it to our list.
 					$this_question = new Question(TYPE_FRIEND, $friend_name);
+					$this_question->permalink = $url;
 					$questions[] = $this_question;
 					$num_want -= 1;
 				}
@@ -192,9 +201,11 @@
 					foreach ($data_keys as $key) {
 						// Get required info.
 						$like_name = $data_items[$key]["_displayName"];
+						$url = $data_items[$key]["_url"];
 					
 						// Create question object and add it to our list.
 						$this_question = new Question(TYPE_LIKE, $like_name);
+						$this_question->permalink = $url;
 						$questions[] = $this_question;
 						$num_want -= 1;
 					}
@@ -203,9 +214,11 @@
 				else {
 					// Get required info.
 					$like_name = $data_items[$data_keys]["_displayName"];
+					$url = $data_items[$data_keys]["_url"];
 						
 					// Create question object and add it to our list.
 					$this_question = new Question(TYPE_LIKE, $like_name);
+					$this_question->permalink = $url;
 					$questions[] = $this_question;
 					$num_want -= 1;
 				}
@@ -231,6 +244,7 @@
 				else {
 					// Get required info.
 					$place_name = $data_items[$data_keys]["_location"]["_displayName"];
+					$url = $data_items[$data_keys]["_url"];
 					$time = $data_items[$data_keys]["_published"];
 					$timestamp = parse_prisoner_time($time);
 						
@@ -248,6 +262,7 @@
 					foreach ($data_keys as $key) {
 						// Get required info.
 						$update_text = $data_items[$key]["_content"];
+						$url = $data_items[$key]["_url"];
 						$privacy = $data_items[$key]["_privacy"];
 						$time = $data_items[$key]["_published"];
 						$timestamp = parse_prisoner_time($time);
@@ -256,6 +271,7 @@
 						$this_question = new Question(TYPE_STATUS, $update_text);
 						$this_question->timestamp = $timestamp;
 						$this_question->privacy_of_data = strtoupper($privacy);
+						$this_question->permalink = $url;
 						$questions[] = $this_question;
 						$num_want -= 1;
 					}
@@ -264,6 +280,7 @@
 				else {
 					// Get required info.
 					$update_text = $data_items[$data_keys]["_content"];
+					$url = $data_items[$data_keys]["_url"];
 					$privacy = $data_items[$data_keys]["_privacy"];
 					$time = $data_items[$data_keys]["_published"];
 					$timestamp = parse_prisoner_time($time);
@@ -272,6 +289,7 @@
 					$this_question = new Question(TYPE_STATUS, $update_text);
 					$this_question->timestamp = $timestamp;
 					$this_question->privacy_of_data = strtoupper($privacy);
+					$this_question->permalink = $url;
 					$questions[] = $this_question;
 					$num_want -= 1;
 				}
@@ -283,6 +301,7 @@
 					foreach ($data_keys as $key) {
 						// Get required info.
 						$album_name = $data_items[$key]["_displayName"];
+						$url = $data_items[$key]["_url"];
 						$privacy = $data_items[$key]["_privacy"];
 						$time = $data_items[$key]["_published"];
 						$cover_photo = $data_items[$key]["_coverPhoto"]["_fullImage"];
@@ -295,6 +314,7 @@
 						$this_question->timestamp = $timestamp;
 						$this_question->privacy_of_data = strtoupper($privacy);
 						$this_question->image = $cover_photo;
+						$this_question->permalink = $url;
 						$this_question->additional_info = $extra_info;
 						$questions[] = $this_question;
 						$num_want -= 1;
@@ -304,6 +324,7 @@
 				else {
 					// Get required info.
 					$album_name = $data_items[$data_keys]["_displayName"];
+					$url = $data_items[$data_keys]["_url"];
 					$privacy = $data_items[$data_keys]["_privacy"];
 					$time = $data_items[$data_keys]["_published"];
 					$cover_photo = $data_items[$data_keys]["_coverPhoto"]["_fullImage"];
@@ -316,6 +337,7 @@
 					$this_question->timestamp = $timestamp;
 					$this_question->privacy_of_data = strtoupper($privacy);
 					$this_question->image = $cover_photo;
+					$this_question->permalink = $url;
 					$this_question->additional_info = $extra_info;
 					$questions[] = $this_question;
 					$num_want -= 1;
@@ -328,6 +350,7 @@
 					foreach ($data_keys as $key) {
 						// Get required info.
 						$photo_name = $data_items[$key]["_displayName"];
+						$url = $data_items[$key]["_url"];
 						$photo = $data_items[$key]["_image"]["_fullImage"];
 						$time = $data_items[$key]["_published"];
 						$timestamp = parse_prisoner_time($time);
@@ -336,6 +359,7 @@
 						$this_question = new Question(TYPE_PHOTO, $photo_name);
 						$this_question->timestamp = $timestamp;
 						$this_question->image = $photo;
+						$this_question->permalink = $url;
 						$questions[] = $this_question;
 						$num_want -= 1;
 					}
@@ -344,6 +368,7 @@
 				else {
 					// Get required info.
 					$photo_name = $data_items[$data_keys]["_displayName"];
+					$url = $data_items[$data_keys]["_url"];
 					$photo = $data_items[$data_keys]["_image"]["_fullImage"];
 					$time = $data_items[$data_keys]["_published"];
 					$timestamp = parse_prisoner_time($time);
@@ -352,6 +377,7 @@
 					$this_question = new Question(TYPE_PHOTO, $photo_name);
 					$this_question->timestamp = $timestamp;
 					$this_question->image = $photo;
+					$this_question->permalink = $url;
 					$questions[] = $this_question;
 					$num_want -= 1;
 				}
@@ -563,9 +589,10 @@
 	 */
 	function check_data_availability($data_type_str, $session_id) {
 		$response = get_response("/get/Facebook/" . $data_type_str . "/session:Facebook.id", $session_id, false, true);
+		var_dump($response);
 		
 		// Is there a JSON object in the response?
-		if (strpos($response, "py/object") === false) {
+		if (empty($response)) {
 			return false;
 		} 
 		
@@ -915,6 +942,7 @@
 	function get_profile_question_obj($profile_info, $data_key, $question_text) {
 		// Get the value associated with the supplied key.
 		$data_value = $profile_info[$data_key];
+		$url = $profile_info["_url"];
 		
 		// No data exists.
 		if (empty($data_value)) {
@@ -926,6 +954,7 @@
 			// Create and return question object.
 			$this_question = new Question(TYPE_PROFILE, $data_value);
 			$this_question->custom_question_text = $question_text;
+			$this_question->permalink = $url;
 			
 			return $this_question;
 		}
@@ -965,6 +994,7 @@
 		$type = $question->type;
 		$text_data = $question->text_data;
 		$response = $question->response;
+		$permalink = $question->permalink;
 		
 		// Generate markup.
 		$markup = "<div class='statement'>";
@@ -987,12 +1017,13 @@
 				break;
 			
 			case TYPE_FRIEND:
-				$friend_pic = $question->image;
-				$markup .= "<p>You are friends with <strong>" . $text_data . "</strong>.</p>";
+				$markup .= "<p>You are friends with <strong>" . $text_data . "</strong>. <br />" .
+				"Click <a href='" . $permalink . "'>here</a> to view this friend's Facebook profile in a new tab / window.</p>";
 				break;
 			
 			case TYPE_LIKE:
-				$markup .= "<p>You like <strong>" . $text_data . "</strong>.</p>";
+				$markup .= "<p>You like <strong>" . $text_data . "</strong>. <br />" .
+				"Click <a href='" . $permalink . "'>here</a> to view this like / interest in more detail in a new tab / window.</p>";
 				break;
 			
 			case TYPE_CHECKIN:
@@ -1006,7 +1037,8 @@
 				$date = date("l j F Y", $question->timestamp);
 				$time = date("H:i", $question->timestamp);
 				$markup .= "<p>You posted saying <em>&quot;" . $text_data . "&quot;</em> on <strong>" . $date . "</strong> at <strong>" .
-				$time . "</strong>.</p>";
+				$time . "</strong>. <br />" .
+				"Click <a href='" . $permalink . "'>here</a> to view this status update in a new tab / window.</p>";
 				break;
 			
 			case TYPE_ALBUM:
@@ -1021,7 +1053,8 @@
 				$image_adjuster->saveImage($filename, 75);
 				$markup .= "<p>You added photos to an album called <strong>" . $text_data . "</strong> on <strong>" . $date . "</strong> at " .
 				"<strong>" . $time . "</strong>. There are <strong>" . $num_photos . "</strong> photos in the album. The album's cover photo can " .
-				"be seen below.</p>";
+				"be seen below. <br />" .
+				"Click <a href='" . $permalink . "'>here</a> to view this album in more detail in a new tab / window.</p>";
 				$markup .= "<img alt='Facebook Photo' src='" . $filename . "' />";
 				break;
 			
@@ -1046,7 +1079,8 @@
 				$image_adjuster->resizeImage($preferred_width, $preferred_height);
 				$image_adjuster->saveImage($filename, 75);
 				
-				$markup .= "<p>A photo you are tagged in can be seen below.</p>";
+				$markup .= "<p>A photo you are tagged in can be seen below. <br />" .
+				"Click <a href='" . $permalink . "'>here</a> to view this photo in more detail in a new tab / window.</p>";
 				$markup .= "<img alt='Facebook Photo' src='" . $filename . "' />";
 				break;
 		}

@@ -34,6 +34,7 @@
 		var $image = NULL;
 		var $timestamp = NULL;
 		var $privacy_of_data = NULL;
+		var $permalink = NULL;
 		var $response = NULL;
 		var $additional_info = NULL;
 		
