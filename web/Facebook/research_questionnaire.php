@@ -376,18 +376,23 @@
 							
 							<?php
 								
+								// Display any notices and the question.
 								echo display_notice() . "\n";
 								echo $to_display . "\n";
 								
+								// If there was a question...
 								if ($question_available) {
+									// Print out the yes / no options.
 									echo "<div class='question'>" .
 									"<p>Will you share this piece of information with us?</p>" . "\n" .
 									"<label><input type='radio' name='agree_to_share' value='Y' id='agree_to_share_1'" . $check_yes . ">Yes</label>" . "\n" .
 									"<label><input type='radio' name='agree_to_share' value='N' id='agree_to_share_0'" . $check_no . ">No</label>" . "\n" .
 									"</div>" . "\n";
 									
+									// Include the question's ID.
 									echo $question_id_field;
 									
+									// Inlcude next / previous buttons.
 									echo "<div class='navigation'>" . "\n";
 									
 									if ($question_num > 1) {
@@ -398,9 +403,9 @@
 									"</div>" . "\n";
 								}
 								
+								// If there was no question, display the loading text.
 								else {
-									echo get_notice("We are still waiting for some of your Facebook data to load. Please be patient. This page will " .
-									"refresh automatically. (And may do so several times)", $is_error);
+									include_once("prisoner.include.loading.php");
 								}
 							
 							?>
