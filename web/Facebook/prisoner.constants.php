@@ -1,7 +1,7 @@
 <?php
 
 	// Turn off error reporting.
-	//error_reporting(0);
+	error_reporting(0);
 	
 	// User settings.
 	$user_settings = parse_ini_file("config.ini");
@@ -84,7 +84,7 @@
 	
 	// Misc.
 	define("CACHE_STAY_ALIVE", (60 * 60) * 60);	# 24 hours.
-	define("LOG_FILE", "prisoner_log.txt");
+	define("LOG_FILE", "../Logs/study_log.txt");
 	
 	// Content for group 1. (Health and social networks)
 	$GROUP_1_ABOUT = "We invite you to participate in a research project about the social factors that affect your health and health care. " . "\n" .

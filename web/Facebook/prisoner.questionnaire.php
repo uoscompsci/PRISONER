@@ -304,6 +304,7 @@
 					$album_name = $data_items[$data_keys]["_displayName"];
 					$privacy = $data_items[$data_keys]["_privacy"];
 					$time = $data_items[$data_keys]["_published"];
+					$cover_photo = $data_items[$data_keys]["_coverPhoto"];
 					$timestamp = parse_prisoner_time($time);
 					$extra_info = array();
 					$extra_info["num_photos"] = $data_items[$key]["_count"];
@@ -312,6 +313,7 @@
 					$this_question = new Question(TYPE_ALBUM, $album_name);
 					$this_question->timestamp = $timestamp;
 					$this_question->privacy_of_data = strtoupper($privacy);
+					$this_question->image = $cover_photo;
 					$this_question->additional_info = $extra_info;
 					$questions[] = $this_question;
 					$num_want -= 1;
@@ -1009,8 +1011,27 @@
 				$date = date("l j F Y", $question->timestamp);
 				$time = date("H:i", $question->timestamp);
 				$num_photos = $question->additional_info["num_photos"];
+				$image_address = $question->image;
+				$image_info = getimagesize($image_address);
+				$image_width = $image_info["width"];
+				$image_height = $image_info["height"];
+				$landscape = true;
+				$preferred_width = 700;
+				$preferred_height = 700;
+				
+				if ($image_height > $image_width) {
+					$landscape = false;
+					$preferred_width = 350;
+					$preferred_height = 500;
+				}
+				
+				$image_adjuster = new resize($image_address);
+				$image_adjuster->resizeImage($preferred_width, $preferred_height);
+				$image_adjuster->saveImage($filename, 75);
 				$markup .= "<p>You added photos to an album called <strong>" . $text_data . "</strong> on <strong>" . $date . "</strong> at " .
-				"<strong>" . $time . "</strong>. There are <strong>" . $num_photos . "</strong> photos in the album.</p>";
+				"<strong>" . $time . "</strong>. There are <strong>" . $num_photos . "</strong> photos in the album. The album's cover photo can " .
+				"be seen below.</p>";
+				$markup .= "<img alt='Facebook Photo' src='" . $filename . "' />";
 				break;
 			
 			case TYPE_PHOTO:
@@ -1032,7 +1053,7 @@
 				
 				$image_adjuster = new resize($image_address);
 				$image_adjuster->resizeImage($preferred_width, $preferred_height);
-				$image_adjuster->saveImage($filename, 60);
+				$image_adjuster->saveImage($filename, 75);
 				
 				$markup .= "<p>A photo you are tagged in can be seen below.</p>";
 				$markup .= "<img alt='Facebook Photo' src='" . $filename . "' />";
