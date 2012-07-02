@@ -1,9 +1,9 @@
 <?php
 
-// Start a session on the server.
-ob_start();
-include_once("prisoner.classes.php");
-session_start();
+	// Start a session on the server.
+	ob_start();
+	include_once("prisoner.classes.php");
+	session_start();
 
 	// Include any required components.
 	include_once("prisoner.authentication.php");
@@ -193,7 +193,7 @@ session_start();
 							participate in this research. If you decide at a later date that data should be destroyed you should 
 							<a href="mailto:tnhh@st-andrews.ac.uk">contact us by e-mail</a>. If you have any questions prior to 
 							beginning the study then you should also contact us by e-mail.</p>
-							
+														
 							<div class="next_submit">
 								<input name="submit" type="submit" value="Next">
 							</div>

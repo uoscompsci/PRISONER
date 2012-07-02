@@ -1,9 +1,9 @@
 <?php
 
-// Start a session on the server.
-ob_start();
-include_once("prisoner.classes.php");
-session_start();
+	// Start a session on the server.
+	ob_start();
+	include_once("prisoner.classes.php");
+	session_start();
 
 	// Include any required components.
 	include_once("prisoner.authentication.php");
@@ -13,6 +13,24 @@ session_start();
 	
 	// Session / cache control.
 	header("Cache-Control: max-age=" . CACHE_STAY_ALIVE);
+	
+	// Check whether or not the study is over.
+	$query = "SELECT COUNT(id) AS 'num_completed' FROM participant WHERE is_finished = '1';";
+	$result = mysqli_query($db, $query);
+	$row = mysqli_fetch_array($result);
+	
+	if (!$result) {
+		log_msg("Fatal error - Unable to determine if study is over: " . mysqli_error($db));
+	}
+	
+	else {
+		$num_completed = $row["num_completed"];
+		log_msg("Note: So far " . $num_completed . " people have completed the study.");
+		
+		if ($num_completed >= 100) {
+			header("Location: study_over.php");
+		}
+	}
 	
 	// Start a PRISONER session.
 	$session_results = start_prisoner_session();

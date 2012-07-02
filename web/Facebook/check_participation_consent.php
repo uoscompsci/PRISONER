@@ -1,9 +1,9 @@
 <?php
 
-// Start a session on the server.
-ob_start();
-include_once("prisoner.classes.php");
-session_start();
+	// Start a session on the server.
+	ob_start();
+	include_once("prisoner.classes.php");
+	session_start();
 
 	// Include any required components.
 	include_once("prisoner.authentication.php");

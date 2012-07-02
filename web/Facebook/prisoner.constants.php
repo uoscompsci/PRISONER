@@ -104,6 +104,6 @@
 	"(Do not just close this tab)</p>" . "\n";
 	
 	$STUDY_START_MESSAGE = "<p>Thank you for agreeing to take part in this study. To get started, please click the <strong>Begin</strong> " . "\n" .
-	"button below.</p>" . "\n";
+	"button below. If your web browser crashes or an error occurs, you will be able to continue from where you left off.</p>" . "\n";
 
 ?>

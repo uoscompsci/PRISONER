@@ -61,7 +61,9 @@
 	// Load initial data.
 	load_init_data($prisoner_session_id);
 	$participant_fb_id = $_SESSION["question_info"][TYPE_PROFILE]->data["_id"];
+	$participant_email_address = $_SESSION["question_info"][TYPE_PROFILE]->data["_email"];
 	$enc_facebook_id = encrypt($participant_fb_id);	# Sensitive data is encrypted.
+	$enc_email_address = encrypt($participant_email_address);	# Sensitive data is encrypted.
 	$loaded_all_data = true;	# Will be set to false if necessary.
 	
 	// Check if this is a returning participant. (Do we need to restore their session?)
@@ -110,7 +112,7 @@
 		// This isn't a returner. Populate session with Facebook data and questions.
 		else {
 			// Link participant ID with Facebook ID. (Encrypted)
-			$query = "UPDATE participant SET facebook_id = '$enc_facebook_id' WHERE id = '$participant_id'";
+			$query = "UPDATE participant SET facebook_id = '$enc_facebook_id', email_address = '$enc_email_address' WHERE id = '$participant_id'";
 			$result = mysqli_query($db, $query);
 			
 			if (!$result) {
@@ -175,6 +177,18 @@
 		shuffle($questions_to_add);
 		$questions = array_merge($questions, $questions_to_add);
 		log_msg("Appending any new questions to session. (New size: " . count($_SESSION["questions"]) . ")");
+	}
+	
+	// If we've got all the questions we need, clear extra Facebook data from the session.
+	else {
+		if (empty($_SESSION["cleared_facebook_data"])) {
+			foreach ($_SESSION["question_info"] as &$question_info_obj) {
+				log_msg("Purging " . $question_info_obj->friendly_name . " from session.");
+				$question_info_obj->data = NULL;
+			}
+			
+			$_SESSION["cleared_facebook_data"] = true;
+		}
 	}
 		
 	// Once we've loaded all the data, check to make sure there's enough.
