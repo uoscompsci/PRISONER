@@ -1,8 +1,12 @@
 <?php
-	
+
 	// Include any required components.
 	include_once("prisoner.constants.php");
 	include_once("prisoner.core.php");
+	
+	// Start a session on the server.
+	//ob_start();
+	//session_start();
 	
 	
 	/**
@@ -74,4 +78,6 @@
 		return $to_return;
 	}
 	
+	// Flush output buffers.
+	//ob_end_flush();
 ?>

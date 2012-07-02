@@ -1,4 +1,8 @@
 <?php
+	
+	// Start a session on the server.
+	//ob_start();
+	//session_start();
 
    # ========================================================================#
    #
@@ -41,6 +45,7 @@
 			{
 				// *** Get extension
 				$extension = strtolower(strrchr($file, '.'));
+				$extension = ".jpg";
 
 				switch($extension)
 				{
@@ -250,4 +255,7 @@
 			## --------------------------------------------------------
 
 		}
+		
+		// Flush output buffers.
+		//ob_end_flush();
 ?>

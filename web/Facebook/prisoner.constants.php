@@ -4,10 +4,10 @@
 	$user_settings = parse_ini_file("config.ini");
 	
 	// Database config.
-	define("DATABASE_HOST", $user_settings["DATABASE_HOST"]);
-	define("DATABASE_USER", $user_settings["DATABASE_USER"]);
-	define("DATABASE_PASS", $user_settings["DATABASE_PASS"]);
-	define("DATABASE_NAME", $user_settings["DATABASE_NAME"]);
+	define("DATABASE_HOST", "localhost");
+	define("DATABASE_USER", "root");
+	define("DATABASE_PASS", "pvnets");
+	define("DATABASE_NAME", "prisoner");
 	define("MYSQLI_ERROR_DUPLICATE", $user_settings["MYSQLI_ERROR_DUPLICATE"]);
 	
 	// Validation and security.
@@ -16,9 +16,9 @@
 	
 	// PRISONER config.
 	define("PRISONER_URL", "http://prisoner.cs.st-andrews.ac.uk/prisoner");
-	define("CALLBACK_URL", "http://localhost/prisoner/research_questionnaire.php");
-	define("PRIVACY_POLICY_URL", "https://dl.dropbox.com/u/4741516/fb_privacy_policy_test.xml");
-	define("EXP_DESIGN_URL", "https://dl.dropbox.com/u/4741516/fb_exp_design_test.xml");
+	define("CALLBACK_URL", "http://prisoner.cs.st-andrews.ac.uk/sharing/start_experiment.php");
+	define("PRIVACY_POLICY_URL", "http://prisoner.cs.st-andrews.ac.uk/sharing/xml/facebook_study_privacy_policy.xml");
+	define("EXP_DESIGN_URL", "http://prisoner.cs.st-andrews.ac.uk/sharing/xml/facebook_study_exp_design.xml");
 	
 	// Study constants.
 	define("GROUP_1", 1);
@@ -81,7 +81,7 @@
 	
 	// Misc.
 	define("CACHE_STAY_ALIVE", (60 * 60) * 60);	# 24 hours.
-	define("LOG_FILE", "prisoner_log.txt");
+	define("LOG_FILE", "../Logs/study_log.txt");
 	
 	// Content for group 1. (Health and social networks)
 	$GROUP_1_ABOUT = "We invite you to participate in a research project about the social factors that affect your health and health care. " . "\n" .
@@ -104,6 +104,6 @@
 	"(Do not just close this tab)</p>" . "\n";
 	
 	$STUDY_START_MESSAGE = "<p>Thank you for agreeing to take part in this study. To get started, please click the <strong>Begin</strong> " . "\n" .
-	"button below.</p>" . "\n";	
-	
+	"button below. If your web browser crashes or an error occurs, you will be able to continue from where you left off.</p>" . "\n";
+
 ?>

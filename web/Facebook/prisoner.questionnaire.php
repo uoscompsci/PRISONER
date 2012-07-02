@@ -1,26 +1,10 @@
 <?php
-	
+
 	// Include any required components.
 	include_once("prisoner.classes.php");
 	include_once("prisoner.constants.php");
 	include_once("prisoner.database.php");
 	include_once("prisoner.image.php");
-	
-	
-	/**
-	 * Sends async re
-	 */
-	function load_additional_data($session_id) {
-		// Send async requests to PRISONER for the rest of the data.
-		$checkin_info = get_response("/get/Facebook/Checkin/session:Facebook.id", $session_id, true);	# Check-ins.
-		log_msg("Sent async request for check-ins.");
-		$status_update_info = get_response("/get/Facebook/Status/session:Facebook.id", $session_id, true);	# Status updates.
-		log_msg("Sent async request for status updates.");
-		$photo_album_info = get_response("/get/Facebook/Album/session:Facebook.id", $session_id, true);	# Photo album.
-		log_msg("Sent async request for photo albums.");
-		$photo_info = get_response("/get/Facebook/Photo/session:Facebook.id", $session_id, true);	# Photos of.
-		log_msg("Sent async request for photos.");
-	}
 	
 	
 	/**
@@ -82,6 +66,36 @@
 	}
 	
 	
+	/**
+	 * Sends async requests for the rest of that data we need from Facebook.
+	 * Checks the session before requesting anything so we don't spam PRISONER.
+	 */
+	function load_additional_data($session_id) {
+		// Send async requests to PRISONER for the rest of the data.
+		//if (empty($_SESSION["sent_async_requests"])) {
+			$checkin_info = get_response("/get/Facebook/Checkin/session:Facebook.id", $session_id, true);	# Check-ins.
+			log_msg("Sent async request for check-ins.");
+			$status_update_info = get_response("/get/Facebook/Status/session:Facebook.id", $session_id, true);	# Status updates.
+			log_msg("Sent async request for status updates.");
+			$photo_album_info = get_response("/get/Facebook/Album/session:Facebook.id", $session_id, true);	# Photo album.
+			log_msg("Sent async request for photo albums.");
+			$photo_info = get_response("/get/Facebook/Photo/session:Facebook.id", $session_id, true);	# Photos of.
+			log_msg("Sent async request for photos.");
+				
+			$_SESSION["sent_async_requests"] = true;
+		//}
+	}
+	
+	
+	/**
+	 * Gets questions of the supplied type.
+	 * Uses the supplied question type as a key to get info from the session.
+	 * Checks to see how many questions of that type are required and then loops through the necessary
+	 * data, generating questions.
+	 * Questions are returned as an array of question objects.
+	 * @param int $question_type The type of question to get questions for.
+	 * @return array An array of question objects. (May be empty)
+	 */
 	function get_questions($question_type) {
 		// Globals.
 		global $PROFILE_INFO_KEYS;
@@ -93,6 +107,12 @@
 		$num_want = &$question_info_obj->num_want;
 		$data_items = &$question_info_obj->data;
 		$data_keys = NULL;
+		
+		// If we don't need any questions, return an empty array.
+		if ($num_want < 1) {
+			log_msg(" - Returned " . count($questions) . " questions.");
+			return $questions;
+		}
 		
 		if ($question_type != TYPE_PROFILE) {
 			$data_keys = array_rand($data_items, $num_want);
@@ -125,6 +145,14 @@
 					$_SESSION["got_required_profile_data"] = true;
 				}
 				
+				// We'll have already got required info, so remove keys for it in case of duplicate questions.
+				unset($PROFILE_INFO_KEYS[array_search("_gender", $PROFILE_INFO_KEYS)]);
+				unset($PROFILE_INFO_KEYS[array_search("_updatedTime", $PROFILE_INFO_KEYS)]);
+				unset($PROFILE_INFO_KEYS[array_search("_image", $PROFILE_INFO_KEYS)]);
+				unset($PROFILE_INFO_KEYS[array_search("_hometown", $PROFILE_INFO_KEYS)]);
+				unset($PROFILE_INFO_KEYS[array_search("_education", $PROFILE_INFO_KEYS)]);
+				unset($PROFILE_INFO_KEYS[array_search("_work", $PROFILE_INFO_KEYS)]);
+				
 				// Now we've got the required data, select the keys we'll ask questions for.
 				$data_keys = array_rand($PROFILE_INFO_KEYS, $num_want);
 				
@@ -153,12 +181,15 @@
 					foreach ($data_keys as $key) {
 						// Get required info.
 						$friend_name = $data_items[$key]["_displayName"];
+						$url = $data_items[$key]["_url"];
 							
 						// Create question object and add it to our list.
 						$this_question = new Question(TYPE_FRIEND, $friend_name);
+						$this_question->permalink = $url;
 						$questions[] = $this_question;
 						$num_want -= 1;
 					}
+					
 				}
 				
 				else {
@@ -167,6 +198,7 @@
 						
 					// Create question object and add it to our list.
 					$this_question = new Question(TYPE_FRIEND, $friend_name);
+					$this_question->permalink = $url;
 					$questions[] = $this_question;
 					$num_want -= 1;
 				}
@@ -178,9 +210,11 @@
 					foreach ($data_keys as $key) {
 						// Get required info.
 						$like_name = $data_items[$key]["_displayName"];
+						$url = $data_items[$key]["_url"];
 					
 						// Create question object and add it to our list.
 						$this_question = new Question(TYPE_LIKE, $like_name);
+						$this_question->permalink = $url;
 						$questions[] = $this_question;
 						$num_want -= 1;
 					}
@@ -189,9 +223,11 @@
 				else {
 					// Get required info.
 					$like_name = $data_items[$data_keys]["_displayName"];
+					$url = $data_items[$data_keys]["_url"];
 						
 					// Create question object and add it to our list.
 					$this_question = new Question(TYPE_LIKE, $like_name);
+					$this_question->permalink = $url;
 					$questions[] = $this_question;
 					$num_want -= 1;
 				}
@@ -217,6 +253,7 @@
 				else {
 					// Get required info.
 					$place_name = $data_items[$data_keys]["_location"]["_displayName"];
+					$url = $data_items[$data_keys]["_url"];
 					$time = $data_items[$data_keys]["_published"];
 					$timestamp = parse_prisoner_time($time);
 						
@@ -234,6 +271,7 @@
 					foreach ($data_keys as $key) {
 						// Get required info.
 						$update_text = $data_items[$key]["_content"];
+						$url = $data_items[$key]["_url"];
 						$privacy = $data_items[$key]["_privacy"];
 						$time = $data_items[$key]["_published"];
 						$timestamp = parse_prisoner_time($time);
@@ -242,6 +280,7 @@
 						$this_question = new Question(TYPE_STATUS, $update_text);
 						$this_question->timestamp = $timestamp;
 						$this_question->privacy_of_data = strtoupper($privacy);
+						$this_question->permalink = $url;
 						$questions[] = $this_question;
 						$num_want -= 1;
 					}
@@ -250,6 +289,7 @@
 				else {
 					// Get required info.
 					$update_text = $data_items[$data_keys]["_content"];
+					$url = $data_items[$data_keys]["_url"];
 					$privacy = $data_items[$data_keys]["_privacy"];
 					$time = $data_items[$data_keys]["_published"];
 					$timestamp = parse_prisoner_time($time);
@@ -258,6 +298,7 @@
 					$this_question = new Question(TYPE_STATUS, $update_text);
 					$this_question->timestamp = $timestamp;
 					$this_question->privacy_of_data = strtoupper($privacy);
+					$this_question->permalink = $url;
 					$questions[] = $this_question;
 					$num_want -= 1;
 				}
@@ -269,8 +310,10 @@
 					foreach ($data_keys as $key) {
 						// Get required info.
 						$album_name = $data_items[$key]["_displayName"];
+						$url = $data_items[$key]["_url"];
 						$privacy = $data_items[$key]["_privacy"];
 						$time = $data_items[$key]["_published"];
+						$cover_photo = $data_items[$key]["_coverPhoto"]["_fullImage"];
 						$timestamp = parse_prisoner_time($time);
 						$extra_info = array();
 						$extra_info["num_photos"] = $data_items[$key]["_count"];
@@ -279,6 +322,8 @@
 						$this_question = new Question(TYPE_ALBUM, $album_name);
 						$this_question->timestamp = $timestamp;
 						$this_question->privacy_of_data = strtoupper($privacy);
+						$this_question->image = $cover_photo;
+						$this_question->permalink = $url;
 						$this_question->additional_info = $extra_info;
 						$questions[] = $this_question;
 						$num_want -= 1;
@@ -288,8 +333,10 @@
 				else {
 					// Get required info.
 					$album_name = $data_items[$data_keys]["_displayName"];
+					$url = $data_items[$data_keys]["_url"];
 					$privacy = $data_items[$data_keys]["_privacy"];
 					$time = $data_items[$data_keys]["_published"];
+					$cover_photo = $data_items[$data_keys]["_coverPhoto"]["_fullImage"];
 					$timestamp = parse_prisoner_time($time);
 					$extra_info = array();
 					$extra_info["num_photos"] = $data_items[$key]["_count"];
@@ -298,6 +345,8 @@
 					$this_question = new Question(TYPE_ALBUM, $album_name);
 					$this_question->timestamp = $timestamp;
 					$this_question->privacy_of_data = strtoupper($privacy);
+					$this_question->image = $cover_photo;
+					$this_question->permalink = $url;
 					$this_question->additional_info = $extra_info;
 					$questions[] = $this_question;
 					$num_want -= 1;
@@ -310,6 +359,7 @@
 					foreach ($data_keys as $key) {
 						// Get required info.
 						$photo_name = $data_items[$key]["_displayName"];
+						$url = $data_items[$key]["_url"];
 						$photo = $data_items[$key]["_image"]["_fullImage"];
 						$time = $data_items[$key]["_published"];
 						$timestamp = parse_prisoner_time($time);
@@ -318,6 +368,7 @@
 						$this_question = new Question(TYPE_PHOTO, $photo_name);
 						$this_question->timestamp = $timestamp;
 						$this_question->image = $photo;
+						$this_question->permalink = $url;
 						$questions[] = $this_question;
 						$num_want -= 1;
 					}
@@ -326,6 +377,7 @@
 				else {
 					// Get required info.
 					$photo_name = $data_items[$data_keys]["_displayName"];
+					$url = $data_items[$data_keys]["_url"];
 					$photo = $data_items[$data_keys]["_image"]["_fullImage"];
 					$time = $data_items[$data_keys]["_published"];
 					$timestamp = parse_prisoner_time($time);
@@ -334,6 +386,7 @@
 					$this_question = new Question(TYPE_PHOTO, $photo_name);
 					$this_question->timestamp = $timestamp;
 					$this_question->image = $photo;
+					$this_question->permalink = $url;
 					$questions[] = $this_question;
 					$num_want -= 1;
 				}
@@ -358,7 +411,7 @@
 	 * Calculates the data available for the supplied type and returns the amount of compensation that is required.
 	 * If the number of pieces of data we want is greater than the number we have, this means that compensation is
 	 * needed.
-	 * @param int $question_type
+	 * @param int $question_type The question type to get questions for.
 	 * @return int The amount of compensation that is required. (0 if we have more pieces of data than we need)
 	 */
 	function calculate_available_data($question_type) {
@@ -413,6 +466,14 @@
 	}
 	
 	
+	/**
+	 * Gets the meta data associated with the supplied question type.
+	 * This function can be used to help with the "Results" section at the end of the questionnaire.
+	 * Returns an array containing the number of questions of the supplied type, the number of times the participant 
+	 * was willing to share info of the supplied type and, finally, the percentage of shares.
+	 * @param int $question_type The question type to get info about.
+	 * @return array An array of meta data about the question.
+	 */
 	function get_question_meta_data($question_type) {
 		$questions = $_SESSION["questions"];
 		$num_of_type = 0;
@@ -441,6 +502,13 @@
 	}
 	
 	
+	/**
+	 * Commits the results to the PRISONER framework and performs a number of essential housekeeping duties.
+	 * In order, the participant's "Finished" flag is set in our database, ensuring they can't take the study again,
+	 * any information stored about them in their session is deleted to avoid holding onto sensitive data, the .group file
+	 * is reset, so the next participant gets assigned the right group and finally, the participant's results are POSTed to
+	 * PRISONER.
+	 */
 	function commit_participant_results() {
 		// Globals.
 		global $db;
@@ -529,14 +597,15 @@
 	
 	/**
 	 * Checks whether or not the requested data is available from PRISONER yet.
-	 * @param unknown_type $data_type_str
-	 * @param unknown_type $session_id
+	 * @param str $data_type_str PRISONER name of the data to check for.
+	 * @param str $session_id PRISONER session ID.
+	 * @return mixed Returns false if the data is not yet available, otherwise the data response is returned.
 	 */
 	function check_data_availability($data_type_str, $session_id) {
 		$response = get_response("/get/Facebook/" . $data_type_str . "/session:Facebook.id", $session_id, false, true);
 		
 		// Is there a JSON object in the response?
-		if (strpos($response, "py/object") === false) {
+		if (empty($response)) {
 			return false;
 		} 
 		
@@ -589,6 +658,9 @@
 	 * @param string $data_key Key to generate question for.
 	 */
 	function get_profile_question($profile_info, $data_key) {
+		// Get the URL of the participant's profile.
+		$url = $profile_info["_url"];
+		
 		switch ($data_key) {
 			// Username.
 			case "_username":
@@ -614,6 +686,7 @@
 					$this_question->custom_question_text = "You either do not have a middle name or have not added it to Facebook";
 				}
 				
+				$this_question->permalink = $url;
 				return $this_question;
 				break;
 			
@@ -624,7 +697,7 @@
 			
 			// Birthday.
 			case "_birthday":
-				$this_question = get_profile_question_obj($profile_info, $data_key, "Your birthday is");
+				$this_question = get_profile_question_obj($profile_info, $data_key, "Your date of birth is");
 				
 				// No info.
 				if (!$this_question) {
@@ -635,10 +708,11 @@
 				// If birthday info exists, remember to format it correctly.
 				else {
 					$birthday_timestamp = parse_prisoner_time($this_question->text_data);
-					$birthday = date("d/m/Y", $birthday_timestamp);
+					$birthday = date("l j F Y", $birthday_timestamp);
 					$this_question->text_data = $birthday;
 				}
 				
+				$this_question->permalink = $url;
 				return $this_question;
 				break;
 			
@@ -656,6 +730,7 @@
 					$this_question->custom_question_text = "You have not added a bio / about section to Facebook";
 				}
 				
+				$this_question->permalink = $url;
 				return $this_question;
 				break;
 			
@@ -668,6 +743,7 @@
 					$this_question->custom_question_text = "You have not added information about your political alignment to Facebook";
 				}
 				
+				$this_question->permalink = $url;
 				return $this_question;
 				break;
 			
@@ -680,6 +756,7 @@
 					$this_question->custom_question_text = "You have not added information about your religion to Facebook";
 				}
 				
+				$this_question->permalink = $url;
 				return $this_question;
 				break;
 			
@@ -691,7 +768,8 @@
 				$this_question = new Question(TYPE_PROFILE, "");
 				$this_question->custom_question_text = "Information about your relationship status is not available.";
 			}
-				
+			
+			$this_question->permalink = $url;
 			return $this_question;
 			break;
 		
@@ -708,7 +786,8 @@
 					$friendly_list = get_friendly_list($this_question->text_data, true);
 					$this_question->text_data = $friendly_list;
 				}
-			
+				
+				$this_question->permalink = $url;
 				return $this_question;
 				break;
 			
@@ -725,7 +804,8 @@
 					$friendly_list = get_friendly_list($this_question->text_data, true);
 					$this_question->text_data = $friendly_list;
 				}
-						
+				
+				$this_question->permalink = $url;
 				return $this_question;
 				break;
 			
@@ -742,9 +822,12 @@
 			// Last Facebook update.
 			case "_updatedTime":
 				$last_update = parse_prisoner_time($profile_info[$data_key]);
-				$last_update = date("d/m/Y @ H:i:s", $last_update);
+				$date = date("l j F Y", $last_update);
+				$time = date("H:i", $last_update);
+				$last_update = $date . "</strong> at <strong>" . $time;
 				$this_question = new Question(TYPE_PROFILE, $last_update);
 				$this_question->custom_question_text = "You last updated your Facebook profile (From Facebook itself, not via an app) on";
+				$this_question->permalink = $url;
 				return $this_question;
 				break;
 			
@@ -766,6 +849,7 @@
 					$place_name = $hometown["_displayName"];
 					$this_question = new Question(TYPE_PROFILE, $place_name);
 					$this_question->custom_question_text = "You are from";
+					$this_question->permalink = $url;
 					return $this_question;
 				}
 				
@@ -773,6 +857,7 @@
 				else {
 					$this_question = new Question(TYPE_PROFILE, "");
 					$this_question->custom_question_text = "You have not added information about your hometown to Facebook.";
+					$this_question->permalink = $url;
 					return $this_question;
 				}
 				
@@ -787,6 +872,7 @@
 					$place_name = $location["_displayName"];
 					$this_question = new Question(TYPE_PROFILE, $place_name);
 					$this_question->custom_question_text = "You are currently at";
+					$this_question->permalink = $url;
 					return $this_question;
 				}
 				
@@ -794,6 +880,7 @@
 				else {
 					$this_question = new Question(TYPE_PROFILE, "");
 					$this_question->custom_question_text = "You have not added information about your current location to Facebook";
+					$this_question->permalink = $url;
 					return $this_question;
 				}
 				
@@ -808,6 +895,7 @@
 					$name = $significant_other["_displayName"];
 					$this_question = new Question(TYPE_PROFILE, $name);
 					$this_question->custom_question_text = "Your significant other is";
+					$this_question->permalink = $url;
 					return $this_question;
 				}
 				
@@ -815,6 +903,7 @@
 				else {
 					$this_question = new Question(TYPE_PROFILE, "");
 					$this_question->custom_question_text = "Information about your significant other is not available on Facebook";
+					$this_question->permalink = $url;
 					return $this_question;
 				}
 				
@@ -832,6 +921,7 @@
 					// Create and return question object.
 					$this_question = new Question(TYPE_PROFILE, $place_list);
 					$this_question->custom_question_text = "Your education history includes places such as";
+					$this_question->permalink = $url;
 					return $this_question;
 				}
 				
@@ -839,6 +929,7 @@
 				else {
 					$this_question = new Question(TYPE_PROFILE, "");
 					$this_question->custom_question_text = "You have not added information about your education history to Facebook";
+					$this_question->permalink = $url;
 					return $this_question;
 				}
 				
@@ -856,6 +947,7 @@
 						// Create and return question object.
 						$this_question = new Question(TYPE_PROFILE, $place_list);
 						$this_question->custom_question_text = "You have worked for employers such as";
+						$this_question->permalink = $url;
 						return $this_question;
 					}
 				
@@ -863,9 +955,10 @@
 					else {
 						$this_question = new Question(TYPE_PROFILE, "");
 						$this_question->custom_question_text = "You have not added information about your work history to Facebook";
+						$this_question->permalink = $url;
 						return $this_question;
 					}
-				
+					
 					break;
 		}
 	}
@@ -884,6 +977,7 @@
 	function get_profile_question_obj($profile_info, $data_key, $question_text) {
 		// Get the value associated with the supplied key.
 		$data_value = $profile_info[$data_key];
+		$url = $profile_info["_url"];
 		
 		// No data exists.
 		if (empty($data_value)) {
@@ -895,6 +989,7 @@
 			// Create and return question object.
 			$this_question = new Question(TYPE_PROFILE, $data_value);
 			$this_question->custom_question_text = $question_text;
+			$this_question->permalink = $url;
 			
 			return $this_question;
 		}
@@ -934,10 +1029,11 @@
 		$type = $question->type;
 		$text_data = $question->text_data;
 		$response = $question->response;
+		$permalink = $question->permalink;
 		
 		// Generate markup.
 		$markup = "<div class='statement'>";
-		$markup .= "<div class='statement_info'><p>Question #" . $question_number . ", Category: " . get_friendly_type($type) . "</p></div>" . "\n";
+		$markup .= "<div class='statement_info'><p>Question #" . $question_number . " / " . NUM_QUESTIONS . "</p></div>" . "\n";
 		
 		switch ($type) {
 			case TYPE_PROFILE:
@@ -951,41 +1047,57 @@
 				
 				// General case.
 				else {
-					$markup .= "<p>" . $question_text . " <strong>" . $data_item . "</strong>.</p>";
+					$markup .= "<p>" . $question_text . " <strong>" . $data_item . "</strong>. <br />";
+					$markup .= "Click <a href='" . $permalink . "' target='_blank'>here</a> to view your Facebook profile.  (Opens in a new tab / window)</p>";
 				}
+				
 				break;
 			
 			case TYPE_FRIEND:
-				$friend_pic = $question->image;
-				$markup .= "<p>You are friends with <strong>" . $text_data . "</strong>.</p>";
+				$markup .= "<p>You are friends with <strong>" . $text_data . "</strong>. <br />" .
+				"Click <a href='" . $permalink . "' target='_blank'>here</a> to view this friend's Facebook profile. (Opens in a new tab / window)</p>";
 				break;
 			
 			case TYPE_LIKE:
-				$markup .= "<p>You like <strong>" . $text_data . "</strong>.</p>";
+				$markup .= "<p>You like <strong>" . $text_data . "</strong>. <br />" .
+				"Click <a href='" . $permalink . "' target='_blank'>here</a> to view this like / interest's Facebook page. (Opens in a new tab / window)</p>";
 				break;
 			
 			case TYPE_CHECKIN:
 				$date = date("l j F Y", $question->timestamp);
-				$markup .= "<p>You were tagged at <strong>" . $text_data . "</strong> on <strong>" . $date . "</strong>.</p>";
+				$time = date("H:i", $question->timestamp);
+				$markup .= "<p>You were tagged at <strong>" . $text_data . "</strong> on <strong>" . $date . "</strong> at <strong>" .
+				$time . "</strong>.</p>";
 				break;
 			
 			case TYPE_STATUS:
 				$date = date("l j F Y", $question->timestamp);
 				$time = date("H:i", $question->timestamp);
 				$markup .= "<p>You posted saying <em>&quot;" . $text_data . "&quot;</em> on <strong>" . $date . "</strong> at <strong>" .
-				$time . "</strong>.</p>";
+				$time . "</strong>. <br />" .
+				"Click <a href='" . $permalink . "' target='_blank'>here</a> to view this status update on Facebook. (Opens in a new tab / window)</p>";
 				break;
 			
 			case TYPE_ALBUM:
 				$date = date("l j F Y", $question->timestamp);
+				$time = date("H:i", $question->timestamp);
+				$filename = "tmp_images/" . date("U") . "_" . rand() . ".jpg";
 				$num_photos = $question->additional_info["num_photos"];
-				$markup .= "<p>You added photos to an album called <strong>" . $text_data . "</strong> on <strong>" . $date . "</strong>. " .
-				"There are <strong>" . $num_photos . "</strong> photos in the album.</p>";
+				$image_address = $question->image;
+				
+				$image_adjuster = new resize($image_address);
+				$image_adjuster->resizeImage(700, 700);
+				$image_adjuster->saveImage($filename, 75);
+				$markup .= "<p>You added photos to an album called <strong>" . $text_data . "</strong> on <strong>" . $date . "</strong> at " .
+				"<strong>" . $time . "</strong>. There are <strong>" . $num_photos . "</strong> photos in the album. The album's cover photo can " .
+				"be seen below. <br />" .
+				"Click <a href='" . $permalink . "' target='_blank'>here</a> to see this album on Facebook. (Opens in a new tab / window)</p>";
+				$markup .= "<img alt='Facebook Photo' src='" . $filename . "' />";
 				break;
 			
 			case TYPE_PHOTO:
 				$date = date("l j F Y", $question->timestamp);
-				$filename = "tmp_images/" . rand() . ".jpg";
+				$filename = "tmp_images/" . date("U") . "_" . rand() . ".jpg";
 				$image_address = $question->image;
 				$image_info = getimagesize($image_address);
 				$image_width = $image_info["width"];
@@ -1002,9 +1114,10 @@
 				
 				$image_adjuster = new resize($image_address);
 				$image_adjuster->resizeImage($preferred_width, $preferred_height);
-				$image_adjuster->saveImage($filename, 60);
+				$image_adjuster->saveImage($filename, 75);
 				
-				$markup .= "<p>A photo you are tagged in can be seen below.</p>";
+				$markup .= "<p>A photo you are tagged in can be seen below. <br />" .
+				"Click <a href='" . $permalink . "' target='_blank'>here</a> to see at this photo on Facebook. (Opens in a new tab / window)</p>";
 				$markup .= "<img alt='Facebook Photo' src='" . $filename . "' />";
 				break;
 		}

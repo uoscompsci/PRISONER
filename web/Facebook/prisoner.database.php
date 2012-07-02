@@ -1,8 +1,12 @@
 <?php
-	
+
 	// Include any required components.
 	include_once("prisoner.constants.php");
 	include_once("prisoner.core.php");
+	
+	// Start a session on the server.
+	//ob_start();
+	//session_start();
 	
 	$db = mysqli_connect(DATABASE_HOST, DATABASE_USER, DATABASE_PASS, DATABASE_NAME);
 	
@@ -37,4 +41,6 @@
 		mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND)));
 	}
 	
+	// Flush output buffers.
+	//ob_end_flush();
 ?>

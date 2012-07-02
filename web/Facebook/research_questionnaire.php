@@ -1,7 +1,10 @@
-<!DOCTYPE HTML>
-
 <?php
-	
+
+	// Start a session on the server.
+	ob_start();
+	include_once("prisoner.classes.php");
+	session_start();
+
 	// Include any required components.
 	include_once("prisoner.authentication.php");
 	include_once("prisoner.classes.php");
@@ -9,9 +12,6 @@
 	include_once("prisoner.core.php");
 	include_once("prisoner.database.php");
 	include_once("prisoner.questionnaire.php");
-	
-	// Start a session on the server.
-	session_start();
 	
 	// Session / cache control.
 	header("Cache-Control: max-age=" . CACHE_STAY_ALIVE);
@@ -61,7 +61,9 @@
 	// Load initial data.
 	load_init_data($prisoner_session_id);
 	$participant_fb_id = $_SESSION["question_info"][TYPE_PROFILE]->data["_id"];
+	$participant_email_address = $_SESSION["question_info"][TYPE_PROFILE]->data["_email"];
 	$enc_facebook_id = encrypt($participant_fb_id);	# Sensitive data is encrypted.
+	$enc_email_address = encrypt($participant_email_address);	# Sensitive data is encrypted.
 	$loaded_all_data = true;	# Will be set to false if necessary.
 	
 	// Check if this is a returning participant. (Do we need to restore their session?)
@@ -110,7 +112,7 @@
 		// This isn't a returner. Populate session with Facebook data and questions.
 		else {
 			// Link participant ID with Facebook ID. (Encrypted)
-			$query = "UPDATE participant SET facebook_id = '$enc_facebook_id' WHERE id = '$participant_id'";
+			$query = "UPDATE participant SET facebook_id = '$enc_facebook_id', email_address = '$enc_email_address' WHERE id = '$participant_id'";
 			$result = mysqli_query($db, $query);
 			
 			if (!$result) {
@@ -176,6 +178,18 @@
 		$questions = array_merge($questions, $questions_to_add);
 		log_msg("Appending any new questions to session. (New size: " . count($_SESSION["questions"]) . ")");
 	}
+	
+	// If we've got all the questions we need, clear extra Facebook data from the session.
+	else {
+		if (empty($_SESSION["cleared_facebook_data"])) {
+			foreach ($_SESSION["question_info"] as &$question_info_obj) {
+				log_msg("Purging " . $question_info_obj->friendly_name . " from session.");
+				$question_info_obj->data = NULL;
+			}
+			
+			$_SESSION["cleared_facebook_data"] = true;
+		}
+	}
 		
 	// Once we've loaded all the data, check to make sure there's enough.
 	if ($loaded_all_data) {
@@ -191,7 +205,7 @@
 		}
 		
 		// Compensation is necessary.
-		else if ($compensation_needed > 0) {
+		else if (($compensation_needed > 0) && (empty($_SESSION["got_compensation"]))) {
 			log_msg("Data compensation is required. (Need " . $compensation_needed . " more items)");
 			
 			$num_question_types = count($_SESSION["question_info"]);
@@ -225,9 +239,10 @@
 				$extra_questions = array_merge($extra_questions, get_questions($question_info_obj->type));
 			}
 			
-			log_msg("Adding " . count($extra_questions) . " into session.");
 			shuffle($extra_questions);
 			$questions = array_merge($questions, $extra_questions);
+			log_msg("Adding " . count($extra_questions) . " questions into session. (New size: " . count($_SESSION["questions"]) . ")");
+			$_SESSION["got_compensation"] = true;
 		}
 	}
 	
@@ -323,7 +338,7 @@
 	$meta_redirect = NULL;
 	
 	if (empty($this_question)) {
-		$meta_redirect = "<meta http-equiv='Refresh' content='10;url=research_questionnaire.php' />";
+		$meta_redirect = "<meta http-equiv='Refresh' content='15;url=research_questionnaire.php' />";
 		$question_available = false;
 	}
 	
@@ -346,9 +361,12 @@
 	else {
 		
 	}
-		
+	
+	// Flush output buffers.
+	ob_end_flush();
 ?>
 
+<!DOCTYPE HTML>
 <html>
 	<head>
 		<?php 
@@ -373,31 +391,41 @@
 							
 							<?php
 								
+								// Display any notices and the question.
 								echo display_notice() . "\n";
 								echo $to_display . "\n";
 								
+								// If there was a question...
 								if ($question_available) {
+									// Print out the yes / no options.
 									echo "<div class='question'>" .
 									"<p>Will you share this piece of information with us?</p>" . "\n" .
 									"<label><input type='radio' name='agree_to_share' value='Y' id='agree_to_share_1'" . $check_yes . ">Yes</label>" . "\n" .
 									"<label><input type='radio' name='agree_to_share' value='N' id='agree_to_share_0'" . $check_no . ">No</label>" . "\n" .
 									"</div>" . "\n";
 									
+									// Include the question's ID.
 									echo $question_id_field;
 									
+									// Inlcude next / previous buttons.
 									echo "<div class='navigation'>" . "\n";
+									$next_button_text = "Next Question";
 									
 									if ($question_num > 1) {
 										echo "<ul><li><a href='research_questionnaire.php?previous=1'>Previous Question</a></li></ul>";
 									}
 									
-									echo "<div class='next_submit'><input name='submit' type='submit' value='Next Question'></div>" . "\n" .
+									if ($question_num == NUM_QUESTIONS) {
+										$next_button_text = "Finish Study";
+									}
+									
+									echo "<div class='next_submit'><input name='submit' type='submit' value='" . $next_button_text . "'></div>" . "\n" .
 									"</div>" . "\n";
 								}
 								
+								// If there was no question, display the loading text.
 								else {
-									echo get_notice("We are still waiting for some of your Facebook data to load. Please be patient. This page will " .
-									"refresh automatically. (And may do so several times)", $is_error);
+									include_once("prisoner.include.loading.php");
 								}
 							
 							?>

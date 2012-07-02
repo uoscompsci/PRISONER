@@ -1,7 +1,10 @@
-<!DOCTYPE HTML>
-
 <?php
-	
+
+	// Start a session on the server.
+	ob_start();
+	include_once("prisoner.classes.php");
+	session_start();
+
 	// Include any required components.
 	include_once("prisoner.authentication.php");
 	include_once("prisoner.classes.php");
@@ -9,23 +12,43 @@
 	include_once("prisoner.core.php");
 	include_once("prisoner.database.php");
 	include_once("prisoner.questionnaire.php");
-
-	// Start a session on the server.
-	session_start();
 	
 	// Session / cache control.
-	header("Cache-Control: max-age=" . CACHE_STAY_ALIVE);
+	header("Cache-Control: no-cache");
 		
 	// Retrieve info from session.
+	$participant_id = $_SESSION["participant_id"];
 	$participant_group = $_SESSION["group"];
 	$study_title = $_SESSION["study_title"];
 	
+	// Grab data from database.
+	$query = "SELECT * FROM participant WHERE id = '$participant_id'";
+	$result = mysqli_query($db, $query);
+	$row = mysqli_fetch_array($result);
+	$email_address_msg = NULL;
+	
+	if (!$result) {
+		log_msg("Error - Failed to retrieve participant email address: " . mysqli_error($db));
+		$email_address_msg = "To get your Amazon voucher code, please email <a href='mailto:sm2269@st-andrews.ac.uk'>sm2269@st-andrews.ac.uk</a> " .
+		"and quote the reference <strong>" . $participant_id . "</strong>.";
+	}
+	
+	else {
+		log_msg("Retrieved participant email address.");
+		$email_address = decrypt($row["email_address"]);
+		$email_address_msg = get_notice("Your Amazon voucher code will be sent to the email address <strong>" . $email_address ."</strong>.", false);
+	}
+	
+	// Flush output buffers.
+	ob_end_flush();
+	
 ?>
 
+<!DOCTYPE HTML>
 <html>
 	<head>
 		<?php include_once("prisoner.include.head.php"); ?>
-		<title><?php echo $study_title; ?> - University Of St Andrews</title>
+		<title>Ethics In Online Social Network Research - University Of St Andrews</title>
 	</head>
 	
 	<body>
@@ -34,6 +57,8 @@
 				<div class="content">
 					<div class="info">
 						<h1>Debriefing</h1>
+						
+						<?php echo $email_address_msg; ?>
 						
 						<h2>1. Your results</h2>
 						<ul>

@@ -1,47 +1,20 @@
 <?php
 	
-	// Include any required components.
-	include_once("prisoner.constants.php");
-	include_once("prisoner.database.php");
-	
 	
 	/**
-	 * Simple class to hold information about a type / category of Facebook information. (Eg: Profile info, Check-ins)
-	 * Records the number of pieces of that info we want, the number we have, and any spare.
-	 * Used mainly internally to divide up questions between categories in the event some category doesn't have enough
-	 * items.
+	 * A QuestionType object is used to represent all the necessary information needed to generate questions of its type.
 	 */
-	class InfoType {
-		var $name = NULL;
-		var $num_want = 0;
-		var $num_have = 0;
-		var $num_spare = 0;
-		var $mismatch = 0;
-		var $type = NULL;
-		
-		
-		/**
-		 * Constructs a new InfoType object with the supplied name.
-		 * @param string $name_to_set The InfoType's name.
-		 */
-		function __construct($name_to_set, $type_to_set) {
-			$this->name = $name_to_set;
-			$this->type = $type_to_set;
-		}
-	}
-	
-	
 	class QuestionType {
-		var $friendly_name = NULL;
-		var $prisoner_name = NULL;
+		var $friendly_name = NULL;	# A friendly description of this type of question. (Eg: Profile info)
+		var $prisoner_name = NULL;	# The name PRISONER uses for this type of info.
 		var $session_name = NULL;
-		var $type = NULL;
-		var $data = NULL;
-		var $generated_questions = false;
-		var $loaded_data = false;
-		var $num_want = 0;
-		var $num_have = 0;
-		var $num_spare = 0;
+		var $type = NULL;	# Internal ID for this type of info.
+		var $data = NULL;	# Facebook data for this type of info. (JSON)
+		var $generated_questions = false;	# Flag indicating whether or not questions have been generated for this type.
+		var $loaded_data = false;	# Flag indicating whether or not data has been loaded for this type.
+		var $num_want = 0;	# The number of questions of this type we want.
+		var $num_have = 0;	# The number of pieces of info of this type that we have.
+		var $num_spare = 0;	# The number of spare pieces of info.
 		
 		
 		function __construct($friendly_name, $type, $prisoner_name, $session_name) {
@@ -64,6 +37,7 @@
 		var $image = NULL;
 		var $timestamp = NULL;
 		var $privacy_of_data = NULL;
+		var $permalink = NULL;
 		var $response = NULL;
 		var $additional_info = NULL;
 		
@@ -78,5 +52,4 @@
 			$this->text_data = $text_data;
 		}
 	}
-	
 ?>
