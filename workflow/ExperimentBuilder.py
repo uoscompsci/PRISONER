@@ -33,6 +33,30 @@ class ExperimentBuilder(object):
 		self.providers = None
 		self.token = str(uuid.uuid4())
 		self.session = defaultdict(dict)
+		self.title = None
+		self.contact = None
+		self.connection_string = None
+
+	def provide_db_string(self, db_string):
+		self.connection_string = db_string
+		self.sog.persistence.rebuild_engine(db_string)
+
+	def provide_title(self, title):
+		""" The title of the experiment as presented to your
+		participants.
+		:param title: Friendly experiment title
+		:type title: str """
+		self.title = title
+
+	def provide_contact(self, contact):
+		""" How to contact someone in connection with this experiment,
+		eg. an email address. This should be provided in a form that fits the following
+		sentence construction:
+			"Contact the researcher at <contact>."
+		:param contact: Contact information
+		:type contact: str
+		"""
+		self.contact = contact
 
 	def provide_privacy_policy(self, policy):
 		""" Provide the privacy policy for this experiment.

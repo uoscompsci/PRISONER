@@ -15,19 +15,25 @@ from workflow import ExperimentBuilder
 parser = OptionParser()
 parser.add_option("-d","--design", type="string", dest="design",
 help="Path to the experimental design file for this experiment")
+
 parser.add_option("-p","--policy", type="string", dest="policy",
 help="Path to the privacy policy file for this experiment")
+
+parser.add_option("-c","--connection", type="string", dest="connection",
+help="Database connection string (eg. sqlite:///test.db")
+
 
 (options, args) = parser.parse_args()
 
 if __name__ == "__main__":
 	design = options.design
 	policy = options.policy
+	connection = options.connection
 
 	expBuilder = ExperimentBuilder.ExperimentBuilder()
 	expBuilder.provide_privacy_policy(policy)
 	expBuilder.provide_experimental_design(design)
-
+	expBuilder.provide_db_string(connection)
 	expBuilder.build_schema()	
 	
 	

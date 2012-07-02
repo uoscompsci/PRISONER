@@ -33,7 +33,7 @@ class PolicyProcessor(object):
 		if policy:
 			self.privacy_policy = policy
 		self.namespaces = {"p":
-		"http://pvnets.cs.st-andrews.ac.uk/prisoner/privacy-policy"}
+		"http://prisoner.cs.st-andrews.ac.uk/prisoner/privacy-policy"}
 
 		self.sog = sog
 

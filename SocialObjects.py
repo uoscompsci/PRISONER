@@ -311,7 +311,7 @@ class Collection(SocialObject):
 	"""
 	def __init__(self):
 		super(Collection,self).__init__()
-		self._objects = None
+		self._objects = []
 
 	@property
 	def objects(self):

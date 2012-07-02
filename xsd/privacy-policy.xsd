@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-targetNamespace="http://pvnets.cs.st-andrews.ac.uk/prisoner/privacy-policy"
-xmlns:tns="http://pvnets.cs.st-andrews.ac.uk/prisoner/privacy-policy"
+targetNamespace="http://prisoner.cs.st-andrews.ac.uk/prisoner/privacy-policy"
+xmlns:tns="http://prisoner.cs.st-andrews.ac.uk/prisoner/privacy-policy"
 elementFormDefault="unqualified">
 
 <xs:complexType name="attribute-match">

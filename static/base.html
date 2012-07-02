@@ -1,0 +1,35 @@
+<html>
+
+<head>
+<title>{{ title }}</title>
+<link href="static/css/style.css" rel="stylesheet" type="text/css" media="screen" />
+</head>
+
+<body>
+<div id="page">
+<div id="header" class="contentblock">
+	<h1>{{ exp_name }}</h1>
+	<h2>{% block title %}{% endblock %}</h2>
+</div>
+
+<div id="content" class="contentblock">
+	{% block content %}
+	<h2>Something went wrong</h2>
+	<p>Sorry, there was an unexpected problem with this experiment. </p>
+	<p>The researchers are now aware of this problem and should be able to
+	fix it soon. In the meantime, we suggest you contact $experiment_contact
+	to find out what to do next.</p>
+	{% endblock %}
+</div>
+
+<div id="footer">
+	<p>This experiment is powered by <a
+href="http://prisoner.cs.st-andrews.ac.uk/info"
+target="_blank">PRISONER</a>.</p>
+	<p>If you experience any issues or have questions about this study,
+contact the researcher at {{ exp_contact }}.</p>
+</div>
+</div>
+</body>
+
+</html>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-targetNamespace="http://pvnets.cs.st-andrews.ac.uk/prisoner/experimental_design"
-xmlns:tns="http://pvnets.cs.st-andrews.ac.uk/prisoner/experimental_design"
+targetNamespace="http://prisoner.cs.st-andrews.ac.uk/prisoner/experimental_design"
+xmlns:tns="http://prisoner.cs.st-andrews.ac.uk/prisoner/experimental_design"
 elementFormDefault="unqualified">
 
 <xs:complexType name="column">

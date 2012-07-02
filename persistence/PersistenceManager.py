@@ -59,8 +59,12 @@ class PersistenceManager(object):
 		# instance DB
 		exp_element = self._experimental_design.xpath("//experiment")[0]
 		exp_name = exp_element.get("name")
-		self.engine = create_engine("sqlite:///%s.db"%exp_name)
-		self.metadata = MetaData(self.engine)
+		#self.engine = create_engine("sqlite:///%s.db"%exp_name)
+		#self.metadata = MetaData(self.engine)
+
+	def rebuild_engine(self, connection_string):
+		self.engine = create_engine(connection_string)
+		self.metadata = MetaData(self.engine)	
 
 	def validate_design(self, design):
 		"""

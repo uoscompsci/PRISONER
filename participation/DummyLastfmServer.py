@@ -21,8 +21,9 @@ import urlparse
 
 """ Dummy web-based Last.fm participation client """
 
-#PRISONER_URI = "http://127.0.0.1:5000"
-PRISONER_URI = "http://prisoner.cs.st-andrews.ac.uk/prisoner"
+PRISONER_URI = "http://127.0.0.1:5000" #local test
+#PRISONER_URI = "http://prisoner.cs.st-andrews.ac.uk/prisoner" #production
+
 SELF_URI = "http://127.0.0.1:1457"
 
 
@@ -71,7 +72,10 @@ class LastFmExperimentClient(object):
 		post_data = {"policy": "http://prisoner.cs.st-andrews.ac.uk/demo/lastfm_privacy_policy_test.xml",
 		"design": "http://prisoner.cs.st-andrews.ac.uk/demo/lastfm_exp_design_test.xml",
 		"participant": "2",
-		"providers": "Lastfm"
+		"providers": "Lastfm",	
+		"title": "The Dumb Dummy Experiment",
+		"contact": "lh49@st-andrews.ac.uk",
+		"db": "mysql://root:pvnets@localhost/prisoner_lfm"
 		}
 	
 		start_request = urllib2.Request(url_fix(request_url),

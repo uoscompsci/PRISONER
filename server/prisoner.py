@@ -7,6 +7,8 @@ from werkzeug.exceptions import HTTPException, NotFound
 from werkzeug.wsgi import SharedDataMiddleware
 from werkzeug.utils import redirect, cached_property
 
+from jinja2 import Environment, FileSystemLoader
+
 from workflow import PolicyProcessor, SocialObjectGateway, ExperimentBuilder
 import SocialObjects
 
@@ -20,6 +22,7 @@ import urllib
 import urllib2
 
 SERVER_URL = "http://localhost:5000"
+TEMPLATE_URL = "/home/lhutton/hg/prisoner/src/static" # LOCAL
 
 class PRISONER(object):
 	""" PRISONER Web Service
@@ -127,6 +130,11 @@ class PRISONER(object):
 		])
 		self.session_store = FilesystemSessionStore()
 		self.session_internals = {}
+		self.jinja_env = Environment(loader=FileSystemLoader(TEMPLATE_URL), autoescape=True)
+		
+	def render_template(self, template_name, **context):
+		t = self.jinja_env.get_template(template_name)
+		return Response(t.render(context), mimetype="text/html")
 
 	def get_builder_reference(self, request):
 		""" Each session has its own instance of PRISONER's internals,
@@ -153,7 +161,9 @@ class PRISONER(object):
 
 		builder.provide_privacy_policy(policy)
 		builder.provide_experimental_design(exp_design)
-	
+
+		builder.provide_db_string(request.form["db"])
+
 		schema = request.form["schema"]
 
 		write_out = {}
@@ -205,6 +215,11 @@ class PRISONER(object):
 		exp_design = request.form["design"]
 		builder.provide_privacy_policy(privacy_policy)
 		builder.provide_experimental_design(exp_design)
+
+		builder.provide_title(request.form["title"])
+		builder.provide_contact(request.form["contact"])
+
+		builder.provide_db_string(request.form["db"])
 
 		participant = builder.authenticate_participant("participant",request.form["participant"])	
 	
@@ -314,6 +329,8 @@ class PRISONER(object):
 		else:
 			confirm_url = "%s/confirm?pctoken=%s&PRISession=%s" % (SERVER_URL,
 			builder.token, request.args["PRISession"])
+
+			"""
 			resp += "(human readable consent here) <br/><br />" +\
 			"Go <a href='%s'>here</a> if you agree to " % confirm_url+\
 			"the invisible information here."
@@ -321,6 +338,9 @@ class PRISONER(object):
 			re = Response(resp)
 			re.content_type = "text/html"
 			return re
+			"""	
+			return self.render_template("start.html",next_link = confirm_url,
+			exp_contact=builder.contact, exp_name=builder.title)
 
 
 	def on_confirm(self, request):
@@ -339,11 +359,16 @@ class PRISONER(object):
 			provider = providers[len(providers)-1]
 			confirm_url = "%s/confirm?provider=%s&pctoken=%s&PRISession=%s" % (SERVER_URL, provider,
 			token, request.args["PRISession"])
+			"""
 			resp += "<a href='%s'>Login to" % confirm_url+\
 			 " %s</a>" % provider
 			re = Response(resp)
 			re.content_type = "text/html"
 			return re
+			"""
+			return self.render_template("service.html",
+			provider=provider, next_link = confirm_url,
+			exp_contact=builder.contact, exp_name=builder.title)
 
 		if providers:
 			callback = "%s/confirm?pctoken=%s&provider=%s&cbprovider=%s&PRISession=%s" % (SERVER_URL, token,
@@ -428,4 +453,5 @@ def create_app():
 if __name__ == "__main__":
 	from werkzeug.serving import run_simple
 	app = create_app()
-	run_simple("127.0.0.1", 5000, app, use_debugger=True, use_reloader=True)
+	run_simple("127.0.0.1", 5000, app, use_debugger=True, use_reloader=True,
+	static_files={"/static": TEMPLATE_URL})
