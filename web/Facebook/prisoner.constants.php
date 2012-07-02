@@ -1,7 +1,4 @@
 <?php
-
-	// Turn off error reporting.
-	//error_reporting(0);
 	
 	// User settings.
 	$user_settings = parse_ini_file("config.ini");
@@ -20,8 +17,8 @@
 	// PRISONER config.
 	define("PRISONER_URL", "http://prisoner.cs.st-andrews.ac.uk/prisoner");
 	define("CALLBACK_URL", "http://prisoner.cs.st-andrews.ac.uk/sharing/start_experiment.php");
-	define("PRIVACY_POLICY_URL", "http://sm2269.host.cs.st-andrews.ac.uk/fb_privacy_policy_test.xml");
-	define("EXP_DESIGN_URL", "http://sm2269.host.cs.st-andrews.ac.uk/fb_exp_design_test.xml");
+	define("PRIVACY_POLICY_URL", "http://prisoner.cs.st-andrews.ac.uk/sharing/xml/facebook_study_privacy_policy.xml");
+	define("EXP_DESIGN_URL", "http://prisoner.cs.st-andrews.ac.uk/sharing/xml/facebook_study_exp_design.xml");
 	
 	// Study constants.
 	define("GROUP_1", 1);

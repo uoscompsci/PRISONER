@@ -174,7 +174,6 @@
 						// Get required info.
 						$friend_name = $data_items[$key]["_displayName"];
 						$url = $data_items[$key]["_url"];
-						log_msg(var_export($data_items[$key], true));
 							
 						// Create question object and add it to our list.
 						$this_question = new Question(TYPE_FRIEND, $friend_name);
@@ -646,6 +645,9 @@
 	 * @param string $data_key Key to generate question for.
 	 */
 	function get_profile_question($profile_info, $data_key) {
+		// Get the URL of the participant's profile.
+		$url = $profile_info["_url"];
+		
 		switch ($data_key) {
 			// Username.
 			case "_username":
@@ -671,6 +673,7 @@
 					$this_question->custom_question_text = "You either do not have a middle name or have not added it to Facebook";
 				}
 				
+				$this_question->permalink = $url;
 				return $this_question;
 				break;
 			
@@ -696,6 +699,7 @@
 					$this_question->text_data = $birthday;
 				}
 				
+				$this_question->permalink = $url;
 				return $this_question;
 				break;
 			
@@ -713,6 +717,7 @@
 					$this_question->custom_question_text = "You have not added a bio / about section to Facebook";
 				}
 				
+				$this_question->permalink = $url;
 				return $this_question;
 				break;
 			
@@ -725,6 +730,7 @@
 					$this_question->custom_question_text = "You have not added information about your political alignment to Facebook";
 				}
 				
+				$this_question->permalink = $url;
 				return $this_question;
 				break;
 			
@@ -737,6 +743,7 @@
 					$this_question->custom_question_text = "You have not added information about your religion to Facebook";
 				}
 				
+				$this_question->permalink = $url;
 				return $this_question;
 				break;
 			
@@ -748,7 +755,8 @@
 				$this_question = new Question(TYPE_PROFILE, "");
 				$this_question->custom_question_text = "Information about your relationship status is not available.";
 			}
-				
+			
+			$this_question->permalink = $url;
 			return $this_question;
 			break;
 		
@@ -765,7 +773,8 @@
 					$friendly_list = get_friendly_list($this_question->text_data, true);
 					$this_question->text_data = $friendly_list;
 				}
-			
+				
+				$this_question->permalink = $url;
 				return $this_question;
 				break;
 			
@@ -782,7 +791,8 @@
 					$friendly_list = get_friendly_list($this_question->text_data, true);
 					$this_question->text_data = $friendly_list;
 				}
-						
+				
+				$this_question->permalink = $url;
 				return $this_question;
 				break;
 			
@@ -804,6 +814,7 @@
 				$last_update = $date . "</strong> at <strong>" . $time;
 				$this_question = new Question(TYPE_PROFILE, $last_update);
 				$this_question->custom_question_text = "You last updated your Facebook profile (From Facebook itself, not via an app) on";
+				$this_question->permalink = $url;
 				return $this_question;
 				break;
 			
@@ -825,6 +836,7 @@
 					$place_name = $hometown["_displayName"];
 					$this_question = new Question(TYPE_PROFILE, $place_name);
 					$this_question->custom_question_text = "You are from";
+					$this_question->permalink = $url;
 					return $this_question;
 				}
 				
@@ -832,6 +844,7 @@
 				else {
 					$this_question = new Question(TYPE_PROFILE, "");
 					$this_question->custom_question_text = "You have not added information about your hometown to Facebook.";
+					$this_question->permalink = $url;
 					return $this_question;
 				}
 				
@@ -846,6 +859,7 @@
 					$place_name = $location["_displayName"];
 					$this_question = new Question(TYPE_PROFILE, $place_name);
 					$this_question->custom_question_text = "You are currently at";
+					$this_question->permalink = $url;
 					return $this_question;
 				}
 				
@@ -853,6 +867,7 @@
 				else {
 					$this_question = new Question(TYPE_PROFILE, "");
 					$this_question->custom_question_text = "You have not added information about your current location to Facebook";
+					$this_question->permalink = $url;
 					return $this_question;
 				}
 				
@@ -867,6 +882,7 @@
 					$name = $significant_other["_displayName"];
 					$this_question = new Question(TYPE_PROFILE, $name);
 					$this_question->custom_question_text = "Your significant other is";
+					$this_question->permalink = $url;
 					return $this_question;
 				}
 				
@@ -874,6 +890,7 @@
 				else {
 					$this_question = new Question(TYPE_PROFILE, "");
 					$this_question->custom_question_text = "Information about your significant other is not available on Facebook";
+					$this_question->permalink = $url;
 					return $this_question;
 				}
 				
@@ -891,6 +908,7 @@
 					// Create and return question object.
 					$this_question = new Question(TYPE_PROFILE, $place_list);
 					$this_question->custom_question_text = "Your education history includes places such as";
+					$this_question->permalink = $url;
 					return $this_question;
 				}
 				
@@ -898,6 +916,7 @@
 				else {
 					$this_question = new Question(TYPE_PROFILE, "");
 					$this_question->custom_question_text = "You have not added information about your education history to Facebook";
+					$this_question->permalink = $url;
 					return $this_question;
 				}
 				
@@ -915,6 +934,7 @@
 						// Create and return question object.
 						$this_question = new Question(TYPE_PROFILE, $place_list);
 						$this_question->custom_question_text = "You have worked for employers such as";
+						$this_question->permalink = $url;
 						return $this_question;
 					}
 				
@@ -922,9 +942,10 @@
 					else {
 						$this_question = new Question(TYPE_PROFILE, "");
 						$this_question->custom_question_text = "You have not added information about your work history to Facebook";
+						$this_question->permalink = $url;
 						return $this_question;
 					}
-				
+					
 					break;
 		}
 	}
@@ -1014,9 +1035,9 @@
 				// General case.
 				else {
 					$markup .= "<p>" . $question_text . " <strong>" . $data_item . "</strong>. <br />";
+					$markup .= "Click <a href='" . $permalink . "' target='_blank'>here</a> to view your Facebook profile.  (Opens in a new tab / window)</p>";
 				}
 				
-				$markup .= "Click <a href='" . $permalink . "' target='_blank'>here</a> to view your Facebook profile.  (Opens in a new tab / window)</p>";
 				break;
 			
 			case TYPE_FRIEND:
