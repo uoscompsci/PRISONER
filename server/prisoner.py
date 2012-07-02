@@ -160,9 +160,10 @@ class PRISONER(object):
 		policy = request.form["policy"]
 
 		builder.provide_privacy_policy(policy)
-		builder.provide_experimental_design(exp_design)
 
 		builder.provide_db_string(request.form["db"])
+		builder.provide_experimental_design(exp_design)
+
 
 		schema = request.form["schema"]
 
@@ -214,12 +215,13 @@ class PRISONER(object):
 		privacy_policy = request.form["policy"]
 		exp_design = request.form["design"]
 		builder.provide_privacy_policy(privacy_policy)
-		builder.provide_experimental_design(exp_design)
 
 		builder.provide_title(request.form["title"])
 		builder.provide_contact(request.form["contact"])
 
 		builder.provide_db_string(request.form["db"])
+		print "got db: %s" % request.form["db"]
+		builder.provide_experimental_design(exp_design)
 
 		participant = builder.authenticate_participant("participant",request.form["participant"])	
 	

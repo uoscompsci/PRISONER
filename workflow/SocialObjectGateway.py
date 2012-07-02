@@ -158,7 +158,8 @@ class SocialObjectsGateway(object):
 		self.policy_processor = PolicyProcessor(self.privacy_policy,
 		self)
 
-	def provide_experimental_design(self, experimental_design):
+	def provide_experimental_design(self, experimental_design,
+	connection_string):
 		"""
 		Provide the experimental design for this experiment.
 		Used to instantiate a PersistenceManager.
@@ -167,12 +168,15 @@ class SocialObjectsGateway(object):
 
 		:param experimental_design: path to an experimental design XML file
 		:type experimental_design: str
+		:param connection_string:
+			database connection string for persisting data
+		:type connection_string: str
 		"""
 		if self.persistence:
 			raise Exception("Experimental design already defined."+\
 			"If you need to change it, start a new instance of PRISONER")
 		self.persistence = PersistenceManager.PersistenceManager(experimental_design,
-		self.policy_processor)
+		self.policy_processor, connection_string)
 
 	def post_response(self, schema, response):
 		""" Passes the response to the PersistenceManager to write to the

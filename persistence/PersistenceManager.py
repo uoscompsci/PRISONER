@@ -14,7 +14,8 @@ class PersistenceManager(object):
 	PersistenceManager, and where possible, friendlier interfaces are available
 	through the ExperimentBuilder and SocialObjectsGateway. 
 	"""	
-	def __init__(self, exp_design = None, policy_processor=None):
+	def __init__(self, exp_design = None, policy_processor=None,
+	connection_string=None):
 		""" Instantiate a PersistenceManager by supply an experimental
 		design and instance of PolicyProcessor (assumed to already be bound to a valid
 		privacy policy.
@@ -35,8 +36,9 @@ class PersistenceManager(object):
 		self.engine = None
 		self.metadata = None
 		#self.metadata = MetaData(self.engine)
-
+		
 		self.policy_processor = policy_processor
+		self.connection_string = connection_string
 
 		self._experimental_design = None
 		if exp_design:	
@@ -61,6 +63,9 @@ class PersistenceManager(object):
 		exp_name = exp_element.get("name")
 		#self.engine = create_engine("sqlite:///%s.db"%exp_name)
 		#self.metadata = MetaData(self.engine)
+		self.engine = create_engine(self.connection_string)
+		self.metadata = MetaData(self.engine)	
+
 
 	def rebuild_engine(self, connection_string):
 		self.engine = create_engine(connection_string)

@@ -26,6 +26,9 @@ PRISONER_URI = "http://127.0.0.1:5000" #local test
 
 SELF_URI = "http://127.0.0.1:1457"
 
+#CONNECTION_STRING = "mysql://root:pvnets@localhost/prisoner_lfm" # mysql
+CONNECTION_STRING = "sqlite:///LastfmDummy.db"
+
 
 class LastFmExperimentClient(object):
 	def __init__(self):
@@ -56,7 +59,9 @@ class LastFmExperimentClient(object):
 		register_data = {"name": "Bob", "gender": "male",
 		"serviceGroup": "Lastfm", "schema":"participant",
 		"policy": "http://prisoner.cs.st-andrews.ac.uk/demo/lastfm_privacy_policy_test.xml",
-		"design": "http://prisoner.cs.st-andrews.ac.uk/demo/lastfm_exp_design_test.xml"}
+		"design": "http://prisoner.cs.st-andrews.ac.uk/demo/lastfm_exp_design_test.xml",
+		"db": CONNECTION_STRING
+}
 		reg_url = "%s/register?PRISession=%s" % (PRISONER_URI,
 		prisession)
 		reg_req = urllib2.Request(url_fix(reg_url),
@@ -75,7 +80,7 @@ class LastFmExperimentClient(object):
 		"providers": "Lastfm",	
 		"title": "The Dumb Dummy Experiment",
 		"contact": "lh49@st-andrews.ac.uk",
-		"db": "mysql://root:pvnets@localhost/prisoner_lfm"
+		"db": CONNECTION_STRING
 		}
 	
 		start_request = urllib2.Request(url_fix(request_url),

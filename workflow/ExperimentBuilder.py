@@ -39,7 +39,7 @@ class ExperimentBuilder(object):
 
 	def provide_db_string(self, db_string):
 		self.connection_string = db_string
-		self.sog.persistence.rebuild_engine(db_string)
+		#self.sog.persistence.rebuild_engine(db_string)
 
 	def provide_title(self, title):
 		""" The title of the experiment as presented to your
@@ -72,7 +72,8 @@ class ExperimentBuilder(object):
 		:param exp_design: Path to experimental design file
 		:type exp_design: str
 		"""
-		self.sog.provide_experimental_design(exp_design)
+		self.sog.provide_experimental_design(exp_design,
+		self.connection_string)
 
 	def authenticate_participant(self, schema, participant_id):
 		""" Provide the ID of the participant in this experiment. This
