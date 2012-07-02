@@ -145,6 +145,14 @@
 					$_SESSION["got_required_profile_data"] = true;
 				}
 				
+				// We'll have already got required info, so remove keys for it in case of duplicate questions.
+				unset($PROFILE_INFO_KEYS[array_search("_gender", $PROFILE_INFO_KEYS)]);
+				unset($PROFILE_INFO_KEYS[array_search("_updatedTime", $PROFILE_INFO_KEYS)]);
+				unset($PROFILE_INFO_KEYS[array_search("_image", $PROFILE_INFO_KEYS)]);
+				unset($PROFILE_INFO_KEYS[array_search("_hometown", $PROFILE_INFO_KEYS)]);
+				unset($PROFILE_INFO_KEYS[array_search("_education", $PROFILE_INFO_KEYS)]);
+				unset($PROFILE_INFO_KEYS[array_search("_work", $PROFILE_INFO_KEYS)]);
+				
 				// Now we've got the required data, select the keys we'll ask questions for.
 				$data_keys = array_rand($PROFILE_INFO_KEYS, $num_want);
 				
@@ -495,7 +503,11 @@
 	
 	
 	/**
-	 * Commits the results
+	 * Commits the results to the PRISONER framework and performs a number of essential housekeeping duties.
+	 * In order, the participant's "Finished" flag is set in our database, ensuring they can't take the study again,
+	 * any information stored about them in their session is deleted to avoid holding onto sensitive data, the .group file
+	 * is reset, so the next participant gets assigned the right group and finally, the participant's results are POSTed to
+	 * PRISONER.
 	 */
 	function commit_participant_results() {
 		// Globals.
@@ -585,8 +597,9 @@
 	
 	/**
 	 * Checks whether or not the requested data is available from PRISONER yet.
-	 * @param unknown_type $data_type_str
-	 * @param unknown_type $session_id
+	 * @param str $data_type_str PRISONER name of the data to check for.
+	 * @param str $session_id PRISONER session ID.
+	 * @return mixed Returns false if the data is not yet available, otherwise the data response is returned.
 	 */
 	function check_data_availability($data_type_str, $session_id) {
 		$response = get_response("/get/Facebook/" . $data_type_str . "/session:Facebook.id", $session_id, false, true);
@@ -1214,6 +1227,4 @@
 		return $timestamp;
 	}
 	
-	// Flush output buffers.
-	//ob_end_flush();
 ?>

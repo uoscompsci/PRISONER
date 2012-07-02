@@ -1,17 +1,20 @@
 <?php
 	
 	
+	/**
+	 * A QuestionType object is used to represent all the necessary information needed to generate questions of its type.
+	 */
 	class QuestionType {
-		var $friendly_name = NULL;
-		var $prisoner_name = NULL;
+		var $friendly_name = NULL;	# A friendly description of this type of question. (Eg: Profile info)
+		var $prisoner_name = NULL;	# The name PRISONER uses for this type of info.
 		var $session_name = NULL;
-		var $type = NULL;
-		var $data = NULL;
-		var $generated_questions = false;
-		var $loaded_data = false;
-		var $num_want = 0;
-		var $num_have = 0;
-		var $num_spare = 0;
+		var $type = NULL;	# Internal ID for this type of info.
+		var $data = NULL;	# Facebook data for this type of info. (JSON)
+		var $generated_questions = false;	# Flag indicating whether or not questions have been generated for this type.
+		var $loaded_data = false;	# Flag indicating whether or not data has been loaded for this type.
+		var $num_want = 0;	# The number of questions of this type we want.
+		var $num_have = 0;	# The number of pieces of info of this type that we have.
+		var $num_spare = 0;	# The number of spare pieces of info.
 		
 		
 		function __construct($friendly_name, $type, $prisoner_name, $session_name) {
