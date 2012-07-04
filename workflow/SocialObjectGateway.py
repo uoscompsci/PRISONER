@@ -125,6 +125,7 @@ class SocialObjectsGateway(object):
 		"""
 		gateway = self.__getServiceGateway(provider)
 		ret_access_token = gateway.complete_authentication(request)
+		print "from gateway complete_auth got %s" % ret_access_token
 		if ret_access_token != False:
 			self.persistence.register_participant_with_provider(self.participant[0],
 			provider, ret_access_token)
