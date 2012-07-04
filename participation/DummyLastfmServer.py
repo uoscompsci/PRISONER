@@ -26,7 +26,8 @@ PRISONER_URI = "http://127.0.0.1:5000" #local test
 
 SELF_URI = "http://127.0.0.1:1457"
 
-#CONNECTION_STRING = "mysql://root:pvnets@localhost/prisoner_lfm" # mysql
+#CONNECTION_STRING = "mysql://root:pvnets@localhost/prisoner_lfm" # remote mysql
+#CONNECTION_STRING = "mysql://root:root@localhost/prisoner_lfm" # local mysql
 CONNECTION_STRING = "sqlite:///LastfmDummy.db"
 
 

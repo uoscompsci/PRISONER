@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}This experiment uses external services{% endblock %}
+
+{% block content %}
+<p>Before we begin, we need you to login with external services. Please
+authenticate yourself with {{ provider }} to continue.</p>
+
+<p>If you have any questions about how we use the data from these services,
+please review the participant information, or contact the researcher.</p>
+
+ <a href="{{ next_link }}"><div class="button">Login to {{ provider }}</div></a>
+
+{% endblock %}
