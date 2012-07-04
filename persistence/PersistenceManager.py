@@ -358,8 +358,8 @@ class PersistenceManager(object):
 				table.get("name"), self.metadata,
 				Column("id",Integer,primary_key=True),
 				Column("participant_id",Integer),
-				Column("provider",String),
-				Column("access_token",String))
+				Column("provider",String(255)),
+				Column("access_token",String(255)))
 				self.meta_participant_table = meta_table
 			elif table.get("type") == "response":
 				self.response_tables[table.get("name")] = new_table
