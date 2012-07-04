@@ -29,8 +29,8 @@
 	
 	if (!$result) {
 		log_msg("Error - Failed to retrieve participant email address: " . mysqli_error($db));
-		$email_address_msg = "To get your Amazon voucher code, please email <a href='mailto:sm2269@st-andrews.ac.uk'>sm2269@st-andrews.ac.uk</a> " .
-		"and quote the reference <strong>" . $participant_id . "</strong>.";
+		$email_address_msg = get_notice("To get your Amazon voucher code, please email <a href='mailto:sm2269@st-andrews.ac.uk'>sm2269@st-andrews.ac.uk</a> " .
+		"and quote the reference <strong>" . $participant_id . "</strong>.", false);
 	}
 	
 	else {

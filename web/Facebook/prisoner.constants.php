@@ -15,14 +15,15 @@
 	define("SALT", "Oh Scotty doesn't know! So Don't Tell Scotty! Scotty doesn't know! Scotty doesn't know! So Don't Tell Scotty!");
 	
 	// PRISONER config.
-	#define("PRISONER_URL", "http://prisoner.cs.st-andrews.ac.uk/prisoner");	# Production.
-	define("PRISONER_URL", "http://localhost:5000/");	# Testing.
-	define("CALLBACK_URL", "http://prisoner.cs.st-andrews.ac.uk/sharing/start_experiment.php");
+	#define("PRISONER_URL", "http://localhost:5000/");	# Testing.
+	#define("DB_CONNECTION_STRING", "sqlite:///Facebook_Study.db");	# Testing.
+	#define("CALLBACK_URL", "http://localhost/prisoner/start_experiment.php");	# Testing.
+	define("PRISONER_URL", "http://prisoner.cs.st-andrews.ac.uk/prisoner");	# Production.
+	define("CALLBACK_URL", "http://prisoner.cs.st-andrews.ac.uk/sharing/start_experiment.php");	# Production.
+	define("DB_CONNECTION_STRING", "mysql://root:pvnets@localhost/facebook_study");	# Production.
 	define("PRIVACY_POLICY_URL", "http://prisoner.cs.st-andrews.ac.uk/sharing/xml/facebook_study_privacy_policy.xml");
 	define("EXP_DESIGN_URL", "http://prisoner.cs.st-andrews.ac.uk/sharing/xml/facebook_study_exp_design.xml");
 	define("CONTACT_EMAIL_ADDRESS", "tnhh@st-andrews.ac.uk");
-	#define("DB_CONNECTION_STRING", "mysql://root:pvnets@localhost/prisoner");	# Production.
-	define("DB_CONNECTION_STRING", "sqlite:///Facebook_Study.db");	# Testing.
 	
 	// Study constants.
 	define("GROUP_1", 1);

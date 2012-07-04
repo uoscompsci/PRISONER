@@ -117,8 +117,15 @@ class FacebookServiceGateway(ServiceGateway):
 		print "Response: " + str(response)
 		
 		# Parse response to get access token and expiry date.
-		self.access_token = response["access_token"][0]
-		expires = response["expires"][0]
+		access_token = None
+		expires = None
+		
+		if (response.has_key("access_token"):
+			self.access_token = response["access_token"][0]
+			expires = response["expires"][0]
+		
+		else:
+			return false
 		
 		# Create a User() object for the authenticated user.
 		auth_user = User()

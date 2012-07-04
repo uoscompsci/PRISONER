@@ -498,6 +498,24 @@ table {
 	text-decoration: none;
 }
 
+.notice_normal p a:link {
+	color: #111111;
+	text-decoration: underline;
+}
+.notice_normal p a:visited {
+	color: #111111;
+	text-decoration: underline;
+}
+.notice_normal p a:hover {
+	color: #111111;
+	text-decoration: none;
+}
+.notice_normal p a:active {
+	color: #111111;
+	text-decoration: none;
+}
+
+
 .button_green a:link, .button_green a:visited, .button_green a:hover, .button_green a:active {
 	color: #FFFFFF;
 	text-decoration: none;
