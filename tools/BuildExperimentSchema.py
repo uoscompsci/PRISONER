@@ -32,8 +32,8 @@ if __name__ == "__main__":
 
 	expBuilder = ExperimentBuilder.ExperimentBuilder()
 	expBuilder.provide_privacy_policy(policy)
-	expBuilder.provide_experimental_design(design)
 	expBuilder.provide_db_string(connection)
+	expBuilder.provide_experimental_design(design)
 	expBuilder.build_schema()	
 	
 	
