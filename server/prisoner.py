@@ -22,7 +22,7 @@ import urllib
 import urllib2
 
 #SERVER_URL = "http://localhost:5000"
-SERVER_URL = "http://prisoner.cs.st-andrews.ac.uk/prisoner/"
+SERVER_URL = "http://prisoner.cs.st-andrews.ac.uk/prisoner"
 TEMPLATE_URL = "/home/sam/Dropbox/PRISONER/static" # LOCAL
 
 class PRISONER(object):
@@ -408,7 +408,7 @@ class PRISONER(object):
 		if auth_code == None:
 			return redirect(builder.exp_callback)
 		else:
-			return redirect("/cancel")
+			return redirect("%s/cancel" % SERVER_URL)
 
 	def on_fallback(self, request, wildcard):
 		url = urllib.unquote(request.url)
