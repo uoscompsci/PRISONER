@@ -2,7 +2,7 @@
 
 	// Start a session on the server.
 	ob_start();
-	include_once("prisoner.classes.php");
+	include_once("prisoner.classes.php");	# Include before starting session for serialization.
 	session_start();
 
 	// Include any required components.
@@ -63,6 +63,7 @@
 			$about_message = $GROUP_2_ABOUT;
 		}
 		
+		// Store group info in session.
 		$_SESSION["group"] = $participant_group;
 		$_SESSION["study_title"] = $study_title;
 		
@@ -80,6 +81,7 @@
 		$_SESSION["participant_id"] = $participant_id;
 		$_SESSION["participant_stage"] = STAGE_CONSENT_PAGE;	# Next stop.
 		
+		// Log for debugging.
 		log_msg("Created new participant.");
 		log_msg(" - ID set to: " . $participant_id);
 		log_msg(" - Group set to: " . $participant_group);
@@ -127,6 +129,7 @@
 	
 	// Flush output buffers.
 	ob_end_flush();
+	
 ?>
 
 <!DOCTYPE HTML>

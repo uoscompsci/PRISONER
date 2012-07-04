@@ -101,7 +101,15 @@ class FacebookServiceGateway(ServiceGateway):
 		"""
 		
 		# Before doing this, could check that our state value matches the state returned by Facebook. (Later addition)
-		facebook_code = request.args['code']
+		facebook_code = None
+		
+		if (response.has_key("code")):
+			facebook_code = request.args['code']
+		
+		else:
+			return False
+		
+		
 		#facebook_code = request # Uncomment me if testing with a known code.
 		
 		# Parameters for the token request URI.
@@ -119,13 +127,6 @@ class FacebookServiceGateway(ServiceGateway):
 		# Parse response to get access token and expiry date.
 		access_token = None
 		expires = None
-		
-		if (response.has_key("access_token")):
-			self.access_token = response["access_token"][0]
-			expires = response["expires"][0]
-		
-		else:
-			return False
 		
 		# Create a User() object for the authenticated user.
 		auth_user = User()

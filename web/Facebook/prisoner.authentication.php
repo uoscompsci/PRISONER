@@ -9,7 +9,7 @@
 	 * Performs a handshake with the PRISONER service in order to start a session.
 	 * Sets "PRISession" cookie and session variables.
 	 * Returns the PRISONER session ID and a URL the user must go to in an array.
-	 * ([0] = Session ID, [1] = URL)
+	 * ([0] = Session ID, [1] = URL, [2] = PRISONER Participant ID)
 	 */
 	function start_prisoner_session() {
 		// URLs we need to authenticate.
@@ -78,6 +78,4 @@
 		return $to_return;
 	}
 	
-	// Flush output buffers.
-	//ob_end_flush();
 ?>
