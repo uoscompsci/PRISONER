@@ -125,7 +125,7 @@ class FacebookServiceGateway(ServiceGateway):
 			expires = response["expires"][0]
 		
 		else:
-			return false
+			return False
 		
 		# Create a User() object for the authenticated user.
 		auth_user = User()
