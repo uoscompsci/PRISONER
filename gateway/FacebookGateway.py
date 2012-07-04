@@ -103,7 +103,7 @@ class FacebookServiceGateway(ServiceGateway):
 		# Before doing this, could check that our state value matches the state returned by Facebook. (Later addition)
 		facebook_code = None
 		
-		if (response.has_key("code")):
+		if (request.args.has_key("code")):
 			facebook_code = request.args['code']
 		
 		else:
