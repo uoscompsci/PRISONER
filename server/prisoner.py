@@ -429,7 +429,7 @@ class PRISONER(object):
 		while start >= 0 and n > 1:
 			start = haystack.find(needle, start+len(needle))
 			n -= 1
-		 return start
+		return start
 	
 	
 	""" END ExpBuilder migration"""
