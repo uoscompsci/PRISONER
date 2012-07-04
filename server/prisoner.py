@@ -388,8 +388,13 @@ class PRISONER(object):
 		
 		try:
 			callback_provider = request.args["cbprovider"]
-			builder.sog.complete_authentication(callback_provider,
+			auth_code = builder.sog.complete_authentication(callback_provider,
 			self.request)
+			if auth_code == None:
+				return redirect(builder.exp_callback)
+			else:
+				return redirect("%s/cancel" % SERVER_URL)
+
 		except:
 			pass
 
