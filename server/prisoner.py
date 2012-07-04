@@ -152,6 +152,7 @@ class PRISONER(object):
 		return self.get_builder_reference(request)
 	
 	def on_cancel(self, request):
+		builder = self.get_builder_reference(request)
 		return self.render_template("cancel.html",
 		exp_contact=builder.contact, exp_name=builder.title)
 		
