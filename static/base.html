@@ -8,7 +8,7 @@
 <body>
 <div id="page">
 <div id="header" class="contentblock">
-	<h1>{{ exp_name }}</h1>
+	<h1>{{ exp_name|safe }}</h1>
 	<h2>{% block title %}{% endblock %}</h2>
 </div>
 
