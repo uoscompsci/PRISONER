@@ -21,7 +21,8 @@ import thread
 import urllib
 import urllib2
 
-SERVER_URL = "http://localhost:5000"
+#SERVER_URL = "http://localhost:5000"
+SERVER_URL = "http://prisoner.cs.st-andrews.ac.uk/prisoner/"
 TEMPLATE_URL = "/home/sam/Dropbox/PRISONER/static" # LOCAL
 
 class PRISONER(object):
@@ -160,7 +161,7 @@ class PRISONER(object):
 		design and privacy policy, and a form of columns to insert about this participant.
 		"""	
 		builder = self.set_builder_reference(request,
-		ExperimentBuilder.ExperimentBuilder())
+		ExperimentBuilder.ExperimentBuilder(SERVER_URL))
 		
 		exp_design = request.form["design"]
 		policy = request.form["policy"]
@@ -216,7 +217,7 @@ class PRISONER(object):
 		"initialise your experiment, supplying the PRISession parameter.")		
 
 	def on_begin(self, request):
-		builder = self.set_builder_reference(request,ExperimentBuilder.ExperimentBuilder())
+		builder = self.set_builder_reference(request,ExperimentBuilder.ExperimentBuilder(SERVER_URL))
 	
 		privacy_policy = request.form["policy"]
 		exp_design = request.form["design"]
