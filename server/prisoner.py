@@ -126,7 +126,8 @@ class PRISONER(object):
 			Rule('/confirm', endpoint="confirm"),
 			Rule('/complete', endpoint="complete"),
 			Rule('/<string:wildcard>', endpoint="fallback"),
-			Rule('/cancel', endpoint="cancel")
+			Rule('/cancel', endpoint="cancel"),
+			Rule('/invalidate', endpoint="invalidate")
 			
 
 		])
@@ -150,6 +151,17 @@ class PRISONER(object):
 		self.session_internals[prisession] = builder
 		print "set session for %s" % prisession
 		return self.get_builder_reference(request)
+
+	def on_invalidate(self, request):
+		""" Invalidate the current session, removing it from memory.
+		Call this  at the end of the experiment to remove its footprint,
+		or in the event of an irrecoverable error, from which you do not want the
+		participant to recover without restarting the experiment flow
+		"""
+		priSession = request.args["PRISession"]
+		del self.session_internals[priSession]
+		return Response("session invalidated")
+		
 	
 	def on_cancel(self, request):
 		builder = self.get_builder_reference(request)
@@ -437,6 +449,9 @@ class PRISONER(object):
 	
 	""" END ExpBuilder migration"""
 
+	def on_session_timeout(self, request):
+		self.render_template("session.html")
+
 	def dispatch_request(self, request):
 		adapter = self.url_map.bind_to_environ(request.environ)
 		try:
@@ -445,6 +460,8 @@ class PRISONER(object):
 			**values)
 		except HTTPException, e:
 			return e
+		except KeyError, e:
+			return self.on_session_timeout(request)
 	
 	def wsgi_app(self, environ, start_response):
 		request = Request(environ)
