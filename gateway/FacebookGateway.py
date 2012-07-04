@@ -120,7 +120,7 @@ class FacebookServiceGateway(ServiceGateway):
 		access_token = None
 		expires = None
 		
-		if (response.has_key("access_token"):
+		if (response.has_key("access_token")):
 			self.access_token = response["access_token"][0]
 			expires = response["expires"][0]
 		
