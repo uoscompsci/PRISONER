@@ -32,15 +32,6 @@
 		}
 	}
 	
-	// Start a PRISONER session.
-	$session_results = start_prisoner_session();
-	$prisoner_session_id = $session_results[0];
-	$participation_url = $session_results[1];
-	$prisoner_participant_id = $session_results[2];
-	$_SESSION["prisoner_session_id"] = $prisoner_session_id;	# This needs to be used for requests.
-	$_SESSION["participation_url"] = $participation_url;	# We'll need this later.
-	$_SESSION["prisoner_participant_id"] = $prisoner_participant_id;	# We'll need this later.
-	
 	// Participant info.
 	$participant_id = NULL;
 	$participant_group = NULL;
@@ -58,7 +49,7 @@
 	
 	// New participant! Assign them an ID and group.
 	if (empty($_SESSION["participant_id"])) {
-		$participant_id = $prisoner_session_id;
+		// Assign group.
 		$participant_group = assign_group();
 		
 		// Get the title for the study.
@@ -72,10 +63,21 @@
 			$about_message = $GROUP_2_ABOUT;
 		}
 		
-		// Save this info in session.
-		$_SESSION["participant_id"] = $participant_id;
 		$_SESSION["group"] = $participant_group;
 		$_SESSION["study_title"] = $study_title;
+		
+		// Start a PRISONER session.
+		$session_results = start_prisoner_session();
+		$prisoner_session_id = $session_results[0];
+		$participation_url = $session_results[1];
+		$prisoner_participant_id = $session_results[2];
+		$_SESSION["prisoner_session_id"] = $prisoner_session_id;	# This needs to be used for requests.
+		$_SESSION["participation_url"] = $participation_url;	# We'll need this later.
+		$_SESSION["prisoner_participant_id"] = $prisoner_participant_id;	# We'll need this later.
+		$participant_id = $prisoner_session_id;
+		
+		// Save this info in session.
+		$_SESSION["participant_id"] = $participant_id;
 		$_SESSION["participant_stage"] = STAGE_CONSENT_PAGE;	# Next stop.
 		
 		log_msg("Created new participant.");

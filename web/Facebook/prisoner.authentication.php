@@ -4,10 +4,6 @@
 	include_once("prisoner.constants.php");
 	include_once("prisoner.core.php");
 	
-	// Start a session on the server.
-	//ob_start();
-	//session_start();
-	
 	
 	/**
 	 * Performs a handshake with the PRISONER service in order to start a session.
@@ -37,6 +33,7 @@
 		$post_data["design"] = EXP_DESIGN_URL;
 		$post_data["name"] = $participant_name;
 		$post_data["schema"] = "participant";
+		$post_data["db"] = DB_CONNECTION_STRING;
 		
 		// Set cURL options.
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
@@ -57,6 +54,9 @@
 		$post_data["design"] = EXP_DESIGN_URL;
 		$post_data["participant"] = $prisoner_participant_id;
 		$post_data["providers"] = "Facebook";
+		$post_data["db"] = DB_CONNECTION_STRING;
+		$post_data["title"] = $_SESSION["study_title"];
+		$post_data["contact"] = CONTACT_EMAIL_ADDRESS;
 		
 		// Set cURL options.
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
