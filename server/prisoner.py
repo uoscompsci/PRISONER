@@ -418,7 +418,9 @@ class PRISONER(object):
 	def on_fallback(self, request, wildcard):
 		url = urllib.unquote(request.url)
 		dup_mark = self.find_nth(url, "?", 2)
-		url[dup_mark] = "&"
+		urlli = list(url)
+		urlli[dup_mark] = "&"
+		url = ''.join(urlli)
 		#url = url.replace("?token","&token") # this is an insane shim for a bug in LFM
 		#url = url.replace("?state","&state") # temp FB shim
 		
