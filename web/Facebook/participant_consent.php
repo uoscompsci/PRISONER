@@ -117,7 +117,11 @@
 							The raw data will be held confidentially by the researcher(s) (and supervisors), The published research 
 							will clearly identify and attribute data collected to the participant.</p>
 							
-							<h2>3. Consent</h2>
+							<h2>3. Facebook app</h2>
+							<p>If you choose to take part in this study, you will be asked to grant a Facebook app (PRISONER) access to 
+							your data. You will be unable to participate in the study if you do not authenticate the app.</p>
+							
+							<h2>4. Consent</h2>
 							<p>The purpose of this form is to ensure that you are willing to take part in this study and to let 
 							you understand what it entails. Signing this form does not commit you to anything you do not wish to do 
 							and you are free to withdraw at any stage. <br />

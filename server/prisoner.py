@@ -22,7 +22,7 @@ import urllib
 import urllib2
 
 SERVER_URL = "http://localhost:5000"
-TEMPLATE_URL = "/home/lhutton/hg/prisoner/src/static" # LOCAL
+TEMPLATE_URL = "/home/sam/Dropbox/PRISONER/static" # LOCAL
 
 class PRISONER(object):
 	""" PRISONER Web Service
