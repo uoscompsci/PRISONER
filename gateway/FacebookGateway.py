@@ -127,7 +127,7 @@ class FacebookServiceGateway(ServiceGateway):
 		expires = None
 		
 		self.access_token = response["access_token"][0]
--		expires = response["expires"][0]
+		expires = response["expires"][0]
 		
 		# Create a User() object for the authenticated user.
 		auth_user = User()
