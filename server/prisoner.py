@@ -417,9 +417,19 @@ class PRISONER(object):
 
 	def on_fallback(self, request, wildcard):
 		url = urllib.unquote(request.url)
-		url = url.replace("?token","&token") # this is an insane shim for a bug in LFM
-		url = url.replace("?state","&state") # temp FB shim
+		dup_mark = self.find_nth(url, "?", 2)
+		url[dup_mark] = "&"
+		#url = url.replace("?token","&token") # this is an insane shim for a bug in LFM
+		#url = url.replace("?state","&state") # temp FB shim
+		
 		return redirect(url)
+
+	def find_nth(self, haystack, needle, n):
+		start = haystack.find(needle)
+		while start >= 0 and n > 1:
+			start = haystack.find(needle, start+len(needle))
+			n -= 1
+		 return start
 	
 	
 	""" END ExpBuilder migration"""
