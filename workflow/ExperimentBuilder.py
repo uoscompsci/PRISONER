@@ -27,8 +27,8 @@ class ExperimentBuilder(object):
 	  participants to review a human-readable version of your privacy 
 	  policy, and to authenticate themselves with providers as needed. 	
 	"""
-	def __init__(self):
-		self.sog = SocialObjectGateway.SocialObjectsGateway()
+	def __init__(self, server_url):
+		self.sog = SocialObjectGateway.SocialObjectsGateway(server_url)
 		self.participant = None
 		self.providers = None
 		self.token = str(uuid.uuid4())

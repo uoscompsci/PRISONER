@@ -124,7 +124,8 @@ class PRISONER(object):
 			Rule('/start_consent', endpoint="consent"),
 			Rule('/confirm', endpoint="confirm"),
 			Rule('/complete', endpoint="complete"),
-			Rule('/<string:wildcard>', endpoint="fallback")
+			Rule('/<string:wildcard>', endpoint="fallback"),
+			Rule('/cancel', endpoint="cancel")
 			
 
 		])
@@ -148,6 +149,11 @@ class PRISONER(object):
 		self.session_internals[prisession] = builder
 		print "set session for %s" % prisession
 		return self.get_builder_reference(request)
+	
+	def on_cancel(self, request):
+		return self.render_template("cancel.html",
+		exp_contact=builder.contact, exp_name=builder.title)
+		
 
 	def on_register(self, request):
 		""" Register a participant. Requires a URL for the experimental

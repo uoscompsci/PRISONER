@@ -29,7 +29,7 @@ class SocialObjectsGateway(object):
 
 	A single instance of this object should be maintained throughout the lifecycle of an experimental application. 
 	"""
-	def __init__(self):
+	def __init__(self, server_url):
 		self.privacy_policy = None
 		self.exp_design = None
 		# dict keyed on provider names, with values access tokens. this
@@ -56,6 +56,8 @@ class SocialObjectsGateway(object):
 		# requests. ONLY for internal use, NEVER directly
 		# access the cache
 		self.internal_cache = {}
+
+		self.server_url = server_url
 
 	def cache_object(self, object_to_cache):
 		""" Generates a unique identifier for this object, caches it,
@@ -95,7 +97,11 @@ class SocialObjectsGateway(object):
 		# attempt to find this gateway
 		gateway = self.__getServiceGateway(provider)
 		authent_url = gateway.request_authentication(callback)
-		return authent_url
+	
+		if authent_url != False:
+			return authent_url
+		else:
+			return "%s/cancel" % self.server_url
 		# what url do i need to authetnicate?
 		# let the user consume the authent url and come back in their
 		# own time
