@@ -401,11 +401,14 @@ class PRISONER(object):
 		builder = self.get_builder_reference(request)
 
 		callback_provider = request.args["cbprovider"]
-		builder.sog.complete_authentication(callback_provider,
+		auth_code = builder.sog.complete_authentication(callback_provider,
 		request)
 
 		# evoke callback
-		return redirect(builder.exp_callback)
+		if auth_code == None:
+			return redirect(builder.exp_callback)
+		else:
+			return redirect("/cancel")
 
 	def on_fallback(self, request, wildcard):
 		url = urllib.unquote(request.url)

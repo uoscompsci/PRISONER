@@ -97,11 +97,8 @@ class SocialObjectsGateway(object):
 		# attempt to find this gateway
 		gateway = self.__getServiceGateway(provider)
 		authent_url = gateway.request_authentication(callback)
-	
-		if authent_url != False:
-			return authent_url
-		else:
-			return "%s/cancel" % self.server_url
+
+		return authent_url	
 		# what url do i need to authetnicate?
 		# let the user consume the authent url and come back in their
 		# own time
@@ -128,8 +125,15 @@ class SocialObjectsGateway(object):
 		"""
 		gateway = self.__getServiceGateway(provider)
 		ret_access_token = gateway.complete_authentication(request)
-		self.persistence.register_participant_with_provider(self.participant[0],
-		provider, ret_access_token)
+		if ret_access_token != False:
+			self.persistence.register_participant_with_provider(self.participant[0],
+			provider, ret_access_token)
+			return None
+
+		else:
+			return False
+			#return "%s/cancel" % self.server_url
+
 
 	def restore_authentication(self, provider, access_token):
 		""" Attempt to provide a service gateway with an existing access
