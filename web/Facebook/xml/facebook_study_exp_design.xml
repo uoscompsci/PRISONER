@@ -1,0 +1,18 @@
+<p:experimental-design xmlns:p="http://prisoner.cs.st-andrews.ac.uk/prisoner/experimental_design" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://prisoner.cs.st-andrews.ac.uk/prisoner/experimental_design.xsd">
+
+	<experiment name="Facebook_Study">
+		<tables>
+			<table name="participant" type="participant">
+				<column name="name" type="string" />
+			</table>
+			<table name="response" type="response">
+				<column name="participant_id" type="string" />
+				<column name="group_id" type="string" />
+				<column name="info_type" type="string" />
+				<column name="privacy" type="string" />
+				<column name="response" type="string" />
+			</table>
+		</tables>
+	</experiment>
+</p:experimental-design>
