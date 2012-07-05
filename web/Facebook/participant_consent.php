@@ -103,12 +103,14 @@
 					<div class="info">
 						<form name="participant_info" method="post" action="check_participation_consent.php">
 							<h1><?php echo $study_title; ?> - Participation Consent Form</h1>
-							
+
+                            <p>The University of St Andrews attaches high priority to the ethical conduct of research.
+                            The purpose of this page is to obtain your consent before you begin the study. Please read the entire page,
+                            consider the points contained within, and if you consent to all of the terms of the study, then use
+                            the "Next" button to begin.</p>
+
 							<h2>1. Researcher(s) name(s)</h2>
-							<p>Tristan Henderson. <br />
-							The University of St Andrews attaches high priority to the ethical conduct of research. 
-							We therefore ask you to consider the following points before signing this form. Your signature 
-							confirms that you are happy to participate in the study.</p>
+							<p><a href="http://www.cs.st-andrews.ac.uk/~tristan/">Tristan Henderson</a>.</p>
 							
 							<h2>2. What is identifiable / attributable data?</h2>
 							<p>‘Identifiable/Attributable data’ is data where the participant is identified, such as when a 
@@ -118,7 +120,7 @@
 							will clearly identify and attribute data collected to the participant.</p>
 							
 							<h2>3. Facebook app</h2>
-							<p>If you choose to take part in this study, you will be asked to grant a Facebook app (PRISONER) access to 
+							<p>If you choose to take part in this study, you will be asked to grant a Facebook app (named PRISONER) access to 
 							your data. You will be unable to participate in the study if you do not authenticate the app.</p>
 							
 							<h2>4. Consent</h2>

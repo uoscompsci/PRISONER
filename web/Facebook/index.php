@@ -176,10 +176,13 @@
 					<div class="info">
 						<form name="participant_info" method="post" action="participant_consent.php">
 							<h1><?php echo $study_title; ?> - Information</h1>
-							
+
+                            <p>Thank you for your interest in our research study. This page explains the purpose of the study and your involvement.
+                            Please read this entire page before using the "Next" button to proceed to the next page.</p>
+
 							<h2>1. What is the study about?</h2>
 							<p><?php echo $about_message; ?> <br />
-							This study is being conducted as part of my research in the <a href="http://www.cs.st-andrews.ac.uk/" target="_blank">School 
+							This study is being conducted as part of our research in the <a href="http://www.cs.st-andrews.ac.uk/" target="_blank">School 
 							of Computer Science</a>.</p>
 						
 							<h2>2. Do I have to take part?</h2>
@@ -193,13 +196,15 @@
 							take 30 minutes to complete. You will be presented with data from your Facebook social network that we 
 							require for our research. You will then be asked whether you are willing to share these data with us. 
 							It is completely up to you whether to share your data with us or not. If you do agree, then your data 
-							will be stored and processed for the purposes of our research.</p>
+                            will be stored and processed for the purposes of our research. If you do not use Facebook, then you
+                            will be unable to participate in the study.</p>
 						
 							<h2>4. Will my participation be anonymous and confidential?</h2>
-							<p>For the purposes of our research, we need to know your name and institution (e.g., university attended). 
+                            <p>For the purposes of our research, we need to know your name and institution (e.g., university attended), and
+                            other data that you have stored in your Facebook account. 
 							We would also like to have similar information for other members of your social network. It is up to you 
 							whether to share these data or not. <br />
-							All data will be stored by the researcher in a secure fashion. We would like to share these data with 
+							All data will be stored by the researchers in a secure fashion. We would like to share these data with 
 							other researchers to be used for future scholarly purposes. Again, this is up to you. You should 
 							indicate whether you are willing to do so in the following questionnaire.</p>
 						
@@ -211,7 +216,7 @@
 						
 							<h2><a id="further_info">6. What will happen to the results of the research study?</a></h2>
 							<p>We expect to have the results of this study ready by the end of 2012. They will be published in various 
-							journal papers. If you wish to know more about the research or have copies of the papers sent to you, then please 
+							research papers. If you wish to know more about the research or have copies of the papers sent to you, then please 
 							indicate this here.</p>
 							
 							<div class="further_info_check">
@@ -234,7 +239,7 @@
 						
 							<h2>9. Consent and approval</h2>
 							<p>This research proposal has been scrutinised and been granted Ethical Approval through the University ethical 
-							approval process.</p>
+							approval process and has been given the approval code CS8772.</p>
 						
 							<h2>10. What should I do if I have concerns about this study?</h2>
 							<p>A full outline of the procedures governed by the University Teaching and Research Ethical Committee is 
