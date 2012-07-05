@@ -135,6 +135,7 @@
 								// Commit results.
 								commit_participant_results();
 								close_session($prisoner_session_id);
+								session_destroy();
 								
 							?>
 						</ul>
@@ -155,8 +156,8 @@
 						activities on Facebook.</p>
 							
 						<p>To explore these issues we have asked you to share some of your online social network data with us. 
-						We have deceived you into believing that you were participating in a research project about 
-						<?php echo $study_title; ?>. This is an example of a real research project that has taken place in the recent past. 
+						We have deceived you into believing that you were participating in a research project about <strong>
+						<?php echo $study_title; ?></strong>. This is an example of a real research project that has taken place in the recent past. 
 						In actual fact we have not been investigating this, but rather we have been interested in what type of information you were 
 						willing to share with us. We are not interested in the actual data themselves, and we have <strong>not</strong> stored 
 						any of your social network data. The only information that we have stored is whether you were willing to share.</p>
