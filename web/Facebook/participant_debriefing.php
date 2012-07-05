@@ -20,6 +20,7 @@
 	$participant_id = $_SESSION["participant_id"];
 	$participant_group = $_SESSION["group"];
 	$study_title = $_SESSION["study_title"];
+	$prisoner_session_id = $_SESSION["prisoner_session_id"];
 	
 	// Grab data from database.
 	$query = "SELECT * FROM participant WHERE id = '$participant_id'";
@@ -133,6 +134,8 @@
 								
 								// Commit results.
 								commit_participant_results();
+								close_session($prisoner_session_id);
+								
 							?>
 						</ul>
 							

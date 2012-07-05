@@ -134,6 +134,12 @@
 	}
 	
 	
+	/**
+	 * Used to generate markup for a pretty notice / information message.
+	 * @param string $message The contents of the message.
+	 * @param boolean $is_error Set to true if this is an error message.
+	 * @return string A string representation of the notice's markup.
+	 */
 	function get_notice($message, $is_error) {
 		$notice_class = "notice_normal";
 		$icon_name = "icon_information";
@@ -147,14 +153,21 @@
 		return $markup;
 	}
 	
+	
+	/**
+	 * Loads a notice / message into the session complete with markup.
+	 * @param string $msg The message texr to load.
+	 */
 	function load_notice($msg) {
 		$_SESSION["notice"] = get_notice($msg, false);
 	}
 	
+	
+	/**
+	 * Displays the contents of the "notice" attribute in the session and clears it.
+	 */
 	function display_notice() {
 		echo $_SESSION["notice"];
 	}
 	
-	// Flush output buffers.
-	//ob_end_flush();
 ?>

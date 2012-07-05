@@ -18,6 +18,10 @@
 	$user_group = $_SESSION["group"];
 	$study_title = $_SESSION["study_title"];
 	$info_message = $_SESSION["info_message"];
+	$prisoner_session_id = $_SESSION["prisoner_session_id"];
+	
+	close_session($prisoner_session_id);
+	session_destroy();
 	
 	// Flush output buffers.
 	ob_end_flush();
