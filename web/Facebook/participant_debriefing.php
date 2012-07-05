@@ -28,12 +28,14 @@
 	$row = mysqli_fetch_array($result);
 	$email_address_msg = NULL;
 	
+	// This should NOT happen, but just in case.
 	if (!$result) {
 		log_msg("Error - Failed to retrieve participant email address: " . mysqli_error($db));
 		$email_address_msg = get_notice("To get your Amazon voucher code, please email <a href='mailto:sm2269@st-andrews.ac.uk'>sm2269@st-andrews.ac.uk</a> " .
 		"and quote the reference <strong>" . $participant_id . "</strong>.", false);
 	}
 	
+	// Tell the participant where their voucher code will be sent.
 	else {
 		log_msg("Retrieved participant email address.");
 		$email_address = decrypt($row["email_address"]);

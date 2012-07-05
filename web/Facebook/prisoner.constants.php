@@ -18,6 +18,7 @@
 	#define("PRISONER_URL", "http://localhost:5000/");	# Testing.
 	#define("DB_CONNECTION_STRING", "sqlite:///Facebook_Study.db");	# Testing.
 	#define("CALLBACK_URL", "http://localhost/prisoner/start_experiment.php");	# Testing.
+	
 	define("PRISONER_URL", "http://prisoner.cs.st-andrews.ac.uk/prisoner");	# Production.
 	define("CALLBACK_URL", "http://prisoner.cs.st-andrews.ac.uk/sharing/start_experiment.php");	# Production.
 	define("DB_CONNECTION_STRING", "mysql://root:pvnets@localhost/facebook_study");	# Production.
