@@ -58,6 +58,9 @@
 			if (empty($item)) {
 				$consent_granted = false;
 				$_SESSION["participant_stage"] = STAGE_NO_CONSENT;
+				$_SESSION["info_message"] = "<strong>you did not agree to the terms</strong>";
+				log_msg("Notice: Screening participant out as they did not agree to the terms.");
+				header("Location: " . SCREENED_OUT_URL);
 				break;
 			}
 		}

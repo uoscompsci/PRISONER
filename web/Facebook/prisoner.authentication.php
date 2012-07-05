@@ -78,4 +78,16 @@
 		return $to_return;
 	}
 	
+	
+	/**
+	 * Closes a PRISONER to free up resources.
+	 * @param string $session_id The session ID to close.
+	 */
+	function close_session($session_id) {
+		$init_url = PRISONER_URL;
+		$invalidate_url = $init_url . "/invalidate?PRISession=" . $session_id;
+		get_headers($invalidate_url);
+		log_msg("Called [ " . $invalidate_url . " ] to invalidate / close the PRISONER session.");
+	}
+	
 ?>

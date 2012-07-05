@@ -20,6 +20,7 @@
 	$participant_id = $_SESSION["participant_id"];
 	$participant_group = $_SESSION["group"];
 	$study_title = $_SESSION["study_title"];
+	$prisoner_session_id = $_SESSION["prisoner_session_id"];
 	
 	// Grab data from database.
 	$query = "SELECT * FROM participant WHERE id = '$participant_id'";
@@ -27,12 +28,14 @@
 	$row = mysqli_fetch_array($result);
 	$email_address_msg = NULL;
 	
+	// This should NOT happen, but just in case.
 	if (!$result) {
 		log_msg("Error - Failed to retrieve participant email address: " . mysqli_error($db));
 		$email_address_msg = get_notice("To get your Amazon voucher code, please email <a href='mailto:sm2269@st-andrews.ac.uk'>sm2269@st-andrews.ac.uk</a> " .
 		"and quote the reference <strong>" . $participant_id . "</strong>.", false);
 	}
 	
+	// Tell the participant where their voucher code will be sent.
 	else {
 		log_msg("Retrieved participant email address.");
 		$email_address = decrypt($row["email_address"]);
@@ -133,6 +136,9 @@
 								
 								// Commit results.
 								commit_participant_results();
+								close_session($prisoner_session_id);
+								session_destroy();
+								
 							?>
 						</ul>
 							
@@ -152,8 +158,8 @@
 						activities on Facebook.</p>
 							
 						<p>To explore these issues we have asked you to share some of your online social network data with us. 
-						We have deceived you into believing that you were participating in a research project about 
-						<?php echo $study_title; ?>. This is an example of a real research project that has taken place in the recent past. 
+						We have deceived you into believing that you were participating in a research project about <strong>
+						<?php echo $study_title; ?></strong>. This is an example of a real research project that has taken place in the recent past. 
 						In actual fact we have not been investigating this, but rather we have been interested in what type of information you were 
 						willing to share with us. We are not interested in the actual data themselves, and we have <strong>not</strong> stored 
 						any of your social network data. The only information that we have stored is whether you were willing to share.</p>

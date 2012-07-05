@@ -67,6 +67,28 @@
 	
 	
 	/**
+	 * Encrypts the supplied data with 256-bit AES.
+	 * @param string $to_encrypt The string to encrypt.
+	 * @return string A base 64 encoded version of the encrypted string.
+	 */
+	function encrypt($to_encrypt) {
+		return trim(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, SALT, $to_encrypt, MCRYPT_MODE_ECB,
+				mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND))));
+	}
+	
+	
+	/**
+	 * Decrypts the supplied string.
+	 * @param string $to_decrypt The AES-encrypted data to decrypt.
+	 * @return string The original string.
+	 */
+	function decrypt($to_decrypt) {
+		return trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, SALT, base64_decode($to_decrypt), MCRYPT_MODE_ECB,
+				mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND)));
+	}
+	
+	
+	/**
 	 * Records a the supplied message in the web app's log file.
 	 * @param String $to_log The message to log.
 	 */
@@ -134,6 +156,12 @@
 	}
 	
 	
+	/**
+	 * Used to generate markup for a pretty notice / information message.
+	 * @param string $message The contents of the message.
+	 * @param boolean $is_error Set to true if this is an error message.
+	 * @return string A string representation of the notice's markup.
+	 */
 	function get_notice($message, $is_error) {
 		$notice_class = "notice_normal";
 		$icon_name = "icon_information";
@@ -147,14 +175,21 @@
 		return $markup;
 	}
 	
+	
+	/**
+	 * Loads a notice / message into the session complete with markup.
+	 * @param string $msg The message texr to load.
+	 */
 	function load_notice($msg) {
 		$_SESSION["notice"] = get_notice($msg, false);
 	}
 	
+	
+	/**
+	 * Displays the contents of the "notice" attribute in the session and clears it.
+	 */
 	function display_notice() {
 		echo $_SESSION["notice"];
 	}
 	
-	// Flush output buffers.
-	//ob_end_flush();
 ?>
