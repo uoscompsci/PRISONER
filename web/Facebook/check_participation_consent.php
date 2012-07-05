@@ -73,9 +73,7 @@
 		
 		// Compose messages to display.
 		$message_to_display = $STUDY_START_MESSAGE;
-		$participation_link = "<div class='button_green'>" . "\n" .
-		"<a href='" . $participation_url . "'>Begin</a>" . "\n" .
-		"</div>";
+		$participation_link = "<div class='next_submit'><input name='submit' type='submit' value='Begin Study'></div>";
 		
 		log_msg("Consent granted by paricipant.");
 	}
@@ -103,7 +101,9 @@
 				<div class="content">
 					<div class="info">
 						<h1>Thank You For Your Time</h1>
-						<?php echo $message_to_display; echo $participation_link; ?>							
+						<form name="participant_info" method="post" action="<?php echo $participation_url; ?>">
+							<?php echo $message_to_display; echo $participation_link; ?>
+						</form>		
 						<div class="clear"></div>
 					</div>
 				</div>

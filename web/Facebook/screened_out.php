@@ -43,7 +43,8 @@
 							<h1>Screened Out</h1>
 							<?php
 								$msg = "Unfortunately we have had to screen you out of this study. This is because <strong>" .
-								$info_message . "</strong>. Thank you for your interest in this research.";
+								$info_message . "</strong>. Thank you for your interest in this research. " .
+								"If you wish to try again, you will have to <a href='index.php'>start from the beginning</a>.";
 								echo get_notice($msg, false);
 							?>
 							

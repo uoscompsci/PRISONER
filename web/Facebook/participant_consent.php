@@ -197,9 +197,13 @@
 							participate in this research. If you decide at a later date that data should be destroyed you should 
 							<a href="mailto:tnhh@st-andrews.ac.uk">contact us by e-mail</a>. If you have any questions prior to 
 							beginning the study then you should also contact us by e-mail.</p>
-														
-							<div class="next_submit">
-								<input name="submit" type="submit" value="Next">
+							
+							<div class="navigation">
+								<ul><li><a href="index.php">Back</a></li></ul>
+								
+								<div class="next_submit">
+									<input name="submit" type="submit" value="Next">
+								</div>
 							</div>
 							
 							<div class="clear"></div>
