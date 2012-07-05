@@ -450,7 +450,7 @@ class PRISONER(object):
 	""" END ExpBuilder migration"""
 
 	def on_session_timeout(self, request):
-		self.render_template("session.html")
+		return self.render_template("session.html")
 
 	def dispatch_request(self, request):
 		adapter = self.url_map.bind_to_environ(request.environ)
