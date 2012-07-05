@@ -92,15 +92,15 @@
 	 * Records a the supplied message in the web app's log file.
 	 * @param String $to_log The message to log.
 	 */
-	function log_msg($to_log) {
-		$date = date("d/m/Y H:i:s");
+	function log_msg($to_log, $log_file = LOG_FILE) {
+		$date = @date("d/m/Y H:i:s");
 		$session_id = $_SESSION["prisoner_session_id"];
 		
 		if (empty($session_id)) {
 			$session_id = "No session ID";
 		}
 		
-		$fh = fopen(LOG_FILE, "a");
+		$fh = fopen($log_file, "a");
 		fwrite($fh, "[" .$date . "]\t[" . $session_id . "]\t" . $to_log . "\n");
 		fclose($fh);
 	}
