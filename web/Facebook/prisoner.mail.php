@@ -88,11 +88,11 @@
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		$return_msg = curl_setopt($ch, CURLOPT_URL, $mailer_addr);
-		log_msg($return_msg);
+		curl_setopt($ch, CURLOPT_URL, $mailer_addr);
 		
-		// Send the POST request.
-		curl_exec($ch);
+		// Send the POST request. (Can't just use mail() because it's restricted to internal addresses)
+		$return_msg = curl_exec($ch);
+		log_msg($return_msg);
 		curl_close($ch);
 	}
 	

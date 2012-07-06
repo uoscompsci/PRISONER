@@ -1,16 +1,5 @@
 @CHARSET "UTF-8";
 
-/** Fonts */
-@font-face {
-	font-family: 'Aller';
-	src: url('fonts/aller.eot');
-	src: url('fonts/aller.eot?#iefix') format('embedded-opentype'), 
-	url('fonts/aller.woff') format('woff'), 
-	url('fonts/aller.ttf') format('truetype'), 
-	url('fonts/aller.svg#webfont') format('svg');
-}
-
-
 /** Tag Styles */
 * {
 	border: 0px;
@@ -71,51 +60,6 @@ table {
 
 
 /** Class styles */
-.button_green {
-	background: #009900;
-	border-radius: 5px;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	color: #FFFFFF;
-	display: block;
-	float: right;
-	font-size: 16px;
-	font-weight: bold;
-	height: 35px;
-	line-height: 35px;
-	padding-left: 10px;
-	padding-right: 10px;
-	text-align: center;
-	text-transform: uppercase;
-}
-
-.button_green:hover {
-	background-color: #000000;
-}
-
-.button_grey {
-	background: #009900;
-	border-radius: 5px;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	color: #FFFFFF;
-	display: block;
-	float: left;
-	font-size: 16px;
-	font-weight: bold;
-	height: 35px;
-	line-height: 35px;
-	padding-left: 10px;
-	padding-right: 10px;
-	opacity: 0.2;
-	text-align: center;
-	text-transform: uppercase;
-}
-
-.button_grey:hover {
-	opacity: 0.7;
-}
-
 .clear {
 	clear: both;
 }
@@ -233,117 +177,7 @@ table {
 	margin-bottom: 20px;
 }
 
-#loading_animation {
-	display: block;
-	height: 20px;
-	margin-bottom: 5px;
-	margin-left: auto;
-    margin-right: auto;
-    margin-top: -10px;
-	width: 200px;
-}
 
-.loading_animation {
-	background-color:#FFFFFF;
-	float:left;
-	height:20px;
-	margin-left:17px;
-	width:20px;
-	-webkit-animation-name:bounce_circleG;
-	-webkit-border-radius:21px;
-	-webkit-animation-duration:1.35s;
-	-webkit-animation-iteration-count:infinite;
-	-webkit-animation-direction:linear;
-	-moz-animation-name:bounce_circleG;
-	-moz-border-radius:21px;
-	-moz-animation-duration:1.35s;
-	-moz-animation-iteration-count:infinite;
-	-moz-animation-direction:linear;
-	opacity:0.3;
-	-o-animation-name:bounce_circleG;
-	border-radius:21px;
-	-o-animation-duration:1.35s;
-	-o-animation-iteration-count:infinite;
-	-o-animation-direction:linear;
-	-ms-animation-name:bounce_circleG;
-	-ms-animation-duration:1.35s;
-	-ms-animation-iteration-count:infinite;
-	-ms-animation-direction:linear;
-	opacity:0.3
-}
-
-#load_ball_01 {
-	-webkit-animation-delay:0.27s;
-	-moz-animation-delay:0.27s;
-	-o-animation-delay:0.27s;
-	-ms-animation-delay:0.27s;
-}
-
-#load_ball_02 {
-	-webkit-animation-delay:0.63s;
-	-moz-animation-delay:0.63s;
-	-o-animation-delay:0.63s;
-	-ms-animation-delay:0.63s;
-}
-
-#load_ball_03 {
-	-webkit-animation-delay:0.8099999999999999s;
-	-moz-animation-delay:0.8099999999999999s;
-	-o-animation-delay:0.8099999999999999s;
-	-ms-animation-delay:0.8099999999999999s;
-}
-
-@-webkit-keyframes bounce_circleG {
-	0% {
-		opacity:0.3;
-	}
-	50% {
-		opacity:1;
-		background-color:#000000;
-	}
-	100% {
-		opacity:0.3;
-	}
-}
-
-@-moz-keyframes bounce_circleG {
-	0% {
-		opacity:0.3;
-	}
-	50% {
-		opacity:1;
-		background-color:#000000;
-	}
-	100% {
-		opacity:0.3;
-	}
-}
-
-@-o-keyframes bounce_circleG{
-	0% {
-		opacity:0.3;
-	}
-	50% {
-		opacity:1;
-		background-color:#000000;
-	}
-	100% {
-		opacity:0.3;
-	}
-}
-
-@-ms-keyframes bounce_circleG{
-	0% {
-		opacity:0.3;
-	}
-	50% {
-		opacity:1;
-		background-color:#000000;
-	}
-	100% {
-		opacity:0.3;
-	}
-}
 
 .navigation {
 	margin-top: 15px;
@@ -531,4 +365,118 @@ table {
 
 .info h2 a:hover {
 	color: #000000;
+}
+
+
+/** Loading animations. */
+#loading_animation {
+	display: block;
+	height: 20px;
+	margin-bottom: 5px;
+	margin-left: auto;
+    margin-right: auto;
+    margin-top: -10px;
+	width: 200px;
+}
+
+.loading_animation {
+	background-color: #FFFFFF;
+	float: left;
+	height: 20px;
+	margin-left: 17px;
+	width: 20px;
+	-webkit-animation-name: bounce_circleG;
+	-webkit-border-radius: 21px;
+	-webkit-animation-duration: 1.35s;
+	-webkit-animation-iteration-count: infinite;
+	-webkit-animation-direction: linear;
+	-moz-animation-name: bounce_circleG;
+	-moz-border-radius: 21px;
+	-moz-animation-duration: 1.35s;
+	-moz-animation-iteration-count: infinite;
+	-moz-animation-direction: linear;
+	opacity: 0.3;
+	-o-animation-name: bounce_circleG;
+	border-radius: 21px;
+	-o-animation-duration: 1.35s;
+	-o-animation-iteration-count: infinite;
+	-o-animation-direction: linear;
+	-ms-animation-name: bounce_circleG;
+	-ms-animation-duration: 1.35s;
+	-ms-animation-iteration-count: infinite;
+	-ms-animation-direction: linear;
+	opacity: 0.3
+}
+
+#load_ball_01 {
+	-webkit-animation-delay: 0.27s;
+	-moz-animation-delay: 0.27s;
+	-o-animation-delay: 0.27s;
+	-ms-animation-delay: 0.27s;
+}
+
+#load_ball_02 {
+	-webkit-animation-delay: 0.63s;
+	-moz-animation-delay: 0.63s;
+	-o-animation-delay: 0.63s;
+	-ms-animation-delay: 0.63s;
+}
+
+#load_ball_03 {
+	-webkit-animation-delay: 0.8099999999999999s;
+	-moz-animation-delay: 0.8099999999999999s;
+	-o-animation-delay: 0.8099999999999999s;
+	-ms-animation-delay: 0.8099999999999999s;
+}
+
+@-webkit-keyframes bounce_circleG {
+	0% {
+		opacity: 0.3;
+	}
+	50% {
+		opacity: 1;
+		background-color: #000000;
+	}
+	100% {
+		opacity: 0.3;
+	}
+}
+
+@-moz-keyframes bounce_circleG {
+	0% {
+		opacity: 0.3;
+	}
+	50% {
+		opacity: 1;
+		background-color: #000000;
+	}
+	100% {
+		opacity: 0.3;
+	}
+}
+
+@-o-keyframes bounce_circleG{
+	0% {
+		opacity: 0.3;
+	}
+	50% {
+		opacity: 1;
+		background-color: #000000;
+	}
+	100% {
+		opacity: 0.3;
+	}
+}
+
+@-ms-keyframes bounce_circleG{
+	0% {
+		opacity: 0.3;
+	}
+	50% {
+		opacity: 1;
+		background-color: #000000;
+	}
+	100% {
+		opacity: 0.3;
+	}
 }
