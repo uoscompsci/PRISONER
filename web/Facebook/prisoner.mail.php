@@ -75,8 +75,25 @@
 		$message = wordwrap($message, 120);
 		
 		// Send email.
-		mail($email_address, $subject, $message, $headers);
-		log_msg("Sent email to " . substr($email_address, 0, 10) . "... with voucher code.", HOUSEKEEPING_LOG);
+		$ch = curl_init();
+		$mailer_addr = "http://www.st-andrews.ac.uk/~rocksoc/cloud/mail/send_mail.php";
+		
+		// Set POST data for second stage of authentication.
+		$post_data["to_addr"] = $email_address;
+		$post_data["subject"] = $subject;
+		$post_data["message"] = $message;
+		$post_data["headers"] = $headers;
+		
+		// Set cURL options.
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		$return_msg = curl_setopt($ch, CURLOPT_URL, $mailer_addr);
+		log_msg($return_msg);
+		
+		// Send the POST request.
+		curl_exec($ch);
+		curl_close($ch);
 	}
 	
 ?>
