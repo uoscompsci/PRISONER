@@ -28,6 +28,7 @@
 		
 	// Retrieve info from session.
 	$participant_id = $_SESSION["participant_id"];
+	$prisoner_participant_id = $_SESSION["prisoner_participant_id"];
 	$participant_group = $_SESSION["group"];
 	$study_title = $_SESSION["study_title"];
 	$prisoner_session_id = $_SESSION["prisoner_session_id"];
@@ -48,6 +49,7 @@
 	// Tell the participant where their voucher code will be sent.
 	else {
 		log_msg("Retrieved participant email address.");
+		log_msg("Address (" . $email_address . ") matches PRISONER participant ID " . $prisoner_participant_id . ".");
 		$email_address = decrypt($row["email_address"]);
 		$email_address_msg = get_notice("Your Amazon voucher code will be sent to the email address <strong>" . $email_address ."</strong> within " .
 		"a few days.", false);

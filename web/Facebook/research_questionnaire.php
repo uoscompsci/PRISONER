@@ -400,8 +400,8 @@
 									// Print out the yes / no options.
 									echo "<div class='question'>" .
 									"<p>Will you share this piece of information with us?</p>" . "\n" .
-									"<label><input type='radio' name='agree_to_share' value='Y' id='agree_to_share_1'" . $check_yes . ">Yes</label>" . "\n" .
-									"<label><input type='radio' name='agree_to_share' value='N' id='agree_to_share_0'" . $check_no . ">No</label>" . "\n" .
+									"<label><input type='radio' name='agree_to_share' value='Y' id='agree_to_share_1'" . $check_yes . " tabindex='1'>Yes</label>" . "\n" .
+									"<label><input type='radio' name='agree_to_share' value='N' id='agree_to_share_0'" . $check_no . " tabindex='2'>No</label>" . "\n" .
 									"</div>" . "\n";
 									
 									// Include the question's ID.
@@ -419,7 +419,7 @@
 										$next_button_text = "Finish Study";
 									}
 									
-									echo "<div class='next_submit'><input name='submit' type='submit' value='" . $next_button_text . "'></div>" . "\n" .
+									echo "<div class='next_submit'><input name='submit' type='submit' value='" . $next_button_text . "' tabindex='3'></div>" . "\n" .
 									"</div>" . "\n";
 								}
 								
