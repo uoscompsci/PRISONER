@@ -46,6 +46,8 @@
 		$consent_info[] = $_POST["agree_info_keep"];
 		$consent_info[] = $_POST["aware_risks"];
 		$consent_info[] = $_POST["over_18"];
+		$consent_info[] = $_POST["facebook_user"];
+		$consent_info[] = $_POST["is_student"];
 		$consent_info[] = $_POST["agree_participation"];
 		
 		// Default to true.

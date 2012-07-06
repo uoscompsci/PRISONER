@@ -49,8 +49,8 @@
 	else {
 		log_msg("Retrieved participant email address.");
 		$email_address = decrypt($row["email_address"]);
-		$email_address_msg = get_notice("Your Amazon voucher code will be sent to the email address <strong>" . $email_address ."</strong>.", false);
-		send_voucher_code($email_address);
+		$email_address_msg = get_notice("Your Amazon voucher code will be sent to the email address <strong>" . $email_address ."</strong> within " .
+		"a few days.", false);
 	}
 	
 	// Flush output buffers.

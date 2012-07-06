@@ -186,6 +186,20 @@
 										</td>
 									</tr>
 									<tr>
+										<td class="consent_info">I am a Facebook user.</td>
+										<td>
+											<label><input type="radio" name="facebook_user" value="1" id="facebook_user_1">Yes</label>
+											<label><input type="radio" name="facebook_user" value="" id="facebook_user_0">No</label>
+										</td>
+									</tr>
+									<tr>
+										<td class="consent_info">I am a current university student.</td>
+										<td>
+											<label><input type="radio" name="is_student" value="1" id="is_student_1">Yes</label>
+											<label><input type="radio" name="is_student" value="" id="is_student_0">No</label>
+										</td>
+									</tr>
+									<tr>
 										<td class="consent_info">I agree to take part in the study.</td>
 										<td>
 											<label><input type="radio" name="agree_participation" value="1" id="agree_participation_1">Yes</label>
