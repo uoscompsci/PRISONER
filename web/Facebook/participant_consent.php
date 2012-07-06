@@ -110,7 +110,7 @@
                             the "Next" button to begin.</p>
 
 							<h2>1. Researcher(s) name(s)</h2>
-							<p><a href="http://www.cs.st-andrews.ac.uk/~tristan/">Tristan Henderson</a>.</p>
+							<p><a href="http://www.cs.st-andrews.ac.uk/~tristan/" target="_blank">Tristan Henderson</a>.</p>
 							
 							<h2>2. What is identifiable / attributable data?</h2>
 							<p>‘Identifiable/Attributable data’ is data where the participant is identified, such as when a 

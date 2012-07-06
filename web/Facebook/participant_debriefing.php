@@ -11,10 +11,20 @@
 	include_once("prisoner.constants.php");
 	include_once("prisoner.core.php");
 	include_once("prisoner.database.php");
+	include_once("prisoner.mail.php");
 	include_once("prisoner.questionnaire.php");
 	
 	// Session / cache control.
 	header("Cache-Control: no-cache");
+	
+	// Should the participant be here?
+	$can_view = assert_can_view(STAGE_GIVEN_CONSENT);
+	
+	// No. Take them back to the index / landing page.
+	if (!$can_view) {
+		log_msg("Caught bad participant. Redirecting to landing page.");
+		header("Location: index.php");
+	}
 		
 	// Retrieve info from session.
 	$participant_id = $_SESSION["participant_id"];
@@ -40,6 +50,7 @@
 		log_msg("Retrieved participant email address.");
 		$email_address = decrypt($row["email_address"]);
 		$email_address_msg = get_notice("Your Amazon voucher code will be sent to the email address <strong>" . $email_address ."</strong>.", false);
+		send_voucher_code($email_address);
 	}
 	
 	// Flush output buffers.
@@ -143,7 +154,7 @@
 						</ul>
 
                         <h2>2. Original project title</h2>
-                        <p><?php echo $study_title; ?></p>
+                        <p><?php echo $study_title; ?>.</p>
 
 						<h2>3. Actual project title</h2>
 						<p>Ethics in online social network research.</p>
