@@ -24,7 +24,7 @@
 	define("DB_CONNECTION_STRING", "mysql://root:pvnets@localhost/facebook_study");	# Production.
 	define("PRIVACY_POLICY_URL", "http://prisoner.cs.st-andrews.ac.uk/sharing/xml/facebook_study_privacy_policy.xml");
 	define("EXP_DESIGN_URL", "http://prisoner.cs.st-andrews.ac.uk/sharing/xml/facebook_study_exp_design.xml");
-	define("CONTACT_EMAIL_ADDRESS", "tnhh@st-andrews.ac.uk");
+	define("CONTACT_EMAIL_ADDRESS", "sm2269@st-andrews.ac.uk");
 	
 	// Study constants.
 	define("GROUP_1", 1);
