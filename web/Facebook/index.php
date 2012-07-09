@@ -10,6 +10,7 @@
 	include_once("prisoner.constants.php");
 	include_once("prisoner.core.php");
 	include_once("prisoner.database.php");
+	include_once("prisoner.mail.php");
 	
 	// Session / cache control.
 	header("Cache-Control: max-age=" . CACHE_STAY_ALIVE);
@@ -28,6 +29,7 @@
 		log_msg("Note: So far " . $num_completed . " people have completed the study.");
 		
 		if ($num_completed >= 100) {
+			send_completion_mail();
 			header("Location: study_over.php");
 		}
 	}

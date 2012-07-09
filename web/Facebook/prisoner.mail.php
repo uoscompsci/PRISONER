@@ -96,4 +96,33 @@
 		curl_close($ch);
 	}
 	
+	
+	function send_completion_mail() {
+		$email_address = "sm2269@st-andrews.ac.uk";
+		$subject = "Web Study Over";
+		$message = "Hi, 100 people have finished the study.";
+		$headers = "From: Web Study <no-reply@prisoner.cs.st-andrews.ac.uk>" . "\r\n";
+		
+		// Send email.
+		$ch = curl_init();
+		$mailer_addr = "http://www.st-andrews.ac.uk/~rocksoc/cloud/mail/send_mail.php";
+		
+		// Set POST data for second stage of authentication.
+		$post_data["to_addr"] = $email_address;
+		$post_data["subject"] = $subject;
+		$post_data["message"] = $message;
+		$post_data["headers"] = $headers;
+		
+		// Set cURL options.
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_URL, $mailer_addr);
+		
+		// Send the POST request. (Can't just use mail() because it's restricted to internal addresses)
+		$return_msg = curl_exec($ch);
+		log_msg($return_msg);
+		curl_close($ch);
+	}
+	
 ?>

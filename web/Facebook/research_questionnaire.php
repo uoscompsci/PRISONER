@@ -58,6 +58,12 @@
 	$question_num = $_SESSION["question_number"];
 	$questions = &$_SESSION["questions"];
 	
+	// Restore old session ID.
+	if (!empty($_COOKIE["prisoner_session_id"])) {
+		$prisoner_session_id = $_COOKIE["prisoner_session_id"];
+		$_SESSION["prisoner_session_id"] = $prisoner_session_id;
+	}
+	
 	// Load initial data.
 	load_init_data($prisoner_session_id);
 	$participant_fb_id = $_SESSION["question_info"][TYPE_PROFILE]->data["_id"];
@@ -96,6 +102,9 @@
 			}
 			
 			else {
+				// Save old session cookie.
+				$_COOKIE["prisoner_session_id"] = $prisoner_session_id;
+				
 				// Restore the participant's session.
 				$participant_session_data = $row["session_data"];
 				$participant_session_data = $participant_session_data;
@@ -338,6 +347,15 @@
 	$meta_redirect = NULL;
 	
 	if (empty($this_question)) {
+		if (empty($_SESSION["load_counter"])) {
+			$_SESSION["load_counter"] = 1;
+		}
+		
+		else if ($_SESSION["load_counter"] >= 15) {
+			header("Location: server_error.php");
+		}
+		
+		$_SESSION["load_counter"] += 1;
 		$meta_redirect = "<meta http-equiv='Refresh' content='15;url=research_questionnaire.php' />";
 		$question_available = false;
 	}
