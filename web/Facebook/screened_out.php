@@ -41,12 +41,17 @@
 					<div class="info">
 						<form name="participant_info" method="post" action="check_participation_consent.php">
 							<h1>You Cannot Take Part In This Study</h1>
+							
 							<?php
 								$msg = "Unfortunately we have had to screen you out of this study. This is because <strong>" .
 								$info_message . "</strong>. Thank you for your interest in this research. " .
 								"If you wish to try again, you will have to <a href='index.php'>start from the beginning</a>.";
 								echo get_notice($msg, false);
 							?>
+							
+							<p>If you believe you should not have been screened out, please do not hesitate to 
+							<a href="mailto:sm2269@st-andrews.ac.uk">contact us</a>, quoting the reference 
+							number <strong><?php echo $prisoner_session_id; ?></strong>.</p>
 							
 							<div class="clear"></div>
 						</form>
