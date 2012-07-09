@@ -105,6 +105,10 @@ table {
 	padding: 10px;
 }
 
+.debriefing_intro p {
+	margin-bottom: 0px;
+}
+
 .email_input {
 	background-color: #EEEEEE;
 	margin-bottom: 20px;

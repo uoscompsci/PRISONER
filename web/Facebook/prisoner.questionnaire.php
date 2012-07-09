@@ -766,7 +766,7 @@
 				
 			if (!$this_question) {
 				$this_question = new Question(TYPE_PROFILE, "");
-				$this_question->custom_question_text = "Information about your relationship status is not available.";
+				$this_question->custom_question_text = "Information about your relationship status is not available";
 			}
 			
 			$this_question->permalink = $url;
@@ -779,7 +779,7 @@
 			
 				if (!$this_question) {
 					$this_question = new Question(TYPE_PROFILE, "");
-					$this_question->custom_question_text = "Information about your sexual orientation is not available.";
+					$this_question->custom_question_text = "Information about your sexual orientation is not available";
 				}
 				
 				else {
@@ -797,7 +797,7 @@
 						
 				if (!$this_question) {
 					$this_question = new Question(TYPE_PROFILE, "");
-					$this_question->custom_question_text = "Information about the languages you know is not available.";
+					$this_question->custom_question_text = "Information about the languages you know is not available";
 				}
 				
 				else {
@@ -826,7 +826,7 @@
 				$time = date("H:i", $last_update);
 				$last_update = $date . "</strong> at <strong>" . $time;
 				$this_question = new Question(TYPE_PROFILE, $last_update);
-				$this_question->custom_question_text = "You last updated your Facebook profile (From Facebook itself, not via an app) on";
+				$this_question->custom_question_text = "You last updated your profile information on";
 				$this_question->permalink = $url;
 				return $this_question;
 				break;

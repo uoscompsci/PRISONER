@@ -73,10 +73,12 @@
                     <div class="info">
                         
                         <h1>Debriefing</h1>
-
-                        <p>Thank you for answering all of the questions in our study. This page describes your responses and explains the purpose of the study. Please read the contents of the page and if you have any questions, then feel free to <a href="mailto:tnhh@st-andrews.ac.uk">contact us</a>.</p>
-
-						<?php echo $email_address_msg; ?>
+                        
+                        <?php echo $email_address_msg; ?>
+                        
+                        <p>Thank you for answering all of the questions in our study. This page describes your responses and 
+                        explains the purpose of the study. Please read the contents of the page and if you have any questions, 
+                        then feel free to <a href="mailto:tnhh@st-andrews.ac.uk">contact us</a>.</p>
 						
 						<h2>1. Your results</h2>
 						<ul>
