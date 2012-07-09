@@ -82,16 +82,6 @@
 		// This participant is a returner.
 		if (mysqli_num_rows($result) >= 1) {
 			log_msg("Detected returning participant. Attempting to restore session.");
-			$query = "DELETE FROM participant WHERE id = '$participant_id'";
-			$result = mysqli_query($db, $query);
-				
-			if (!$result) {
-				log_msg("Error - Failed to delete redundant participant data: " . mysqli_error($db));
-			}
-				
-			else {
-				log_msg("Removed old data ok.");
-			}
 			
 			// Has this person already finished the study?
 			$is_finished = $row["is_finished"];

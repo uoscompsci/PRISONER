@@ -49,9 +49,9 @@
 	// Tell the participant where their voucher code will be sent.
 	else {
 		log_msg("Retrieved participant email address.");
+		log_msg("Address (" . $row["email_address"] . ") matches PRISONER participant ID " . $prisoner_participant_id . ".");
 		$email_address = decrypt($row["email_address"]);
         $email_address_msg = get_notice("Your Amazon voucher code will be sent to the email address <strong>" . $email_address ."</strong> after the conclusion of our study. We hope that this will be within a few days.", false);
-		log_msg("Address (" . $email_address . ") matches PRISONER participant ID " . $prisoner_participant_id . ".");
 	}
 	
 	// Flush output buffers.
