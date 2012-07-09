@@ -519,7 +519,7 @@
 		$prisoner_participant_id = $_SESSION["prisoner_participant_id"];
 		$prisoner_session_id = $_SESSION["prisoner_session_id"];
 		$questions = $_SESSION["questions"];
-		log_msg("Commiting participant results.");
+		log_msg("Committing participant results.");
 		
 		// Set finished flag in database.
 		$is_finished = true;
