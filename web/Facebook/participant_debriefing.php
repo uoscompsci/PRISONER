@@ -50,8 +50,7 @@
 	else {
 		log_msg("Retrieved participant email address.");
 		$email_address = decrypt($row["email_address"]);
-		$email_address_msg = get_notice("Your Amazon voucher code will be sent to the email address <strong>" . $email_address ."</strong> within " .
-		"a few days.", false);
+        $email_address_msg = get_notice("Your Amazon voucher code will be sent to the email address <strong>" . $email_address ."</strong> after the conclusion of our study. We hope that this will be within a few days.", false);
 		log_msg("Address (" . $email_address . ") matches PRISONER participant ID " . $prisoner_participant_id . ".");
 	}
 	
@@ -71,9 +70,12 @@
 		<div class="wrapper">
 			<div class="content-container">
 				<div class="content">
-					<div class="info">
-						<h1>Debriefing</h1>
-						
+                    <div class="info">
+                        
+                        <h1>Debriefing</h1>
+
+                        <p>Thank you for answering all of the questions in our study. This page describes your responses and explains the purpose of the study. Please read the contents of the page and if you have any questions, then feel free to <a href="mailto:tnhh@st-andrews.ac.uk">contact us</a>.</p>
+
 						<?php echo $email_address_msg; ?>
 						
 						<h2>1. Your results</h2>
