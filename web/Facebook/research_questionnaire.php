@@ -61,6 +61,7 @@
 	// Restore old session ID.
 	if (!empty($_COOKIE["prisoner_session_id"])) {
 		$prisoner_session_id = $_COOKIE["prisoner_session_id"];
+		log_msg("Restore: " . $prisoner_session_id . " from cookie.");
 		$_SESSION["prisoner_session_id"] = $prisoner_session_id;
 	}
 	
@@ -348,14 +349,17 @@
 	
 	if (empty($this_question)) {
 		if (empty($_SESSION["load_counter"])) {
+			log_msg("Notice: Set load counter to 1.");
 			$_SESSION["load_counter"] = 1;
 		}
 		
 		else if ($_SESSION["load_counter"] >= 15) {
+			log_msg("Error: Load counter limit hit. Redirecting.");
 			header("Location: server_error.php");
 		}
 		
 		$_SESSION["load_counter"] += 1;
+		log_msg("Notice: Set load counter to " . $_SESSION["load_counter"] . ".");
 		$meta_redirect = "<meta http-equiv='Refresh' content='15;url=research_questionnaire.php' />";
 		$question_available = false;
 	}
