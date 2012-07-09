@@ -58,13 +58,6 @@
 	$question_num = $_SESSION["question_number"];
 	$questions = &$_SESSION["questions"];
 	
-	// Restore old session ID.
-	if (!empty($_COOKIE["prisoner_session_id"])) {
-		$prisoner_session_id = $_COOKIE["prisoner_session_id"];
-		log_msg("Restore: " . $prisoner_session_id . " from cookie.");
-		$_SESSION["prisoner_session_id"] = $prisoner_session_id;
-	}
-	
 	// Load initial data.
 	load_init_data($prisoner_session_id);
 	$participant_fb_id = $_SESSION["question_info"][TYPE_PROFILE]->data["_id"];
@@ -94,14 +87,18 @@
 			
 			else {
 				// Save old session cookie.
-				$_COOKIE["prisoner_session_id"] = $prisoner_session_id;
-				
+				$old_session = $prisoner_session_id;
+				log_msg("Working session ID: " . $old_session);
+								
 				// Restore the participant's session.
 				$participant_session_data = $row["session_data"];
 				$participant_session_data = $participant_session_data;
 				$success = session_decode($participant_session_data);
 				load_notice("Welcome back. We have restored your answers so you can pick up from where you left off.");
 				log_msg("Session restored: " . $success);
+				$_SESSION["prisoner_session_id"] = $old_session;
+				$_SESSION["load_counter"] = 0;
+				log_msg("In session: " . $_SESSION["prisoner_session_id"]);
 					
 				// Store the fact we checked for a restore and redirect. (To reload session)
 				$_SESSION["checked_restore"] = true;
@@ -146,6 +143,10 @@
 			else {
 				if (!$question_info_obj->loaded_data) {
 					$data = check_data_availability($question_info_obj->prisoner_name, $prisoner_session_id);
+					
+					if ($_SESSION["limp_mode"] == true) {
+						$data = true;
+					}
 					
 					if ($data !== false) {
 						log_msg(" - Data is now available.");
@@ -343,9 +344,11 @@
 			$_SESSION["load_counter"] = 1;
 		}
 		
-		else if ($_SESSION["load_counter"] >= 15) {
-			log_msg("Error: Load counter limit hit. Redirecting.");
-			header("Location: server_error.php");
+		else if ($_SESSION["load_counter"] >= 5) {
+			//log_msg("Error: Load counter limit hit. Redirecting.");
+			//header("Location: server_error.php");
+			$_SESSION["limp_mode"] = true;
+			log_msg("Enabled limp mode. Should make use of what data we have.");
 		}
 		
 		$_SESSION["load_counter"] += 1;
