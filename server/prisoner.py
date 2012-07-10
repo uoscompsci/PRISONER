@@ -159,7 +159,7 @@ class PRISONER(object):
 		participant to recover without restarting the experiment flow
 		"""
 		priSession = request.args["PRISession"]
-		self.session_internals[priSession].sog.persistence.close_connection()
+		#self.session_internals[priSession].sog.persistence.close_connection()
 
 		del self.session_internals[priSession]
 		return Response("session invalidated")
