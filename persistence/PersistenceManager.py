@@ -316,6 +316,10 @@ class PersistenceManager(object):
 	def do_build_schema(self, drop_first=False):
 		return self.__build_schema(drop_first)
 
+	def close_connection(self):
+		self.engine.close()
+		
+
 	"""
 	Parses the experimental design and constructs relevant tables, classes,
 	and meta_tables (for relating tables to objects).

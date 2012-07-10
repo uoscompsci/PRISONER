@@ -159,6 +159,8 @@ class PRISONER(object):
 		participant to recover without restarting the experiment flow
 		"""
 		priSession = request.args["PRISession"]
+		self.session_internals[priSession].sog.persistence.close_connection()
+
 		del self.session_internals[priSession]
 		return Response("session invalidated")
 		
@@ -309,6 +311,7 @@ class PRISONER(object):
 		response object when it is. 
 		"""
 		builder = self.get_builder_reference(request)
+		builder.last_touch = datetime.now()
 		if "async" in request.args:
 			thread.start_new_thread(self.threaded_get_object, (request,
 			provider, object_name, payload, criteria))

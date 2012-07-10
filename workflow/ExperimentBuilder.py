@@ -1,4 +1,5 @@
 from collections import defaultdict
+import datetime
 import sys
 import threading
 import tornado.ioloop
@@ -36,6 +37,7 @@ class ExperimentBuilder(object):
 		self.title = None
 		self.contact = None
 		self.connection_string = None
+		self.last_touch = None
 
 	def provide_db_string(self, db_string):
 		self.connection_string = db_string
