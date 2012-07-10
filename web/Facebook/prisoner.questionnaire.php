@@ -509,7 +509,7 @@
 	 * is reset, so the next participant gets assigned the right group and finally, the participant's results are POSTed to
 	 * PRISONER.
 	 */
-	function commit_participant_results() {
+	function commit_participant_results($enc_facebook_id) {
 		// Globals.
 		global $db;
 		
@@ -523,7 +523,8 @@
 		
 		// Set finished flag in database.
 		$is_finished = true;
-		$query = "UPDATE participant SET is_finished = '$is_finished' WHERE id = '$participant_id'";
+		$query = "UPDATE participant SET is_finished = '$is_finished' WHERE facebook_id = '$enc_facebook_id';";
+		log_msg("Query: " . $query);
 		$result = mysqli_query($db, $query);
 			
 		if (!$result) {
@@ -536,7 +537,8 @@
 		
 		// Remove any stored session data.
 		$session_data = NULL;
-		$query = "UPDATE participant SET session_data = '$session_data' WHERE id = '$participant_id'";
+		$query = "UPDATE participant SET session_data = '$session_data' WHERE facebook_id = '$enc_facebook_id';";
+		log_msg("Query: " . $query);
 		$result = mysqli_query($db, $query);
 			
 		if (!$result) {

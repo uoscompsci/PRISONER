@@ -31,6 +31,7 @@
 	$study_title = $_SESSION["study_title"];
 	
 	// Flush output buffers.
+	mysqli_close($db);
 	ob_end_flush();
 	
 ?>

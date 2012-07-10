@@ -66,6 +66,12 @@
 	$enc_email_address = encrypt($participant_email_address);	# Sensitive data is encrypted.
 	$loaded_all_data = true;	# Will be set to false if necessary.
 	
+	// Store encoded Facebook ID in session if necessary.
+	if (empty($_SESSION["enc_facebook_id"])) {
+		$_SESSION["enc_facebook_id"] = $enc_facebook_id;
+		log_msg("Stored Facebook ID " . $_SESSION["enc_facebook_id"] . " in session.");
+	}
+	
 	// Check if this is a returning participant. (Do we need to restore their session?)
 	if (!$checked_for_restore) {
 		$query = "SELECT * FROM participant WHERE facebook_id = '$enc_facebook_id'";
@@ -83,6 +89,7 @@
 				$_SESSION["info_message"] = "<strong>you have already completed this study</strong>";
 				log_msg("Notice: Screening participant out as they've already completed the study.");
 				header("Location: " . SCREENED_OUT_URL);
+				exit;
 			}
 			
 			else {
@@ -105,6 +112,7 @@
 				// Store the fact we checked for a restore and redirect. (To reload session)
 				$_SESSION["checked_restore"] = true;
 				header("Location: research_questionnaire.php");
+				exit;
 			}
 		}
 		
@@ -112,6 +120,7 @@
 		else {
 			// Link participant ID with Facebook ID. (Encrypted)
 			$query = "UPDATE participant SET facebook_id = '$enc_facebook_id', email_address = '$enc_email_address' WHERE id = '$participant_id'";
+			log_msg("Query: " . $query);
 			$result = mysqli_query($db, $query);
 			
 			if (!$result) {
@@ -208,6 +217,7 @@
 			$_SESSION["info_message"] = "your Facebook profile does not contain enough information";
 			log_msg("Notice: Screening participant out. Only " . calculate_total_data() . " pieces of data available.");
 			header("Location: " . SCREENED_OUT_URL);
+			exit;
 		}
 		
 		// Compensation is necessary.
@@ -389,7 +399,9 @@
 	}
 	
 	// Flush output buffers.
+	mysqli_close($db);
 	ob_end_flush();
+	
 ?>
 
 <!DOCTYPE HTML>

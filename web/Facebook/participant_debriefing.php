@@ -34,11 +34,11 @@
 	$prisoner_session_id = $_SESSION["prisoner_session_id"];
 	$participant_fb_id = $_SESSION["question_info"][TYPE_PROFILE]->data["_id"];
 	$participant_email_address = $_SESSION["question_info"][TYPE_PROFILE]->data["_email"];
-	$enc_facebook_id = encrypt($participant_fb_id);	# Sensitive data is encrypted.
-	$enc_email_address = encrypt($participant_email_address);	# Sensitive data is encrypted.
+	$enc_facebook_id = $_SESSION["enc_facebook_id"];
 	
 	// Grab data from database.
-	$query = "SELECT * FROM participant WHERE id = '$participant_id'";
+	$query = "SELECT * FROM participant WHERE facebook_id = '$enc_facebook_id'";
+	log_msg("Query: " . $query);
 	$result = mysqli_query($db, $query);
 	$row = mysqli_fetch_array($result);
 	$email_address_msg = NULL;
@@ -59,7 +59,6 @@
 	}
 	
 	// Flush output buffers.
-	mysqli_close($db);
 	ob_end_flush();
 	
 ?>
@@ -157,9 +156,10 @@
 								"(<strong>" . $percent_photo_shares . "%</strong>)</li>" . "\n";
 								
 								// Commit results.
-								commit_participant_results();
+								commit_participant_results($enc_facebook_id);
 								close_session($prisoner_session_id);
 								session_destroy();
+								mysqli_close($db);
 								
 							?>
 						</ul>

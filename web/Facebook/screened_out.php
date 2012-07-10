@@ -24,6 +24,7 @@
 	session_destroy();
 	
 	// Flush output buffers.
+	mysqli_close($db);
 	ob_end_flush();
 ?>
 

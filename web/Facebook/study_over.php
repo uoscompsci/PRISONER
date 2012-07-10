@@ -20,7 +20,9 @@
 	$info_message = $_SESSION["info_message"];
 	
 	// Flush output buffers.
+	mysqli_close($db);
 	ob_end_flush();
+	
 ?>
 
 <!DOCTYPE HTML>
