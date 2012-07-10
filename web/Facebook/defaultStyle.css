@@ -137,6 +137,13 @@ table {
 	color: #990000;
 }
 
+.error_generic {
+	background-image: url(images/error_generic.jpg);
+	background-repeat: no-repeat;
+	min-height: 177px;
+	padding-left: 180px;
+}
+
 .further_info_check {
 	clear: both;
 	float: none;

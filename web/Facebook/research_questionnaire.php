@@ -264,7 +264,9 @@
 	
 	// Save current session state in database.
 	$session_str = mysqli_real_escape_string($db, session_encode());
+	$enc_facebook_id = $_SESSION["enc_facebook_id"];
 	$query = "UPDATE participant SET session_data = '$session_str' WHERE facebook_id = '$enc_facebook_id'";
+	log_msg("Query: UPDATE participant SET session_data = [Redacted] WHERE facebook_id = '$enc_facebook_id'");
 	$result = mysqli_query($db, $query);
 		
 	if (!$result) {
@@ -418,7 +420,9 @@
 		<script type="text/javascript">
 			$(document).ready(function() {
 				$('input:submit').click(function(){
-					$('input:submit').attr("disabled", true);
+					this.value = "Loading...";
+					$(this).attr("disabled", true);
+					$(this).parents("form").submit();
 				});
 			});
 		</script>
@@ -460,7 +464,7 @@
 										$next_button_text = "Finish Study";
 									}
 									
-									echo "<div class='next_submit'><input name='submit' type='submit' value='" . $next_button_text . "' tabindex='3'></div>" . "\n" .
+									echo "<div class='next_submit'><input name='submit_button' type='submit' value='" . $next_button_text . "' tabindex='3'></div>" . "\n" .
 									"</div>" . "\n";
 								}
 								
