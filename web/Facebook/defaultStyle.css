@@ -41,6 +41,7 @@ h2 {
 	font-weight: normal;
 }
 
+
 p {
 	color: #444444;
 	font-size: 11pt;
@@ -254,6 +255,12 @@ table {
 
 .next_submit input:hover {
 	background-color: #000000;
+}
+
+.next_submit input[type=submit][disabled=disabled] {
+	background-color: #EEEEEE;
+	color: #CCCCCC;
+	cursor: auto;
 }
 
 .notice_normal {

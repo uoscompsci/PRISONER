@@ -254,7 +254,7 @@
 	
 	// Save current session state in database.
 	$session_str = mysqli_real_escape_string($db, session_encode());
-	$query = "UPDATE participant SET session_data = '$session_str' WHERE id = '$participant_id'";
+	$query = "UPDATE participant SET session_data = '$session_str' WHERE facebook_id = '$enc_facebook_id'";
 	$result = mysqli_query($db, $query);
 		
 	if (!$result) {
@@ -304,7 +304,9 @@
 		
 		// Participant has answered all questions. Redirect to debriefing.
 		if ($question_num > NUM_QUESTIONS) {
+			log_msg("Redirecting to debriefing page.");
 			header("Location: " . DEBRIEFING_URL);
+			exit;
 		}
 	}
 	
@@ -402,7 +404,10 @@
 	
 	<body>
 		<script type="text/javascript">
-			$(document).ready(function(){
+			$(document).ready(function() {
+				$('input:submit').click(function(){
+					$('input:submit').attr("disabled", true);
+				});
 			});
 		</script>
 		<div class="wrapper">
