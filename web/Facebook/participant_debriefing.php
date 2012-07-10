@@ -32,6 +32,10 @@
 	$participant_group = $_SESSION["group"];
 	$study_title = $_SESSION["study_title"];
 	$prisoner_session_id = $_SESSION["prisoner_session_id"];
+	$participant_fb_id = $_SESSION["question_info"][TYPE_PROFILE]->data["_id"];
+	$participant_email_address = $_SESSION["question_info"][TYPE_PROFILE]->data["_email"];
+	$enc_facebook_id = encrypt($participant_fb_id);	# Sensitive data is encrypted.
+	$enc_email_address = encrypt($participant_email_address);	# Sensitive data is encrypted.
 	
 	// Grab data from database.
 	$query = "SELECT * FROM participant WHERE id = '$participant_id'";
@@ -55,6 +59,7 @@
 	}
 	
 	// Flush output buffers.
+	mysqli_close($db);
 	ob_end_flush();
 	
 ?>
