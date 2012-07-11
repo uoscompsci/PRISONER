@@ -1,6 +1,7 @@
 import json
 import lxml.etree as etree
 from sqlalchemy import *
+from sqlalchemy.pool import NullPool
 import urllib2
 
 from gateway.ServiceGateway import *
@@ -63,14 +64,14 @@ class PersistenceManager(object):
 		exp_name = exp_element.get("name")
 		#self.engine = create_engine("sqlite:///%s.db"%exp_name)
 		#self.metadata = MetaData(self.engine)
-		self.engine = create_engine(self.connection_string, pool_size=1,
-		pool_recycle=3600)
+		self.engine = create_engine(self.connection_string,
+		poolclass=NullPool)
 		self.metadata = MetaData(self.engine)	
 
 
 	def rebuild_engine(self, connection_string):
-		self.engine = create_engine(connection_string, pool_size=1,
-		pool_recycle=3600)
+		self.engine = create_engine(connection_string,
+		poolclass=NullPool) 
 		self.metadata = MetaData(self.engine)	
 
 	def validate_design(self, design):
