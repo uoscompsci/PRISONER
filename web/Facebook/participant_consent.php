@@ -21,6 +21,8 @@
 	if (!$can_view) {
 		log_msg("Caught bad participant. Redirecting to landing page.");
 		header("Location: index.php");
+		session_destroy();
+		exit;
 	}
 		
 	// Retrieve info about participant from session.
