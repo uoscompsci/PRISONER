@@ -319,7 +319,7 @@ class PersistenceManager(object):
 		return self.__build_schema(drop_first)
 
 	def close_connection(self):
-		self.engine.close()
+		self.engine.dispose()
 		
 
 	"""
