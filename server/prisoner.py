@@ -381,19 +381,24 @@ class PRISONER(object):
 		except:
 			current_provider = None
 			resp = "For this experiment, we need you to login to some services.<br />"
-			provider = providers[len(providers)-1]
-			confirm_url = "%s/confirm?provider=%s&pctoken=%s&PRISession=%s" % (SERVER_URL, provider,
-			token, request.args["PRISession"])
-			"""
-			resp += "<a href='%s'>Login to" % confirm_url+\
-			 " %s</a>" % provider
-			re = Response(resp)
-			re.content_type = "text/html"
-			return re
-			"""
-			return self.render_template("service.html",
-			provider=provider, next_link = confirm_url,
-			exp_contact=builder.contact, exp_name=builder.title)
+			
+			try:
+				provider = providers[len(providers)-1]
+			
+				confirm_url = "%s/confirm?provider=%s&pctoken=%s&PRISession=%s" % (SERVER_URL, provider,
+				token, request.args["PRISession"])
+				"""
+				resp += "<a href='%s'>Login to" % confirm_url+\
+				 " %s</a>" % provider
+				re = Response(resp)
+				re.content_type = "text/html"
+				return re
+				"""
+				return self.render_template("service.html",
+				provider=provider, next_link = confirm_url,
+				exp_contact=builder.contact, exp_name=builder.title)
+			except:
+				pass
 
 		if providers:
 			callback = "%s/confirm?pctoken=%s&provider=%s&cbprovider=%s&PRISession=%s" % (SERVER_URL, token,
