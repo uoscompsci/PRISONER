@@ -473,6 +473,8 @@ class PRISONER(object):
 			sid = request.args["PRISession"]
 		except:
 			sid = None
+		if sid == "":
+			sid = None
 		print "sid: %s" % sid
 		if not sid:
 			request.session = self.session_store.new()
