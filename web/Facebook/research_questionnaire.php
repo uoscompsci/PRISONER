@@ -373,6 +373,14 @@
 			$_SESSION["limp_mode"] = true;
 		}
 		
+		// Shouldn't happen.
+		if ($_SESSION["load_counter"] >= RELOAD_LIMIT) {
+			log_msg("Notice: Fatal error. Reload limit hit. This could indicate a broken session.");
+			log_msg("Notice: Redirecting participant.");
+			header("Location: server_error.php");
+			exit;
+		}
+		
 		// Increment the load counter.
 		$_SESSION["load_counter"] += 1;
 		log_msg("Notice: Set reload counter to " . $_SESSION["load_counter"] . ".");

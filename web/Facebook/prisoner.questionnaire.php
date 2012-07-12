@@ -401,6 +401,15 @@
 			}
 		}
 		
+		// Loop through the array of questions and check for null / empty questions.
+		foreach ($questions as &$question) {
+			if (empty($question)) {
+				$question = new Question(TYPE_ERROR, "");
+				$question->response = true;
+				log_msg("Note: Detected empty question. Inserting placeholder.");
+			}
+		}
+		
 		log_msg(" - Returned " . count($questions) . " questions.");
 		$_SESSION["question_info"][$question_type] = $question_info_obj;
 		return $questions;
@@ -1121,6 +1130,10 @@
 				$markup .= "<p>A photo you are tagged in can be seen below. <br />" .
 				"Click <a href='" . $permalink . "' target='_blank'>here</a> to see at this photo on Facebook. (Opens in a new tab / window)</p>";
 				$markup .= "<img alt='Facebook Photo' src='" . $filename . "' />";
+				break;
+			
+			case TYPE_ERROR:
+				$markup .= "<p>An error occurred trying to load this question, please click <strong>Next Question</strong> to continue.</p>";
 				break;
 		}
 		

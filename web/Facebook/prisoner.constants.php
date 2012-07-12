@@ -60,6 +60,7 @@
 	define("TYPE_STATUS", 4);
 	define("TYPE_ALBUM", 5);
 	define("TYPE_PHOTO", 6);
+	define("TYPE_ERROR", 7);
 	
 	// Key names for Facebook profile information.
 	$PROFILE_INFO_KEYS = array();
@@ -91,6 +92,8 @@
 	define("HOUSEKEEPING_LOG", "../Logs/housekeeping_log.txt");
 	define("TMP_IMAGES_FOLDER", "tmp_images");
 	define("RELOAD_THRESHOLD", 6);
+	define("RELOAD_LIMIT", 12);
+	define("EMPTY_QUESTION", 63492);
 	
 	// Content for group 1. (Health and social networks)
 	$GROUP_1_ABOUT = "We invite you to participate in a research project about the social factors that affect your health and health care. " . "\n" .
