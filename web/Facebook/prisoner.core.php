@@ -46,7 +46,38 @@
 	 * already exists, the participant is assigned to group 2 and the file is deleted.
 	 * @return A number representing the participant's group.
 	 */
-	function assign_group() {		
+	function assign_group() {
+		// Globals.
+		global $db;
+		
+		// How many people from each group are done?
+		$query = "SELECT * FROM participant WHERE is_finished = '1'";
+		$result = mysqli_query($db, $query);
+		$num_group_1 = 0;
+		$num_group_2 = 0;
+		
+		while ($row = mysqli_fetch_array($result)) {
+			if ($row["group_id"] == "1") {
+				$num_group_1 ++;
+			}
+			
+			else if ($row["group_id"] == "2") {
+				$num_group_2 ++;
+			}
+		}
+		
+		log_msg("Notice: Group 1 = " . $num_group_1 . ", Group 2 = " . $num_group_2 . ".");
+		
+		if (($num_group_1 - $num_group_2) <= -3) {
+			log_msg("Notice: Group assignment threshold met, assigning group 1.");
+			return GROUP_1;
+		}
+		
+		else if (($num_group_2 - $num_group_1) <= -3) {
+			log_msg("Notice: Group assignment threshold met, assigning group 2.");
+			return GROUP_1;
+		}
+		
 		// Check if the group file exists.
 		$exists = file_exists(GROUP_FILE_LOCATION);
 		
