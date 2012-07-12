@@ -399,6 +399,8 @@
 			foreach ($data_keys as $key) {
 				unset($data_items[$key]);
 			}
+			
+			$data_items = array_values($data_items);
 		}
 		
 		// Loop through the array of questions and check for null / empty questions.
