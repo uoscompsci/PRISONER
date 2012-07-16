@@ -577,7 +577,7 @@
 		
 		foreach ($questions as $question) {
 			$type = $question->type;
-			$privacy = $question->privacy_of_data;
+			$privacy = str_replace("'", "", $question->privacy_of_data);
 			$response = $question->response;
 			
 			if (empty($privacy)) {
