@@ -29,7 +29,6 @@
 		log_msg("Note: So far " . $num_completed . " people have completed the study.");
 		
 		if ($num_completed >= 81) {
-			send_completion_mail();
 			header("Location: study_over.php");
 		}
 	}
