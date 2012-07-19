@@ -35,7 +35,7 @@
 		
 		// Compose email to send.
 		$subject = "Your Amazon Gift Certificate";
-		$from_addr = "Gift Certificate Mailer <no-reply@prisoner.cs.st-andrews.ac.uk>";
+		$from_addr = "University Of St Andrews - Computer Science <no-reply@prisoner.cs.st-andrews.ac.uk>";
 		$headers = "From: $from_addr" . "\r\n";
 		
 		$message_preamble = "Dear participant," . "\n\n" .
