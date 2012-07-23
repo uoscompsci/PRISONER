@@ -1,4 +1,4 @@
-"Participant ID"	"Group ID"	"Info Type ID"	"Info Type"	"Privacy Setting"	"Response"
+ParticipantID	GroupID	InfoTypeID	InfoType	PrivacySetting	Response
 155	1	0	"Profile Info"	"N/A"	1
 155	1	0	"Profile Info"	"N/A"	1
 155	1	0	"Profile Info"	"N/A"	0
