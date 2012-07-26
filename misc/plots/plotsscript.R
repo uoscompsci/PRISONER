@@ -1,13 +1,15 @@
 library(ggplot2)
 library(scales)
+library(plyr)
 #box_cols = c("#635855","#CF6148")
-box_cols = c(rgb(0.471,0.722,0.098),rgb(0.098,0.639,0.722))
+#box_cols = c(rgb(0.471,0.722,0.098),rgb(0.098,0.639,0.722))
+box_cols = c("grey","dark green")
 font_size <- 12
 
 
 # START descriptive plots
 dev.new(width=7,height=5)
-results <- read.table("Results_Complete.txt",header=T)
+results <- read.table("../Results_Complete.txt",header=T)
 # differences between two groups
 info_agg <- ddply(results,c("ParticipantID","GroupID"),function(df) return(c(AVERAGE=mean(df$Response), MEDIAN=median(df$Response),SD=sd(df$Response),SE=sqrt(var(df$Response)/length(df$Response)))))
 boxplot(info_agg$AVERAGE~info_agg$GroupID)
@@ -39,7 +41,7 @@ ggsave(file="infotype.eps")
 
 # differences between privacy settings, sub-divided by participant group
 dev.new(width=10,height=5)
-results <- read.table("Results_Privacy_Reduced.txt",header=T)
+results <- read.table("../Results_Privacy_Reduced.txt",header=T)
 info_agg <- ddply(results,c("ParticipantID","GroupID","PrivacySetting"),function(df) return(c(AVERAGE=mean(df$Response), MEDIAN=median(df$Response),SD=sd(df$Response),SE=sqrt(var(df$Response)/length(df$Response)))))
 Group <- factor(info_agg$GroupID, labels=c("T3","LocShare"))
 p <- ggplot(info_agg,aes(PrivacySetting,AVERAGE), label)
