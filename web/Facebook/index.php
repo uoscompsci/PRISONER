@@ -28,8 +28,7 @@
 		$num_completed = $row["num_completed"];
 		log_msg("Note: So far " . $num_completed . " people have completed the study.");
 		
-		if ($num_completed >= 100) {
-			send_completion_mail();
+		if ($num_completed >= 81) {
 			header("Location: study_over.php");
 		}
 	}
@@ -95,6 +94,9 @@
 		// Storing participant info failed.
 		if (!$result) {
 			log_msg("Error - Failed to store participant info: " . mysqli_error($db));
+			log_msg("Notice: Participant will be redirected.");
+			header("Location: server_error.php");
+			exit;
 		}
 			
 		// Success.
@@ -118,6 +120,13 @@
 		
 		log_msg("Detected participant " . $participant_id . ".");
 		log_msg(" - Group: " . $participant_group);
+		
+		// Redirect to questionnaire if necessary.
+		if ($_SESSION["participant_stage"] >= STAGE_GIVEN_CONSENT) {
+			header("Location: research_questionnaire.php");
+			log_msg("Notice: Redirecting back to questionnaire.");
+			exit;
+		}
 		
 		// Get the about message.
 		if ($participant_group == GROUP_1) {

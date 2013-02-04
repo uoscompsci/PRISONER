@@ -41,16 +41,13 @@
 			<div class="content-container">
 				<div class="content">
 					<div class="info">
-						<form name="participant_info" method="post" action="check_participation_consent.php">
-							<h1>Error</h1>
-							<?php
-								$msg = "We are sorry for any inconvenience, but an error has occurred with the web app. To continue the study, please exit " .
-								"your web browser and <a href='index.php'>start again</a>. Your questions and progess will be restored.";
-								echo get_notice($msg, false);
-							?>
-							
+						<div class="error_generic">
+							<h1>Server Error</h1>
+							<p>An error occurred that prevented us from making a session for you. Please <a href="index.php">click here</a> to try 
+							again. <br />
+							We apologise for any inconvenience.</p>
 							<div class="clear"></div>
-						</form>
+						</div>
 					</div>
 				</div>
 			</div>
