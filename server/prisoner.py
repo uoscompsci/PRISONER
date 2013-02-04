@@ -23,7 +23,8 @@ import urllib2
 
 #SERVER_URL = "http://localhost:5000"
 SERVER_URL = "http://prisoner.cs.st-andrews.ac.uk/prisoner"
-TEMPLATE_URL = "/home/sam/Dropbox/PRISONER/static" # LOCAL
+#TEMPLATE_URL = "/home/sam/Dropbox/PRISONER/static" # LOCAL
+TEMPLATE_URL = "/home/lhutton/prisoner/prisoner/static"
 
 class PRISONER(object):
 	""" PRISONER Web Service
@@ -311,7 +312,7 @@ class PRISONER(object):
 		response object when it is. 
 		"""
 		builder = self.get_builder_reference(request)
-		builder.last_touch = datetime.now()
+		#builder.last_touch = datetime.now()
 		if "async" in request.args:
 			thread.start_new_thread(self.threaded_get_object, (request,
 			provider, object_name, payload, criteria))
@@ -372,6 +373,7 @@ class PRISONER(object):
 		builder = self.get_builder_reference(request)
 		token = request.args["pctoken"]
 		providers = builder.providers
+		print "got providers %s" % providers
 		try:
 			current_provider = request.args["provider"]
 			if current_provider not in providers:
@@ -414,7 +416,7 @@ class PRISONER(object):
 			if auth_code == None:
 				return redirect(builder.exp_callback)
 			else:
-				return redirect("%s/cancel" % SERVER_URL)
+				return redirect("%s/cancel?PRISession=%s" % (SERVER_URL, request.args["PRISession"]))
 
 		except:
 			pass
@@ -434,7 +436,8 @@ class PRISONER(object):
 		if auth_code == None:
 			return redirect(builder.exp_callback)
 		else:
-			return redirect("%s/cancel" % SERVER_URL)
+			return redirect("%s/cancel?PRISession=%s" % (SERVER_URL, request.args["PRISession"]))
+
 
 	def on_fallback(self, request, wildcard):
 		url = urllib.unquote(request.url)
@@ -510,5 +513,6 @@ def create_app():
 if __name__ == "__main__":
 	from werkzeug.serving import run_simple
 	app = create_app()
+	print app
 	run_simple("127.0.0.1", 5000, app, use_debugger=True, use_reloader=True,
 	static_files={"/static": TEMPLATE_URL})

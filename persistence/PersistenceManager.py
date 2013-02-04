@@ -5,7 +5,8 @@ from sqlalchemy.pool import NullPool
 import urllib2
 
 from gateway.ServiceGateway import *
-EXPERIMENTAL_DESIGN_XSD = "../xsd/experimental_design.xsd"
+#EXPERIMENTAL_DESIGN_XSD = "../xsd/experimental_design.xsd"
+EXPERIMENTAL_DESIGN_XSD = "/home/lhutton/prisoner/prisoner/xsd/experimental_design.xsd"
 
 class PersistenceManager(object):
 	""" The PersistenceManager manages the storage of all data, including
