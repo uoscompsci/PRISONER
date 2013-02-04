@@ -102,7 +102,7 @@ class PRISONER(object):
 	instances of Social Objects. Each object in a JSON response includes a "prisoner_id"
 	attribute. Use this to subsequently relate a request to a previous
 	object you received. PRISONER will lookup the original object based on
-	this identifier. For example, in our experimental response above, we
+	this identifier. For example, in our experimentntal response above, we
 	provided a track ID. This allows requests to be lightweight while
 	PRISONER temporarily stores the complete version of that object.
 	"""
@@ -117,7 +117,7 @@ class PRISONER(object):
 			Rule('/get/<string:provider>/<string:object_name>/<string:payload>',
 			endpoint="get_object"),
 			Rule('/post', endpoint="post_response"),
-			Rule('/publish', endpoint="publish_object"),
+			Rule('/publish/<string:provider>/<string:object_name>', endpoint="publish_object"),
 			Rule('/session/write',
 			endpoint="session_write"),
 			Rule('/session/read',
@@ -274,8 +274,15 @@ class PRISONER(object):
 
 		return Response(post_response)	
 
-	def on_publish_object(self, request):
-		pass
+	def on_publish_object(self, request, provider, object_name):
+		builder = self.get_builder_reference(request)
+		builder.last_touch = datetime.now()
+
+		payload = request.form["payload"]
+		publish_response = builder.sog.PostObjectJSON(provider, object_name, payload)
+		
+
+
 
 	def threaded_get_object(self, request, provider, object_name, payload,
 	criteria=None):
@@ -373,7 +380,7 @@ class PRISONER(object):
 		builder = self.get_builder_reference(request)
 		token = request.args["pctoken"]
 		providers = builder.providers
-		print "got providers %s" % providers
+		
 		try:
 			current_provider = request.args["provider"]
 			if current_provider not in providers:
