@@ -23,7 +23,8 @@ import urllib2
 
 #SERVER_URL = "http://localhost:5000"
 SERVER_URL = "http://prisoner.cs.st-andrews.ac.uk/prisoner"
-TEMPLATE_URL = "/home/sam/Dropbox/PRISONER/static" # LOCAL
+#TEMPLATE_URL = "/home/sam/Dropbox/PRISONER/static" # LOCAL
+TEMPLATE_URL = "/home/lhutton/prisoner/prisoner/static"
 
 class PRISONER(object):
 	""" PRISONER Web Service
@@ -101,7 +102,7 @@ class PRISONER(object):
 	instances of Social Objects. Each object in a JSON response includes a "prisoner_id"
 	attribute. Use this to subsequently relate a request to a previous
 	object you received. PRISONER will lookup the original object based on
-	this identifier. For example, in our experimental response above, we
+	this identifier. For example, in our experimentntal response above, we
 	provided a track ID. This allows requests to be lightweight while
 	PRISONER temporarily stores the complete version of that object.
 	"""
@@ -116,7 +117,7 @@ class PRISONER(object):
 			Rule('/get/<string:provider>/<string:object_name>/<string:payload>',
 			endpoint="get_object"),
 			Rule('/post', endpoint="post_response"),
-			Rule('/publish', endpoint="publish_object"),
+			Rule('/publish/<string:provider>/<string:object_name>', endpoint="publish_object"),
 			Rule('/session/write',
 			endpoint="session_write"),
 			Rule('/session/read',
@@ -273,8 +274,15 @@ class PRISONER(object):
 
 		return Response(post_response)	
 
-	def on_publish_object(self, request):
-		pass
+	def on_publish_object(self, request, provider, object_name):
+		builder = self.get_builder_reference(request)
+		builder.last_touch = datetime.now()
+
+		payload = request.form["payload"]
+		publish_response = builder.sog.PostObjectJSON(provider, object_name, payload)
+		
+
+
 
 	def threaded_get_object(self, request, provider, object_name, payload,
 	criteria=None):
@@ -311,7 +319,7 @@ class PRISONER(object):
 		response object when it is. 
 		"""
 		builder = self.get_builder_reference(request)
-		builder.last_touch = datetime.now()
+		#builder.last_touch = datetime.now()
 		if "async" in request.args:
 			thread.start_new_thread(self.threaded_get_object, (request,
 			provider, object_name, payload, criteria))
@@ -372,6 +380,7 @@ class PRISONER(object):
 		builder = self.get_builder_reference(request)
 		token = request.args["pctoken"]
 		providers = builder.providers
+		
 		try:
 			current_provider = request.args["provider"]
 			if current_provider not in providers:
@@ -414,7 +423,7 @@ class PRISONER(object):
 			if auth_code == None:
 				return redirect(builder.exp_callback)
 			else:
-				return redirect("%s/cancel" % SERVER_URL)
+				return redirect("%s/cancel?PRISession=%s" % (SERVER_URL, request.args["PRISession"]))
 
 		except:
 			pass
@@ -434,7 +443,8 @@ class PRISONER(object):
 		if auth_code == None:
 			return redirect(builder.exp_callback)
 		else:
-			return redirect("%s/cancel" % SERVER_URL)
+			return redirect("%s/cancel?PRISession=%s" % (SERVER_URL, request.args["PRISession"]))
+
 
 	def on_fallback(self, request, wildcard):
 		url = urllib.unquote(request.url)
@@ -510,5 +520,6 @@ def create_app():
 if __name__ == "__main__":
 	from werkzeug.serving import run_simple
 	app = create_app()
+	print app
 	run_simple("127.0.0.1", 5000, app, use_debugger=True, use_reloader=True,
 	static_files={"/static": TEMPLATE_URL})

@@ -59,8 +59,7 @@ class FacebookServiceGateway(ServiceGateway):
 		# Placeholders.
 		self.access_token = None
 		self.session = None
-	
-	
+
 	def request_authentication(self, callback):
 		"""
 		Initiates Facebook's authentication process.
@@ -555,8 +554,21 @@ class FacebookServiceGateway(ServiceGateway):
 		:param payload: A User() or Person() whose ID is either a Facebook UID or username.
 		:type payload: SocialObject
 		:returns: A collection representing this person's backlog of status updates.
+
+		For POST payloads:
+			payload must be a dictionary with all mandatory (and any optional) fields of a Status object}
 		"""
 		
+		if(operation == "POST"):
+			# convert SO dict to fb call
+			call_dict = {
+				"message":payload.content
+				}
+
+			response = self.post_graph_data("/me/feed", call_dict)
+
+
+
 		if (operation == "GET"):
 			try:
 				# Get user ID and query Facebook for their info.
@@ -1218,6 +1230,32 @@ class FacebookServiceGateway(ServiceGateway):
 		
 		return comments
 	
+	def post_graph_data(self, query, params):
+		"""
+			Internal Function.
+			Post the params dictionary to the given query path on the Graph API
+			Use for creating, deleting, updating content
+			All calls must be authenticated
+
+			:param query: Graph API query to perform
+			:type query: str
+			:param params: Dictionary of data to publish to this endpoint
+			:type params: dict
+		"""
+		# If query doesn't start with https://, we assume it is relative.
+		if (not query.startswith("https://")):
+			query = self.graph_uri + query + "?access_token=" + self.access_token
+		
+		# Retrieve and parse result.
+		data_req = urllib2.Request(query,
+		data = urlliburlencode(params))
+
+		data_resp = urllib2.urlopen(data_req)
+		data = data_resp.read()
+		json_obj = self.parse_json(data)
+
+		return json_obj
+
 	
 	def get_graph_data(self, query):
 		"""
@@ -1560,7 +1598,8 @@ class Friends(SocialObjects.Collection):
 	
 	def __init__(self):
 		super(Friends, self).__init__()
-			
+
+
 
 class Status(SocialObjects.Note):
 	"""
@@ -1576,7 +1615,6 @@ class Status(SocialObjects.Note):
 		self._privacy = None	# String
 		self._likes = None	# Collection of users
 		self._comments = None	# Collection of comments
-	
 	
 	@property
 	def privacy(self):

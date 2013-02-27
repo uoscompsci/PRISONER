@@ -81,7 +81,7 @@ class SocialObjectsGateway(object):
 		calls with a service gateway (usually required to write data as a person or to
 		read sensitive data).
 
-		Each service gateway has its own authentication
+		Each service gateway has its own res
 		mechanism. Calling this will return a token needed to proceed with
 		authentication. Authentication is completed by presenting a relevant interface
 		to users, then calling complete_authentication() with its token.
@@ -206,7 +206,7 @@ class SocialObjectsGateway(object):
 		is more pythonic - you request objects by supplying relevant SocialObjects, and
 		you get SocialObject instances in return. This method however, receives
 		plain-text responses, and returns 
-				mapped_obj = sog.get_cachJSON objects. Whereas GetObject expects a
+		JSON objects. Whereas GetObject expects a
 		semantically-appropriate SocialObject as the payload (eg. supply an instance of Person to
 		receive objects of a given type owned by that Person), this method expects a
 		payload expressed as a query string, using the namespaced syntax found in the
@@ -241,7 +241,19 @@ class SocialObjectsGateway(object):
 			return jsonpickle.encode(self.cached_objects[ident])
 		else:
 			return None
-	
+
+	def PostObjectJSON(self, provider, object_type, payload):
+		""" Used by web services interface for pushing objects to a service gateway.
+
+		Expects a payload as a JSON dictionary, where the keys are the appropriate fields of <object_type>
+		This method converts the dictionary to a native object and pushes it through the PRISONER pipe for sanitisation and publication
+		"""
+		dumb_social = SocialObject()
+		for key, value in payload.items():
+			setattr(dumb_social,key,value)
+
+		self.PostObject(provider, object_type, dumb_social)
+
 	def __add_to_cache(self, key, to_cache):
 		""" Make a deep copy of the given object and write it to the
 		internal cache.
