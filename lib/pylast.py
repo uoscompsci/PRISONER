@@ -1996,6 +1996,7 @@ class Library(_BaseObject):
         
         params = self._get_params()
         params["track"] = track.get_title()
+        params["artist"] = track.get_artist.get_name()
         
         self._request("library.addTrack", False, params)
     

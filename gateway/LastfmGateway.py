@@ -148,7 +148,15 @@ class LastfmServiceGateway(ServiceGateway):
 				this_track.tag = "test_tag"
 				track_set.append(this_track)
 			track_coll.objects = track_set
-			return track_coll	
+			return track_coll
+		elif(operation == "POST"):
+			target = self.network.get_user(payload.addTo.id)
+			artist = payload.artist
+			song = payload.song
+			track = self.network.get_track(song, artist)
+			lib = pylast.Library(target, network = "LastFM")
+			lib.add_track(track)
+
 
 	def Comment(self, operation, payload):
 		""" Performs operations on Comment objects. Supports GET and
