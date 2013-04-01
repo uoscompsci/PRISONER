@@ -276,7 +276,6 @@ class PRISONER(object):
 
 	def on_publish_object(self, request, provider, object_name):
 		builder = self.get_builder_reference(request)
-		builder.last_touch = datetime.now()
 
 		payload = request.form["payload"]
 		publish_response = builder.sog.PostObjectJSON(provider, object_name, payload)

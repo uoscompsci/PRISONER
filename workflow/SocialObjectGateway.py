@@ -248,7 +248,9 @@ class SocialObjectsGateway(object):
 		Expects a payload as a JSON dictionary, where the keys are the appropriate fields of <object_type>
 		This method converts the dictionary to a native object and pushes it through the PRISONER pipe for sanitisation and publication
 		"""
-		dumb_social = SocialObject()
+		dumb_social = SocialObjects.SocialObject()
+		payload = json.loads(payload)
+		print "payload: %s" % payload
 		for key, value in payload.items():
 			setattr(dumb_social,key,value)
 
@@ -390,7 +392,6 @@ class SocialObjectsGateway(object):
 		:type payload: Social Object
 		"""
 		headers = SARHeaders("POST", provider, object_type, payload)
-		
 		if not self.privacy_policy:
 			raise Exception("Provide a privacy policy before"\
 			" making requests.")	
