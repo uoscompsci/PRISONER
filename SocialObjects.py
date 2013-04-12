@@ -448,6 +448,12 @@ class Place(SocialObject):
 		self._position = None
 		self._address = None
 
+	def position_as_dict(self):
+		""" Converts the internal ISO 6709 representation to a dictionary
+		with 'lat' and 'lng' components, non-destructively """
+		return self.position # doesn't exist yet
+
+
 	@property
 	def position(self):
 		""" Latitude, longitude and altitude of point on Earth. This
