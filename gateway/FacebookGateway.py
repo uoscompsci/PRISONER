@@ -55,7 +55,7 @@ class FacebookServiceGateway(ServiceGateway):
 
 		# this is a terrible pattern
 		# just do this until individual apps can provide their permissions in bootstrap
-		mobiad_permissions = "user_about_me,user_checkins,friends_about_me"
+		mobiad_permissions = "user_about_me,user_checkins,friends_about_me,read_stream,publish_checkins,publish_stream"
 		
 		# Set the scope for our app. (What permissions do we need?)
 		
