@@ -52,9 +52,16 @@ class FacebookServiceGateway(ServiceGateway):
 		"friends_videos,friends_website,friends_work_history"
 		extended_permissions = "read_friendlists,read_insights,read_mailbox,read_requests,read_stream,xmpp_login,ads_management,create_event," +\
 		"manage_friendlists,manage_notifications,user_online_presence,friends_online_presence,publish_checkins,publish_stream,rsvp_event"
+
+		# this is a terrible pattern
+		# just do this until individual apps can provide their permissions in bootstrap
+		mobiad_permissions = "user_about_me,user_checkins,friends_about_me"
 		
 		# Set the scope for our app. (What permissions do we need?)
-		self.scope = user_permissions + "," + friend_permissions + "," + extended_permissions
+		
+		#self.scope = user_permissions + "," + friend_permissions + "," + extended_permissions # get all perms
+
+		self.scope = mobiad_permissions #get mobiad perms
 		
 		# Placeholders.
 		self.access_token = None
