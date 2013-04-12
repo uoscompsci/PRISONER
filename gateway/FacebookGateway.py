@@ -558,18 +558,21 @@ class FacebookServiceGateway(ServiceGateway):
 		For POST payloads:
 			payload must be a dictionary with all mandatory (and any optional) fields of a Status object}
 		"""
-		
 		if(operation == "POST"):
-			# convert SO dict to fb call
+			# convert SO dict to fb call	
 			call_dict = {
-				"message":payload.content
+				"message":payload.content,
+				"link":payload.link
 				}
 
+			if(payload.privacy):
+				privacy = "{'value':'CUSTOM', 'allow': '%s'}" % payload.privacy
+				call_dict['privacy'] = privacy
 			response = self.post_graph_data("/me/feed", call_dict)
 
 
 
-		if (operation == "GET"):
+		elif (operation == "GET"):
 			try:
 				# Get user ID and query Facebook for their info.
 				user_id = payload
@@ -672,6 +675,7 @@ class FacebookServiceGateway(ServiceGateway):
 		if (operation == "GET"):
 			try:
 				# Get user ID and query Facebook for their friends.
+				print "friends payload: %s " % payload
 				user_id = payload
 				result_set = self.get_graph_data("/" + user_id + "/friends")
 				friend_coll = Friends()
@@ -1248,7 +1252,7 @@ class FacebookServiceGateway(ServiceGateway):
 		
 		# Retrieve and parse result.
 		data_req = urllib2.Request(query,
-		data = urlliburlencode(params))
+		data = urllib.urlencode(params))
 
 		data_resp = urllib2.urlopen(data_req)
 		data = data_resp.read()
@@ -1615,6 +1619,16 @@ class Status(SocialObjects.Note):
 		self._privacy = None	# String
 		self._likes = None	# Collection of users
 		self._comments = None	# Collection of comments
+		self._link = None
+
+	@property
+	def link(self):
+		""" A link to an external resource embedded in this status update """
+		return self._link
+
+	@link.setter
+	def link(self, value):
+		self._link = value
 	
 	@property
 	def privacy(self):
