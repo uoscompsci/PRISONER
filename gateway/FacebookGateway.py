@@ -1108,10 +1108,22 @@ class FacebookServiceGateway(ServiceGateway):
 		
 		# Get location.
 		if (facebook_obj.has_key("place")):
+
+
 			place = SocialObjects.Place()
 			place.id = self.get_value(facebook_obj["place"], "id")
 			place.displayName = self.get_value(facebook_obj["place"], "name")
-						
+			
+			# pull information from the page for this location
+			result_set = self.get_graph_data("/" + place.id)
+			category = result_set["category"]
+			image = result_set["cover"]["source"]
+
+			place.category = category
+			place.image = image
+
+
+
 			# Get additional location info if it's present.
 			if (facebook_obj["place"].has_key("location")):
 				latitude = str(self.get_value(facebook_obj["place"]["location"], "latitude"))
@@ -1129,9 +1141,10 @@ class FacebookServiceGateway(ServiceGateway):
 						
 			# Get address info if available.
 			if ((facebook_obj["place"]["location"].has_key("city")) and (facebook_obj["place"]["location"].has_key("country"))):
+				street = self.get_value(facebook_obj["place"["location"], "street")
 				city = self.get_value(facebook_obj["place"]["location"], "city")
 				country = self.get_value(facebook_obj["place"]["location"], "country")
-				place.address = place.displayName + ", " + city + ", " + country
+				place.address = street + ", " + city + ", " + country
 			
 			# Return place object.
 			return place
@@ -1956,7 +1969,6 @@ class Checkin(SocialObjects.SocialObject):
 		super(Checkin, self).__init__()
 		self._provider = "Facebook"	# String
 		self._checkinType = None	# String
-	
 	
 	@property
 	def checkinType(self):
