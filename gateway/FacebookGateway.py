@@ -1141,7 +1141,7 @@ class FacebookServiceGateway(ServiceGateway):
 						
 			# Get address info if available.
 			if ((facebook_obj["place"]["location"].has_key("city")) and (facebook_obj["place"]["location"].has_key("country"))):
-				street = self.get_value(facebook_obj["place"["location"], "street")
+				street = self.get_value(facebook_obj["place"]["location"], "street")
 				city = self.get_value(facebook_obj["place"]["location"], "city")
 				country = self.get_value(facebook_obj["place"]["location"], "country")
 				place.address = street + ", " + city + ", " + country
