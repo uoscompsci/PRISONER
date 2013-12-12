@@ -6,6 +6,7 @@ import json	# Used for parsing responses from Facebook.
 import md5	# Used for generating unique state.
 import random	# Used for generating unique state.
 import sys	# Used for displaying error message names and descriptions.
+import traceback
 import urllib2	# Used for formatting URI params, reading web addresses, etc.
 import urllib	# Used for formatting URI params, reading web addresses, etc.
 import urlparse	# Used for reading Facebook access token.
@@ -1006,7 +1007,8 @@ class FacebookServiceGateway(ServiceGateway):
 			
 			except:
 				print "Checkin() function exception:"
-				print sys.exc_info()[0]
+				#print sys.exc_info()[0]
+				print traceback.format_exc()
 				return Checkins()
 		
 		else:
@@ -1116,12 +1118,13 @@ class FacebookServiceGateway(ServiceGateway):
 			
 			# pull information from the page for this location
 			result_set = self.get_graph_data("/" + place.id)
-			category = result_set["category"]
-			image = result_set["cover"]["source"]
-
+			category = self.get_value(result_set,"category")
+			try:
+				image = result_set["cover"]["source"]
+			except:
+				image = None
 			place.category = category
 			place.image = image
-
 
 
 			# Get additional location info if it's present.

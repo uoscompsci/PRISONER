@@ -11,6 +11,9 @@ experiment or registering participants.
 from optparse import OptionParser
 from workflow import ExperimentBuilder
 
+import sys
+sys.path.append("/home/lhutton/prisoner/prisoner")
+
 
 parser = OptionParser()
 parser.add_option("-d","--design", type="string", dest="design",
