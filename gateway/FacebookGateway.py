@@ -1372,7 +1372,12 @@ class FacebookServiceGateway(ServiceGateway):
 		
 		# If query doesn't start with https://, we assume it is relative.
 		if (not query.startswith("https://")):
-			query = self.graph_uri + query + "?access_token=" + self.access_token
+			if "?" not in query:
+				token = "?"
+			else:
+				token = "&"
+
+			query = self.graph_uri + query + token + "access_token=" + self.access_token
 		
 		# Retrieve and parse result.
 		data = urllib2.urlopen(query).read()
