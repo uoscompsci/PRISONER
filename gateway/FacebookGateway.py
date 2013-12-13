@@ -709,6 +709,8 @@ class FacebookServiceGateway(ServiceGateway):
 						this_friend.displayName = self.get_value(friend, "name")
 						this_friend.url = "https://www.facebook.com/" + this_friend.id
 
+						user_details = friend
+
 						# Get a list detailing the user's education history.
 						education_list = self.get_value(user_details, "education")
 						edu_coll = SocialObjects.Collection()
