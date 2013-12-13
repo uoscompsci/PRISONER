@@ -808,7 +808,7 @@ class FacebookServiceGateway(ServiceGateway):
 				
 			except:
 				print "Friends() function exception:"
-				print sys.exc_info()[0]
+				print traceback.format_exc()
 				return FriendsList()
 		
 		else:
