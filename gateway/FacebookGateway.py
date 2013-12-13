@@ -56,13 +56,14 @@ class FacebookServiceGateway(ServiceGateway):
 
 		# this is a terrible pattern
 		# just do this until individual apps can provide their permissions in bootstrap
-		mobiad_permissions = "user_about_me,user_checkins,friends_about_me,read_stream,publish_checkins,publish_stream"
+		
+		#mobiad_permissions = "user_about_me,user_checkins,friends_about_me,read_stream,publish_checkins,publish_stream"
 		
 		# Set the scope for our app. (What permissions do we need?)
 		
-		#self.scope = user_permissions + "," + friend_permissions + "," + extended_permissions # get all perms
+		self.scope = user_permissions + "," + friend_permissions + "," + extended_permissions # get all perms
 
-		self.scope = mobiad_permissions #get mobiad perms
+		#self.scope = mobiad_permissions #get mobiad perms
 		
 		# Placeholders.
 		self.access_token = None
