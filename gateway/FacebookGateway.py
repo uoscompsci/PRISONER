@@ -1148,7 +1148,8 @@ class FacebookServiceGateway(ServiceGateway):
 				city = self.get_value(facebook_obj["place"]["location"], "city")
 				country = self.get_value(facebook_obj["place"]["location"], "country")
 				place.address = street + ", " + city + ", " + country
-			
+			else:
+				place.address = None	
 			# Return place object.
 			return place
 		
