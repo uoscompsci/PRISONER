@@ -685,7 +685,8 @@ class FacebookServiceGateway(ServiceGateway):
 				# Get user ID and query Facebook for their friends.
 				print "friends payload: %s " % payload
 				user_id = payload
-				result_set = self.get_graph_data("/" + user_id + "/friends")
+				fields = "name,id,hometown,location,education,work"
+				result_set = self.get_graph_data("/" + user_id + "/friends?fields=%s" % fields)
 				friend_coll = Friends()
 				friend_obj_list = []
 				
@@ -706,6 +707,79 @@ class FacebookServiceGateway(ServiceGateway):
 						this_friend.id = self.get_value(friend, "id")
 						this_friend.displayName = self.get_value(friend, "name")
 						this_friend.url = "https://www.facebook.com/" + this_friend.id
+
+						# Get a list detailing the user's education history.
+						education_list = self.get_value(user_details, "education")
+						edu_coll = SocialObjects.Collection()
+						edu_coll.author = author
+						
+						# Education information exists.
+						if ((education_list) and (len(education_list) > 0)):
+							# Create list to hold places.
+							edu_list = []
+							
+							# Loop through places and add to list.
+							for place in education_list:
+								this_place = SocialObjects.Place()
+								this_place.id = place["school"]["id"]
+								this_place.displayName = place["school"]["name"]
+								edu_list.append(this_place)
+							
+							edu_coll.objects = edu_list
+						
+						# Add education info to User object.
+						user.education = edu_coll
+						
+						# Get a list detailing the user's work history.
+						work_coll = SocialObjects.Collection()
+						work_coll.author = author
+						work_history = self.get_value(user_details, "work")
+						
+						# Info exists.
+						if ((work_history) and (len(work_history) > 0)):
+							# Create Collection object to hold work history.
+							work_list = []
+							
+							# Loop through places and add to list.
+							for place in work_history:
+								this_place = SocialObjects.Place()
+								this_place.id = place["employer"]["id"]
+								this_place.displayName = place["employer"]["name"]
+								work_list.append(this_place)
+							
+							work_coll.objects = work_list
+							
+						
+						# Add work info to User object.
+						user.work = work_coll
+						
+						# Make a Place object for the user's hometown.
+						hometown_place = SocialObjects.Place()
+						hometown_info = self.get_value(user_details, "hometown")
+						
+						# Hometown supplied.
+						if (hometown_info):
+							hometown_place.id = hometown_info["id"]
+							hometown_place.displayName = hometown_info["name"]
+							user.hometown = hometown_place
+						
+						# Not supplied, so use an empty Place object.
+						else:
+							user.hometown = SocialObjects.Place()
+						
+						# Make a Place object for the user's current location.
+						location_place = SocialObjects.Place()
+						location_info = self.get_value(user_details, "location")
+						
+						# Location supplied.
+						if (location_info):
+							location_place.id = location_info["id"]
+							location_place.displayName = location_info["name"]
+							user.location = location_place
+						
+						# Location not supplied.
+						else:
+							user.location = SocialObjects.Place()
 						
 						# Create author object for this friend. (User "has" their friends)
 						author = SocialObjects.Person()
