@@ -731,7 +731,7 @@ class FacebookServiceGateway(ServiceGateway):
 							edu_coll.objects = edu_list
 						
 						# Add education info to User object.
-						user.education = edu_coll
+						this_friend.education = edu_coll
 						
 						# Get a list detailing the user's work history.
 						work_coll = SocialObjects.Collection()
@@ -754,7 +754,7 @@ class FacebookServiceGateway(ServiceGateway):
 							
 						
 						# Add work info to User object.
-						user.work = work_coll
+						this_friend.work = work_coll
 						
 						# Make a Place object for the user's hometown.
 						hometown_place = SocialObjects.Place()
@@ -764,11 +764,11 @@ class FacebookServiceGateway(ServiceGateway):
 						if (hometown_info):
 							hometown_place.id = hometown_info["id"]
 							hometown_place.displayName = hometown_info["name"]
-							user.hometown = hometown_place
+							this_friend.hometown = hometown_place
 						
 						# Not supplied, so use an empty Place object.
 						else:
-							user.hometown = SocialObjects.Place()
+							this_friend.hometown = SocialObjects.Place()
 						
 						# Make a Place object for the user's current location.
 						location_place = SocialObjects.Place()
@@ -778,11 +778,11 @@ class FacebookServiceGateway(ServiceGateway):
 						if (location_info):
 							location_place.id = location_info["id"]
 							location_place.displayName = location_info["name"]
-							user.location = location_place
+							this_friend.location = location_place
 						
 						# Location not supplied.
 						else:
-							user.location = SocialObjects.Place()
+							this_friend.location = SocialObjects.Place()
 						
 						# Create author object for this friend. (User "has" their friends)
 						author = SocialObjects.Person()
