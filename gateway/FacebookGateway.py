@@ -1046,6 +1046,7 @@ class FacebookServiceGateway(ServiceGateway):
 				author = SocialObjects.Person()
 				author.id = user_id
 				
+				
 				# While there is still data available...
 				while ((result_set.has_key("data")) and (len(result_set["data"]) > 0)):
 					# Grab the current batch of check-ins.
@@ -1055,6 +1056,13 @@ class FacebookServiceGateway(ServiceGateway):
 					for checkin in this_data:
 						# Get and set basic info.
 						this_checkin = Checkin()
+
+						# author posted this
+						author = SocialObjects.Person()
+						author.id = checkin["from"]["id"]
+						author.displayName = checkin["from"]["name"]
+
+
 						this_checkin.id = self.get_value(checkin, "id")
 						this_checkin.author = author
 						this_checkin.checkinType = self.get_value(checkin, "type")
