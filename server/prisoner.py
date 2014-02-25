@@ -152,15 +152,15 @@ class PRISONER(object):
 		The output from the shell when updating from hg is piped to the response
 		"""
 		output_pipe = ""
-		commands = ["cd /home/lhutton/prisoner/prisoner", "hg pull", "hg up", "touch /home/lhutton/prisoner/prisoner.wsgi"]
-		
+		commands = "cd /home/lhutton/prisoner/prisoner;hg pull;hg up;touch /home/lhutton/prisoner/prisoner.wsgi"
+
 		output_pipe="Attempting to update prisoner...\n\n"
 
-		for command in commands:
-			output_pipe="%s\nRunning: %s\nOutput:\n\n" % (output_pipe, command)
 
-			for line in self.run_command(command):
-				output_pipe="%s\n%s" % (output_pipe,line)
+		output_pipe="%s\nRunning: %s\nOutput:\n\n" % (output_pipe, commands)
+
+		for line in self.run_command(commands):
+			output_pipe="%s\n%s" % (output_pipe,line)
 
 		return Response(output_pipe)
 
