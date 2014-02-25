@@ -156,8 +156,6 @@ class PRISONER(object):
 		commands = "cd /home/lhutton/prisoner; ./invoke.sh"
 
 		output_pipe="Attempting to update prisoner...\n\n"
-
-
 		output_pipe="%s\nRunning: %s\nOutput:\n\n" % (output_pipe, commands)
 
 		for line in self.run_command(commands):
