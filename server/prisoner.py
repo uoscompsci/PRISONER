@@ -128,14 +128,46 @@ class PRISONER(object):
 			Rule('/complete', endpoint="complete"),
 			Rule('/<string:wildcard>', endpoint="fallback"),
 			Rule('/cancel', endpoint="cancel"),
-			Rule('/invalidate', endpoint="invalidate")
+			Rule('/invalidate', endpoint="invalidate"),
+			Rule('/instancewsgirestart',endpoint="restart")
 			
 
 		])
 		self.session_store = FilesystemSessionStore()
 		self.session_internals = {}
 		self.jinja_env = Environment(loader=FileSystemLoader(TEMPLATE_URL), autoescape=True)
+
+	def run_command(command):
+	    p = subprocess.Popen(command,
+	                         stdout=subprocess.PIPE,
+	                         stderr=subprocess.STDOUT)
+	    return iter(p.stdout.readline, b'')
 		
+	def on_restart(self, request):
+		""" This call should not be publicly exposed.
+		Does a hg pull from the prisoner repo, updates prisoner's server code then
+		forces a wsgi restart. If the pull does not succeed or otherwise leaves the
+		server in an inconsistent state, things may be broken.
+		The output from the shell when updating from hg is piped to the response
+		"""
+		output_pipe = ""
+		commands = ["cd /home/lhutton/prisoner/prisoner", "hg pull", "hg up", "touch /home/lhutton/prisoner/prisoner.wsgi"]
+		
+		output_pipe="Attempting to update prisoner...\n\n"
+		
+		for command in commands:
+			output_pipe="%s\nRunning: %s\nOutput:\n\n" % (output_pipe, command)
+
+			for line in run_command(command):
+				output_pipe="%s\n%s" % (output_pipe,line)
+
+		return Response(output_pipe)
+
+		
+
+
+
+
 	def render_template(self, template_name, **context):
 		t = self.jinja_env.get_template(template_name)
 		return Response(t.render(context), mimetype="text/html")
