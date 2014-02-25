@@ -153,7 +153,7 @@ class PRISONER(object):
 		The output from the shell when updating from hg is piped to the response
 		"""
 		output_pipe = ""
-		commands = "cd /home/lhutton/prisoner/prisoner;hg pull;hg up;touch /home/lhutton/prisoner/prisoner.wsgi"
+		commands = "cd ~/lhutton/prisoner; ./restart.sh"
 
 		output_pipe="Attempting to update prisoner...\n\n"
 
