@@ -141,7 +141,8 @@ class PRISONER(object):
 	def run_command(self, command):
 	    p = subprocess.Popen(command,
 	                         stdout=subprocess.PIPE,
-	                         stderr=subprocess.STDOUT)
+	                         stderr=subprocess.STDOUT,
+	                         shell=True)
 	    return iter(p.stdout.readline, b'')
 		
 	def on_restart(self, request):
