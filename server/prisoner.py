@@ -137,7 +137,7 @@ class PRISONER(object):
 		self.session_internals = {}
 		self.jinja_env = Environment(loader=FileSystemLoader(TEMPLATE_URL), autoescape=True)
 
-	def run_command(command):
+	def run_command(self, command):
 	    p = subprocess.Popen(command,
 	                         stdout=subprocess.PIPE,
 	                         stderr=subprocess.STDOUT)
@@ -154,11 +154,11 @@ class PRISONER(object):
 		commands = ["cd /home/lhutton/prisoner/prisoner", "hg pull", "hg up", "touch /home/lhutton/prisoner/prisoner.wsgi"]
 		
 		output_pipe="Attempting to update prisoner...\n\n"
-		
+
 		for command in commands:
 			output_pipe="%s\nRunning: %s\nOutput:\n\n" % (output_pipe, command)
 
-			for line in run_command(command):
+			for line in self.run_command(command):
 				output_pipe="%s\n%s" % (output_pipe,line)
 
 		return Response(output_pipe)
