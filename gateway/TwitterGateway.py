@@ -1,7 +1,7 @@
 from ServiceGateway import ServiceGateway
 import SocialObjects
 import urlparse
-import oauth2 as oauth
+import oauth
 
 
 class TwitterServiceGateway(ServiceGateway):
