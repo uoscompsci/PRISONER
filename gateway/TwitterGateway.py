@@ -37,6 +37,7 @@ class TwitterServiceGateway(ServiceGateway):
 		"""
 
 		#For some reason prisoner can't find this file if these are made in the _init_
+		import oauth
 		self.consumer = oauth.Consumer(consumer_key, consumer_secret)
 		self.client = oauth.Client(consumer)
 		
