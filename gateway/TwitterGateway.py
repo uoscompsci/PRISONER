@@ -60,10 +60,6 @@ class TwitterServiceGateway(ServiceGateway):
 		:returns: Unique access token that should persist for this user.
 		"""
 		
-		# Before doing this, could check that our state value matches the state returned by Facebook. (Later addition)
-		facebook_code = None
-		#facebook_code = request # Uncomment me if testing with a known code.
-		
 		if (request.args.has_key("oauth_token")):
 			raise Exception("Invalid response %s." % str(request.args['oauth_token']))
 		else:
