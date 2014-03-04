@@ -60,6 +60,9 @@ class TwitterServiceGateway(ServiceGateway):
 		:returns: Unique access token that should persist for this user.
 		"""
 		
-		print "boo"
+		if (request.args.has_key("oauth_token")):
+			raise Exception("Invalid response %s." % str(request.args['oauth_token']))
+		else:
+			raise Exception("Invalid response %s." % str(request))
 		
 		
