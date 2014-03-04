@@ -36,9 +36,10 @@ class TwitterServiceGateway(ServiceGateway):
 		"""
 
 		#For some reason prisoner can't find this file if these are made in the _init_
-		import oauth
-		self.consumer = oauth.Consumer(consumer_key, consumer_secret)
-		self.client = oauth.Client(consumer)
+		import oauth2
+		self.consumer = oauth2.Consumer(consumer_key, consumer_secret)
+		self.access_token = oauth2.Token(key=ACCESS_KEY, secret=ACCESS_SECRET)
+		self.client = oauth2.Client(consumer)
 		
 		resp, content = client.request(request_token_url, "GET")
 		if resp['status'] != '200':
