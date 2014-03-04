@@ -38,7 +38,7 @@ class TwitterServiceGateway(ServiceGateway):
 		:return: URI the user must visit in order to authenticate.
 		"""
 		
-		self.resp, self.content = selfclient.request(request_token_url, "GET")
+		self.resp, self.content = self.client.request(request_token_url, "GET")
 		if resp['status'] != '200':
 		    raise Exception("Invalid response %s." % self.resp['status'])
 
