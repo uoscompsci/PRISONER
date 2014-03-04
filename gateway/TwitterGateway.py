@@ -3,6 +3,7 @@ import SocialObjects
 import urlparse
 import oauth2
 import datetime
+import urllib
 
 
 class TwitterServiceGateway(ServiceGateway):
@@ -38,8 +39,10 @@ class TwitterServiceGateway(ServiceGateway):
 		:type callback: str
 		:return: URI the user must visit in order to authenticate.
 		"""
-		
-		self.resp, self.content = self.client.request(self.request_token_url, "GET")
+
+		self.callback_url = urllib.urlencode({'oauth_callback':callback})
+
+		self.resp, self.content = self.client.request(self.request_token_url, "GET", body=self.callback_url)
 		self.timetest = datetime.datetime.now()
 		if self.resp['status'] == '200':
 		    raise Exception("Invalid response %s." % str(callback))
