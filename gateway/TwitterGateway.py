@@ -68,5 +68,6 @@ class TwitterServiceGateway(ServiceGateway):
 
 		self.resp, self.content = self.client.request(self.access_token_url, "POST")
 		self.access_token = dict(urlparse.parse_qsl(self.content))
+		raise Exception("Invalid response %s." % str(self.access_token))
 		
 		
