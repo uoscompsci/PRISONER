@@ -40,9 +40,9 @@ class TwitterServiceGateway(ServiceGateway):
 		:return: URI the user must visit in order to authenticate.
 		"""
 
-		#self.callback_url = urllib.urlencode({'oauth_callback':callback})
+		self.callback_url = urllib.urlencode({'oauth_callback':callback})
 
-		self.resp, self.content = self.client.request(self.request_token_url)
+		self.resp, self.content = self.client.request(self.request_token_url, "POST", body=self.callback_url)
 		self.timetest = datetime.datetime.now()
 		if self.resp['status'] == '200':
 		    raise Exception("Invalid response %s." % str(callback))
