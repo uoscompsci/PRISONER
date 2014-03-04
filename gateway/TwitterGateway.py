@@ -62,9 +62,9 @@ class TwitterServiceGateway(ServiceGateway):
 		if (request.args.has_key("oauth_verifier")):
 			self.oauth_verifier = request.args['oauth_verifier']
 
-		self.token = oauth.Token(self.request_token['oauth_token'], self.request_token['oauth_token_secret'])
+		self.token = oauth2.Token(self.request_token['oauth_token'], self.request_token['oauth_token_secret'])
 		self.token.set_verifier(oauth_verifier)
-		self.client = oauth.Client(self.consumer, self.token)
+		self.client = oauth2.Client(self.consumer, self.token)
 
 		self.resp, self.content = self.client.request(self.access_token_url, "POST")
 		self.access_token = dict(urlparse.parse_qsl(self.content))
