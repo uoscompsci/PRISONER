@@ -40,7 +40,7 @@ class TwitterServiceGateway(ServiceGateway):
 		
 		self.resp, self.content = self.client.request(self.request_token_url, "GET")
 		if self.resp['status'] != '200':
-		    raise Exception("Invalid response %s." % self.resp['status'])
+		    raise Exception("Invalid response %s." % str(self.resp))
 
 		self.request_token = dict(urlparse.parse_qsl(self.content))
 
