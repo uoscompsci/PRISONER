@@ -67,7 +67,9 @@ class TwitterServiceGateway(ServiceGateway):
 		self.client = oauth2.Client(self.consumer, self.token)
 
 		self.resp, self.content = self.client.request(self.access_token_url, "POST")
-		self.access_token = dict(urlparse.parse_qsl(self.content))
+		self.content_json = dict(urlparse.parse_qsl(self.content))
+		self.access_token_secret = self.content_json['oauth_token_secret']
+		self.access_token = self.content_json['oauth_token']
 		raise Exception("Invalid response %s." % str(self.access_token))
 		
 		
