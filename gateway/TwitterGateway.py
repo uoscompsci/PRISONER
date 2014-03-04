@@ -59,10 +59,14 @@ class TwitterServiceGateway(ServiceGateway):
 		:type request: HTTPRequest
 		:returns: Unique access token that should persist for this user.
 		"""
-		
-		if (request.args.has_key("oauth_token")):
-			raise Exception("Invalid response %s." % str(request.args['oauth_token']))
-		else:
-			raise Exception("Invalid response %s." % str(request))
+		if (request.args.has_key("oauth_verifier")):
+			self.oauth_verifier = request.args['oauth_verifier']
+
+		self.token = oauth.Token(self.request_token['oauth_token'], self.request_token['oauth_token_secret'])
+		self.token.set_verifier(oauth_verifier)
+		self.client = oauth.Client(self.consumer, self.token)
+
+		self.resp, self.content = self.client.request(self.access_token_url, "POST")
+		self.access_token = dict(urlparse.parse_qsl(self.content))
 		
 		
