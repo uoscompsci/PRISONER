@@ -21,9 +21,6 @@ class TwitterServiceGateway(ServiceGateway):
 		self.access_token_url = 'https://api.twitter.com/oauth/access_token'
 		self.authorize_url = 'http://twitter.com/oauth/authorize'
 
-		#self.consumer = oauth.Consumer(consumer_key, consumer_secret)
-		#self.client = oauth.Client(consumer)
-
 
 		self.access_token = None
 
@@ -38,6 +35,10 @@ class TwitterServiceGateway(ServiceGateway):
 		:type callback: str
 		:return: URI the user must visit in order to authenticate.
 		"""
+
+		#For some reason prisoner can't find this file if these are made in the _init_
+		self.consumer = oauth.Consumer(consumer_key, consumer_secret)
+		self.client = oauth.Client(consumer)
 		
 		resp, content = client.request(request_token_url, "GET")
 		if resp['status'] != '200':
