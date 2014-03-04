@@ -14,8 +14,8 @@ class TwitterServiceGateway(ServiceGateway):
 		self.service_name = "Twitter"
 		self.service_description = "Micro-blogging service"
 
-		self.consumer_key = '5pAHjJPwANtEXx7ZZD7XEQ'
-		self.consumer_secret = 'ugXcAGqU2i8QxGkeFK0xkNoKNT0LplEmWUpaN5RTg'
+		self.consumer_key = 'x39RMkComhNOjLgnhUfyXA'
+		self.consumer_secret = 'LJ2mas1AgEPkF5Z67cs6BUHcuBh1sNZ9LJtYqPVFqI4'
 
 		self.request_token_url = 'https://api.twitter.com/oauth/request_token'
 		self.access_token_url = 'https://api.twitter.com/oauth/access_token'
