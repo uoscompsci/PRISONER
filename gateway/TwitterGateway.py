@@ -63,7 +63,7 @@ class TwitterServiceGateway(ServiceGateway):
 			self.oauth_verifier = request.args['oauth_verifier']
 
 		self.token = oauth2.Token(self.request_token['oauth_token'], self.request_token['oauth_token_secret'])
-		self.token.set_verifier(oauth_verifier)
+		self.token.set_verifier(self.oauth_verifier)
 		self.client = oauth2.Client(self.consumer, self.token)
 
 		self.resp, self.content = self.client.request(self.access_token_url, "POST")
