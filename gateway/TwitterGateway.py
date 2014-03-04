@@ -21,8 +21,8 @@ class TwitterServiceGateway(ServiceGateway):
 		self.access_token_url = 'https://api.twitter.com/oauth/access_token'
 		self.authorize_url = 'http://twitter.com/oauth/authorize'
 
-		#self.consumer = oauth.Consumer(consumer_key, consumer_secret)
-		#self.client = oauth.Client(consumer)
+		self.consumer = oauth.Consumer(consumer_key, consumer_secret)
+		self.client = oauth.Client(consumer)
 
 
 		self.access_token = None
