@@ -1,6 +1,7 @@
 from ServiceGateway import ServiceGateway
 import SocialObjects
 import urlparse
+import oauth2
 
 
 class TwitterServiceGateway(ServiceGateway):
@@ -20,6 +21,8 @@ class TwitterServiceGateway(ServiceGateway):
 		self.access_token_url = 'https://api.twitter.com/oauth/access_token'
 		self.authorize_url = 'http://twitter.com/oauth/authorize'
 
+		self.consumer = oauth2.Consumer(self.consumer_key, self.consumer_secret)
+		self.client = oauth2.Client(self.consumer)
 
 		self.access_token = None
 
@@ -34,21 +37,16 @@ class TwitterServiceGateway(ServiceGateway):
 		:type callback: str
 		:return: URI the user must visit in order to authenticate.
 		"""
-
-		#For some reason prisoner can't find this file if these are made in the _init_
-		import oauth2
-		self.consumer = oauth2.Consumer(self.consumer_key, self.consumer_secret)
-		self.client = oauth2.Client(self.consumer)
 		
-		resp, content = client.request(request_token_url, "GET")
+		self.resp, self.content = selfclient.request(request_token_url, "GET")
 		if resp['status'] != '200':
-		    raise Exception("Invalid response %s." % resp['status'])
+		    raise Exception("Invalid response %s." % self.resp['status'])
 
-		request_token = dict(urlparse.parse_qsl(content))
+		self.request_token = dict(urlparse.parse_qsl(self.content))
 
 		print "Request Token:"
-		print "    - oauth_token        = %s" % request_token['oauth_token']
-		print "    - oauth_token_secret = %s" % request_token['oauth_token_secret']
+		print "    - oauth_token        = %s" % self.request_token['oauth_token']
+		print "    - oauth_token_secret = %s" % self.request_token['oauth_token_secret']
 		print 
 
 
@@ -56,7 +54,7 @@ class TwitterServiceGateway(ServiceGateway):
 		# redirect. In a web application you would redirect the user to the URL
 		# below.
 
-		return "%s?oauth_token=%s" % (authorize_url, request_token['oauth_token']) 
+		return "%s?oauth_token=%s" % (self.authorize_url, self.request_token['oauth_token']) 
 
 	
 	
