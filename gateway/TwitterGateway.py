@@ -1,5 +1,6 @@
 from ServiceGateway import ServiceGateway
 import SocialObjects
+
 import urlparse
 import oauth2
 import datetime
@@ -72,9 +73,7 @@ class TwitterServiceGateway(ServiceGateway):
 		self.access_token = self.content_json['oauth_token']
 		
 		auth_user = User()
-
-		auth_user.id = "17899123"
-		auth_user.username = "tnhh"
+		auth_user.id = '17899123'
 		
 		# Set up session.
 		self.session = auth_user
@@ -104,4 +103,25 @@ class TwitterServiceGateway(ServiceGateway):
 		url_user = "https://api.twitter.com/1.1/statuses/user_timeline.json?count=200&user_id="
 		tristans_id = "17899123"
 		raise Exception("Invalid response %s." % str(payload))
+
+class User(SocialObjects.Person):
+	"""
+	Representation of a user object on Facebook.
+	Users are essentially the backbone of the Facebook service and such objects can contain a great deal of information.
+	User objects will not always have values for all their attributes, as Facebook does not require users to provide 
+	allthis information.
+	"""
+	
+	def __init__(self):
+		super(User, self).__init__()
+		self._provider = "Twitter"	# String
+		self._id = None	# String
+
+	@property
+	def id(self):
+		return self._username
+
+	@id.setter
+	def id(self, value):
+		self._username = value
 		
