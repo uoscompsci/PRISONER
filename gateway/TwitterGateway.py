@@ -70,6 +70,22 @@ class TwitterServiceGateway(ServiceGateway):
 		self.content_json = dict(urlparse.parse_qsl(self.content))
 		self.access_token_secret = self.content_json['oauth_token_secret']
 		self.access_token = self.content_json['oauth_token']
-		raise Exception("Invalid response %s." % str(self.access_token))
 		
+		return self.access_token
+		
+	def Timeline(self, operation, payload):
+		"""
+		Performs operations relating to people's musical tastes.
+		Currently only supports GET operations, so we can just get the bands a person / user likes.
+		
+		:param operation: The operation to perform. (GET)
+		:type operation: str
+		:param payload: A User() or Person() whose ID is either a Facebook UID or username.
+		:type payload: SocialObject
+		:returns: A list of the bands this person likes.
+		"""
+
+		url_user = "https://api.twitter.com/1.1/statuses/user_timeline.json?count=200&user_id="
+		tristans_id = "17899123"
+		raise Exception("Invalid response %s." % str(payload))
 		
