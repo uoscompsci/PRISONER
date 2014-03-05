@@ -71,7 +71,23 @@ class TwitterServiceGateway(ServiceGateway):
 		self.access_token_secret = self.content_json['oauth_token_secret']
 		self.access_token = self.content_json['oauth_token']
 		
+		auth_user = User()
+
+		auth_user.id = "17899123"
+		auth_user.username = "tnhh"
+		
+		# Set up session.
+		self.session = auth_user
+
 		return self.access_token
+
+	def Session(self):
+		"""
+		The Facebook session exposes the authenticated user as an instance of User().
+		Can also be accessed in the same way as Person() as this class simply extends it.
+		"""
+		
+		return self.session
 		
 	def Timeline(self, operation, payload):
 		"""
