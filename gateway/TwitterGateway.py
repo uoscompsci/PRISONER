@@ -72,8 +72,8 @@ class TwitterServiceGateway(ServiceGateway):
 		self.access_token_secret = self.content_json['oauth_token_secret']
 		self.access_token = self.content_json['oauth_token']
 		
-		auth_user = User()
-		auth_user.id = '17899123'
+		auth_user = Timeline()
+		auth_user.id = 'stub for user id'
 		
 		# Set up session.
 		self.session = auth_user
