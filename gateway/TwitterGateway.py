@@ -1,11 +1,15 @@
 from ServiceGateway import ServiceGateway
 import SocialObjects
 
+MERCURIAL TEST NO 1
+
 import urlparse
 import oauth2
 import datetime
 import urllib
 
+
+TEST OF MERCURIAL
 
 class TwitterServiceGateway(ServiceGateway):
 	""" Service Gateway for Twitter. 
