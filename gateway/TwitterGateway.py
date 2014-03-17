@@ -100,6 +100,16 @@ class TwitterServiceGateway(ServiceGateway):
 		:returns: A list of the bands this person likes.
 		"""
 
+		# Get user ID and query Facebook for their info.
+		timeline_id = payload				
+		# Create user object.
+		timeline = Timeline()
+		timeline.id = timeline_id
+				
+		# Create author object for future use.
+		author = SocialObjects.Person()
+		author.id = timeline_id
+
 		url_user = "https://api.twitter.com/1.1/statuses/user_timeline.json?count=200&user_id="
 		tristans_id = "17899123"
 		timeline = payload
