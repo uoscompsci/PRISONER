@@ -102,9 +102,11 @@ class TwitterServiceGateway(ServiceGateway):
 
 		url_user = "https://api.twitter.com/1.1/statuses/user_timeline.json?count=200&user_id="
 		tristans_id = "17899123"
-		raise Exception("Invalid response %s." % str(payload))
+		timeline = payload
+		raise Exception("Invalid response %s." % str(timeline))
 
-class User(SocialObjects.Person):
+
+class Timeline(SocialObjects.Person):
 	"""
 	Representation of a user object on Facebook.
 	Users are essentially the backbone of the Facebook service and such objects can contain a great deal of information.
