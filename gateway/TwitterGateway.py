@@ -126,7 +126,7 @@ class Timeline(SocialObjects.Person):
 	"""
 	
 	def __init__(self):
-		super(User, self).__init__()
+		super(Timeline, self).__init__()
 		self._provider = "Twitter"	# String
 		self._id = None	# String
 
