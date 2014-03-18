@@ -192,9 +192,12 @@ class CompleteConsentHandler(tornado.web.RequestHandler):
 		builder.sog.complete_authentication(callback_provider,
 		self.request)
 
-		self.write("Thanks. Now ready to start the experiment...")
+		#self.write("Thanks. Now ready to start the experiment...")
 		# evoke callback
-		self.redirect(builder.exp_callback)
+		if "http" in builder.exp_callback():
+			self.redirect(builder.exp_callback)
+		else:
+			self.write(builder.exp_callback)
 
 
 class ConsentFlowHandler(tornado.web.RequestHandler):
