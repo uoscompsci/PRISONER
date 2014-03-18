@@ -6,6 +6,9 @@ import oauth2
 import datetime
 import urllib
 
+class Timeline(SocialObjects.Collection):
+	def __init__(self):
+		super(Timeline, self).__init__()
 
 class TwitterServiceGateway(ServiceGateway):
 	""" Service Gateway for Twitter. 
