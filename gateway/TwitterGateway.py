@@ -126,15 +126,15 @@ class Timeline(SocialObjects.Person):
 	"""
 	
 	def __init__(self):
-		super(Timeline, self).__init__()
+		super(User, self).__init__()
 		self._provider = "Twitter"	# String
 		self._id = None	# String
 
 	@property
 	def id(self):
-		return self._id
+		return self._username
 
 	@id.setter
 	def id(self, value):
+		self._username = value
 		self._id = value
-

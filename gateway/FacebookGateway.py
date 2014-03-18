@@ -1043,8 +1043,8 @@ class FacebookServiceGateway(ServiceGateway):
 				checkin_obj_list = []
 				
 				# Author info.
-				author = SocialObjects.Person()
-				author.id = user_id
+				#author = SocialObjects.Person()
+				#author.id = user_id
 				
 				
 				# While there is still data available...
@@ -1065,7 +1065,8 @@ class FacebookServiceGateway(ServiceGateway):
 
 						this_checkin.id = self.get_value(checkin, "id")
 						this_checkin.author = author
-						this_checkin.checkinType = self.get_value(checkin, "type")
+						#this_checkin.checkinType = self.get_value(checkin, "type")
+						this_checkin.checkinType = "status"
 						this_checkin.published = self.str_to_time(self.get_value(checkin, "created_time"))
 						
 						# Get location info.
