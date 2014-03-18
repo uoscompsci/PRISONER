@@ -7,13 +7,7 @@ import oauth2
 import datetime
 import urllib
 
-<<<<<<< local
-class Timeline(SocialObjects.Collection):
-	def __init__(self):
-		super(Timeline, self).__init__()
 
-=======
->>>>>>> other
 class TwitterServiceGateway(ServiceGateway):
 	""" Service Gateway for Twitter. 
 	
@@ -142,9 +136,5 @@ class Timeline(SocialObjects.Person):
 
 	@id.setter
 	def id(self, value):
-<<<<<<< local
-		self._username = value
-		
-=======
 		self._id = value
-		>>>>>>> other
+
