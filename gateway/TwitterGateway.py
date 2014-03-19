@@ -77,7 +77,6 @@ class TwitterServiceGateway(ServiceGateway):
 
 		self.token = oauth2.Token(self.access_token, self.access_token_secret)
 		self.client = oauth2.Client(self.consumer, self.token)
-		self.resp, self.content = self.client.request(self.user_details_url, "GET")
 
 
 		auth_user = Timeline()
@@ -119,8 +118,18 @@ class TwitterServiceGateway(ServiceGateway):
 		author.id = timeline_id
 		timeline.author = author
 
-		url_user = "https://api.twitter.com/1.1/statuses/user_timeline.json?count=200&user_id="
-		tristans_id = "17899123"
+		self.timeline_url = 'https://api.twitter.com/1/statuses/user_timeline.json'
+		self.timeline_params = {"user_id": payload,
+								"count": 50,
+								"include_rts": 1,
+								"include_entities":1,
+								"exclude_replies":1}
+
+		self.timeline_request = self.timeline_url + urllib.urlencode(self.timeline_params)
+
+		self.resp, self.content = self.client.request(self.timeline_request, "GET")
+		timeline.id = self.content
+
 		return timeline
 
 
