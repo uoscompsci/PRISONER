@@ -80,8 +80,9 @@ class TwitterServiceGateway(ServiceGateway):
 
 
 		auth_user = Timeline()
-		auth_user.id = self.content_json['user_id']
-		
+		#auth_user.id = self.content_json['user_id']
+		auth_user.id = 'freakin awesome'
+
 		# Set up session.
 		self.session = auth_user
 
