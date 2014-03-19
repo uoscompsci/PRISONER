@@ -107,6 +107,17 @@ class TwitterServiceGateway(ServiceGateway):
 		:returns: A list of the bands this person likes.
 		"""
 
+		self.timeline_url = 'https://api.twitter.com/1/statuses/user_timeline.json'
+		self.timeline_params = {"user_id": payload,
+								"count": 50,
+								"include_rts": 1,
+								"include_entities":1,
+								"exclude_replies":1}
+
+		self.timeline_request = self.timeline_url + urllib.urlencode(self.timeline_params)
+
+		self.resp, self.content = self.client.request(self.timeline_request, "GET")
+
 		# Get user ID and query Facebook for their info.
 		timeline_id = payload				
 		# Create user object.
@@ -120,7 +131,8 @@ class TwitterServiceGateway(ServiceGateway):
 
 		url_user = "https://api.twitter.com/1.1/statuses/user_timeline.json?count=200&user_id="
 		tristans_id = "17899123"
-		return timeline
+		timeline = payload
+		raise Exception("Invalid response %s." % str(self.content))
 
 
 class Timeline(SocialObjects.Person):
