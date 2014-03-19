@@ -355,7 +355,7 @@ class PolicyProcessor(object):
 			raise RuntimePrivacyPolicyParserError("Criteria "+\
 			"produced an unexpected result - is it well-formed?")
 		elif criteria_stack[0] == False:
-			return None
+			raise NotImplementedException("tried to validate as none")
 		else:
 			return True
 
