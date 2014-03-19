@@ -80,7 +80,7 @@ class TwitterServiceGateway(ServiceGateway):
 
 		#TEMPTEMPTEMPTEMPTEMPTEMPTEMPTEMPTEMPTEMPTEMPTEMPTEMPTEMPTEMPTEMPTEMPTEMPTEMP
 		self.timeline_url = 'https://api.twitter.com/1.1/statuses/user_timeline.json?'
-		self.timeline_params = {"user_id": payload,
+		self.timeline_params = {"user_id": self.content_json['user_id'],
 								"count": 50}
 								#"include_rts": 1,
 								#"exclude_replies":1}
