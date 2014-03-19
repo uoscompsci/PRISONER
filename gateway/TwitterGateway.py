@@ -111,6 +111,7 @@ class TwitterServiceGateway(ServiceGateway):
 		timeline_id = payload				
 		# Create user object.
 		timeline = Timeline()
+		timeline.id = "self.resp"
 				
 		# Create author object for future use.
 		author = SocialObjects.Person()
