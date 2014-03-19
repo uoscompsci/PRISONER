@@ -131,7 +131,7 @@ class TwitterServiceGateway(ServiceGateway):
 		url_user = "https://api.twitter.com/1.1/statuses/user_timeline.json?count=200&user_id="
 		tristans_id = "17899123"
 		timeline = payload
-		returnstring  = str(self.resp) + "            " + str(self.content)
+		self.returnstring  = str(self.resp) + "            " + str(self.content)
 		raise Exception("Invalid response %s." % str(self.returnstring))
 
 
