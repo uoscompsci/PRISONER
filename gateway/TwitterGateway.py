@@ -81,7 +81,7 @@ class TwitterServiceGateway(ServiceGateway):
 
 
 		auth_user = Timeline()
-		auth_user.id = self.content_json
+		auth_user.id = self.content_json['user_id']
 		
 		# Set up session.
 		self.session = auth_user
@@ -139,9 +139,8 @@ class Timeline(SocialObjects.Person):
 
 	@property
 	def id(self):
-		return self._username
+		return self._id
 
 	@id.setter
 	def id(self, value):
-		self._username = value
 		self._id = value
