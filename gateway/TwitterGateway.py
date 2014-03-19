@@ -107,7 +107,7 @@ class TwitterServiceGateway(ServiceGateway):
 		:returns: A list of the bands this person likes.
 		"""
 
-		self.timeline_url = 'https://api.twitter.com/1.1/statuses/user_timeline.json'
+		self.timeline_url = 'https://api.twitter.com/1.1/statuses/user_timeline.json?'
 		self.timeline_params = {"user_id": payload,
 								"count": 50}
 								#"include_rts": 1,
