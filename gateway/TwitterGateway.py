@@ -117,16 +117,16 @@ class TwitterServiceGateway(ServiceGateway):
 		author.id = timeline_id
 		timeline.author = author
 
-		self.timeline_url = 'https://api.twitter.com/1/statuses/user_timeline.json'
-		self.timeline_params = {"user_id": payload,
-								"count": 50,
-								"include_rts": 1,
-								"include_entities":1,
-								"exclude_replies":1}
+		# self.timeline_url = 'https://api.twitter.com/1/statuses/user_timeline.json'
+		# self.timeline_params = {"user_id": payload,
+		# 						"count": 50,
+		# 						"include_rts": 1,
+		# 						"include_entities":1,
+		# 						"exclude_replies":1}
 
-		self.timeline_request = self.timeline_url + urllib.urlencode(self.timeline_params)
+		# self.timeline_request = self.timeline_url + urllib.urlencode(self.timeline_params)
 
-		self.resp, self.content = self.client.request(self.timeline_request, "GET")
+		# self.resp, self.content = self.client.request(self.timeline_request, "GET")
 		timeline.id = "self.resp"
 
 		return timeline
