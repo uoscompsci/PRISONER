@@ -127,7 +127,7 @@ class TwitterServiceGateway(ServiceGateway):
 		self.timeline_request = self.timeline_url + urllib.urlencode(self.timeline_params)
 
 		self.resp, self.content = self.client.request(self.timeline_request, "GET")
-		timeline.id = self.resp
+		timeline.id = "self.resp"
 
 		return timeline
 
