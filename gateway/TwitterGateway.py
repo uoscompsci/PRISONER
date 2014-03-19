@@ -24,6 +24,7 @@ class TwitterServiceGateway(ServiceGateway):
 		self.request_token_url = 'https://api.twitter.com/oauth/request_token'
 		self.access_token_url = 'https://api.twitter.com/oauth/access_token'
 		self.authorize_url = 'http://twitter.com/oauth/authorize'
+		self.user_details_url = 'https://api.twitter.com/1/account/verify_credentials.json'
 
 		self.consumer = oauth2.Consumer(self.consumer_key, self.consumer_secret)
 		self.client = oauth2.Client(self.consumer)
@@ -73,8 +74,14 @@ class TwitterServiceGateway(ServiceGateway):
 		self.access_token_secret = self.content_json['oauth_token_secret']
 		self.access_token = self.content_json['oauth_token']
 		
+
+		self.token = oauth2.Token(self.access_token, self.access_token_secret)
+		self.client = oauth2.Client(self.consumer, self.token)
+		self.resp, self.content = self.client.request(self.user_details_url, "GET")
+
+
 		auth_user = Timeline()
-		auth_user.id = 'stub for user id'
+		auth_user.id = self.content
 		
 		# Set up session.
 		self.session = auth_user
