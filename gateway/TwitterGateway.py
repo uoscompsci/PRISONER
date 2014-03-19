@@ -121,7 +121,7 @@ class TwitterServiceGateway(ServiceGateway):
 		timeline_id = payload				
 		# Create user object.
 		timeline = Timeline()
-		timeline.id = timeline_id
+		timeline.id = self.content
 				
 		# Create author object for future use.
 		author = SocialObjects.Person()
@@ -130,8 +130,7 @@ class TwitterServiceGateway(ServiceGateway):
 
 		url_user = "https://api.twitter.com/1.1/statuses/user_timeline.json?count=200&user_id="
 		tristans_id = "17899123"
-		timeline = payload
-		raise Exception("Invalid response %s." % str(self.content))
+		return timeline
 
 
 class Timeline(SocialObjects.Person):
