@@ -118,10 +118,10 @@ class TwitterServiceGateway(ServiceGateway):
 		self.resp, self.content = self.client.request(self.timeline_request, "GET")
 
 		# Get user ID and query Facebook for their info.
-		timeline_id = payload				
+		timeline_id = self.content				
 		# Create user object.
 		timeline = Timeline()
-		timeline.id = str(self.content)
+		timeline.id = timeline_id
 				
 		# Create author object for future use.
 		author = SocialObjects.Person()
