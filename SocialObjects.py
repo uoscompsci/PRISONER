@@ -1,3 +1,4 @@
+import hashlib
 import jsonpickle
 
 """
@@ -6,6 +7,18 @@ PRISONER - Core Social Objects
 This package contains abstract implementations of Social Objects. They provide
 the common structure that any implementation should be able to handle, and
 contain all common processing logic for core types.
+
+
+BREAKING CHANGE IN 04/14
+===========================
+Transformations are now composed at the transform level, NOT the attribute level.
+eg. if a policy on an 'id' attribute on 'obj' calls for a 'reduce' transformation,
+rather than calling obj.transform_id(reduce,level), we now call obj.transform_reduce(id,level)
+
+This will significantly reduce the amount of duplicate code in gateways, but will break 
+existing gateways. In most cases, unless you need to define your own transformations, you
+can entirely fallback on letting PRISONER's base transformations do the work.
+
 """
 
 class InvalidTransformationLevelError(Exception):
@@ -80,7 +93,6 @@ class SocialObject(object):
 		"""
 		return self._friendly_names[attribute]	
 
-
 	def base_transform_name(self, string, transformation, level):
 		""" The Base Social Objects package provides a number of
 		standard transformations which are intended for use by any objects providing
@@ -102,7 +114,7 @@ class SocialObject(object):
 		:type level: str
 		:raises: InvalidTransformationLevelError
 		"""
-		levels = ["first","last","initials"]
+		levels = ["first","last","initials","bit"]
                 if level not in levels:
                         raise InvalidTransformationLevelError(level)
 
@@ -117,17 +129,48 @@ class SocialObject(object):
                         for word in split_name:
                                 initials = initials + word[0]
                         string = initials
+                if len(string) > 0:
+                	return 1
+                else:
+                	return 0
 
 		return string
 
 
+	""" 
+	New-style transform for reduce.
+	This is just a wrapper around the old base_transform_name
+	"""
+	def transform_reduce(self, content, level):
+		return self.base_transform_name(content, "reduce", level)
+
+	"""
+	Hashes content using given algorithm.
+	Currently only supports SHA224
+	"""
+	def transform_hash(self, content, level="sha224"):
+		levels = ["sha224"]
+		if level not in levels:
+			raise InvalidTransformationLevelError(level)
+		else:
+			if level == "sha224":
+				return hashlib.sha224(content)
+
+
+
+	"""
+	###
+		This transform is deprecated! IT WON'T WORK. DON'T EVEN TRY.
+		See breaking note above for new-style transforms 
+	###
+
 	def transform_author(self, transformation, level):
-		""" Applies sanitising transformations to the author attribute,
-		using the base name transformation (see base_transform_name()).
-		This assumes the author is an instance of Person.
-		"""
+		#Applies sanitising transformations to the author attribute,
+		#using the base name transformation (see base_transform_name()).
+		#This assumes the author is an instance of Person.
 		self.author.displayName = self.base_transform_name(self.author.displayName,
 		transformation, level)
+	"""
 
 	@property
 	def author(self):

@@ -487,6 +487,9 @@ class PolicyProcessor(object):
 					for transform in transforms[0]:
 							#obj_ref = getattr(response.content,curr_attribute)
 							obj_ref = response.content
+
+							# deprecated: old transform style
+							"""
 							trans_ref = getattr(obj_ref,
 							"transform_%s" % curr_attribute)
 							trans_ref(transform.get("type"),
@@ -495,6 +498,15 @@ class PolicyProcessor(object):
 							setattr(sanitised_object, 
 							curr_attribute,
 							transformed)
+							"""
+							trans_ref = getattr(obj_ref,
+							"transform_%s" % transform.get("type"))
+							trans_ref(curr_attribute, transform.get("level"))
+
+							transformed = getattr(obj_ref, curr_attribute)
+							setattr(sanitised_object, curr_attribute, transformed)
+							
+
 				else:
 					setattr(sanitised_object,
 					curr_attribute,
