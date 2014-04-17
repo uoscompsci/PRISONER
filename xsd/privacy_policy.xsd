@@ -124,14 +124,7 @@ elementFormDefault="unqualified">
 			and service gateway.
 		</xs:documentation>
 	</xs:annotation>
-	<xs:attribute name="type" use="required">
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:enumeration value="reduce" />
-				<xs:enumeration value="obfuscate" />
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:attribute>
+	<xs:attribute name="type" type="xs:string" use="required" />
 	<xs:attribute name="level" type="xs:string" use="required" />
 </xs:complexType>
 
