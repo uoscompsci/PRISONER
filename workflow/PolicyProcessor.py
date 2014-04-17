@@ -499,11 +499,12 @@ class PolicyProcessor(object):
 							curr_attribute,
 							transformed)
 							"""
+							if transform.tag is etree.Comment:
+								continue
 							trans_ref = getattr(obj_ref,
 							"transform_%s" % transform.get("type"))
-							trans_ref(curr_attribute, transform.get("level"))
-
-							transformed = getattr(obj_ref, curr_attribute)
+							transformed = trans_ref(curr_attribute, transform.get("level"))
+							print transformed
 							setattr(sanitised_object, curr_attribute, transformed)
 							
 
