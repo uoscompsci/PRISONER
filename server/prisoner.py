@@ -129,8 +129,8 @@ class PRISONER(object):
 			Rule('/complete', endpoint="complete"),
 			Rule('/<string:wildcard>', endpoint="fallback"),
 			Rule('/cancel', endpoint="cancel"),
-			Rule('/invalidate', endpoint="invalidate"),
-			Rule('/instancewsgirestart',endpoint="restart")
+			Rule('/invalidate', endpoint="invalidate")
+			#Rule('/instancewsgirestart',endpoint="restart")
 			
 
 		])
