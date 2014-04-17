@@ -19,6 +19,8 @@ This will significantly reduce the amount of duplicate code in gateways, but wil
 existing gateways. In most cases, unless you need to define your own transformations, you
 can entirely fallback on letting PRISONER's base transformations do the work.
 
+If attributes in your Gateways do not map to this approach, override the base methods in your
+gateway class and provide attribute-specific behaviours.
 """
 
 class InvalidTransformationLevelError(Exception):
