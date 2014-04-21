@@ -150,7 +150,7 @@ class SocialObject(object):
 	Hashes content using given algorithm.
 	Currently only supports SHA224
 	"""
-	def transform_hash(self, attribute, level="sha224"):
+	def transform_hash(self, content, level="sha224"):
 		levels = ["sha224"]
 		if level not in levels:
 			raise InvalidTransformationLevelError(level)
