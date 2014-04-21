@@ -143,14 +143,16 @@ class SocialObject(object):
 	New-style transform for reduce.
 	This is just a wrapper around the old base_transform_name
 	"""
-	def transform_reduce(self, content, level):
+	def transform_reduce(self, attribute, level):
+		content = getattr(self,attribute)
 		return self.base_transform_name(content, "reduce", level)
 
 	"""
-	Hashes content using given algorithm.
+	Hashes attribute of object using given algorithm.
 	Currently only supports SHA224
 	"""
-	def transform_hash(self, content, level="sha224"):
+	def transform_hash(self, attribute, level="sha224"):
+		content = getattr(self,attribute)
 		levels = ["sha224"]
 		if level not in levels:
 			raise InvalidTransformationLevelError(level)

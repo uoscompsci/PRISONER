@@ -503,7 +503,8 @@ class PolicyProcessor(object):
 								continue
 							trans_ref = getattr(obj_ref,
 							"transform_%s" % transform.get("type"))
-							transformed = trans_ref(curr_attribute, transform.get("level"))
+							to_transform = getattr(obj_ref, curr_attribute)
+							transformed = trans_ref(to_transform, transform.get("level"))
 							print transformed
 							setattr(sanitised_object, curr_attribute, transformed)
 							
