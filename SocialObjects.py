@@ -144,7 +144,7 @@ class SocialObject(object):
 	This is just a wrapper around the old base_transform_name
 	"""
 	def transform_reduce(self, content, level):
-		return self.base_transform_name(content, "reduce", level)
+		return self.base_transform_name(str(content), "reduce", level)
 
 	"""
 	Hashes content using given algorithm.
