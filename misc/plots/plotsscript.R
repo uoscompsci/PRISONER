@@ -22,8 +22,9 @@ scale_fill_manual("",values=box_cols) +
 theme_bw(base_size=font_size) +	
 coord_fixed() +
 coord_equal(ratio=2) +
-opts(axis.text.x=theme_text(size=font_size),axis.text.y=theme_text(size=font_size),legend.key = theme_rect(col = 0),legend.text=theme_text(size=font_size),axis.title.x=theme_text(vjust=0,size=font_size,face="bold"),axis.title.y=theme_text(hjust=0.5,vjust=0.15,angle=90,size=font_size,face="bold"))
+theme(axis.text.x=element_text(size=font_size),axis.text.y=element_text(size=font_size),legend.key = element_rect(colour = 0),legend.text=element_text(size=font_size),axis.title.x=element_text(vjust=0,size=font_size,face="bold"),axis.title.y=element_text(hjust=0.5,vjust=0.15,angle=90,size=font_size,face="bold"))
 ggsave(file="partgroup.eps")
+dev.off()
 
 # differences between information types, sub-divided by participant group
 dev.new(width=10,height=3)
@@ -36,8 +37,9 @@ scale_x_discrete("Information type") +
 scale_fill_manual("",values=box_cols) +
 theme_bw(base_size=font_size) +	
 coord_equal(ratio=2) +
-opts(axis.text.x=theme_text(size=font_size),axis.text.y=theme_text(size=font_size),legend.key = theme_rect(col = 0),legend.text=theme_text(size=font_size),axis.title.x=theme_text(vjust=0,size=font_size,face="bold"),axis.title.y=theme_text(hjust=0.5,vjust=0.15,angle=90,size=font_size,face="bold"))
+theme(axis.text.x=element_text(size=font_size),axis.text.y=element_text(size=font_size),legend.key = element_rect(colour = 0),legend.text=element_text(size=font_size),axis.title.x=element_text(vjust=0,size=font_size,face="bold"),axis.title.y=element_text(hjust=0.5,vjust=0.15,angle=90,size=font_size,face="bold"))
 ggsave(file="infotype.eps")
+dev.off()
 
 # differences between privacy settings, sub-divided by participant group
 dev.new(width=10,height=5)
@@ -51,5 +53,6 @@ scale_x_discrete("Privacy setting",limits=c("EVERYONE","FRIENDS-OF-FRIENDS","FRI
 scale_fill_manual("",values=box_cols) +
 theme_bw(base_size=font_size) +
 coord_equal(ratio=2) +
-opts(axis.text.x=theme_text(size=font_size),axis.text.y=theme_text(size=font_size),legend.key = theme_rect(col = 0),legend.text=theme_text(size=font_size),axis.title.x=theme_text(vjust=0,size=font_size,face="bold"),axis.title.y=theme_text(hjust=0.5,vjust=0.15,angle=90,size=font_size,face="bold"))
+theme(axis.text.x=element_text(size=font_size),axis.text.y=element_text(size=font_size),legend.key = element_rect(colour = 0),legend.text=element_text(size=font_size),axis.title.x=element_text(vjust=0,size=font_size,face="bold"),axis.title.y=element_text(hjust=0.5,vjust=0.15,angle=90,size=font_size,face="bold"))
 ggsave(file="privsetting.eps")
+dev.off()
