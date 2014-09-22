@@ -156,7 +156,7 @@ class SocialObject(object):
 			raise InvalidTransformationLevelError(level)
 		else:
 			if level == "sha224":
-				return hashlib.sha224(content)
+				return hashlib.sha224(content).hexdigest()
 
 
 
