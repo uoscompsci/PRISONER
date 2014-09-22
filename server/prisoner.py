@@ -254,7 +254,9 @@ class PRISONER(object):
 		""" Read the session data corresponding to the given key
 		parameter. Session data is bound to the active PRISession. """
 		builder = self.get_builder_reference(request)
-		return Response(builder.session[request.args["PRISession"]][request.args["key"]])
+		if request.args["key"] not in builder.session[request.args["PRISession"]]:
+			return Response("Key not in session",status=404)
+		return Response(json.dumps(builder.session[request.args["PRISession"]][request.args["key"]]))
 
 	def on_handshake(self, request):
 		""" This initial call provides the client with their session
