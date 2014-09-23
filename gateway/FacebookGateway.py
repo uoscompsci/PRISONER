@@ -1015,7 +1015,7 @@ class FacebookServiceGateway(ServiceGateway):
 			
 			except:
 				print "Photo() function exception:"
-				raise
+				#raise
 				print sys.exc_info()[0]
 				return Photos()
 		

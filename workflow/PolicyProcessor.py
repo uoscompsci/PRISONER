@@ -300,7 +300,7 @@ class PolicyProcessor(object):
 				# a logical group
 				
 				
-				print("reached end of %s - " % element.tag + \
+				#print("reached end of %s - " % element.tag + \
 				"evaluate everything earlier on the stack")
 				working_stack_set = []
 				while len(criteria_stack) > 0:
@@ -312,7 +312,7 @@ class PolicyProcessor(object):
 						# result to working set
 						working_stack_set.append(self.__test_criteria(top_element,response))
 					else:
-						print("evaluating %s for %s" % 
+						#print("evaluating %s for %s" % 
 						(working_stack_set,
 						top_element.tag))
 						
@@ -541,7 +541,7 @@ class PolicyProcessor(object):
 			on_object_obj = self._infer_object(on_object)
 			to_match_obj =	self._infer_attributes(to_match,
 			response.content)
-			print "does %s equal %s?" % (to_match_obj,
+			#print "does %s equal %s?" % (to_match_obj,
 			on_object_obj)
 			if to_match_obj == on_object_obj:
 				return True
