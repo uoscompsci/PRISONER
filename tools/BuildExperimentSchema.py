@@ -26,6 +26,10 @@ help="Path to the privacy policy file for this experiment")
 parser.add_option("-c","--connection", type="string", dest="connection",
 help="Database connection string (eg. sqlite:///test.db")
 
+parser.add_option("-s","--server", type="string", dest="server",
+help="URL of PRISONER server")
+
+
 
 (options, args) = parser.parse_args()
 
@@ -34,7 +38,7 @@ if __name__ == "__main__":
 	policy = options.policy
 	connection = options.connection
 
-	expBuilder = ExperimentBuilder.ExperimentBuilder()
+	expBuilder = ExperimentBuilder.ExperimentBuilder(options.server)
 	expBuilder.provide_privacy_policy(policy)
 	expBuilder.provide_db_string(connection)
 	expBuilder.provide_experimental_design(design)
