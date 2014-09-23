@@ -8,11 +8,12 @@ lost) to rebuild the database. This script must be called before running your
 experiment or registering participants.
 """
 
+import sys
+sys.path.append("/home/lhutton/prisoner/prisoner")
 from optparse import OptionParser
 from workflow import ExperimentBuilder
 
-import sys
-sys.path.append("/home/lhutton/prisoner/prisoner")
+
 
 
 parser = OptionParser()
