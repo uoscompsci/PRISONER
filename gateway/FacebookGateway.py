@@ -1044,8 +1044,8 @@ class FacebookServiceGateway(ServiceGateway):
 				checkin_obj_list = []
 				
 				# Author info.
-				#author = SocialObjects.Person()
-				#author.id = user_id
+				author = SocialObjects.Person()
+				author.id = user_id
 				
 				
 				# While there is still data available...
@@ -1060,8 +1060,8 @@ class FacebookServiceGateway(ServiceGateway):
 
 						# author posted this
 						author = SocialObjects.Person()
-						author.id = checkin["from"]["id"]
-						author.displayName = checkin["from"]["name"]
+						#author.id = checkin["from"]["id"]
+						#author.displayName = checkin["from"]["name"]
 
 
 						this_checkin.id = self.get_value(checkin, "id")
