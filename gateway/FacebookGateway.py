@@ -52,7 +52,7 @@ class FacebookServiceGateway(ServiceGateway):
 		"friends_questions,friends_relationships,friends_relationship_details,friends_religion_politics,friends_status,friends_subscriptions," +\
 		"friends_videos,friends_website,friends_work_history"
 		extended_permissions = "read_friendlists,read_insights,read_mailbox,read_requests,read_stream,xmpp_login,ads_management,create_event," +\
-		"manage_friendlists,manage_notifications,user_online_presence,friends_online_presence,publish_checkins,publish_stream,rsvp_event"
+		"manage_friendlists,manage_notifications,user_online_presence,friends_online_presence,publish_checkins,publish_stream,rsvp_event,user_tagged_places"
 
 		# this is a terrible pattern
 		# just do this until individual apps can provide their permissions in bootstrap
@@ -935,7 +935,7 @@ class FacebookServiceGateway(ServiceGateway):
 			try:
 				# Get the payload object's ID.
 				obj_id = payload
-				result_set = self.get_graph_data("/" + obj_id + "/photos")
+				result_set = self.get_graph_data("/" + obj_id + "/photos/uploaded")
 				photo_obj_list = []
 				
 				# Author info for individual photos and the collection.
@@ -1015,6 +1015,7 @@ class FacebookServiceGateway(ServiceGateway):
 			
 			except:
 				print "Photo() function exception:"
+				raise
 				print sys.exc_info()[0]
 				return Photos()
 		
@@ -1233,7 +1234,7 @@ class FacebookServiceGateway(ServiceGateway):
 				street = self.get_value(facebook_obj["place"]["location"], "street")
 				city = self.get_value(facebook_obj["place"]["location"], "city")
 				country = self.get_value(facebook_obj["place"]["location"], "country")
-				place.address = street + ", " + city + ", " + country
+				#place.address = street + ", " + city + ", " + country
 			else:
 				place.address = None	
 			# Return place object.
