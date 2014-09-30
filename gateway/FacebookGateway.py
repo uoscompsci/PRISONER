@@ -792,7 +792,7 @@ class FacebookServiceGateway(ServiceGateway):
 						
 						# Compose profile pic address.
 						profile_pic = SocialObjects.Image()
-						profile_pic.fullImage = self.graph_uri + "/" + this_friend.id + "/picture?type=normal" + "&access_token=" + self.access_token
+						profile_pic.fullImage = self.graph_uri + "/" + this_friend.id + "/picture?type=large" + "&access_token=" + self.access_token
 						profile_pic.author = this_friend.id
 						this_friend.image = profile_pic
 						
@@ -1234,7 +1234,7 @@ class FacebookServiceGateway(ServiceGateway):
 				street = self.get_value(facebook_obj["place"]["location"], "street")
 				city = self.get_value(facebook_obj["place"]["location"], "city")
 				country = self.get_value(facebook_obj["place"]["location"], "country")
-				#place.address = street + ", " + city + ", " + country
+				place.address = street + ", " + city + ", " + country
 			else:
 				place.address = None	
 			# Return place object.
