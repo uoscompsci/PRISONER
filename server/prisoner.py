@@ -523,7 +523,7 @@ class PRISONER(object):
 			sid = None
 		if sid == "":
 			sid = None
-		print "sid: %s" % sid
+		#print "sid: %s" % sid
 		if not sid:
 			request.session = self.session_store.new()
 			request.session["active"] = True
@@ -532,7 +532,7 @@ class PRISONER(object):
 			request.session = self.session_store.get(sid)
 
 
-		print request.session.modified
+		#print request.session.modified
 
 		response = self.dispatch_request(request)
 		if request.session.should_save:
