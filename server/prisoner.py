@@ -246,6 +246,7 @@ class PRISONER(object):
 		"key" value (used to retrieve the data later) and
 		"data" (the arbitrary session data to store).
 		"""
+		print "writing to session"
 		builder = self.get_builder_reference(request)
 		builder.session[request.args["PRISession"]][request.form["key"]] = request.form["data"]	
 		return Response()
@@ -254,6 +255,7 @@ class PRISONER(object):
 		""" Read the session data corresponding to the given key
 		parameter. Session data is bound to the active PRISession. """
 		builder = self.get_builder_reference(request)
+		print "reading from session"
 		if request.args["key"] not in builder.session[request.args["PRISession"]]:
 			return Response("Key not in session",status=404)
 		return Response(json.dumps(builder.session[request.args["PRISession"]][request.args["key"]]))
