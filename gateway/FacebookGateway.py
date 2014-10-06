@@ -483,6 +483,7 @@ class FacebookServiceGateway(ServiceGateway):
 			except:
 				print "Like() function exception:"
 				print sys.exc_info()[0]
+				raise
 				return SocialObjects.Collection()
 		
 		else:
