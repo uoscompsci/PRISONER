@@ -965,6 +965,9 @@ class FacebookServiceGateway(ServiceGateway):
 						
 						# Add this album to our list of albums.
 						album_obj_list.append(this_album)
+
+					if "next" not in result_set["paging"]:
+						break
 					
 					# Get next set of results.
 					next_address = result_set["paging"]["next"]
@@ -1068,6 +1071,9 @@ class FacebookServiceGateway(ServiceGateway):
 						
 						# Add photo to list.
 						photo_obj_list.append(this_photo)
+
+					if "next" not in result_set["paging"]:
+						break
 					
 					# Get next set of results.
 					next_address = result_set["paging"]["next"]
