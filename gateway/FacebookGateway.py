@@ -359,8 +359,7 @@ class FacebookServiceGateway(ServiceGateway):
 		
 		else:
 			raise NotImplementedException("Operation not supported.")
-	
-	
+
 	def Music(self, operation, payload):
 		"""
 		Performs operations relating to people's musical tastes.
@@ -424,6 +423,73 @@ class FacebookServiceGateway(ServiceGateway):
 		
 		else:
 			raise NotImplementedException("Operation not supported.")
+
+
+	def Like(self, operation, payload):
+		"""
+		Returns a user's liked pages.
+		Only supports GET operations.
+
+		:param operation: The operation to perform. (GET)
+		:type operation: str
+		:param payload: A User() or Person() whose ID is either a Facebook UID or username.
+		:type payload: SocialObject
+		:returns: A list of pages this person likes.
+		"""
+		if (operation == "GET"):
+			try:
+				# Get user ID and query Facebook for their info.
+				user_id = payload
+				
+				# Create author object.
+				author = SocialObjects.Person()
+				author.id = user_id
+				
+				# Get the initial result set.
+				result_set = self.get_graph_data("/" + user_id + "/likes")
+				like_obj_list = []
+				
+				# While there are still more likes available, add them to the list.
+				while ((result_set.has_key("paging")) and (result_set["paging"].has_key("next"))):
+					# Get movies.
+					like_obj_list.extend(result_set["data"])
+					
+					# Get next result set.
+					result_set = self.get_graph_data(result_set["paging"]["next"])
+				
+				# Loop through the movie object list and add their names to a separate list.
+				likes = []
+				
+				for like in like_obj_list:
+					# Create an object for this movie.
+					this_like = Page()
+					this_like.displayName = self.get_value(movie, "name")
+					this_like.id = self.get_value(like, "id")
+					this_like.url = "https://www.facebook.com/" + this_like.id
+					this_like.author = author
+					this_like.category = self.get_value(like,"category")
+					likes.append(this_like)
+				
+				# Create a collection object to hold the list.
+				likes_coll = SocialObjects.Collection()
+				likes_coll.author = author
+				likes_coll.provider = "Facebook"
+				likes_coll.objects = likes
+				
+				# Return.
+				print "Like() function returned successfully."
+				return likes_coll
+
+			except:
+				print "Like() function exception:"
+				print sys.exc_info()[0]
+				return SocialObjects.Collection()
+		
+		else:
+			raise NotImplementedException("Operation not supported.")
+
+	
+	
 	
 	
 	def Movie(self, operation, payload):
@@ -2095,7 +2161,23 @@ class Page(SocialObjects.SocialObject):
 	def __init__(self):
 		super(Page, self).__init__()
 		self._provider = "Facebook"
+		self._category = None
 
+	@property
+	def category(self):
+	    return self._category
+	@category.setter
+	def category(self, value):
+	    self._category = value
+
+
+class Like(Page):
+	"""
+	A Like is just a representation of a Page
+	"""
+	
+	def __init__(self):
+		super(Page, self).__init__()	
 
 class Music(Page):
 	"""

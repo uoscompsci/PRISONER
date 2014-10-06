@@ -196,7 +196,7 @@ class PolicyProcessor(object):
 		ns = obj_components[0]
 		if len(obj_components) == 1 or len(obj_components[1]) < 1:
 			raise RuntimePrivacyPolicyParserError("No valid object "+ \
-			"reference supplied in %s" % obj_components)
+			"reference supplied in %s. Does this Gateway have a class definition for this object?" % obj_components)
 		if ns not in base_namespaces:
 			try:
 				provider_gateway = globals()["%sServiceGateway" %			
