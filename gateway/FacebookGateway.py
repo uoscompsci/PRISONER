@@ -463,7 +463,7 @@ class FacebookServiceGateway(ServiceGateway):
 				for like in like_obj_list:
 					# Create an object for this movie.
 					this_like = Page()
-					this_like.displayName = self.get_value(movie, "name")
+					this_like.displayName = self.get_value(like, "name")
 					this_like.id = self.get_value(like, "id")
 					this_like.url = "https://www.facebook.com/" + this_like.id
 					this_like.author = author
