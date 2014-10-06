@@ -977,6 +977,7 @@ class FacebookServiceGateway(ServiceGateway):
 				
 			except:
 				print "Album() function exception:"
+				raise
 				print sys.exc_info()[0]
 				return Albums()
 		
