@@ -468,6 +468,7 @@ class FacebookServiceGateway(ServiceGateway):
 					this_like.url = "https://www.facebook.com/" + this_like.id
 					this_like.author = author
 					this_like.category = self.get_value(like,"category")
+					this_like.image = self.graph_uri + "/" + this_like.id + "/picture?type=large" + "&access_token=" + self.access_token
 					likes.append(this_like)
 				
 				# Create a collection object to hold the list.
@@ -475,6 +476,7 @@ class FacebookServiceGateway(ServiceGateway):
 				likes_coll.author = author
 				likes_coll.provider = "Facebook"
 				likes_coll.objects = likes
+
 				
 				# Return.
 				print "Like() function returned successfully."
@@ -2170,6 +2172,15 @@ class Page(SocialObjects.SocialObject):
 		super(Page, self).__init__()
 		self._provider = "Facebook"
 		self._category = None
+		self._image = None
+
+	@property
+	def image(self):
+	    return self._image
+	@image.setter
+	def image(self, value):
+	    self._image = value
+	
 
 	@property
 	def category(self):
