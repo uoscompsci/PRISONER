@@ -1303,7 +1303,7 @@ class FacebookServiceGateway(ServiceGateway):
 				if (not longitude.startswith("-")):
 					longitude = "+" + longitude
 							
-				place.position = latitude + longitude + "/"
+				place.position = "%s %s" % (latitude,longitude)
 						
 			# Get address info if available.
 			if ((facebook_obj["place"]["location"].has_key("city")) and (facebook_obj["place"]["location"].has_key("country"))):
