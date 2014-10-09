@@ -238,7 +238,10 @@ class SocialObjectsGateway(object):
 		# cache the object under a unique id, JSONify, return
 		if ret_object != None:
 			ident = self.cache_object(ret_object)
-			return jsonpickle.encode(self.cached_objects[ident])
+			try:
+				return jsonpickle.encode(self.cached_objects[ident])
+			except:
+				return None
 		else:
 			return None
 
