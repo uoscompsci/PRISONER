@@ -1148,6 +1148,8 @@ class FacebookServiceGateway(ServiceGateway):
 						
 						# Get location info.
 						this_checkin.location = self.parse_location(checkin)
+
+						this_checkin.image = self.graph_uri + "/" + this_checkin.id + "/picture?type=large" + "&access_token=" + self.access_token
 						
 						# Get tag info. (People that've been tagged in this check-in)
 						tags_list = self.parse_tags(checkin)
@@ -2141,6 +2143,15 @@ class Checkin(SocialObjects.SocialObject):
 		super(Checkin, self).__init__()
 		self._provider = "Facebook"	# String
 		self._checkinType = None	# String
+		self._image = None
+
+	@property
+	def image(self):
+	    return self._image
+	@image.setter
+	def image(self, value):
+	    self._image = value
+	
 	
 	@property
 	def checkinType(self):
