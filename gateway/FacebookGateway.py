@@ -1150,7 +1150,7 @@ class FacebookServiceGateway(ServiceGateway):
 						this_checkin.location = self.parse_location(checkin)
 
 						this_checkin.image = self.graph_uri + "/" + this_checkin.id + "/picture?type=large" + "&access_token=" + self.access_token
-						
+						print "Checkin - image: %s" % this_checkin.image
 						# Get tag info. (People that've been tagged in this check-in)
 						tags_list = self.parse_tags(checkin)
 						tags_coll = Tags()
