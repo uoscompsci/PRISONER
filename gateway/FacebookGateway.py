@@ -59,7 +59,7 @@ class FacebookServiceGateway(ServiceGateway):
 		
 		#mobiad_permissions = "user_about_me,user_checkins,friends_about_me,read_stream,publish_checkins,publish_stream"
 
-		consent_permissions = "user_about_me,user_checkins,user_education_history,user_hometown,user_likes,user_location,user_photos,user_religion_politics,user_status,user_work_history,user_friends"
+		consent_permissions = "user_about_me,user_checkins,user_education_history,user_hometown,user_likes,user_location,user_photos,user_religion_politics,user_status,user_work_history,user_friends,read_stream"
 		
 		# Set the scope for our app. (What permissions do we need?)
 		
