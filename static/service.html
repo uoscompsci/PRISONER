@@ -1,10 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}This experiment uses external services{% endblock %}
+{% block title %}This experiment uses {{ provider }}{% endblock %}
 
 {% block content %}
-<p>Before we begin, we need you to login with external services. Please
-authenticate yourself with {{ provider }} to continue.</p>
+<p>Before we begin, we need you to login with {{ provider }}.</p>
+
+<p>{{ provider }} may ask you to grant certain permissions for this experiment to use your data. Please allow these permissions for the experiment to work correctly. If you are using browser extensions which block access to data from other websites, such as Adblock, please add this site to your whitelist, or disable the extension while taking part, as this may interfere with the experiment.</p> 
 
 <p>If you have any questions about how we use the data from these services,
 please review the participant information, or contact the researcher.</p>
