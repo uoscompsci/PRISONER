@@ -46,7 +46,7 @@ class FacebookServiceGateway(ServiceGateway):
 		# Permissions. (We'll ask for them ALL for now)
 		user_permissions = "user_about_me,user_activities,user_birthday,user_checkins,user_education_history,user_events," +\
 		"user_groups,user_hometown,user_interests,user_likes,user_location,user_notes,user_photos,user_questions,user_relationships," +\
-		"user_relationship_details,user_religion_politics,user_status,user_subscriptions,user_videos,user_website,user_work_history,email,user_birthday"
+		"user_relationship_details,user_religion_politics,user_status,user_subscriptions,user_videos,user_website,user_work_history,email"
 		friend_permissions = "friends_about_me,friends_activities,friends_birthday,friends_checkins,friends_education_history," +\
 		"friends_events,friends_groups,friends_hometown,friends_interests,friends_likes,friends_location,friends_notes,friends_photos," +\
 		"friends_questions,friends_relationships,friends_relationship_details,friends_religion_politics,friends_status,friends_subscriptions," +\
@@ -59,7 +59,7 @@ class FacebookServiceGateway(ServiceGateway):
 		
 		#mobiad_permissions = "user_about_me,user_checkins,friends_about_me,read_stream,publish_checkins,publish_stream"
 
-		consent_permissions = "user_about_me,user_checkins,user_education_history,user_hometown,user_likes,user_location,user_photos,user_religion_politics,user_status,user_work_history,user_friends,read_stream"
+		consent_permissions = "user_about_me,user_checkins,user_education_history,user_hometown,user_likes,user_location,user_photos,user_religion_politics,user_status,user_work_history,user_friends,read_stream,user_birthday"
 		
 		# Set the scope for our app. (What permissions do we need?)
 		
