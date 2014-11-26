@@ -675,6 +675,7 @@ class FacebookServiceGateway(ServiceGateway):
 				
 				# So long as there's data, parse it.
 				while ((result_set.has_key("data")) and (len(result_set["data"]) > 0) and (page < page_limit)):
+
 					# Get status updates in this batch.
 					this_data = result_set["data"]
 					
@@ -722,8 +723,12 @@ class FacebookServiceGateway(ServiceGateway):
 													
 					# Compose next address.
 					page += 1
-					next_address = result_set["paging"]["next"]
-					result_set = self.get_graph_data(next_address)
+					if("paging" in result_set and "next" in result_set["paging"]):
+
+						next_address = result_set["paging"]["next"]
+						result_set = self.get_graph_data(next_address)
+					else:
+						break
 				
 				# Add the status list to our collection.
 				status_coll.objects = status_list
@@ -1278,52 +1283,55 @@ class FacebookServiceGateway(ServiceGateway):
 		"""
 		
 		# Get location.
-		if (facebook_obj.has_key("place")):
+		try:
+			if (facebook_obj.has_key("place")):
 
 
-			place = SocialObjects.Place()
-			place.id = self.get_value(facebook_obj["place"], "id")
-			place.displayName = self.get_value(facebook_obj["place"], "name")
+				place = SocialObjects.Place()
+				place.id = self.get_value(facebook_obj["place"], "id")
+				place.displayName = self.get_value(facebook_obj["place"], "name")
+				
+				# pull information from the page for this location
+				result_set = self.get_graph_data("/" + place.id)
+				category = self.get_value(result_set,"category")
+				try:
+					image = result_set["cover"]["source"]
+				except:
+					image = None
+				place.category = category
+				place.image = image
+
+
+				# Get additional location info if it's present.
+				if (facebook_obj["place"].has_key("location")):
+					latitude = str(self.get_value(facebook_obj["place"]["location"], "latitude"))
+					longitude = str(self.get_value(facebook_obj["place"]["location"], "longitude"))
+								
+					# Format latitude if necessary.
+					if (not latitude.startswith("-")):
+						latitude = "+" + latitude
+								
+					# Format longitude if necessary.
+					if (not longitude.startswith("-")):
+						longitude = "+" + longitude
+								
+					place.position = "%s %s" % (latitude,longitude)
+							
+				# Get address info if available.
+				if ((facebook_obj["place"]["location"].has_key("city")) and (facebook_obj["place"]["location"].has_key("country"))):
+					street = self.get_value(facebook_obj["place"]["location"], "street")
+					city = self.get_value(facebook_obj["place"]["location"], "city")
+					country = self.get_value(facebook_obj["place"]["location"], "country")
+					#place.address = street + ", " + city + ", " + country
+				else:
+					place.address = None	
+				# Return place object.
+				return place
 			
-			# pull information from the page for this location
-			result_set = self.get_graph_data("/" + place.id)
-			category = self.get_value(result_set,"category")
-			try:
-				image = result_set["cover"]["source"]
-			except:
-				image = None
-			place.category = category
-			place.image = image
-
-
-			# Get additional location info if it's present.
-			if (facebook_obj["place"].has_key("location")):
-				latitude = str(self.get_value(facebook_obj["place"]["location"], "latitude"))
-				longitude = str(self.get_value(facebook_obj["place"]["location"], "longitude"))
-							
-				# Format latitude if necessary.
-				if (not latitude.startswith("-")):
-					latitude = "+" + latitude
-							
-				# Format longitude if necessary.
-				if (not longitude.startswith("-")):
-					longitude = "+" + longitude
-							
-				place.position = "%s %s" % (latitude,longitude)
-						
-			# Get address info if available.
-			if ((facebook_obj["place"]["location"].has_key("city")) and (facebook_obj["place"]["location"].has_key("country"))):
-				street = self.get_value(facebook_obj["place"]["location"], "street")
-				city = self.get_value(facebook_obj["place"]["location"], "city")
-				country = self.get_value(facebook_obj["place"]["location"], "country")
-				#place.address = street + ", " + city + ", " + country
+			# Return empty place.
 			else:
-				place.address = None	
-			# Return place object.
-			return place
-		
-		# Return empty place.
-		else:
+				return SocialObjects.Place()
+		except:
 			return SocialObjects.Place()
 	
 	
