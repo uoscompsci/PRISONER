@@ -19,10 +19,21 @@ class ServiceGateway(object):
 	  ServiceGateway
 
 	NEW in 0.2: ServiceGateways should expect a props dict in __init__, populated
-	by an experiment's design policy.
+	by an experiment's design policy, and a policy parameter with an instance of
+	PolicyProcessor, allowing the experiment's privacy policy to be interrogated.
+
+	NEW in 0.2: All gateways must implement a request_handler() - or use the
+	superclass-provided implementation. This allows a dictionary of response
+	headers to be added by the service gateway, provided to a WrappedResponse
+	object.
+
 	"""
-        def __init__(self, props={}):
+     def __init__(self, props={}, policy=None):
                 pass
+
+     def request_handler(self, request):
+     	response = request()
+     	return WrappedResponse(response,{})
 
 	def Session(self):
 		""" Each ServiceGateway can maintain a Session object, which
@@ -171,5 +182,33 @@ class SARHeaders(object):
 		""" The criteria for a request, or object to publish. """
 		return self._payload
 	
+	@property
+	def wrapped_headers(self):
+		""" The header component of a WrappedResponse. Allows service-specific headers
+		to be surfaced
+		"""
+	    return self._wrapped_headers
 
+	@wrapped_headers.setter
+	def wrapped_headers(self, value):
+		self._wrapped_headers = value
 	
+
+
+
+class WrappedResponse(object):
+	""" A Social Object returned by a service gateway is wrapped in this object
+	which allows the gateway to inject additional metadata to be handled elsewhere
+	"""
+
+	def __init__(self, social_object, headers):
+		self._social_object = social_object
+		self._headers = headers
+
+	@property
+	def social_object(self):
+	    return self._social_object
+
+	@social_object.setter
+	def social_object(self, value):
+		self._social_object = value

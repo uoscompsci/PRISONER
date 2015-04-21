@@ -19,11 +19,34 @@ class FacebookServiceGateway(ServiceGateway):
 	"""
 	
 	
-	def __init__(self, access_token=None, props={}):
+	def __init__(self, access_token=None, props={}, policy=None):
 		"""
 		Initialises itself with PRISONER's App ID and App Secret.
 		"""
+
+		self.props = props
+		self.policy = policy
+
+		# map from object names to the required FB permission(s)
+		self.perm_maps = {
+			"User":
+			["public_profile", "user_education_history", "user_work_history",
+			"user_relationships", "user_relationship_details",
+			"user_religion_politics", "user_hometown", "user_birthday", "user_about_me",
+			"user_location", "user_website"],
+			"Music": ["user_likes"],
+			"Like": ["user_likes"],
+			"Movie": ["user_likes"],
+			"Book": ["user_likes"],
+			"Status": ["user_status", "user_posts"],
+			"Friends": ["user_friends"],
+			"Album": ["user_photos"],
+			"Photo": ["user_photos"],
+			"Checkin": ["user_tagged_places"]			
+		}
 		
+		self.perms = self.generate_permissions_list()
+
 		# Gateway details.
 		self.service_name = "Facebook"
 		self.service_description = "Connect and share with people you know."
@@ -79,12 +102,43 @@ class FacebookServiceGateway(ServiceGateway):
 		self.access_token = None
 		self.session = None
 
+	def request_handler(self, request):
+		""" Wrapper around object requests. Used to inject any necessary debug headers
+		"""
+
+		resp = request()
+		headers = {}
+		if self.props["debug"]:
+			headers['PRISONER-FB-Permissions'] = self.perms
+		return ServiceGateway(resp, headers)
+
+
 	def generate_permissions_list(self):
 		"""
 		Generates a list of permissions based on the experiment's privacy policy.
 
 		:returns: List of permissions
 		"""
+		processor = self.policy
+		policy = processor.privacy_policy
+
+		query_path = ("//policy")
+		elements = self.privacy_policy.xpath(query_path)
+
+		perms = []
+
+		for elem in elements:
+			obj = elem['for'].split(":")[1]
+			perms = list(set(perms+ self.perm_maps[obj]))
+
+		return perms
+
+
+
+
+
+
+
 
 
 	def request_authentication(self, callback):

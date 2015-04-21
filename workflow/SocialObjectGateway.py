@@ -324,7 +324,9 @@ class SocialObjectsGateway(object):
 	
 		if "%s_%s" % (object_type, payload) not in self.internal_cache:		
 			gateway_attr = getattr(provider_gateway,object_type)
-			response = gateway_attr("GET",payload)		
+			request_handler = getattr(provider_gateway,"request_handler")
+			response = request_handler(gateway_attr)
+			#response = gateway_attr("GET",payload)		
 			self.__add_to_cache("%s_%s" % (object_type,
 			payload), response)
 			print "pushing response to cache under %s_%s" % (object_type, payload)
@@ -335,12 +337,12 @@ class SocialObjectsGateway(object):
 			payload)
 
 		sanitised_set = []
-		if hasattr(response, "objects"): #is a Collection
-			new_coll = response
+		if hasattr(response.social_object, "objects"): #is a Collection
+			new_coll = response.social_object
 			if criteria:
 				lambda_func = eval("lambda x: %s" % criteria)
-				response.objects = filter(lambda_func, response.objects)				
-			for resp in response.objects:
+				response.social_object.objects = filter(lambda_func, response.social_object.objects)				
+			for resp in response.social_object.objects:
 				resp.provider = provider
 				response_obj = SocialActivityResponse(resp, headers)
 				sanitised_response = processor._sanitise_object_request(response_obj)
@@ -351,13 +353,16 @@ class SocialObjectsGateway(object):
 			return new_coll
 		else:
 			if criteria:
-				response_set = [response]
-				response = filter(eval("lambda x: %s" % criteria),
-				response.objects)
+				response_set = [response.social_object]
+				response.social_object = filter(eval("lambda x: %s" % criteria),
+				response.social_object.objects)
 			response.provider = provider
-			response_obj = SocialActivityResponse(response, headers)
+			headers.wrapped_headers = response.headers
+
+			response_obj = SocialActivityResponse(response.social_object, headers)
 			sanitised_response = processor._sanitise_object_request(response_obj)
 			sanitised_response.prisoner_id = self.cache_object(sanitised_response)
+			sanitised_response.headers = headers
 			return sanitised_response
 
 	def get_service_gateway(self, provider):
@@ -376,7 +381,7 @@ class SocialObjectsGateway(object):
 			return self.gateways[provider]
 		try:	
 			provider_gateway = globals()["%sServiceGateway" %
-			provider]()
+			provider](policy=self.policy_processor))
 		except:
 			raise ServiceGatewayNotFound(provider)
 		self.gateways[provider] = provider_gateway
