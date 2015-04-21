@@ -19,7 +19,7 @@ class FacebookServiceGateway(ServiceGateway):
 	"""
 	
 	
-	def __init__(self, access_token=None):
+	def __init__(self, access_token=None, props={}):
 		"""
 		Initialises itself with PRISONER's App ID and App Secret.
 		"""
@@ -29,14 +29,20 @@ class FacebookServiceGateway(ServiceGateway):
 		self.service_description = "Connect and share with people you know."
 		
 		# App details.
-		self.app_id = "123177727819065"
-		self.app_secret = "ffccbab29c959b17bf53c8d200321c12"
+		#self.app_id = "123177727819065"
+		#self.app_secret = "ffccbab29c959b17bf53c8d200321c12"
+
+		self.app_id = props['app_id']
+		self.app_id = props['app_secret']
 		
 		# URI references.
 		self.redirect_uri = None # Placeholder. This will be initialised by request_authorisation()
 		self.auth_request_uri = "https://www.facebook.com/dialog/oauth?"
 		self.auth_token_uri = "https://graph.facebook.com/oauth/access_token?"
-		self.graph_uri = "https://graph.facebook.com"
+		if props['api_version']:
+			self.graph_uri = "https://graph.facebook.com/v%s" % props['api_version']
+		else:
+			self.graph_uri = "https://graph.facebook.com"
 		self.facebook_uri = "https://www.facebook.com/";
 		
 		# Generate a unique state. (Required by Facebook for security)
@@ -72,6 +78,14 @@ class FacebookServiceGateway(ServiceGateway):
 		# Placeholders.
 		self.access_token = None
 		self.session = None
+
+	def generate_permissions_list(self):
+		"""
+		Generates a list of permissions based on the experiment's privacy policy.
+
+		:returns: List of permissions
+		"""
+
 
 	def request_authentication(self, callback):
 		"""

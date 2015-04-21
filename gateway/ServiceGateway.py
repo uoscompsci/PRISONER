@@ -17,8 +17,11 @@ class ServiceGateway(object):
 	  module
 	- contain a class called <GatewayName>ServiceGateway which subclasses
 	  ServiceGateway
+
+	NEW in 0.2: ServiceGateways should expect a props dict in __init__, populated
+	by an experiment's design policy.
 	"""
-        def __init__(self):
+        def __init__(self, props={}):
                 pass
 
 	def Session(self):
