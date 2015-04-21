@@ -48,6 +48,16 @@ class PersistenceManager(object):
 			self.__build_schema()
 		
 	@property
+	def props(self):
+		return get_props()
+		
+
+	@props.setter
+	def props(self, value):
+		self._props = value
+	
+
+	@property
 	def experimental_design(self):
 		return self._experimental_design
 
@@ -130,6 +140,24 @@ class PersistenceManager(object):
 		print table.c
 		result = table.select(table.c.id==participant_id).execute().fetchone()
 		return result
+
+	def get_props(self):
+		""" Parses the props collection in the experimental design and makes these
+		available as a dict of dicts
+		"""
+		if self._props:
+			return self._props
+
+		props = self.experimental_design.xpath("//prop")
+		out_props = {}
+		for prop in props:
+			if prop['for'] not in out_props:
+				out_props[prop['for']] = {}
+			out_props[prop['for']][prop['key']] = prop['value']
+
+		self._props = props
+		return props
+
 
 	def register_participant(self, schema, participant):
 		""" Add the participant data in given dictionary to the

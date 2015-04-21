@@ -31,6 +31,7 @@ elementFormDefault="unqualified">
 	<xs:attribute name="mapTo" type="xs:string" />
 </xs:complexType>
 
+
 <xs:complexType name="tables">
 	<xs:annotation>
 		<xs:documentation>
@@ -40,6 +41,29 @@ elementFormDefault="unqualified">
 	</xs:annotation>
 	<xs:sequence>
 		<xs:element name="table" type="tns:table" minOccurs="1" maxOccurs="unbounded" />
+	</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="prop">
+	<xs:annotation>
+		<xs:documentation>
+			An individual property.
+		</xs:documentation>
+	</xs:annotation>
+	<xs:attribute name="for" use="required" type="xs:string" />
+	<xs:attribute name="key" use="required" type="xs:string" />
+	<xs:attribute name="value" use="required" type="xs:string" />
+</xs:complexType>
+
+
+<xs:complexType name="props">
+	<xs:annotation>
+		<xs:documentation>
+			A set of experiment-specific properties to be used by PRISONER or specific service gateways.
+		</xs:documentation>
+	</xs:annotation>
+	<xs:sequence>
+		<xs:element name="prop" type="tns:prop" minOccurs="1" maxOccurs="unbounded" />
 	</xs:sequence>
 </xs:complexType>
 
@@ -53,6 +77,11 @@ elementFormDefault="unqualified">
 	<xs:sequence minOccurs="1" maxOccurs="1">
 		<xs:element name="tables" type="tns:tables" />
 	</xs:sequence>
+
+	<xs:sequence minOccurs="0" maxOccurs="1">
+		<xs:element name="props" type="tns:props" />
+	</xs:sequence>
+
 	<xs:attribute name="name" use="required" type="xs:string" />
 </xs:complexType>
 

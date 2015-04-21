@@ -183,6 +183,7 @@ class SocialObjectsGateway(object):
 			"If you need to change it, start a new instance of PRISONER")
 		self.persistence = PersistenceManager.PersistenceManager(experimental_design,
 		self.policy_processor, connection_string)
+		self.props = self.persistence.props
 
 	def post_response(self, schema, response):
 		""" Passes the response to the PersistenceManager to write to the
@@ -381,7 +382,7 @@ class SocialObjectsGateway(object):
 			return self.gateways[provider]
 		try:	
 			provider_gateway = globals()["%sServiceGateway" %
-			provider](policy=self.policy_processor))
+			provider](policy=self.policy_processor,props=self.props[provider])
 		except:
 			raise ServiceGatewayNotFound(provider)
 		self.gateways[provider] = provider_gateway

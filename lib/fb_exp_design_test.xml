@@ -16,6 +16,11 @@
                 <column name="answer" type="string" />
         </table>
 </tables>
+<props>
+        <prop for="Facebook" key="app_id" value="462365643919501" />
+        <prop for="Facebook" key="app_secret" value="e927a00c03bb1e280f2bcb6f3cb88628" />
+        <prop for="Facebook" key="api_version" value="2.0" />
+</props>
 </experiment>
 </p:experimental-design>
 

@@ -96,7 +96,9 @@ class FacebookServiceGateway(ServiceGateway):
 		
 		#self.scope = mobiad_permissions #get mobiad perms
 
-		self.scope = consent_permissions
+		#self.scope = consent_permissions
+
+		self.scope = str(self.perms).strip('[]')
 		
 		# Placeholders.
 		self.access_token = None
