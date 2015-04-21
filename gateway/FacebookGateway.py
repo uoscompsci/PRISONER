@@ -844,6 +844,7 @@ class FacebookServiceGateway(ServiceGateway):
 				author.id = user_id
 				friend_coll.author = author
 				
+
 				# While there is still data available...
 				while ((result_set.has_key("data")) and (len(result_set["data"]) > 0)):
 					# Grab the current batch of friends.
@@ -859,6 +860,7 @@ class FacebookServiceGateway(ServiceGateway):
 
 						user_details = friend
 
+						"""
 						# Get a list detailing the user's education history.
 						education_list = self.get_value(user_details, "education")
 						edu_coll = SocialObjects.Collection()
@@ -931,6 +933,7 @@ class FacebookServiceGateway(ServiceGateway):
 						# Location not supplied.
 						else:
 							this_friend.location = SocialObjects.Place()
+						"""
 						
 						# Create author object for this friend. (User "has" their friends)
 						author = SocialObjects.Person()
