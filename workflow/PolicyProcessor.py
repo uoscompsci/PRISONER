@@ -301,7 +301,7 @@ class PolicyProcessor(object):
 				
 				
 				#print("reached end of %s - " % element.tag + \
-				"evaluate everything earlier on the stack")
+				#"evaluate everything earlier on the stack")
 				working_stack_set = []
 				while len(criteria_stack) > 0:
 					top_element = criteria_stack.pop()
