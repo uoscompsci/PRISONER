@@ -49,7 +49,7 @@ class PersistenceManager(object):
 		
 	@property
 	def props(self):
-		return get_props()
+		return self.get_props()
 		
 
 	@props.setter
