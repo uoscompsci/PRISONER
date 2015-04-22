@@ -313,8 +313,8 @@ class PolicyProcessor(object):
 						working_stack_set.append(self.__test_criteria(top_element,response))
 					else:
 						#print("evaluating %s for %s" % 
-						(working_stack_set,
-						top_element.tag))
+						#(working_stack_set,
+						#top_element.tag))
 						
 						# evaluate everything in set
 						# according to this operator,
