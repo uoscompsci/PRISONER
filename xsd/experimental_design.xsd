@@ -74,11 +74,8 @@ elementFormDefault="unqualified">
 			about the experiment itself.
 		</xs:documentation>
 	</xs:annotation>
-	<xs:sequence minOccurs="1" maxOccurs="1">
-		<xs:element name="tables" type="tns:tables" />
-	</xs:sequence>
-
 	<xs:sequence minOccurs="0" maxOccurs="1">
+		<xs:element name="tables" type="tns:tables" />
 		<xs:element name="props" type="tns:props" />
 	</xs:sequence>
 
