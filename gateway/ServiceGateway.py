@@ -32,8 +32,8 @@ class ServiceGateway(object):
 		pass
 
 	def request_handler(self, request):
-     	response = request()
-     	return WrappedResponse(response,{})
+		response = request()
+		return WrappedResponse(response,{})
 
 	def Session(self):
 		""" Each ServiceGateway can maintain a Session object, which
