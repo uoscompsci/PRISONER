@@ -34,6 +34,8 @@ class PersistenceManager(object):
 		self.participant_tables = {}
 		self.participant_table = None
 		self.meta_participant_table = None
+		self._props = None
+		
 		#self.engine = create_engine("sqlite:///prisoner.db")
 		self.engine = None
 		self.metadata = None
