@@ -29,11 +29,17 @@ class FacebookServiceGateway(ServiceGateway):
 
 		# map from object names to the required FB permission(s)
 		self.perm_maps = {
-			"User":
-			["public_profile", "user_education_history", "user_work_history",
-			"user_relationships", "user_relationship_details",
-			"user_religion_politics", "user_hometown", "user_birthday", "user_about_me",
-			"user_location", "user_website"],
+			"User":["public_profile"],
+			"education":["user_education_history"],
+			"work": ["user_work_history"],
+			"relationshipStatus":["user_relationships"],
+			"interestedIn": ["user_relationship_details"],
+			"religion": ["user_religion_politics"],
+			"politicalViews": ["user_religion_politics"],
+			"hometown":["user_hometown"],
+			"birthday": ["user_birthday"],
+			"bio": ["user_about_me"],
+			"location": ["user_location"],
 			"Music": ["user_likes"],
 			"Like": ["user_likes"],
 			"Movie": ["user_likes"],
@@ -131,7 +137,18 @@ class FacebookServiceGateway(ServiceGateway):
 
 		for elem in elements:
 			obj = elem['for'].split(":")[1]
-			perms = list(set(perms+ self.perm_maps[obj]))
+
+			if obj != "User":
+				if att_type in self.perm_maps:
+					perms = list(set(perms+ self.perm_maps[obj]))
+
+			else:
+				xpath = "//policy[@for='%s']//attributes" % object_type
+				atts = self.privacy_policy.xpath(xpath)
+				for att in atts:
+					att_type = att['type']
+					if att_type in self.perm_maps:
+						perms = list(set(perms+ self.perm_maps[att_type]))
 
 		return perms
 
