@@ -28,10 +28,10 @@ class ServiceGateway(object):
 	object.
 
 	"""
-     def __init__(self, props={}, policy=None):
-                pass
+	def __init__(self, props={}, policy=None):
+		pass
 
-     def request_handler(self, request):
+	def request_handler(self, request):
      	response = request()
      	return WrappedResponse(response,{})
 
