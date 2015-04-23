@@ -187,7 +187,7 @@ class SARHeaders(object):
 		""" The header component of a WrappedResponse. Allows service-specific headers
 		to be surfaced
 		"""
-	    return self._wrapped_headers
+		return self._wrapped_headers
 
 	@wrapped_headers.setter
 	def wrapped_headers(self, value):
