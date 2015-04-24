@@ -1,5 +1,5 @@
-from ServiceGateway import ServiceGateway
-import SocialObjects
+from prisoner.gateway.ServiceGateway import ServiceGateway
+import prisoner.SocialObjects as SocialObjects
 
 
 import urlparse

@@ -1,12 +1,17 @@
 import lxml.etree as etree
 import urllib2
 
-from Exceptions import *
-from gateway import *  	# import all known service gateways
-import SocialObjects
+import os
 
+from prisoner.workflow.Exceptions import *
+from prisoner.gateway import *  	# import all known service gateways
+import prisoner.SocialObjects
+
+dir = os.path.dirname(__file__)
 #PRIVACY_POLICY_XSD = "../xsd/privacy_policy.xsd"
-PRIVACY_POLICY_XSD = "/home/lhutton/prisoner/prisoner/xsd/privacy_policy.xsd"
+#PRIVACY_POLICY_XSD = "/home/lhutton/prisoner/prisoner/xsd/privacy_policy.xsd"
+PRIVACY_POLICY_XSD = os.path.join(dir, "../xsd/privacy_policy.xsd")
+
 op_match = {"GET": "retrieve", "POST": "publish", "PUT": "store"}
 
 class PolicyProcessor(object):
@@ -111,19 +116,23 @@ class PolicyProcessor(object):
 		sanitisation process) """
 		if not self.privacy_policy:
 			raise NoPrivacyPolicyProvidedError()
+
+		if operation not in ["GET","POST","PUT"]:
+			raise OperationNotImplementedError(operation)
 		
 		orig_object_type = object_type	
 		object_type = self.__get_most_specialised_policy_for_class(provider, object_type)
+
+		print object_type
 		if not object_type:
 			raise DisallowedByPrivacyPolicyError("Privacy policy contains no policy element" + \
 			" for %s - no requests will be allowed" % orig_object_type)
 
 
-		query_path = ("//policy[@for='%s']"%
+		query_path = ("//policy[@for='base:%s']"%
 		object_type)
 
-		if operation not in ["GET","POST","PUT"]:
-			raise OperationNotImplementedError(operation)
+		
 
 		# is there a <policy for="object"> element?
 		attrs = self.privacy_policy.xpath(query_path, namespaces=self.namespaces)
@@ -145,6 +154,8 @@ class PolicyProcessor(object):
 		# allow=retrieve attribute?
 		if ns:
 			object_type = "%s:%s" % (provider, object_type)
+		else:
+			object_type = "base:%s" % object_type
 		att_path=("//policy[@for='%s']//attribute-policy[@allow='%s']"
 		% (object_type, op_match[operation]))
 		
@@ -192,11 +203,18 @@ class PolicyProcessor(object):
 		except ValueError:
 			raise RuntimePrivacyPolicyParserError("%s " % object_name + \
 			"is not a valid object definition")
+
+		if len(obj_components) == 1:
+			obj_components = ["base",obj_components[0]]
 		
 		ns = obj_components[0]
+
 		if len(obj_components) == 1 or len(obj_components[1]) < 1:
 			raise RuntimePrivacyPolicyParserError("No valid object "+ \
-			"reference supplied in %s. Does this Gateway have a class definition for this object?" % obj_components)
+			"reference supplied in %s. Did you use the right namespace?\
+			Base objects use"+\
+			"the 'base' namespace"% obj_components)
+
 		if ns not in base_namespaces:
 			try:
 				provider_gateway = globals()["%sServiceGateway" %			
@@ -235,7 +253,7 @@ class PolicyProcessor(object):
 			return participant[obj_components[1]]			
 		elif ns == "base":
 			try:
-				ns_obj = getattr(SocialObjects, obj_components[1])()
+				ns_obj = getattr(SocialObjects, obj_components[1])
 			except:
 				raise SocialObjectNotSupportedError("base",obj_components[1])
 			return ns_obj
@@ -383,9 +401,12 @@ class PolicyProcessor(object):
 				#return "%s:%s" % (provider, obj.__name__)
 				return obj.__name__
 			# is a non-namespaced policy?
-			xpath = "//policy[@for='%s']" % obj.__name__
+
+			xpath = "//policy[@for='base:%s']" % obj.__name__
+			
 			xpath_res = self.privacy_policy.xpath(xpath)
 			if xpath_res:
+				
 				return obj.__name__
 		return False
 
@@ -407,6 +428,7 @@ class PolicyProcessor(object):
 		except:
 			# try inferring base object
 			obj = self._infer_object(class_name)
+			
 	
 		inst = obj()
 		# call get_most_specialised with this instance

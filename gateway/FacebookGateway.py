@@ -1,5 +1,5 @@
-from ServiceGateway import ServiceGateway
-import SocialObjects
+from prisoner.gateway.ServiceGateway import ServiceGateway
+import prisoner.SocialObjects as SocialObjects
 
 import datetime	# Used for creating standardised date / time objects from Facebook's attribute values.
 import json	# Used for parsing responses from Facebook.

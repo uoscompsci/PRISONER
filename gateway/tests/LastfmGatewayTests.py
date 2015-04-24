@@ -2,8 +2,8 @@ try:
 	import unittest2 as unittest
 except:
 	import unittest
-from gateway import LastfmServiceGateway
-import SocialObjects
+from prisoner.gateway.LastfmGateway import LastfmServiceGateway
+from prisoner import SocialObjects
 
 """
 This test case:
@@ -33,7 +33,7 @@ class ImageTestCase(BaseLastfmServiceGatewayTestCase):
 		response = self.gateway.Image("GET",self.good_person)
 		self.assertEqual(response.author.id, "lukeweb")
 		self.assertEqual(response.fullImage,
-		"http://userserve-ak.last.fm/serve/34/66246694.jpg")
+		"http://userserve-ak.last.fm/serve/34/99555077.jpg")
 
 	def test_get_failure(self):
 		response = self.gateway.Image("GET",self.bad_person)

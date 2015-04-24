@@ -1,5 +1,5 @@
-from ServiceGateway import ServiceGateway
-import SocialObjects
+from prisoner.gateway.ServiceGateway import ServiceGateway
+from prisoner import SocialObjects
 
 import datetime
 
@@ -192,7 +192,7 @@ class LastfmServiceGateway(ServiceGateway):
 		"""
 		if (operation == "GET"):
 			try:
-				user = self.network.get_user(payload)
+				user = self.network.get_user(payload.id)
 				user_image = user.get_image()
 				img_object = SocialObjects.Image()
 				img_object.fullImage = user_image

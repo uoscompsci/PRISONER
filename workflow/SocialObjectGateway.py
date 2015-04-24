@@ -1,7 +1,7 @@
-from gateway import *  	# import all known service gateways
-from PolicyProcessor import PolicyProcessor
-import SocialObjects
-from persistence import PersistenceManager
+from prisoner.gateway import *  	# import all known service gateways
+from prisoner.workflow import PolicyProcessor
+import prisoner.SocialObjects
+from prisoner.persistence import PersistenceManager
 
 import copy
 import json

@@ -5,10 +5,10 @@ try:
 except:
 	import unittest
 
-from gateway import *
-import SocialObjects
-from workflow import PolicyProcessor
-from workflow.Exceptions import *
+from prisoner.gateway import *
+from prisoner import SocialObjects
+from prisoner.workflow import PolicyProcessor
+from prisoner.workflow.Exceptions import *
 
 """
 This test suite ensures:
@@ -83,7 +83,7 @@ class InferObjectTestCase(BasePolicyProcessorTestCase):
 
 	def test_valid_base(self):
 		policy_proc = self.get_good_processor()
-		obj = policy_proc._infer_object("base:Image")
+		obj = policy_proc._infer_object("base:Image")()
 		self.assertTrue(isinstance(obj, SocialObjects.Image))
 
 	def test_invalid_base(self):
@@ -115,8 +115,9 @@ class InferAttributesTestCase(BasePolicyProcessorTestCase):
 		policy_proc = self.get_good_processor()
 		person = SocialObjects.Person()
 
-		with self.assertRaises(AttributeError):
-			obj = policy_proc._infer_attributes("id",person)
+		#with self.assertRaises(AttributeError):
+		obj = policy_proc._infer_attributes("id",person)
+		self.assertEqual(obj,None)
 
 	def test_bad_attribute(self):
 		policy_proc = self.get_good_processor()
@@ -134,7 +135,7 @@ class InferAttributesTestCase(BasePolicyProcessorTestCase):
 	def test_good_nested_obj(self):
 		policy_proc = self.get_good_processor()
 		test_obj = SocialObjects.Person()
-		test_obj.updated = datetime.fromtimestamp(0)
+		test_obj.updated = datetime.datetime.fromtimestamp(0)
 		
 		obj = policy_proc._infer_attributes("updated.year",test_obj)
 		self.assertEqual(obj,1970)
@@ -142,7 +143,7 @@ class InferAttributesTestCase(BasePolicyProcessorTestCase):
 	def test_bad_nested_obj(self):
 		policy_proc = self.get_good_processor()
 		test_obj = SocialObjects.Person()
-		test_obj.updated = datetime.fromtimestamp(0)
+		test_obj.updated = datetime.datetime.fromtimestamp(0)
 
 		with self.assertRaises(AttributeError):
 			obj = policy_proc._infer_attributes("updated.blah", test_obj)
@@ -214,7 +215,7 @@ class ValidateObjectRequestTestCase(BasePolicyProcessorTestCase):
 		test_person = SocialObjects.Person()
 		test_person.id = "lukeweb"
 		
-		with self.assertRaises(DisallowedByPrivacyPolicyError) as exp:
+		with self.assertRaises(SocialObjectNotSupportedError) as exp:
 			request = policy_proc._validate_object_request("GET",
 			"Lastfm", "NotAObject", test_person)
 	

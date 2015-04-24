@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <p:privacy-policy
-	xmlns:p="http://pvnets.cs.st-andrews.ac.uk/prisoner/privacy-policy"
+	xmlns:p="http://prisoner.cs.st-andrews.ac.uk/prisoner/privacy-policy"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://pvnets.cs.st-andrews.ac.uk/prisoner/privacy-policy privacy_policy.xsd">
+	xsi:schemaLocation="http://prisoner.cs.st-andrews.ac.uk/prisoner/privacy-policy privacy_policy.xsd">
 	
-	<policy for="Image">
+	<policy for="base:Image">
 		<attributes>
 		<attribute type="author">
 			<attribute-policy allow="retrieve">
