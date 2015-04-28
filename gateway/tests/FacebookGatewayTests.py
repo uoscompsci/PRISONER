@@ -258,6 +258,23 @@ class UserTestCase(BaseFacebookGatewayTestCase):
 		user = self.gateway.User("POST",self.user['id'])
 		
 
+class StatusTestCase(BaseFacebookGatewayTestCase):
+	def test_post(self):
+		self.gateway = FacebookGateway.FacebookServiceGateway(access_token=None,
+		props=self.get_good_props(), policy=self.get_good_processor())
+
+		self.create_user_all_permissions()
+		self.gateway.access_token = self.user['access_token']
+
+		call_dict = {
+		"message":"Test status",
+		"link":""
+		}
+		response = self.__post_graph_data("/me/feed", call_dict)
+
+	def test_empty(self):
+		pass
+
 		
 
 
