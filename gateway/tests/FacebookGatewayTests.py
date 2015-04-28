@@ -19,7 +19,7 @@ These tests:
 	- test version mappings
 
 Running these tests requires a Facebook App ID and Secret. 
-The test runner will create a test user at setup for that app populated with
+The test runner will create ,a test user at setup for that app populated with
 enough content to test endpoints.
 """
 
@@ -73,12 +73,16 @@ class BaseFacebookGatewayTestCase(unittest.TestCase):
 		perms = []
 		for key in self.gateway.perm_maps:
 			if self.gateway.perm_maps[key][0] not in perms:
-				perms.append(self.gateway.perm_maps[key][0])
+				for p in self.gateway.perm_maps[key]:
+					perms.append(p)
+				#perms.append(self.gateway.perm_maps[key][0])
 
 		perm_string = ""
 		for perm in perms:
 			perm_string = "%s%s," % (perm_string, perm)
 		perm_string = perm_string[:-1]
+
+		print perm_string
 
 		# create test user
 		user = {'installed': True,
@@ -86,7 +90,7 @@ class BaseFacebookGatewayTestCase(unittest.TestCase):
 				'name':"Bob Tester"}
 
 		endpoint = "%s/accounts/test-users" % self.APP_ID
-		self.user = self.__post_graph_data(endpoint,user)
+		self.user = self.post_graph_data(endpoint,user)
 		self.gateway.access_token = self.user['access_token']
 
 	def create_user_no_permissions(self):
@@ -102,7 +106,7 @@ class BaseFacebookGatewayTestCase(unittest.TestCase):
 				'name':"Fail Tester"}
 
 		endpoint = "%s/accounts/test-users" % self.APP_ID
-		self.user = self.__post_graph_data(endpoint,user)
+		self.user = self.post_graph_data(endpoint,user)
 		self.gateway.access_token = self.user['access_token']
 
 		set_test_user_attributes()
@@ -119,7 +123,7 @@ class BaseFacebookGatewayTestCase(unittest.TestCase):
 		# response = self.__post_graph_data("/me/feed", call_dict)
 
 
-	def __post_graph_data(self, query, params):
+	def post_graph_data(self, query, params):
 		"""
 			Internal Function.
 			Post the params dictionary to the given query path on the Graph API
@@ -132,8 +136,12 @@ class BaseFacebookGatewayTestCase(unittest.TestCase):
 			:type params: dict
 		"""
 		# If query doesn't start with https://, we assume it is relative.
+		if self.gateway.access_token:
+			token = self.gateway.access_token
+		else:
+			token = self.APP_ACCESS_TOKEN
 		if (not query.startswith("https://")):
-			query = self.graph_uri + query + "?access_token=" + self.APP_ACCESS_TOKEN
+			query = self.graph_uri + query + "?access_token=" + token
 		
 		# Retrieve and parse result.
 		data_req = urllib2.Request(query,
@@ -218,7 +226,7 @@ class GetPermissionsForPolicyTestCase(BaseFacebookGatewayTestCase):
 		"user_relationships", "user_relationship_details", "user_religion_politics",
 		"user_hometown", "user_birthday", "user_about_me", "user_location",
 		"user_likes", "user_status", "user_posts", "user_friends", "user_photos",
-		"user_tagged_places"]
+		"user_tagged_places","read_stream","publish_actions"]
 
 		self.gateway = FacebookGateway.FacebookServiceGateway(access_token=None,
 			props=self.get_good_props(), policy=self.get_good_processor())
@@ -228,12 +236,13 @@ class GetPermissionsForPolicyTestCase(BaseFacebookGatewayTestCase):
 		
 	def test_bad_policy(self):
 		expect_perms = ["user_likes", "user_status", "user_posts", "user_friends", "user_photos",
-		"user_tagged_places"]
+		"user_tagged_places", "read_stream", "publish_actions"]
 
 		self.gateway = FacebookGateway.FacebookServiceGateway(access_token=None,
 			props=self.get_good_props(), policy=self.get_bad_processor())
 
 		perms = self.gateway.generate_permissions_list()
+
 
 		assert set(expect_perms) == set(perms)
 
@@ -254,7 +263,7 @@ class UserTestCase(BaseFacebookGatewayTestCase):
 		props=self.get_good_props(), policy=self.get_good_processor())
 
 		self.create_user_all_permissions()
-		self.gateway.access_token = self.user['access_token']
+		self.gateway.access_token =	 self.user['access_token']
 		user = self.gateway.User("POST",self.user['id'])
 		
 
@@ -270,10 +279,15 @@ class StatusTestCase(BaseFacebookGatewayTestCase):
 		"message":"Test status",
 		"link":""
 		}
-		response = self.__post_graph_data("/me/feed", call_dict)
+		response = self.post_graph_data("/me/feed", call_dict)
 
-	def test_empty(self):
-		pass
+		statuses = self.gateway.Status("GET",self.user['id'])
+
+		assert statuses.objects[0].content == "Test status"
+
+
+
+
 
 		
 
