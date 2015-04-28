@@ -26,7 +26,7 @@ class FacebookServiceGateway(ServiceGateway):
 
 		self.props = props
 		self.policy = policy
-
+		
 		# map from object names to the required FB permission(s)
 		self.perm_maps = {
 			"User":["public_profile"],
@@ -131,22 +131,28 @@ class FacebookServiceGateway(ServiceGateway):
 		policy = processor.privacy_policy
 
 		query_path = ("//policy")
-		elements = self.privacy_policy.xpath(query_path)
+
+		elements = policy.xpath(query_path)
 
 		perms = []
 
 		for elem in elements:
-			obj = elem['for'].split(":")[1]
+			obj = elem.attrib['for'].split(":")
+			if len(obj) > 1:
+				obj = obj[1]
+			else:
+				obj = obj[0]
 
 			if obj != "User":
-				if att_type in self.perm_maps:
+				if obj in self.perm_maps:
 					perms = list(set(perms+ self.perm_maps[obj]))
 
 			else:
-				xpath = "//policy[@for='%s']//attributes" % object_type
-				atts = self.privacy_policy.xpath(xpath)
-				for att in atts:
-					att_type = att['type']
+				perms.append("public_profile")
+				xpath = "//policy[@for='Facebook:%s']//attributes" % obj
+				atts = policy.xpath(xpath)
+				for att in atts[0]:
+					att_type = att.get('type')
 					if att_type in self.perm_maps:
 						perms = list(set(perms+ self.perm_maps[att_type]))
 
@@ -449,7 +455,7 @@ class FacebookServiceGateway(ServiceGateway):
 				return User()
 		
 		else:
-			raise NotImplementedException("Operation not supported.")
+			raise NotImplementedError("Operation not supported.")
 
 	def Music(self, operation, payload):
 		"""

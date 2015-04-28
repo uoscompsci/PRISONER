@@ -78,6 +78,7 @@ class PolicyProcessor(object):
 			policy_file = urllib2.urlopen(policy)
 		policy = etree.parse(policy_file)
 
+		
 		validation = schema.assertValid(policy)		
 		return policy
 

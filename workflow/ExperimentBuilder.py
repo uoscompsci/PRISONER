@@ -194,7 +194,7 @@ class CompleteConsentHandler(tornado.web.RequestHandler):
 
 		#self.write("Thanks. Now ready to start the experiment...")
 		# evoke callback
-		if "http://" in builder.exp_callback:
+		if "http" in builder.exp_callback:
 			self.redirect(builder.exp_callback)
 		else:
 			self.write(builder.exp_callback)
