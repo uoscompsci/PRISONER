@@ -18,7 +18,7 @@ class PersistenceManager(object):
 	"""	
 	def __init__(self, exp_design = None, policy_processor=None,
 	connection_string=None):
-		""" Instantiate a PersistenceManager by supply an experimental
+		""" Instantiate a PersistenceManager by supplying an experimental
 		design and instance of PolicyProcessor (assumed to already be bound to a valid
 		privacy policy.
 
