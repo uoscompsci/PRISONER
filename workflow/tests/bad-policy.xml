@@ -6,6 +6,7 @@
 	xsi:schemaLocation="http://prisoner.cs.st-andrews.ac.uk/prisoner/privacy-policy privacy_policy.xsd">
 	
 	<policy for="base:Image">
+		<invalid_element></invalid_element>
 		<attributes>
 		<attribute type="test_attribute">
 			<attribute-policy allow="retrieve">

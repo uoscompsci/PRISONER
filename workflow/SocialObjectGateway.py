@@ -1,5 +1,5 @@
 from prisoner.gateway import *  	# import all known service gateways
-from prisoner.workflow import PolicyProcessor
+from prisoner.workflow.PolicyProcessor import PolicyProcessor
 import prisoner.SocialObjects
 from prisoner.persistence import PersistenceManager
 

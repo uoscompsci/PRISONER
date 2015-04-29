@@ -78,8 +78,10 @@ class PolicyProcessor(object):
 			policy_file = urllib2.urlopen(policy)
 		policy = etree.parse(policy_file)
 
-		
-		validation = schema.assertValid(policy)		
+		try:
+			validation = schema.assertValid(policy)		
+		except Exception as e:
+			raise InvalidPolicyProvidedError(e.message)
 		return policy
 
 		if validation:
@@ -87,6 +89,7 @@ class PolicyProcessor(object):
 			return policy
 		else:
 			print "Privacy policy failed validation."
+			raise InvalidPolicyProvidedError()
 	
 	def _validate_object_request(self, operation, provider, object_type, payload):
 		""" Validates a request to perform an operation on Social

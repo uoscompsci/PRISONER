@@ -1,3 +1,11 @@
+class InvalidPolicyProvidedError(Exception):
+	def __init__(self, error):
+		self.error = error
+
+	def __str__(self):
+		return("The policy file provided could not be validated, because of the\
+			following: %s" % self.error )
+
 class NoPrivacyPolicyProvidedError(Exception):
 	""" Raised if a privacy policy is required before the operation can be
 	completed. See the SocialObjectGateway or ExperimentBuilder to provide a privacy
