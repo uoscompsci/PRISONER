@@ -9,7 +9,8 @@ from werkzeug.utils import redirect, cached_property
 
 from jinja2 import Environment, FileSystemLoader
 
-from workflow import PolicyProcessor, SocialObjectGateway, ExperimentBuilder
+from prisoner.workflow import PolicyProcessor, SocialObjectGateway,
+ExperimentBuilder
 import SocialObjects
 
 import csv
