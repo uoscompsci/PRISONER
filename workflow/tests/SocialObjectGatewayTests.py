@@ -1,3 +1,4 @@
+import json
 import os
 try:
 	import unittest2 as unittest
@@ -5,9 +6,12 @@ except:
 	import unittest
 
 from prisoner import SocialObjects
+from prisoner.gateway.FacebookGateway import FacebookServiceGateway
 from prisoner.workflow import SocialObjectGateway
 from prisoner.workflow.Exceptions import *
+from prisoner.workflow.PolicyProcessor import PolicyProcessor
 
+from mock import MagicMock, patch
 from nose.tools import *
 
 
@@ -29,8 +33,23 @@ class BaseSocialObjectGatewayTestCase(unittest.TestCase):
 
 		self.test_object = SocialObjects.Person()
 		self.test_object.displayName = "Test Object"
-
 		self.sog = SocialObjectGateway.SocialObjectsGateway(server_url="")
+
+	@patch('prisoner.workflow.SocialObjectGateway.SocialObjectsGateway.GetObject')
+	def GetObject_returns_test_object(*args, **kwargs):
+		test_object = SocialObjects.Person()
+		test_object.displayName = "Test Object"
+		return test_object
+
+	@patch('prisoner.workflow.PolicyProcessor.PolicyProcessor._infer_object')
+	def ProcessorInferObject_returns_Person(*args, **kwargs):
+		print "i are stub"
+
+		test_object = SocialObjects.Person()
+		return test_object
+
+
+
 
 
 class CacheObjectTestCase(BaseSocialObjectGatewayTestCase):
@@ -62,8 +81,13 @@ class ProvidePoliciesTestCase(BaseSocialObjectGatewayTestCase):
 		pass
 
 class GetObjectJSONTestCase(BaseSocialObjectGatewayTestCase):
+
 	def test_good_get(self):
 		self.sog.provide_privacy_policy(self.good_policy)
+		obj = self.sog.GetObjectJSON("Facebook", "User", "","")
+		obj_json = json.loads(obj)
+
+		assert obj_json["_displayName"] == "Test Object"
 
 
 	def test_bad_get(self):

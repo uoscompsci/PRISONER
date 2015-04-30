@@ -215,9 +215,9 @@ class PolicyProcessor(object):
 
 		if len(obj_components) == 1 or len(obj_components[1]) < 1:
 			raise RuntimePrivacyPolicyParserError("No valid object "+ \
-			"reference supplied in %s. Did you use the right namespace?\
-			Base objects use"+\
-			"the 'base' namespace"% obj_components)
+			"reference supplied in %s. Did you use the right namespace?" % obj_components+\
+			" Base objects use"+\
+			" the 'base' namespace")
 
 		if ns not in base_namespaces:
 			try:
