@@ -505,6 +505,10 @@ class PRISONER(object):
 		#print request.session.modified
 
 		response = self.dispatch_request(request)
+
+		if "RequestRedirect" in type(response).__name__:
+			return response(environ,start_response)
+			
 		if request.session.should_save:
 			print "saving session"
 			self.session_store.save(request.session)
