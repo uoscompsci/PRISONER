@@ -1,0 +1,73 @@
+Facebook Graph API 2.x
+Changes to PRISONER's Facebook Service Gateway
+----------------------------------------
+
+On April 30th 2015, there will be some significant changes to the Facebook Graph
+API as version 1.0 is deprecated, and version 2.0 becomes the default.
+
+There are two ways in which this impacts experiments which use Facebook on
+PRISONER. This guide outlines which changes will affect you. Please note that
+section 1 applies to ALL Facebook experiments, and you will at least need to
+make these changes for experiments to continue to function.
+
+1) Facebook Apps, Permissions, and Login Review
+---------------------------------------
+
+Currently, PRISONER uses a shared Facebook App to make API requests. Because of
+changes in v2.0 you will need to do the following:
+
+1) Create your own Facebook app
+
+From https://developers.facebook.com go to My Apps, and create a new app for
+your experiment (using "advanced setup"). From the developers dashboard, note
+the App ID and App Secret.
+
+2) Provide PRISONER with the app details
+
+Your experimental design policy should include the following lines within the
+<experiment> element:
+
+	<props>
+	<prop for="Facebook" key="app_id" value="YOUR_APP_ID" />
+	<prop for="Facebook" key="app_secret" value="YOUR_APP_SECRET" />
+	<prop for="Facebook" key="api_version" value="2.0" />
+	</props>
+
+PRISONER will now use this app to make its requests.
+
+3) Apply for login review
+
+All Facebook apps must now have their permissions reviewed by Facebook before
+the app is made public. From the developers dashboard, you will need to create a
+login review submission that justifies why your app needs to use each requested
+permission. To help with this, a debugging option has been provided which lists
+all of the Facebook permissions your experiment requests. This is available by
+adding the following prop to your policy:
+
+	<prop for="Facebook" key="debug" value="true" />
+
+All requests using the Facebook gateway will return a
+"PRISONER-Facebook-Permissions" header. This will list the names of all Facebook
+permissions the policy requires. You can use this to ensure Facebook review the full set of permissions your app requires. You should do this once your app is
+working and you know you will not need to have more permissions reviewed in the
+future, as this could incur additional delays. Login review will require that
+your experiment is visibile to Facebook, so make sure to describe any steps they
+need to test it.
+
+This is a temporary solution but soon PRISONER should have more tools to make
+the Login Review process easier to deal with.
+
+2) Breaking API change
+-----------------------
+The /friends endpoint will return *substantially* less information, and for most
+purposes will not be particularly useful. Requests to it will still work, but
+now
+only a collection of friends *who also use your app* will be returned. The
+Person() objects in this collection will only be populated with the ID and the
+name of the friend, so additional information such as their education and work
+history and other biographical details will NOT be collected. Ensure that this
+endpoint is still meaningful to your experiment before continuing to use it in
+v2.0
+
+Other endpoints have changed but the PRISONER interfaces to these have not, so
+no further changes are needed on your part.
