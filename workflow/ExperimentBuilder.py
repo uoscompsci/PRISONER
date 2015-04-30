@@ -7,7 +7,7 @@ import tornado.web
 import urllib
 import uuid
 
-from workflow import PolicyProcessor, SocialObjectGateway
+from prisoner.workflow import PolicyProcessor, SocialObjectGateway
 
 SERVER_URL = "http://localhost:8888"
 
