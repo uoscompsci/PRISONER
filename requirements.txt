@@ -1,0 +1,12 @@
+# This file lists all dependencies required for PRISONER to work.
+
+# Run 'pip install -r requirements.txt' to install these to your environment.
+# You are *strongly* recommended to run PRISONER within a virtualenv to
+# isolate this environment, and to avoid package conflicts.
+
+jinja2
+jsonpickle
+mock
+nose
+pylast
+werkzeug
