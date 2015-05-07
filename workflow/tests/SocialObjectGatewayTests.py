@@ -48,6 +48,12 @@ class BaseSocialObjectGatewayTestCase(unittest.TestCase):
 		test_object = SocialObjects.Person()
 		return test_object
 
+	@patch('prisoner.workflow.SocialObjectGateway.SocialObjectsGateway')
+	def GetObjectJSON_returns_object(*args, **kwargs):
+		raise Exception('blah')
+		test_object = SocialObjects.Person()
+		test_object.displayName = "Test Object"
+		return test_object
 
 
 
