@@ -6,7 +6,7 @@ import urllib2
 
 from prisoner.gateway.ServiceGateway import *
 #EXPERIMENTAL_DESIGN_XSD = "../xsd/experimental_design.xsd"
-EXPERIMENTAL_DESIGN_XSD = "/home/lhutton/prisoner/prisoner/xsd/experimental_design.xsd"
+EXPERIMENTAL_DESIGN_XSD = "../xsd/experimental_design.xsd"
 
 class PersistenceManager(object):
 	""" The PersistenceManager manages the storage of all data, including
@@ -20,7 +20,7 @@ class PersistenceManager(object):
 	connection_string=None):
 		""" Instantiate a PersistenceManager by supplying an experimental
 		design and instance of PolicyProcessor (assumed to already be bound to a valid
-		privacy policy.
+		privacy policy).
 
 		:param exp_design: Path to experimental design file
 		:type exp_design: str.

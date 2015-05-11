@@ -1,3 +1,12 @@
+## PRISONER Version 0.2.1 (May 11, 2015)
+
+### Bug fixes
+
+* Old hard-coded paths removed
+
+
+
+
 ##  PRISONER Version 0.2 (April 30, 2015)
 
 ### New features
