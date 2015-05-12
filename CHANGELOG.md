@@ -10,6 +10,7 @@ docker run -it --rm -P --name prisoner lhutton/prisoner
 
 * Old hard-coded paths removed
 * Experimental design XSD now handles props correctly
+* PersistenceManager parses props correctly
 
 
 

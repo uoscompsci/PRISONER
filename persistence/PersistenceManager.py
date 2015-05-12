@@ -158,9 +158,9 @@ class PersistenceManager(object):
 		out_props = {}
 		for prop in props:
 			print prop
-			if prop['for'] not in out_props:
-				out_props[prop['for']] = {}
-			out_props[prop['for']][prop['key']] = prop['value']
+			if prop.get('for') not in out_props:
+				out_props[prop.get('for')] = {}
+			out_props[prop.get('for')][prop.get('key')] = prop.get('value')
 
 		self._props = props
 		return props
