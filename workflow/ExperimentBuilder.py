@@ -41,6 +41,7 @@ class ExperimentBuilder(object):
 
 	def get_props(self, who_for=None):
 		props = self.sog.persistence.props
+		print props
 		if not who_for:
 			return props
 		else:

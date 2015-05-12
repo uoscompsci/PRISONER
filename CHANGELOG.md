@@ -7,7 +7,7 @@ available from the Docker registry run the following:
 docker run -it --rm -P --name prisoner lhutton/prisoner
 
 * Experimental designs must now include a "secret" prop for "PRISONER". This
-should be a secure passphrase (ideally crytographically secure). When making
+should be a secure passphrase. When making
 requests to administrative endpoints, such as /begin, /register, or /schema, an
 additional parameter must be provided: secret, which matches this value. If this
 does not match the secret in the design, the request will be rejected. This
