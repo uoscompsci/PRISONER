@@ -9,6 +9,7 @@ docker run -it --rm -P --name prisoner lhutton/prisoner
 ### Bug fixes
 
 * Old hard-coded paths removed
+* Experimental design XSD now handles props correctly
 
 
 
