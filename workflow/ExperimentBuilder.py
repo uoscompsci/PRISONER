@@ -118,7 +118,7 @@ class ExperimentBuilder(object):
 		
 		self.sog.persistence.do_build_schema(drop_first=True)
 		print "Schema built without error"
-		sys.exit()
+	
 	
 	def build(self, callback_url):
 		""" Using the information provided by the participation client,
