@@ -6,7 +6,11 @@
 
 jinja2
 jsonpickle
+lxml
 mock
 nose
+oauth2
 pylast
+sqlalchemy
+tornado
 werkzeug
