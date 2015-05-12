@@ -157,7 +157,8 @@ class PersistenceManager(object):
 		props = self.experimental_design.xpath("//prop")
 		out_props = {}
 		for prop in props:
-			if props[prop]['for'] not in out_props:
+			print prop
+			if prop['for'] not in out_props:
 				out_props[prop['for']] = {}
 			out_props[prop['for']][prop['key']] = prop['value']
 
