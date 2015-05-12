@@ -195,7 +195,7 @@ class PRISONER(object):
 		builder = self.set_builder_reference(request,
 		ExperimentBuilder.ExperimentBuilder(SERVER_URL))
 	
-		self.__validate_secret(builder,request)
+		
 		
 		exp_design = request.form["design"]
 		policy = request.form["policy"]
@@ -205,7 +205,7 @@ class PRISONER(object):
 		builder.provide_db_string(request.form["db"])
 		builder.provide_experimental_design(exp_design)
 
-
+		self.__validate_secret(builder,request)
 		schema = request.form["schema"]
 
 		write_out = {}
@@ -223,8 +223,6 @@ class PRISONER(object):
 
 		builder = self.set_builder_reference(request,
 		ExperimentBuilder.ExperimentBuilder(SERVER_URL))
-		
-		self.__validate_secret(builder,request)
 
 		exp_design = request.form["design"]
 		policy = request.form["policy"]
@@ -232,6 +230,9 @@ class PRISONER(object):
 		builder.provide_privacy_policy(policy)
 		builder.provide_db_string(request.form["db"])
 		builder.provide_experimental_design(exp_design)
+
+		self.__validate_secret(builder,request)
+		
 		builder.build_schema()
 
 		return Response("Schema built")
