@@ -1,5 +1,9 @@
 ## PRISONER Version 0.2.1 (May 11, 2015)
 
+### New features
+
+* PRISONER can now be deployed as a Docker container. 
+
 ### Bug fixes
 
 * Old hard-coded paths removed

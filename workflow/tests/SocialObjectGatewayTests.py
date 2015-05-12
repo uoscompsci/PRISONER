@@ -11,8 +11,10 @@ from prisoner.workflow import SocialObjectGateway
 from prisoner.workflow.Exceptions import *
 from prisoner.workflow.PolicyProcessor import PolicyProcessor
 
+import jsonpickle
 from mock import MagicMock, patch
 from nose.tools import *
+
 
 
 class BaseSocialObjectGatewayTestCase(unittest.TestCase):
@@ -36,7 +38,7 @@ class BaseSocialObjectGatewayTestCase(unittest.TestCase):
 		self.sog = SocialObjectGateway.SocialObjectsGateway(server_url="")
 
 	@patch('prisoner.workflow.SocialObjectGateway.SocialObjectsGateway.GetObject')
-	def GetObject_returns_test_object(*args, **kwargs):
+	def GetObject_returns_object(*args, **kwargs):
 		test_object = SocialObjects.Person()
 		test_object.displayName = "Test Object"
 		return test_object
@@ -47,14 +49,6 @@ class BaseSocialObjectGatewayTestCase(unittest.TestCase):
 
 		test_object = SocialObjects.Person()
 		return test_object
-
-	@patch('prisoner.workflow.SocialObjectGateway.SocialObjectsGateway')
-	def GetObjectJSON_returns_object(*args, **kwargs):
-		raise Exception('blah')
-		test_object = SocialObjects.Person()
-		test_object.displayName = "Test Object"
-		return test_object
-
 
 
 
@@ -90,11 +84,20 @@ class GetObjectJSONTestCase(BaseSocialObjectGatewayTestCase):
 
 	def test_good_get(self):
 		self.sog.provide_privacy_policy(self.good_policy)
-		obj = self.sog.GetObjectJSON("Facebook", "User", "","")
-		obj_json = json.loads(obj)
+		with patch.object(self.sog, 'GetObject',
+			return_value=self.test_object) as mock_json:
+			obj = self.sog.GetObjectJSON("Facebook", "User", "session:Facebook.id","")
+			obj_json = jsonpickle.decode(obj)
 
-		assert obj_json["_displayName"] == "Test Object"
+			assert obj_json.displayName == "Test Object"
 
 
+	@patch.object(PolicyProcessor,"_infer_object",return_value=SocialObjects.Person())
 	def test_bad_get(self):
-		pass
+		self.sog.provide_privacy_policy(self.good_policy)
+		with patch.object(SocialObjectGateway.SocialObjectsGateway, 'GetObject',
+			return_value=None) as mock_json:
+			obj = self.sog.GetObjectJSON("Facebook", "User", "session:Facebook.id","")
+			obj_json = jsonpickle.decode(obj)
+
+			assert obj_json == None

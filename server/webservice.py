@@ -25,7 +25,11 @@ import urllib2
 #SERVER_URL = "http://localhost:5000"
 SERVER_URL = "https://prisoner.cs.st-andrews.ac.uk/prisoner"
 #TEMPLATE_URL = "/home/sam/Dropbox/PRISONER/static" # LOCAL
-TEMPLATE_URL = "/home/lhutton/prisoner/prisoner/static"
+#TEMPLATE_URL = "/home/lhutton/prisoner/prisoner/static"
+
+dir = os.path.dirname(__file__)
+TEMPLATE_URL =  os.path.join(dir, "static")
+
 
 class PRISONER(object):
 	""" PRISONER Web Service
@@ -527,6 +531,7 @@ def create_app():
 if __name__ == "__main__":
 	from werkzeug.serving import run_simple
 	app = create_app()
-	print app
+	#print app
+	print "Starting PRISONER Web Service..."
 	run_simple("127.0.0.1", 5000, app, use_debugger=True, use_reloader=True,
 	static_files={"/static": TEMPLATE_URL})

@@ -1,12 +1,15 @@
 import json
 import lxml.etree as etree
+import os
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
 import urllib2
 
 from prisoner.gateway.ServiceGateway import *
 #EXPERIMENTAL_DESIGN_XSD = "../xsd/experimental_design.xsd"
-EXPERIMENTAL_DESIGN_XSD = "../xsd/experimental_design.xsd"
+
+dir = os.path.dirname(__file__)
+EXPERIMENTAL_DESIGN_XSD =  os.path.join(dir, "../xsd/experimental_design.xsd")
 
 class PersistenceManager(object):
 	""" The PersistenceManager manages the storage of all data, including
