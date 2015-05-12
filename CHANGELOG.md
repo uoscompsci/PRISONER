@@ -6,6 +6,20 @@
 available from the Docker registry run the following:
 docker run -it --rm -P --name prisoner lhutton/prisoner
 
+* Experimental designs must now include a "secret" prop for "PRISONER". This
+should be a secure passphrase (ideally crytographically secure). When making
+requests to administrative endpoints, such as /begin, /register, or /schema, an
+additional parameter must be provided: secret, which matches this value. If this
+does not match the secret in the design, the request will be rejected. This
+ensures that such requests are only made by the experiment administrator. For
+added security, make sure your experimental design is not in a URL known to
+participants. 
+
+* Experiment response databases can now be created via the web service. A new
+endpoint, /schema, expects a form including a policy, design, secret and db
+attributes (as when calling /register). This will build the corresponding
+schema, and will delete any data in that database already. 
+
 ### Bug fixes
 
 * Old hard-coded paths removed

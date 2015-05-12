@@ -67,3 +67,11 @@ class RuntimePrivacyPolicyParserError(Exception):
 
 	def __str__(self):
 		return self.error
+
+class IncorrectSecretError(Exception):
+	""" Raised if the secret is not correct for this experiment"""
+	def __init__(self):
+		pass
+
+	def __str__(self):
+		return "Cannot authenticate with this secret"

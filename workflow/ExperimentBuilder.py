@@ -39,6 +39,13 @@ class ExperimentBuilder(object):
 		self.connection_string = None
 		self.last_touch = None
 
+	def get_props(self, who_for=None):
+		props = self.sog.persistence.props
+		if not who_for:
+			return props
+		else:
+			return props[who_for]
+
 	def provide_db_string(self, db_string):
 		self.connection_string = db_string
 		#self.sog.persistence.rebuild_engine(db_string)

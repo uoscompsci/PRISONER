@@ -9,7 +9,7 @@ experiment or registering participants.
 """
 
 import sys
-sys.path.append("/home/lhutton/prisoner/prisoner")
+#sys.path.append("/home/lhutton/prisoner/prisoner")
 from optparse import OptionParser
 from workflow import ExperimentBuilder
 

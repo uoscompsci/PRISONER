@@ -10,6 +10,7 @@ from werkzeug.utils import redirect, cached_property
 from jinja2 import Environment, FileSystemLoader
 
 from prisoner.workflow import PolicyProcessor, SocialObjectGateway,ExperimentBuilder
+from prisoner.workflow.Exceptions import *
 from prisoner import SocialObjects
 
 import csv
@@ -117,6 +118,7 @@ class PRISONER(object):
 			Rule('/', endpoint="handshake"),
 			Rule('/begin', endpoint="begin"),
 			Rule('/register', endpoint="register"),
+			Rule('/schema', endpoint="schema"),
 			Rule('/get/<string:provider>/<string:object_name>/<string:payload>/<string:criteria>',
 			endpoint="get_object"),
 			Rule('/get/<string:provider>/<string:object_name>/<string:payload>',
@@ -176,6 +178,14 @@ class PRISONER(object):
 		builder = self.get_builder_reference(request)
 		return self.render_template("cancel.html",
 		exp_contact=builder.contact, exp_name=builder.title)
+
+	def __validate_secret(self, builder, request):
+			""" Validates that the secure request provided the correct secret """
+			secret = request.form['secret']
+			design_secret = builder.get_props("PRISONER")['secret']
+			if secret != design_secret:
+				raise IncorrectSecretError()
+
 		
 
 	def on_register(self, request):
@@ -184,6 +194,8 @@ class PRISONER(object):
 		"""	
 		builder = self.set_builder_reference(request,
 		ExperimentBuilder.ExperimentBuilder(SERVER_URL))
+	
+		self.__validate_secret(builder,request)
 		
 		exp_design = request.form["design"]
 		policy = request.form["policy"]
@@ -205,6 +217,26 @@ class PRISONER(object):
 		print "PRISONER registered participant %s" % participant
 		return Response(str(participant[0]))
 		
+	def on_schema(self, request):
+		""" Builds the database schema matching this experimental design
+		"""
+
+		builder = self.set_builder_reference(request,
+		ExperimentBuilder.ExperimentBuilder(SERVER_URL))
+		
+		self.__validate_secret(builder,request)
+
+		exp_design = request.form["design"]
+		policy = request.form["policy"]
+
+		builder.provide_privacy_policy(policy)
+		builder.provide_db_string(request.form["db"])
+		builder.provide_experimental_design(exp_design)
+		builder.build_schema()
+
+		return Response("Schema built")
+
+
 
 
 
@@ -253,6 +285,8 @@ class PRISONER(object):
 		builder.provide_db_string(request.form["db"])
 		print "got db: %s" % request.form["db"]
 		builder.provide_experimental_design(exp_design)
+
+		self.__validate_secret(builder,request)
 
 		participant = builder.authenticate_participant("participant",request.form["participant"])	
 	
