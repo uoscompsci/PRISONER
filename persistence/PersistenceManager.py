@@ -162,8 +162,9 @@ class PersistenceManager(object):
 				out_props[prop.get('for')] = {}
 			out_props[prop.get('for')][prop.get('key')] = prop.get('value')
 
-		self._props = props
+		self._props = out_props
 		return out_props
+		
 
 
 	def register_participant(self, schema, participant):
