@@ -9,6 +9,7 @@ from prisoner.gateway.ServiceGateway import *
 #EXPERIMENTAL_DESIGN_XSD = "../xsd/experimental_design.xsd"
 
 dir = os.path.dirname(__file__)
+print dir
 EXPERIMENTAL_DESIGN_XSD =  os.path.join(dir, "../xsd/experimental_design.xsd")
 
 class PersistenceManager(object):
