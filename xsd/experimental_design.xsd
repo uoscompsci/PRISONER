@@ -74,10 +74,10 @@ elementFormDefault="unqualified">
 			about the experiment itself.
 		</xs:documentation>
 	</xs:annotation>
-	<xs:choice minOccurs="0" maxOccurs="1">
-		<xs:element name="tables" type="tns:tables" />
-		<xs:element name="props" type="tns:props" />
-	</xs:choice>
+	<xs:sequence>
+		<xs:element name="tables" type="tns:tables" minOccurs="1" maxOccurs="1" />
+		<xs:element name="props" type="tns:props" minOccurs="1" maxOccurs="1" />
+	</xs:sequence>
 
 	<xs:attribute name="name" use="required" type="xs:string" />
 </xs:complexType>
