@@ -29,7 +29,7 @@ SERVER_URL = "https://prisoner.cs.st-andrews.ac.uk/prisoner"
 #TEMPLATE_URL = "/home/lhutton/prisoner/prisoner/static"
 
 dir = os.path.dirname(__file__)
-TEMPLATE_URL =  os.path.join(dir, "static")
+TEMPLATE_URL =  os.path.join(dir, "../static")
 
 
 class PRISONER(object):
