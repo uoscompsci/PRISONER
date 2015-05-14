@@ -26,7 +26,7 @@ schema, and will delete any data in that database already.
 * Old hard-coded paths removed
 * Experimental design XSD now handles props correctly
 * PersistenceManager parses props correctly
-
+* FacebookServiceGateway no longer tries to request deprecated permissions
 
 
 
