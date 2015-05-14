@@ -44,7 +44,7 @@ class FacebookServiceGateway(ServiceGateway):
 			"Like": ["user_likes"],
 			"Movie": ["user_likes"],
 			"Book": ["user_likes"],
-			"Status": ["read_stream"],
+			"Status": ["user_status", "user_posts", "read_stream", "publish_actions"],
 			"Friends": ["user_friends"],
 			"Album": ["user_photos"],
 			"Photo": ["user_photos"],
@@ -105,6 +105,8 @@ class FacebookServiceGateway(ServiceGateway):
 		#self.scope = consent_permissions
 
 		self.scope = str(self.perms).strip('[]')
+
+		print "scope is %s" % self.scope
 		
 		# Placeholders.
 		self.access_token = None
