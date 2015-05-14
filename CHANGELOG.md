@@ -2,6 +2,7 @@
 
 ### New features
 
+
 * PRISONER can now be deployed as a Docker container. Assuming the image is
 available from the Docker registry run the following:
 docker run -it --rm -P --name prisoner lhutton/prisoner

@@ -19,4 +19,6 @@ COPY ./ /usr/bin/prisoner/
 # install python requirements into this environment
 RUN pip install -r /usr/bin/prisoner/requirements.txt
 
+EXPOSE 5000
+
 CMD ["python","/usr/bin/prisoner/server/prisoner.wsgi"]

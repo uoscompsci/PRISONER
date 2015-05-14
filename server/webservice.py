@@ -568,5 +568,5 @@ if __name__ == "__main__":
 	app = create_app()
 	#print app
 	print "Starting PRISONER Web Service..."
-	run_simple("127.0.0.1", 5000, app, use_debugger=True, use_reloader=True,
-	static_files={"/static": TEMPLATE_URL})
+	run_simple("localhost", 5000, app, use_debugger=True, use_reloader=True,
+	static_files={"prisoner/static": TEMPLATE_URL})
