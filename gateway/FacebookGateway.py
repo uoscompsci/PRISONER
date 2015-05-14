@@ -104,7 +104,7 @@ class FacebookServiceGateway(ServiceGateway):
 
 		#self.scope = consent_permissions
 
-		self.scope = str(self.perms).strip('[]')
+		self.scope = str(self.perms).strip("['] ")
 
 		print "scope is %s" % self.scope
 		
