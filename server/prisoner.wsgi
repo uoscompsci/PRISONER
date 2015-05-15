@@ -28,5 +28,5 @@ app = server.webservice.create_app()
 print "Starting PRISONER Web Service..."
 TEMPLATE_URL = "/usr/bin/prisoner/static"
 
-run_simple("localhost", 5000, app, use_debugger=True, use_reloader=True,
+run_simple("0.0.0.0", 5000, app, use_debugger=True, use_reloader=False,
 static_files={"/static": TEMPLATE_URL})
