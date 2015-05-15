@@ -1,4 +1,4 @@
-## PRISONER Version 0.2.1 (May 11, 2015)
+## PRISONER Version 0.2.1 (May 15, 2015)
 
 ### New features
 
@@ -27,6 +27,7 @@ schema, and will delete any data in that database already.
 * Experimental design XSD now handles props correctly
 * PersistenceManager parses props correctly
 * FacebookServiceGateway no longer tries to request deprecated permissions
+* request_handler in ServiceGateways now passes through operation and payload
 
 
 

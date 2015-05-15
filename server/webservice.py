@@ -521,6 +521,7 @@ class PRISONER(object):
 		except HTTPException, e:
 			return e
 		except KeyError, e:
+			raise
 			return self.on_session_timeout(request)
 	
 	def wsgi_app(self, environ, start_response):
