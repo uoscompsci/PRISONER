@@ -31,8 +31,8 @@ class ServiceGateway(object):
 	def __init__(self, props={}, policy=None):
 		pass
 
-	def request_handler(self, request):
-		response = request()
+	def request_handler(self, request, operation, payload):
+		response = request(operation,payload)
 		return WrappedResponse(response,{})
 
 	def Session(self):

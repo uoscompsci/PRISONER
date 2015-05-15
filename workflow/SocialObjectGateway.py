@@ -326,7 +326,7 @@ class SocialObjectsGateway(object):
 		if "%s_%s" % (object_type, payload) not in self.internal_cache:		
 			gateway_attr = getattr(provider_gateway,object_type)
 			request_handler = getattr(provider_gateway,"request_handler")
-			response = request_handler(gateway_attr)
+			response = request_handler(gateway_attr,"GET",payload)
 			#response = gateway_attr("GET",payload)		
 			self.__add_to_cache("%s_%s" % (object_type,
 			payload), response)

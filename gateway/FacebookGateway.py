@@ -112,11 +112,11 @@ class FacebookServiceGateway(ServiceGateway):
 		self.access_token = None
 		self.session = None
 
-	def request_handler(self, request):
+	def request_handler(self, request, operation, payload):
 		""" Wrapper around object requests. Used to inject any necessary debug headers
 		"""
 
-		resp = request()
+		resp = request(operation, payload)
 		headers = {}
 		if self.props["debug"]:
 			headers['PRISONER-FB-Permissions'] = self.perms
