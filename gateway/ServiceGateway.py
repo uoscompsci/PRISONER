@@ -212,3 +212,12 @@ class WrappedResponse(object):
 	@social_object.setter
 	def social_object(self, value):
 		self._social_object = value
+
+
+	@property
+	def headers(self):
+	    return self._headers
+
+	@headers.setter
+	def headers(self, value):
+		self._headers = value
