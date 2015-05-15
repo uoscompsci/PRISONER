@@ -118,7 +118,7 @@ class FacebookServiceGateway(ServiceGateway):
 
 		resp = request(operation, payload)
 		headers = {}
-		if self.props["debug"]:
+		if "debug" in self.props:
 			headers['PRISONER-FB-Permissions'] = self.perms
 		return ServiceGateway(resp, headers)
 
