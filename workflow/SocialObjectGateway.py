@@ -29,7 +29,7 @@ class SocialObjectsGateway(object):
 
 	A single instance of this object should be maintained throughout the lifecycle of an experimental application. 
 	"""
-	def __init__(self, server_url):
+	def __init__(self, server_url=None):
 		self.privacy_policy = None
 		self.exp_design = None
 		# dict keyed on provider names, with values access tokens. this

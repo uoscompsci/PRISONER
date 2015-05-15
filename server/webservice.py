@@ -23,6 +23,8 @@ import thread
 import urllib
 import urllib2
 
+
+# set this to the URL of your PRISONER instance
 SERVER_URL = "https://prisoner.cs.st-andrews.ac.uk/prisoner"
 
 dir = os.path.dirname(__file__)
@@ -189,7 +191,7 @@ class PRISONER(object):
 		design and privacy policy, and a form of columns to insert about this participant.
 		"""	
 		builder = self.set_builder_reference(request,
-		ExperimentBuilder.ExperimentBuilder(SERVER_URL))
+		ExperimentBuilder.ExperimentBuilder())
 	
 		
 		
@@ -217,7 +219,7 @@ class PRISONER(object):
 		"""
 
 		builder = self.set_builder_reference(request,
-		ExperimentBuilder.ExperimentBuilder(SERVER_URL))
+		ExperimentBuilder.ExperimentBuilder())
 
 		exp_design = request.form["design"]
 		policy = request.form["policy"]
@@ -269,7 +271,7 @@ class PRISONER(object):
 		"initialise your experiment, supplying the PRISession parameter.")		
 
 	def on_begin(self, request):
-		builder = self.set_builder_reference(request,ExperimentBuilder.ExperimentBuilder(SERVER_URL))
+		builder = self.set_builder_reference(request,ExperimentBuilder.ExperimentBuilder())
 	
 		privacy_policy = request.form["policy"]
 		exp_design = request.form["design"]
