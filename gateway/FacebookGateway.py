@@ -62,7 +62,7 @@ class FacebookServiceGateway(ServiceGateway):
 		#self.app_secret = "ffccbab29c959b17bf53c8d200321c12"
 
 		self.app_id = props['app_id']
-		self.app_id = props['app_secret']
+		self.app_secret = props['app_secret']
 		
 		# URI references.
 		self.redirect_uri = None # Placeholder. This will be initialised by request_authorisation()
