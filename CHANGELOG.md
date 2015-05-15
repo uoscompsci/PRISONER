@@ -1,3 +1,8 @@
+## PRISONER Version 0.2.2 (May 15, 2015)
+
+This release does not change any functionality, but includes some internal
+refactoring and a more streamlined repository.
+
 ## PRISONER Version 0.2.1 (May 15, 2015)
 
 ### New features
