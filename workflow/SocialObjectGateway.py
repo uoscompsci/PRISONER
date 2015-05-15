@@ -33,9 +33,8 @@ class SocialObjectsGateway(object):
 		self.privacy_policy = None
 		self.exp_design = None
 		# dict keyed on provider names, with values access tokens. this
-		# should be ethically persisted so auth not needed on each
+		# should be persisted so auth not needed on each
 		# session for the same participant
-		#self.keychain = {'Lastfm':'a78ab9d8a03c60a7e3579fa517dee618'}
 		self.keychain = {}
 		# dict keyed on provider names, instances of service gateways
 		self.gateways = {}
@@ -150,16 +149,17 @@ class SocialObjectsGateway(object):
 
 	def provide_privacy_policy(self, privacy_policy):
 		"""
-		Provide the privacy policy for this experiment. Used to instantiate an instance of PolicyProcessor. This can only be done once for an instance of SocialObjectGateway. This must be called before attempting to read or write Social Objects.
+		Provide the privacy policy for this experiment. Used to instantiate an instance
+		of PolicyProcessor. This can only be done once for an instance of SocialObjectGateway.
+		This must be called before attempting to read or write Social Objects.
 
 		:param privacy_policy: path to a privacy policy XML file
 		:type privacy_policy: str
 		"""
 		if self.privacy_policy:
 			raise Exception("Privacy policy already defined. If \
-			you need to change it, start a new instance of PRISONER")
-	#	processor = PolicyProcessor()
-	#	policy = processor.validate_policy(privacy_policy)
+			you need to change it, start a new experiment.")
+
 		self.privacy_policy = privacy_policy	
 		self.policy_processor = PolicyProcessor(self.privacy_policy,
 		self)
@@ -180,7 +180,7 @@ class SocialObjectsGateway(object):
 		"""
 		if self.persistence:
 			raise Exception("Experimental design already defined."+\
-			"If you need to change it, start a new instance of PRISONER")
+			"If you need to change it, start a new experiment")
 		self.persistence = PersistenceManager.PersistenceManager(experimental_design,
 		self.policy_processor, connection_string)
 		self.props = self.persistence.props
@@ -254,7 +254,6 @@ class SocialObjectsGateway(object):
 		"""
 		dumb_social = SocialObjects.SocialObject()
 		payload = json.loads(payload)
-		print "payload: %s" % payload
 		for key, value in payload.items():
 			setattr(dumb_social,key,value)
 
@@ -308,16 +307,8 @@ class SocialObjectsGateway(object):
 		if not self.privacy_policy:
 			raise Exception("Provide a privacy policy before"\
 			" making requests.")
-		"""
-		try:
-			provider_gateway = globals()["%sServiceGateway" %			
-			provider]()
-		except:
-			raise ServiceGatewayNotFound(provider)
-		"""
 		provider_gateway = self.__getServiceGateway(provider)
 		
-		#processor = PolicyProcessor(self.privacy_policy)
 		processor = self.policy_processor
 
 		object_type = processor._validate_object_request("GET",
@@ -327,15 +318,11 @@ class SocialObjectsGateway(object):
 			gateway_attr = getattr(provider_gateway,object_type)
 			request_handler = getattr(provider_gateway,"request_handler")
 			response = request_handler(gateway_attr,"GET",payload)
-			#response = gateway_attr("GET",payload)		
 			self.__add_to_cache("%s_%s" % (object_type,
 			payload), response)
-			print "pushing response to cache under %s_%s" % (object_type, payload)
 		else:
 			response = self.internal_cache["%s_%s" %
 			(object_type, payload)]
-			print "cache hit on %s_%s" % (object_type,
-			payload)
 
 		sanitised_set = []
 		if hasattr(response.social_object, "objects"): #is a Collection

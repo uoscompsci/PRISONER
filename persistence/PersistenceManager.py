@@ -40,10 +40,8 @@ class PersistenceManager(object):
 		self.meta_participant_table = None
 		self._props = None
 		
-		#self.engine = create_engine("sqlite:///prisoner.db")
 		self.engine = None
 		self.metadata = None
-		#self.metadata = MetaData(self.engine)
 		
 		self.policy_processor = policy_processor
 		self.connection_string = connection_string
@@ -79,8 +77,6 @@ class PersistenceManager(object):
 		# instance DB
 		exp_element = self._experimental_design.xpath("//experiment")[0]
 		exp_name = exp_element.get("name")
-		#self.engine = create_engine("sqlite:///%s.db"%exp_name)
-		#self.metadata = MetaData(self.engine)
 		self.engine = create_engine(self.connection_string,
 		poolclass=NullPool)
 		self.metadata = MetaData(self.engine)	
@@ -340,18 +336,6 @@ class PersistenceManager(object):
 		table = self.response_tables[schema]
 		insert = table.insert()
 		insert.execute(response_out)
-
-		"""
-		select = table.select()
-		res = select.execute()
-		for row in res:
-			print row
-		
-		trackselect = self.object_tables["track"].select()
-			res = trackselect.execute()
-		for row in res:
-			print row
-		"""
 	
 	def do_build_schema(self, drop_first=False):
 		return self.__build_schema(drop_first)

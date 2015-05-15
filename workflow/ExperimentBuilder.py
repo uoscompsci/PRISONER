@@ -49,7 +49,6 @@ class ExperimentBuilder(object):
 
 	def provide_db_string(self, db_string):
 		self.connection_string = db_string
-		#self.sog.persistence.rebuild_engine(db_string)
 
 	def provide_title(self, title):
 		""" The title of the experiment as presented to your
@@ -200,7 +199,6 @@ class CompleteConsentHandler(tornado.web.RequestHandler):
 		builder.sog.complete_authentication(callback_provider,
 		self.request)
 
-		#self.write("Thanks. Now ready to start the experiment...")
 		# evoke callback
 		if "http" in builder.exp_callback:
 			self.redirect(builder.exp_callback)

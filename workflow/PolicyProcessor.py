@@ -8,8 +8,6 @@ from prisoner.gateway import *  	# import all known service gateways
 import prisoner.SocialObjects
 
 dir = os.path.dirname(__file__)
-#PRIVACY_POLICY_XSD = "../xsd/privacy_policy.xsd"
-#PRIVACY_POLICY_XSD = "/home/lhutton/prisoner/prisoner/xsd/privacy_policy.xsd"
 PRIVACY_POLICY_XSD = os.path.join(dir, "../xsd/privacy_policy.xsd")
 
 op_match = {"GET": "retrieve", "POST": "publish", "PUT": "store"}
@@ -68,7 +66,6 @@ class PolicyProcessor(object):
 		"""
 		if not policy:
 			raise IOError("Privacy policy not found at path")
-		print "Validating policy at %s" % policy
 		xsd_file = open(PRIVACY_POLICY_XSD)
 		schema = etree.XMLSchema(etree.parse(xsd_file))
 
@@ -85,10 +82,8 @@ class PolicyProcessor(object):
 		return policy
 
 		if validation:
-			print "Privacy policy validates!"
 			return policy
 		else:
-			print "Privacy policy failed validation."
 			raise InvalidPolicyProvidedError()
 	
 	def _validate_object_request(self, operation, provider, object_type, payload):
@@ -127,7 +122,6 @@ class PolicyProcessor(object):
 		orig_object_type = object_type	
 		object_type = self.__get_most_specialised_policy_for_class(provider, object_type)
 
-		print object_type
 		if not object_type:
 			raise DisallowedByPrivacyPolicyError("Privacy policy contains no policy element" + \
 			" for %s - no requests will be allowed" % orig_object_type)
@@ -281,8 +275,6 @@ class PolicyProcessor(object):
 			if not parse_rec:
 				parse_rec = getattr(source, meth)
 			else:
-				print "get attr %s from %s" % (meth,
-				parse_rec)
 				parse_rec = getattr(parse_rec,meth)
 		return parse_rec
 
@@ -321,9 +313,6 @@ class PolicyProcessor(object):
 				# working_stack_set so they can be evaluated as
 				# a logical group
 				
-				
-				#print("reached end of %s - " % element.tag + \
-				#"evaluate everything earlier on the stack")
 				working_stack_set = []
 				while len(criteria_stack) > 0:
 					top_element = criteria_stack.pop()
@@ -334,10 +323,6 @@ class PolicyProcessor(object):
 						# result to working set
 						working_stack_set.append(self.__test_criteria(top_element,response))
 					else:
-						#print("evaluating %s for %s" % 
-						#(working_stack_set,
-						#top_element.tag))
-						
 						# evaluate everything in set
 						# according to this operator,
 						# then push the result back and
@@ -402,7 +387,6 @@ class PolicyProcessor(object):
 			obj.__name__)
 			xpath_res = self.privacy_policy.xpath(xpath)
 			if xpath_res:
-				#return "%s:%s" % (provider, obj.__name__)
 				return obj.__name__
 			# is a non-namespaced policy?
 
@@ -422,18 +406,14 @@ class PolicyProcessor(object):
 		"""
 		# try inferring namespaced object
 		try:
-			#obj = self._infer_object("%s:%s" % (provider,
-			#class_name))
 			provider_gateway = globals()["%sGateway" %			
 			provider]
 			obj = getattr(
 			provider_gateway, class_name)
 
 		except:
-			# try inferring base object
 			obj = self._infer_object(class_name)
 			
-	
 		inst = obj()
 		# call get_most_specialised with this instance
 		return self.__get_most_specialised_policy_for_object(provider,
@@ -481,12 +461,10 @@ class PolicyProcessor(object):
 		else:
 			object_type = response.headers.object_type
 
-		print xpath
 		valid_object_policy = self.__validate_criteria(response,
 		xpath_res[0])
 
 		if not valid_object_policy:
-			print "Object policy failed for request"
 			return None
 
 		# recompose object - only include attributes with an
@@ -506,7 +484,7 @@ class PolicyProcessor(object):
 			else:
 				valid_attr_policy = True
 			if not valid_attr_policy:
-				print "Attribute policy %s failed for request" % curr_attribute
+				pass
 			else:
 				# apply any transforms for this attribute
 				transforms = attribute.xpath("attribute-policy/transformations")
@@ -515,24 +493,12 @@ class PolicyProcessor(object):
 							#obj_ref = getattr(response.content,curr_attribute)
 							obj_ref = response.content
 
-							# deprecated: old transform style
-							"""
-							trans_ref = getattr(obj_ref,
-							"transform_%s" % curr_attribute)
-							trans_ref(transform.get("type"),
-							transform.get("level"))
-							transformed = getattr(obj_ref, curr_attribute)
-							setattr(sanitised_object, 
-							curr_attribute,
-							transformed)
-							"""
 							if transform.tag is etree.Comment:
 								continue
 							trans_ref = getattr(obj_ref,
 							"transform_%s" % transform.get("type"))
 							to_transform = getattr(obj_ref, curr_attribute)
 							transformed = trans_ref(to_transform, transform.get("level"))
-							print transformed
 							setattr(sanitised_object, curr_attribute, transformed)
 							
 
@@ -543,12 +509,6 @@ class PolicyProcessor(object):
 	
 		sanitised_object.provider = response.content.provider
 		return sanitised_object
-		
- 
-			
-
-
-		# return response
 	
 	def __test_criteria(self, element, response):
 		""" Tests that an object passes a single logical test within object or attribute criteria.
@@ -567,25 +527,7 @@ class PolicyProcessor(object):
 			on_object_obj = self._infer_object(on_object)
 			to_match_obj =	self._infer_attributes(to_match,
 			response.content)
-			#print "does %s equal %s?" % (to_match_obj,
-			#on_object_obj)
 			if to_match_obj == on_object_obj:
 				return True
 			else:
 				return False
-
-
-"""
-DEPRECRATED: CLI not supported
-parser = OptionParser()
-parser.add_option("-p","--policy", type="string",dest="policy",
-help="Path to privacy policy")
-(options, args) = parser.parse_args()
-
-if __name__ == "__main__":
-	print "PRISONER Policy Processor 0.1"
-	policy = options.policy
-	
-	proc = PolicyProcessor()
-	proc.validate_policy(policy)	
-"""

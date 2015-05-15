@@ -23,10 +23,7 @@ import thread
 import urllib
 import urllib2
 
-#SERVER_URL = "http://localhost:5000"
 SERVER_URL = "https://prisoner.cs.st-andrews.ac.uk/prisoner"
-#TEMPLATE_URL = "/home/sam/Dropbox/PRISONER/static" # LOCAL
-#TEMPLATE_URL = "/home/lhutton/prisoner/prisoner/static"
 
 dir = os.path.dirname(__file__)
 TEMPLATE_URL =  os.path.join(dir, "../static")
@@ -158,7 +155,6 @@ class PRISONER(object):
 	def set_builder_reference(self, request, builder):
 		prisession = request.args["PRISession"]
 		self.session_internals[prisession] = builder
-		print "set session for %s" % prisession
 		return self.get_builder_reference(request)
 
 	def on_invalidate(self, request):
@@ -214,7 +210,6 @@ class PRISONER(object):
 				write_out[key] = request.form[key]
 		participant = builder.sog.register_participant(schema,
 		write_out)
-		print "PRISONER registered participant %s" % participant
 		return Response(str(participant[0]))
 		
 	def on_schema(self, request):
@@ -284,7 +279,6 @@ class PRISONER(object):
 		builder.provide_contact(request.form["contact"])
 
 		builder.provide_db_string(request.form["db"])
-		print "got db: %s" % request.form["db"]
 		builder.provide_experimental_design(exp_design)
 
 		self.__validate_secret(builder,request)
@@ -302,8 +296,6 @@ class PRISONER(object):
 			re = Response(consent_url)
 			return re
 		else:
-			#return self.consent_flow_handler(request, callback)
-			#return redirect("start_consent?pctoken=%s" % builder.token)
 			return Response("%s/start_consent?pctoken=%s&PRISession=%s" % (SERVER_URL,
 			builder.token, request.args["PRISession"]))
 		#return redirect(consent_url)
@@ -338,7 +330,6 @@ class PRISONER(object):
 		resp = Response(response)
 		resp.headers["Content-Type"] = "application/json"
 
-		#return Response(response)
 		return resp
 
 	def on_get_object(self, request, provider, object_name, payload,
@@ -361,7 +352,6 @@ class PRISONER(object):
 		response object when it is. 
 		"""
 		builder = self.get_builder_reference(request)
-		#builder.last_touch = datetime.now()
 		if "async" in request.args:
 			thread.start_new_thread(self.threaded_get_object, (request,
 			provider, object_name, payload, criteria))
@@ -377,26 +367,11 @@ class PRISONER(object):
 		return self.threaded_get_object(request, provider, object_name,
 		payload, criteria)
 		
-		"""
-		jsonpickle.handlers.registry.register(datetime.datetime,
-		SocialObjects.DateTimeJSONHandler)
-	
-		builder = self.get_builder_reference(request)
-		response = builder.sog.GetObjectJSON(provider, object_name, payload,
-		criteria)
-
-		resp = Response(response)
-		resp.headers["Content-Type"] = "application/json"
-
-		#return Response(response)
-		return resp
-		"""
 
 	""" START server handlers migrated from ExpBuilder """
 	def on_consent(self, request):
 		builder = self.get_builder_reference(request)
 		token = request.args["pctoken"]
-		#token = builder.token
 		resp = "Stand back. We're doing science.<br />"
 		if(token != builder.token):
 			resp += "Token %s is not %s" % (token, builder.token)
@@ -494,9 +469,7 @@ class PRISONER(object):
 		urlli = list(url)
 		urlli[dup_mark] = "&"
 		url = ''.join(urlli)
-		#url = url.replace("?token","&token") # this is an insane shim for a bug in LFM
-		#url = url.replace("?state","&state") # temp FB shim
-		
+
 		return redirect(url)
 
 	def find_nth(self, haystack, needle, n):
@@ -521,7 +494,7 @@ class PRISONER(object):
 		except HTTPException, e:
 			return e
 		except KeyError, e:
-			raise
+			#raise
 			return self.on_session_timeout(request)
 	
 	def wsgi_app(self, environ, start_response):
@@ -533,16 +506,11 @@ class PRISONER(object):
 			sid = None
 		if sid == "":
 			sid = None
-		#print "sid: %s" % sid
 		if not sid:
 			request.session = self.session_store.new()
 			request.session["active"] = True
-			print "set session"
 		else:
 			request.session = self.session_store.get(sid)
-
-
-		#print request.session.modified
 
 		response = self.dispatch_request(request)
 
@@ -550,7 +518,6 @@ class PRISONER(object):
 			return response(environ,start_response)
 			
 		if request.session.should_save:
-			print "saving session"
 			self.session_store.save(request.session)
 			#response.set_cookie("PRISession", request.session.sid)
 			response.headers.add("PRISession", request.session.sid)

@@ -87,8 +87,8 @@ class LastfmServiceGateway(ServiceGateway):
 		self.service_name = "Last.fm"
 		self.service_description = "Music recommendation service"
 		
-		API_KEY = "e88606453074ed34ca84904d9ef195d4"	
-		API_SECRET = "62ae5491416da384b241bff1a5833873"
+		API_KEY = ""	
+		API_SECRET = ""
 
 		self.network = pylast.LastFMNetwork(api_key = API_KEY,
 		api_secret = API_SECRET,
