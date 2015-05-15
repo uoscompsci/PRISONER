@@ -1,5 +1,6 @@
-from prisoner.gateway.ServiceGateway import ServiceGateway
+from prisoner.gateway.ServiceGateway import ServiceGateway, WrappedResponse
 import prisoner.SocialObjects as SocialObjects
+
 
 import datetime	# Used for creating standardised date / time objects from Facebook's attribute values.
 import json	# Used for parsing responses from Facebook.
@@ -120,7 +121,9 @@ class FacebookServiceGateway(ServiceGateway):
 		headers = {}
 		if "debug" in self.props:
 			headers['PRISONER-FB-Permissions'] = self.perms
-		return ServiceGateway(resp, headers)
+		
+		#return ServiceGateway(resp, headers)
+		return WrappedResponse(resp, headers)
 
 
 	def generate_permissions_list(self):
