@@ -1,2 +1,0 @@
-MAILTO=sm2269@st-andrews.ac.uk
-*/5       *       *       *       *       bash /home/sm2269/Facebook_Study/cron_housekeeping.sh&> /dev/null
