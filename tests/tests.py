@@ -22,4 +22,3 @@ This test suite:
 class SocialObjectsTestCase(unittest.TestCase):
 	def setUp(self):
 		pass
-		

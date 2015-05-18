@@ -12,6 +12,7 @@ PRIVACY_POLICY_XSD = os.path.join(dir, "../xsd/privacy_policy.xsd")
 
 op_match = {"GET": "retrieve", "POST": "publish", "PUT": "store"}
 
+
 class PolicyProcessor(object):
 	""" The Policy Processor is responsible for validating and sanitising all
 	requests to retrieve and publish Social Objects.
@@ -28,7 +29,7 @@ class PolicyProcessor(object):
 	"""
 	def __init__(self, policy=None, sog=None):
 		""" Do not instantiate your own PolicyProcessor.
-	
+
 		However, if you choose to ignore that and instantiate your own
 		anyway, provide the path to an XML file, which will be
 		immediately validated.
@@ -45,12 +46,12 @@ class PolicyProcessor(object):
 	def privacy_policy(self):
 		""" Get the privacy policy bound to this PolicyProcessor."""
 		return self._privacy_policy
-	
+
 	@privacy_policy.setter
 	def privacy_policy(self, value):
 		"""Bind a privacy policy to this PolicyProcessor. The privacy
 		policy is validated before bound.
-		
+
 		:param value: Path to the privacy policy XML file.
 		:type value: str.
 		"""
@@ -76,7 +77,7 @@ class PolicyProcessor(object):
 		policy = etree.parse(policy_file)
 
 		try:
-			validation = schema.assertValid(policy)		
+			validation = schema.assertValid(policy)
 		except Exception as e:
 			raise InvalidPolicyProvidedError(e.message)
 		return policy
@@ -85,10 +86,11 @@ class PolicyProcessor(object):
 			return policy
 		else:
 			raise InvalidPolicyProvidedError()
-	
+
 	def _validate_object_request(self, operation, provider, object_type, payload):
 		""" Validates a request to perform an operation on Social
-		Objects (whether retrieving from a service gateway, publishing back to a service
+		Objects (whether retrieving from a service gateway,
+		publishing back to a service
 		gateway, or putting data to a database).
 
 		A request will only be allowed in the first instance if
@@ -96,30 +98,33 @@ class PolicyProcessor(object):
 
 		:param operation: The type of request.
 		:type operation: str.
-		 :param provider:
+		:param provider:
 			The name of the provider of this object. There must be a
 			ServiceGateway class corresponding to this provider.
 		:type provider: str.
 		:param object_type:
 			The type of object being processed. This should not be
 			prefixed with a provider namespace. The method will attempt to find an
-			implementation of this object by the Service Gateway, otherwise attempting to
+			implementation of this object by the Service Gateway, otherwise
+			attempting to
 			find an implementation from the base social objects library.
 		:type object_type: str.
 		:param payload:
 		A dictionary of parameters, or instance of a Social
-		Object, used to determine the query criteria, or object to write. The payload is
+		Object, used to determine the query criteria, or object to write. The
+		payload is
 		specific to the request - see the documentation for the appropriate gateway
 		request for the expected format. :type payload: SocialObject or dictionary
-		:returns: str -- a clean object_type for this request (used in later stages of
+		:returns: str -- a clean object_type for this request (used in later
+		stages of
 		sanitisation process) """
 		if not self.privacy_policy:
 			raise NoPrivacyPolicyProvidedError()
 
 		if operation not in ["GET","POST","PUT"]:
 			raise OperationNotImplementedError(operation)
-		
-		orig_object_type = object_type	
+
+		orig_object_type = object_type
 		object_type = self.__get_most_specialised_policy_for_class(provider, object_type)
 
 		if not object_type:
@@ -130,7 +135,7 @@ class PolicyProcessor(object):
 		query_path = ("//policy[@for='base:%s']"%
 		object_type)
 
-		
+
 
 		# is there a <policy for="object"> element?
 		attrs = self.privacy_policy.xpath(query_path, namespaces=self.namespaces)
@@ -147,7 +152,7 @@ class PolicyProcessor(object):
 				ns = True
 		else:
 			ns = False
-		
+
 		# is there an object or attribute criteria with an
 		# allow=retrieve attribute?
 		if ns:
@@ -156,7 +161,7 @@ class PolicyProcessor(object):
 			object_type = "base:%s" % object_type
 		att_path=("//policy[@for='%s']//attribute-policy[@allow='%s']"
 		% (object_type, op_match[operation]))
-		
+
 		obj_path=("//policy[@for='%s']//object-policy[@allow='%s']"
 		% (object_type, op_match[operation]))
 
@@ -185,9 +190,9 @@ class PolicyProcessor(object):
 		else:
 			return object_type.split(":")[1]
 
-	
+
 	def _infer_object(self, object_name):
-		""" Infers object type based on object definition in a privacy policy. 
+		""" Infers object type based on object definition in a privacy policy.
 
 		:param object_name: Object name with an optional namespace component
 		:type object_name: str.
@@ -204,7 +209,7 @@ class PolicyProcessor(object):
 
 		if len(obj_components) == 1:
 			obj_components = ["base",obj_components[0]]
-		
+
 		ns = obj_components[0]
 
 		if len(obj_components) == 1 or len(obj_components[1]) < 1:
@@ -215,10 +220,10 @@ class PolicyProcessor(object):
 
 		if ns not in base_namespaces:
 			try:
-				provider_gateway = globals()["%sServiceGateway" %			
+				provider_gateway = globals()["%sServiceGateway" %
 				ns]()
 			except:
-				raise ServiceGatewayNotFoundError(ns)	
+				raise ServiceGatewayNotFoundError(ns)
 			try:
 				ns_object = getattr(
 				provider_gateway, obj_components[1])
@@ -237,18 +242,18 @@ class PolicyProcessor(object):
 			# rest is session obj ref
 			gateway = self.sog.get_service_gateway(obj_ref[0])
 			gateway_session = gateway.Session()
-			
+
 			concat_attrs = ""
 			# for each remaining attr, concat a string to getattr
 			for comp in obj_ref[1:]:
 				concat_attrs = "%s%s." % (concat_attrs, comp)
 			concat_attrs = concat_attrs[:-1]
-				
+
 			return getattr(gateway_session, concat_attrs)
 		elif ns == "participant":
-			# get a reference to the current participant object	
+			# get a reference to the current participant object
 			participant = self.sog.get_participant()
-			return participant[obj_components[1]]			
+			return participant[obj_components[1]]
 		elif ns == "base":
 			try:
 				ns_obj = getattr(SocialObjects, obj_components[1])
@@ -258,12 +263,12 @@ class PolicyProcessor(object):
 		else:
 			raise RuntimePrivacyPolicyParserError("%s " % object_name + \
 			"is not a valid object definition")
-	
-	
+
+
 	def _infer_attributes(self, object_attr, source):
 		""" Maps a string representation of an object and its attributes back to an instance ofa source object, to return its value.
 
-		:param object_attr: object_attributes references (can be many deep) 
+		:param object_attr: object_attributes references (can be many deep)
 		:type object_attr: str.
 		:param source: the object to search on
 		:type source: object
@@ -287,18 +292,18 @@ class PolicyProcessor(object):
 		:type tree: ElementTree
 		:raises: RuntimePrivacyPolicyParserError
 		:returns: boolean - whether or not object passed criteria
-		""" 
+		"""
 		logical_elements = ["and-match","or-match"]
 		criteria_stack = []
 		last_element = None
 		last_parent = None
-		
+
 		criteria_type = None
 		if tree.tag == "attribute-criteria":
 			criteria_type = "attribute"
 		elif tree.tag == "object-criteria":
 			criteria_type = "object"
-			
+
 		else:
 			raise RuntimePrivacyPolicyParserError("Unexpected criteria")
 		criteria_walk = etree.iterwalk(tree,
@@ -306,19 +311,19 @@ class PolicyProcessor(object):
 		criteria_walk.next()
 		for action, element in criteria_walk:
 			if action == "start":
-				criteria_stack.append(element)	
+				criteria_stack.append(element)
 			elif action == "end" and element.tag in logical_elements:
 				# pop from stack until reach logical operator or
 				# empty stack. add match elements to
 				# working_stack_set so they can be evaluated as
 				# a logical group
-				
+
 				working_stack_set = []
 				while len(criteria_stack) > 0:
 					top_element = criteria_stack.pop()
 					if top_element in [True,False]:
 						working_stack_set.append(top_element)
-					elif top_element.tag not in logical_elements: 
+					elif top_element.tag not in logical_elements:
 						# evaluate element and add
 						# result to working set
 						working_stack_set.append(self.__test_criteria(top_element,response))
@@ -357,8 +362,8 @@ class PolicyProcessor(object):
 				criteria_stack.append(False)
 			else:
 				criteria_stack.append(True)
-				
-		
+
+
 		if len(criteria_stack) > 1:
 			raise RuntimePrivacyPolicyParserError("Criteria "+\
 			"produced an unexpected result - is it well-formed?")
@@ -391,35 +396,35 @@ class PolicyProcessor(object):
 			# is a non-namespaced policy?
 
 			xpath = "//policy[@for='base:%s']" % obj.__name__
-			
+
 			xpath_res = self.privacy_policy.xpath(xpath)
 			if xpath_res:
-				
+
 				return obj.__name__
 		return False
 
 	def __get_most_specialised_policy_for_class(self, provider, class_name):
 		""" Similar to get_most_specialised_policy_for_object except
-		class_name is a string, not an instance of the object to test. 
+		class_name is a string, not an instance of the object to test.
 		Attempts to infer the class before getting the best-fitting
 		policy
 		"""
 		# try inferring namespaced object
 		try:
-			provider_gateway = globals()["%sGateway" %			
+			provider_gateway = globals()["%sGateway" %
 			provider]
 			obj = getattr(
 			provider_gateway, class_name)
 
 		except:
 			obj = self._infer_object(class_name)
-			
+
 		inst = obj()
 		# call get_most_specialised with this instance
 		return self.__get_most_specialised_policy_for_object(provider,
 		inst)
-		
-	
+
+
 
 	def _sanitise_object_request(self, response):
 		"""
@@ -470,7 +475,7 @@ class PolicyProcessor(object):
 		# recompose object - only include attributes with an
 		# attribute-policy
 		sanitised_object = response.content.__class__()
-			
+
 		xpath = "//policy[@for='%s']//attributes" % object_type
 		attributes_collection = self.privacy_policy.xpath(xpath)
 		for attribute in attributes_collection[0]:
@@ -500,16 +505,16 @@ class PolicyProcessor(object):
 							to_transform = getattr(obj_ref, curr_attribute)
 							transformed = trans_ref(to_transform, transform.get("level"))
 							setattr(sanitised_object, curr_attribute, transformed)
-							
+
 
 				else:
 					setattr(sanitised_object,
 					curr_attribute,
 					getattr(response.content, curr_attribute))
-	
+
 		sanitised_object.provider = response.content.provider
 		return sanitised_object
-	
+
 	def __test_criteria(self, element, response):
 		""" Tests that an object passes a single logical test within object or attribute criteria.
 		Used internally when validating objects
@@ -523,7 +528,7 @@ class PolicyProcessor(object):
 		if element.tag == "attribute-match":
 			to_match = element.get("match")
 			on_object = element.get("on_object")
-		
+
 			on_object_obj = self._infer_object(on_object)
 			to_match_obj =	self._infer_attributes(to_match,
 			response.content)
