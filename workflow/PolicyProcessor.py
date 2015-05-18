@@ -534,6 +534,7 @@ class PolicyProcessor(object):
 			to_match_obj =	self._infer_attributes(to_match,
 			response.content)
 
+			print "object id: %s" % response.content.id
 			print "response content: %s" % response.content
 			print "does %s equal %s" % (to_match_obj, on_object_obj)
 			if to_match_obj == on_object_obj:
