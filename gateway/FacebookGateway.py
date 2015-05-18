@@ -1246,7 +1246,7 @@ class FacebookServiceGateway(ServiceGateway):
 
 						# author posted this
 						author = SocialObjects.Person()
-						#author.id = checkin["from"]["id"]
+						author.id = user_id
 						#author.displayName = checkin["from"]["name"]
 
 

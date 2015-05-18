@@ -282,7 +282,7 @@ class PolicyProcessor(object):
 				parse_rec = getattr(source, meth)
 			else:
 				parse_rec = getattr(parse_rec,meth)
-				print "parse_rec: %s" % parse_rec 
+			print "parse_rec: %s" % parse_rec 
 		return parse_rec
 
 	def __validate_criteria(self, response, tree):
