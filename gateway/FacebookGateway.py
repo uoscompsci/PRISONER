@@ -1268,8 +1268,11 @@ class FacebookServiceGateway(ServiceGateway):
 						checkin_obj_list.append(this_checkin)
 
 					# Get next set of results.
-					next_address = result_set["paging"]["next"]
-					result_set = self.get_graph_data(next_address)
+					if("paging" in result_set and "next" in result_set["paging"]):
+						next_address = result_set["paging"]["next"]
+						result_set = self.get_graph_data(next_address)
+					else:
+						break
 
 				# Compose collection and return it.
 				checkins_coll = Checkins()
