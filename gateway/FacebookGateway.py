@@ -123,6 +123,7 @@ class FacebookServiceGateway(ServiceGateway):
 			headers['PRISONER-FB-Permissions'] = self.perms
 
 		#return ServiceGateway(resp, headers)
+		print "resp: %s" % resp
 		return WrappedResponse(resp, headers)
 
 
