@@ -2,8 +2,10 @@
 
 ### Bug fixes
 
-* Facebook Service Gateway now calls /tagged_places rather than /locations to
- get checkins.
+* Facebook Service Gateway now calls /tagged_places rather than
+ /locations to get checkins.
+
+* Clarified an error raised by PolicyProcessor if criteria are invalid.
 
 
 ## PRISONER Version 0.2.1 (May 15, 2015)
