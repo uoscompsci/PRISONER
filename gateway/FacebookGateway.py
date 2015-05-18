@@ -1237,7 +1237,7 @@ class FacebookServiceGateway(ServiceGateway):
 				while ((result_set.has_key("data")) and (len(result_set["data"]) > 0)):
 					# Grab the current batch of check-ins.
 					this_data = result_set["data"]
-
+					print "checkin: %s" % this_data
 					# Loop through each check-in on this page.
 					for checkin in this_data:
 						# Get and set basic info.
