@@ -1,3 +1,13 @@
+## PRISONER Version 0.2.3 (May 18, 2015)
+
+### New features
+
+* PRISONER no longer uses PRISession URL parameters for passing session
+ identifiers. The initial call to /begin sets a PRISession cookie which
+ should be maintained by the experimental application and used in requests.
+ Experimental applications can further delegate this cookie to participation
+ clients (eg. the participant's browser) for a single session identifier.
+
 ## PRISONER Version 0.2.2 (May 18, 2015)
 
 ### Bug fixes

@@ -27,13 +27,15 @@ import urllib2
 # set this to the URL of your PRISONER instance
 SERVER_URL = "https://prisoner.cs.st-andrews.ac.uk/prisoner"
 
+COOKIE_KEY = os.urandom(20)
+
 dir = os.path.dirname(__file__)
 TEMPLATE_URL =  os.path.join(dir, "../static")
 
 
 class PRISONER(object):
 	""" PRISONER Web Service
-	Exposes the functionality of PRISONER through a RESTful API.	
+	Exposes the functionality of PRISONER through a RESTful API.
 	Participation clients should use this API to manage social objects.
 
 	The PRISONER web service requires the following flow:
@@ -55,10 +57,10 @@ class PRISONER(object):
 
 	4) From this point onwards, use PRISONER to request objects:
 		/get/<provider>/<object_name>/<payload>/<criteria>
-	
+
 		eg. to get a participant's favourite tracks by Pixies on Last.fm we query:
 		/get/Lastfm/Track/session:Lastfm.id/x.artist=="Pixies"
-		
+
 		(for readability we have not escaped this query string - this
 		must be safely encoded before making requests!)
 
@@ -70,12 +72,12 @@ class PRISONER(object):
 	  To publish objects:
 		/post/<provider>/<object_name>
 		with a form-encoded payload of the data to publish.
-	
+
 		eg. to publish a comment to my own Last.fm profile, we query:
 		/post/Lastfm/Comment
 		{'author': session:Lastfm.id,
 		'inReplyTo': session:Lastfm.id,
-		'content': "Test comment" }	
+		'content': "Test comment" }
 
 	 To store experimental responses:
 		/response
@@ -95,7 +97,7 @@ class PRISONER(object):
 		/session/write/
 		with a form-encoded 'key' and 'data' (any arbitrary data can be
 		stored)
-		
+
 	Later, to retrieve session data, call:
 		/session/read/<key>
 
@@ -136,7 +138,7 @@ class PRISONER(object):
 			Rule('/cancel', endpoint="cancel"),
 			Rule('/invalidate', endpoint="invalidate")
 			#Rule('/instancewsgirestart',endpoint="restart")
-			
+
 
 		])
 		self.session_store = FilesystemSessionStore()
@@ -170,8 +172,8 @@ class PRISONER(object):
 
 		del self.session_internals[priSession]
 		return Response("session invalidated")
-		
-	
+
+
 	def on_cancel(self, request):
 		builder = self.get_builder_reference(request)
 		return self.render_template("cancel.html",
@@ -184,17 +186,17 @@ class PRISONER(object):
 			if secret != design_secret:
 				raise IncorrectSecretError()
 
-		
+
 
 	def on_register(self, request):
 		""" Register a participant. Requires a URL for the experimental
 		design and privacy policy, and a form of columns to insert about this participant.
-		"""	
+		"""
 		builder = self.set_builder_reference(request,
 		ExperimentBuilder.ExperimentBuilder())
-	
-		
-		
+
+
+
 		exp_design = request.form["design"]
 		policy = request.form["policy"]
 
@@ -213,7 +215,7 @@ class PRISONER(object):
 		participant = builder.sog.register_participant(schema,
 		write_out)
 		return Response(str(participant[0]))
-		
+
 	def on_schema(self, request):
 		""" Builds the database schema matching this experimental design
 		"""
@@ -229,7 +231,7 @@ class PRISONER(object):
 		builder.provide_experimental_design(exp_design)
 
 		self.__validate_secret(builder,request)
-		
+
 		builder.build_schema()
 
 		return Response("Schema built")
@@ -251,7 +253,7 @@ class PRISONER(object):
 		"data" (the arbitrary session data to store).
 		"""
 		builder = self.get_builder_reference(request)
-		builder.session[request.args["PRISession"]][request.form["key"]] = request.form["data"]	
+		builder.session[request.args["PRISession"]][request.form["key"]] = request.form["data"]
 		return Response()
 
 	def on_session_read(self, request):
@@ -268,11 +270,11 @@ class PRISONER(object):
 		PRISession value.
 		"""
 		return Response("Welcome to PRISONER. Now call /begin to "+\
-		"initialise your experiment, supplying the PRISession parameter.")		
+		"initialise your experiment, supplying the PRISession parameter.")
 
 	def on_begin(self, request):
 		builder = self.set_builder_reference(request,ExperimentBuilder.ExperimentBuilder())
-	
+
 		privacy_policy = request.form["policy"]
 		exp_design = request.form["design"]
 		builder.provide_privacy_policy(privacy_policy)
@@ -285,15 +287,15 @@ class PRISONER(object):
 
 		self.__validate_secret(builder,request)
 
-		participant = builder.authenticate_participant("participant",request.form["participant"])	
-	
+		participant = builder.authenticate_participant("participant",request.form["participant"])
+
 		providers = request.form["providers"].strip().split(",")
 		builder.authenticate_providers(providers)
 
 		callback = request.args["callback"]
 
-		consent_url = builder.build(callback)	
-	
+		consent_url = builder.build(callback)
+
 		if consent_url != True: # we got a callback url
 			re = Response(consent_url)
 			return re
@@ -301,7 +303,7 @@ class PRISONER(object):
 			return Response("%s/start_consent?pctoken=%s&PRISession=%s" % (SERVER_URL,
 			builder.token, request.args["PRISession"]))
 		#return redirect(consent_url)
-	
+
 	def on_post_response(self, request):
 		builder = self.get_builder_reference(request)
 		schema = request.form["schema"]
@@ -309,14 +311,14 @@ class PRISONER(object):
 		post_response = builder.sog.persistence.post_response_json(builder.sog, schema,
 		response)
 
-		return Response(post_response)	
+		return Response(post_response)
 
 	def on_publish_object(self, request, provider, object_name):
 		builder = self.get_builder_reference(request)
 
 		payload = request.form["payload"]
 		publish_response = builder.sog.PostObjectJSON(provider, object_name, payload)
-		
+
 
 
 
@@ -337,7 +339,7 @@ class PRISONER(object):
 	def on_get_object(self, request, provider, object_name, payload,
 	criteria=None):
 		""" Returns a SocialObject of given type (object_name) from a
-		given provider. 
+		given provider.
 		The payload is the primary criteria for evaluating a request for
 		the object, and must be interpretable by the receiving ServiceGateway. For
 		example, providing a user ID may return instances of objects created by that
@@ -351,7 +353,7 @@ class PRISONER(object):
 		your request was valid. Periodically, call your request URL
 		again, instead with the additional argument 'isready'. This will
 		return an empty response if the request has not been completed, or the full
-		response object when it is. 
+		response object when it is.
 		"""
 		builder = self.get_builder_reference(request)
 		if "async" in request.args:
@@ -364,11 +366,11 @@ class PRISONER(object):
 			try:
 				cache_obj = builder.sog.internal_cache[key]
 			except:
-				return Response("{}")	
-	
+				return Response("{}")
+
 		return self.threaded_get_object(request, provider, object_name,
 		payload, criteria)
-		
+
 
 	""" START server handlers migrated from ExpBuilder """
 	def on_consent(self, request):
@@ -390,7 +392,7 @@ class PRISONER(object):
 			re = Response(resp)
 			re.content_type = "text/html"
 			return re
-			"""	
+			"""
 			return self.render_template("start.html",next_link = confirm_url,
 			exp_contact=builder.contact, exp_name=builder.title)
 
@@ -399,7 +401,7 @@ class PRISONER(object):
 		builder = self.get_builder_reference(request)
 		token = request.args["pctoken"]
 		providers = builder.providers
-		
+
 		try:
 			current_provider = request.args["provider"]
 			if current_provider not in providers:
@@ -409,10 +411,10 @@ class PRISONER(object):
 		except:
 			current_provider = None
 			resp = "For this experiment, we need you to login to some services.<br />"
-			
+
 			try:
 				provider = providers[len(providers)-1]
-			
+
 				confirm_url = "%s/confirm?provider=%s&pctoken=%s&PRISession=%s" % (SERVER_URL, provider,
 				token, request.args["PRISession"])
 				"""
@@ -434,7 +436,7 @@ class PRISONER(object):
 		else:
 			callback = "%s/complete?pctoken=%s&cbprovider=%s&PRISession=%s" % (SERVER_URL, token,
 			current_provider, request.args["PRISession"])
-		
+
 		try:
 			callback_provider = request.args["cbprovider"]
 			auth_code = builder.sog.complete_authentication(callback_provider,
@@ -449,8 +451,8 @@ class PRISONER(object):
 
 		url = builder.sog.request_authentication(current_provider,
 		callback=urllib.quote(callback,safe=":/"))
-		return redirect(url)		
-	
+		return redirect(url)
+
 	def on_complete(self, request):
 		builder = self.get_builder_reference(request)
 
@@ -480,8 +482,8 @@ class PRISONER(object):
 			start = haystack.find(needle, start+len(needle))
 			n -= 1
 		return start
-	
-	
+
+
 	""" END ExpBuilder migration"""
 
 	def on_session_timeout(self, request):
@@ -498,14 +500,15 @@ class PRISONER(object):
 		except KeyError, e:
 			#raise
 			return self.on_session_timeout(request)
-	
+
 	def wsgi_app(self, environ, start_response):
 		request = Request(environ)
 		#sid = request.cookies.get("PRISession")
-		try:
-			sid = request.args["PRISession"]
-		except:
-			sid = None
+		sid = request.cookies.get("PRISession")
+		#try:
+			#sid = request.args["PRISession"]
+		#except:
+		#	sid = None
 		if sid == "":
 			sid = None
 		if not sid:
@@ -518,11 +521,11 @@ class PRISONER(object):
 
 		if "RequestRedirect" in type(response).__name__:
 			return response(environ,start_response)
-			
+
 		if request.session.should_save:
 			self.session_store.save(request.session)
-			#response.set_cookie("PRISession", request.session.sid)
-			response.headers.add("PRISession", request.session.sid)
+			response.set_cookie("PRISession", request.session.sid)
+			#response.headers.add("PRISession", request.session.sid)
 		return response(environ, start_response)
 
 	def __call__(self, environ, start_response):
