@@ -266,7 +266,7 @@ class PolicyProcessor(object):
 
 
 	def _infer_attributes(self, object_attr, source):
-		""" Maps a string representation of an object and its attributes back to an instance ofa source object, to return its value.
+		""" Maps a string representation of an object and its attributes back to an instance of a source object, to return its value.
 
 		:param object_attr: object_attributes references (can be many deep)
 		:type object_attr: str.
@@ -281,6 +281,7 @@ class PolicyProcessor(object):
 				parse_rec = getattr(source, meth)
 			else:
 				parse_rec = getattr(parse_rec,meth)
+		print "get %s on %s" % (meth, source)
 		return parse_rec
 
 	def __validate_criteria(self, response, tree):
