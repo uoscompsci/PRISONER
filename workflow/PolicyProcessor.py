@@ -275,14 +275,12 @@ class PolicyProcessor(object):
 		:returns: attribute value searched for
 		"""
 		parsed_object = object_attr.split(".")
-		print "parsed object: %s" % parsed_object
 		parse_rec = None
 		for meth in parsed_object:
 			if not parse_rec:
 				parse_rec = getattr(source, meth)
 			else:
 				parse_rec = getattr(parse_rec,meth)
-			print "parse_rec: %s" % parse_rec 
 		return parse_rec
 
 	def __validate_criteria(self, response, tree):
@@ -535,9 +533,6 @@ class PolicyProcessor(object):
 			to_match_obj =	self._infer_attributes(to_match,
 			response.content)
 
-			print "object id: %s" % response.content.id
-			print "response content: %s" % response.content
-			print "does %s equal %s" % (to_match_obj, on_object_obj)
 			if to_match_obj == on_object_obj:
 				return True
 			else:
