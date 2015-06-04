@@ -1,0 +1,452 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>prisoner.gateway.tests package &mdash; PRISONER 0.2.3 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="PRISONER 0.2.3 documentation" href="index.html"/>
+        <link rel="up" title="prisoner.gateway package" href="prisoner.gateway.html"/>
+        <link rel="next" title="prisoner.persistence package" href="prisoner.persistence.html"/>
+        <link rel="prev" title="prisoner.gateway package" href="prisoner.gateway.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="index.html">
+        
+
+        
+          
+          <img src="_static/prisoner-logo.png" class="logo" />
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.gettingstarted.html">Getting started</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="prisoner.html">prisoner package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="prisoner.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="prisoner.gateway.html">prisoner.gateway package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="prisoner.gateway.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#module-prisoner.gateway.FacebookGateway">prisoner.gateway.FacebookGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#module-prisoner.gateway.LastfmGateway">prisoner.gateway.LastfmGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#module-prisoner.gateway.ServiceGateway">prisoner.gateway.ServiceGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#module-prisoner.gateway.TwitterGateway">prisoner.gateway.TwitterGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#module-prisoner.gateway">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="prisoner.persistence.html">prisoner.persistence package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.persistence.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.persistence.html#module-prisoner.persistence.PersistenceManager">prisoner.persistence.PersistenceManager module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.persistence.html#module-prisoner.persistence">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="prisoner.server.html">prisoner.server package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.server.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.server.html#module-prisoner.server.webservice">prisoner.server.webservice module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.server.html#module-prisoner.server">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="prisoner.tests.html">prisoner.tests package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.tests.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.tests.html#module-prisoner.tests.tests">prisoner.tests.tests module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.tests.html#module-prisoner.tests">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="prisoner.workflow.html">prisoner.workflow package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#module-prisoner.workflow.Exceptions">prisoner.workflow.Exceptions module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#module-prisoner.workflow.ExperimentBuilder">prisoner.workflow.ExperimentBuilder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#prisoner-workflow-policydocumentgenerator-module">prisoner.workflow.PolicyDocumentGenerator module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#module-prisoner.workflow.PolicyProcessor">prisoner.workflow.PolicyProcessor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#module-prisoner.workflow.SocialObjectGateway">prisoner.workflow.SocialObjectGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#module-prisoner.workflow">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="prisoner.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prisoner.html#module-prisoner.SocialObjects">prisoner.SocialObjects module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prisoner.html#module-prisoner">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">PRISONER</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="prisoner.html">prisoner package</a> &raquo;</li>
+      
+          <li><a href="prisoner.gateway.html">prisoner.gateway package</a> &raquo;</li>
+      
+    <li>prisoner.gateway.tests package</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/prisoner.gateway.tests.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="prisoner-gateway-tests-package">
+<h1>prisoner.gateway.tests package<a class="headerlink" href="#prisoner-gateway-tests-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-prisoner.gateway.tests.FacebookGatewayTests">
+<span id="prisoner-gateway-tests-facebookgatewaytests-module"></span><h2>prisoner.gateway.tests.FacebookGatewayTests module<a class="headerlink" href="#module-prisoner.gateway.tests.FacebookGatewayTests" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase">
+<em class="property">class </em><code class="descclassname">prisoner.gateway.tests.FacebookGatewayTests.</code><code class="descname">BaseFacebookGatewayTestCase</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="method">
+<dt id="prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase.create_user_all_permissions">
+<code class="descname">create_user_all_permissions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase.create_user_all_permissions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a test user who has every relevant FB permission enabled</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase.create_user_no_permissions">
+<code class="descname">create_user_no_permissions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase.create_user_no_permissions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a test user who has no FB permission enabled</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase.get_bad_processor">
+<code class="descname">get_bad_processor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase.get_bad_processor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase.get_empty_processor">
+<code class="descname">get_empty_processor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase.get_empty_processor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase.get_good_processor">
+<code class="descname">get_good_processor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase.get_good_processor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase.get_good_props">
+<code class="descname">get_good_props</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase.get_good_props" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase.post_graph_data">
+<code class="descname">post_graph_data</code><span class="sig-paren">(</span><em>query</em>, <em>params</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase.post_graph_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal Function.
+Post the params dictionary to the given query path on the Graph API
+Use for creating, deleting, updating content
+All calls must be authenticated</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>query</strong> (<em>str</em>) &#8211; Graph API query to perform</li>
+<li><strong>params</strong> (<em>dict</em>) &#8211; Dictionary of data to publish to this endpoint</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase.setUp">
+<code class="descname">setUp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase.setUp" title="Permalink to this definition">¶</a></dt>
+<dd><p>### These values must be set before running these tests!</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase.set_test_user_attributes">
+<code class="descname">set_test_user_attributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase.set_test_user_attributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>sets some attributes for testing common to all test objects</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="prisoner.gateway.tests.FacebookGatewayTests.GetPermissionsForPolicyTestCase">
+<em class="property">class </em><code class="descclassname">prisoner.gateway.tests.FacebookGatewayTests.</code><code class="descname">GetPermissionsForPolicyTestCase</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.FacebookGatewayTests.GetPermissionsForPolicyTestCase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase" title="prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase"><code class="xref py py-class docutils literal"><span class="pre">prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase</span></code></a></p>
+<dl class="method">
+<dt id="prisoner.gateway.tests.FacebookGatewayTests.GetPermissionsForPolicyTestCase.test_bad_policy">
+<code class="descname">test_bad_policy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.FacebookGatewayTests.GetPermissionsForPolicyTestCase.test_bad_policy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.gateway.tests.FacebookGatewayTests.GetPermissionsForPolicyTestCase.test_good_policy">
+<code class="descname">test_good_policy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.FacebookGatewayTests.GetPermissionsForPolicyTestCase.test_good_policy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="prisoner.gateway.tests.FacebookGatewayTests.InitialiseTestCase">
+<em class="property">class </em><code class="descclassname">prisoner.gateway.tests.FacebookGatewayTests.</code><code class="descname">InitialiseTestCase</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.FacebookGatewayTests.InitialiseTestCase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase" title="prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase"><code class="xref py py-class docutils literal"><span class="pre">prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase</span></code></a></p>
+<p>Test handling of init parameters: tokens, props, and policies</p>
+<dl class="method">
+<dt id="prisoner.gateway.tests.FacebookGatewayTests.InitialiseTestCase.test_bad_policy">
+<code class="descname">test_bad_policy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.FacebookGatewayTests.InitialiseTestCase.test_bad_policy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.gateway.tests.FacebookGatewayTests.InitialiseTestCase.test_bad_props">
+<code class="descname">test_bad_props</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.FacebookGatewayTests.InitialiseTestCase.test_bad_props" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.gateway.tests.FacebookGatewayTests.InitialiseTestCase.test_bad_token">
+<code class="descname">test_bad_token</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.FacebookGatewayTests.InitialiseTestCase.test_bad_token" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.gateway.tests.FacebookGatewayTests.InitialiseTestCase.test_good_policy">
+<code class="descname">test_good_policy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.FacebookGatewayTests.InitialiseTestCase.test_good_policy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.gateway.tests.FacebookGatewayTests.InitialiseTestCase.test_good_props">
+<code class="descname">test_good_props</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.FacebookGatewayTests.InitialiseTestCase.test_good_props" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.gateway.tests.FacebookGatewayTests.InitialiseTestCase.test_good_token">
+<code class="descname">test_good_token</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.FacebookGatewayTests.InitialiseTestCase.test_good_token" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.gateway.tests.FacebookGatewayTests.InitialiseTestCase.test_no_policy">
+<code class="descname">test_no_policy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.FacebookGatewayTests.InitialiseTestCase.test_no_policy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.gateway.tests.FacebookGatewayTests.InitialiseTestCase.test_no_props">
+<code class="descname">test_no_props</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.FacebookGatewayTests.InitialiseTestCase.test_no_props" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.gateway.tests.FacebookGatewayTests.InitialiseTestCase.test_no_token">
+<code class="descname">test_no_token</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.FacebookGatewayTests.InitialiseTestCase.test_no_token" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="prisoner.gateway.tests.FacebookGatewayTests.StatusTestCase">
+<em class="property">class </em><code class="descclassname">prisoner.gateway.tests.FacebookGatewayTests.</code><code class="descname">StatusTestCase</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.FacebookGatewayTests.StatusTestCase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase" title="prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase"><code class="xref py py-class docutils literal"><span class="pre">prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase</span></code></a></p>
+<dl class="method">
+<dt id="prisoner.gateway.tests.FacebookGatewayTests.StatusTestCase.test_post">
+<code class="descname">test_post</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.FacebookGatewayTests.StatusTestCase.test_post" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="prisoner.gateway.tests.FacebookGatewayTests.UserTestCase">
+<em class="property">class </em><code class="descclassname">prisoner.gateway.tests.FacebookGatewayTests.</code><code class="descname">UserTestCase</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.FacebookGatewayTests.UserTestCase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase" title="prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase"><code class="xref py py-class docutils literal"><span class="pre">prisoner.gateway.tests.FacebookGatewayTests.BaseFacebookGatewayTestCase</span></code></a></p>
+<dl class="method">
+<dt id="prisoner.gateway.tests.FacebookGatewayTests.UserTestCase.test_good_get">
+<code class="descname">test_good_get</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.FacebookGatewayTests.UserTestCase.test_good_get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.gateway.tests.FacebookGatewayTests.UserTestCase.test_post">
+<code class="descname">test_post</code><span class="sig-paren">(</span><em>*arg</em>, <em>**kw</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.FacebookGatewayTests.UserTestCase.test_post" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-prisoner.gateway.tests.LastfmGatewayTests">
+<span id="prisoner-gateway-tests-lastfmgatewaytests-module"></span><h2>prisoner.gateway.tests.LastfmGatewayTests module<a class="headerlink" href="#module-prisoner.gateway.tests.LastfmGatewayTests" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="prisoner.gateway.tests.LastfmGatewayTests.BaseLastfmServiceGatewayTestCase">
+<em class="property">class </em><code class="descclassname">prisoner.gateway.tests.LastfmGatewayTests.</code><code class="descname">BaseLastfmServiceGatewayTestCase</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.LastfmGatewayTests.BaseLastfmServiceGatewayTestCase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="method">
+<dt id="prisoner.gateway.tests.LastfmGatewayTests.BaseLastfmServiceGatewayTestCase.setUp">
+<code class="descname">setUp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.LastfmGatewayTests.BaseLastfmServiceGatewayTestCase.setUp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="prisoner.gateway.tests.LastfmGatewayTests.ImageTestCase">
+<em class="property">class </em><code class="descclassname">prisoner.gateway.tests.LastfmGatewayTests.</code><code class="descname">ImageTestCase</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.LastfmGatewayTests.ImageTestCase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#prisoner.gateway.tests.LastfmGatewayTests.BaseLastfmServiceGatewayTestCase" title="prisoner.gateway.tests.LastfmGatewayTests.BaseLastfmServiceGatewayTestCase"><code class="xref py py-class docutils literal"><span class="pre">prisoner.gateway.tests.LastfmGatewayTests.BaseLastfmServiceGatewayTestCase</span></code></a></p>
+<dl class="method">
+<dt id="prisoner.gateway.tests.LastfmGatewayTests.ImageTestCase.test_get_failure">
+<code class="descname">test_get_failure</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.LastfmGatewayTests.ImageTestCase.test_get_failure" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.gateway.tests.LastfmGatewayTests.ImageTestCase.test_get_success">
+<code class="descname">test_get_success</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.tests.LastfmGatewayTests.ImageTestCase.test_get_success" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="prisoner-gateway-tests-socialgatewaytests-module">
+<h2>prisoner.gateway.tests.SocialGatewayTests module<a class="headerlink" href="#prisoner-gateway-tests-socialgatewaytests-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-prisoner.gateway.tests">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-prisoner.gateway.tests" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="prisoner.persistence.html" class="btn btn-neutral float-right" title="prisoner.persistence package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="prisoner.gateway.html" class="btn btn-neutral" title="prisoner.gateway package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Luke Hutton.
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.2.3',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

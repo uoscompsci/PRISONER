@@ -1,0 +1,498 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>prisoner.server package &mdash; PRISONER 0.2.3 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="PRISONER 0.2.3 documentation" href="index.html"/>
+        <link rel="up" title="prisoner package" href="prisoner.html"/>
+        <link rel="next" title="prisoner.tests package" href="prisoner.tests.html"/>
+        <link rel="prev" title="prisoner.persistence package" href="prisoner.persistence.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="index.html">
+        
+
+        
+          
+          <img src="_static/prisoner-logo.png" class="logo" />
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="prisoner.html">prisoner package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="prisoner.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="prisoner.gateway.html">prisoner.gateway package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#module-prisoner.gateway.FacebookGateway">prisoner.gateway.FacebookGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#module-prisoner.gateway.LastfmGateway">prisoner.gateway.LastfmGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#module-prisoner.gateway.ServiceGateway">prisoner.gateway.ServiceGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#module-prisoner.gateway.TwitterGateway">prisoner.gateway.TwitterGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#module-prisoner.gateway">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="prisoner.persistence.html">prisoner.persistence package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.persistence.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.persistence.html#module-prisoner.persistence.PersistenceManager">prisoner.persistence.PersistenceManager module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.persistence.html#module-prisoner.persistence">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">prisoner.server package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-prisoner.server.webservice">prisoner.server.webservice module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-prisoner.server">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="prisoner.tests.html">prisoner.tests package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.tests.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.tests.html#module-prisoner.tests.tests">prisoner.tests.tests module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.tests.html#module-prisoner.tests">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="prisoner.workflow.html">prisoner.workflow package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#module-prisoner.workflow.Exceptions">prisoner.workflow.Exceptions module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#module-prisoner.workflow.ExperimentBuilder">prisoner.workflow.ExperimentBuilder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#prisoner-workflow-policydocumentgenerator-module">prisoner.workflow.PolicyDocumentGenerator module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#module-prisoner.workflow.PolicyProcessor">prisoner.workflow.PolicyProcessor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#module-prisoner.workflow.SocialObjectGateway">prisoner.workflow.SocialObjectGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#module-prisoner.workflow">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="prisoner.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prisoner.html#module-prisoner.SocialObjects">prisoner.SocialObjects module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prisoner.html#module-prisoner">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">PRISONER</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="prisoner.html">prisoner package</a> &raquo;</li>
+      
+    <li>prisoner.server package</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/prisoner.server.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="prisoner-server-package">
+<h1>prisoner.server package<a class="headerlink" href="#prisoner-server-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-prisoner.server.webservice">
+<span id="prisoner-server-webservice-module"></span><h2>prisoner.server.webservice module<a class="headerlink" href="#module-prisoner.server.webservice" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="prisoner.server.webservice.PRISONER">
+<em class="property">class </em><code class="descclassname">prisoner.server.webservice.</code><code class="descname">PRISONER</code><a class="headerlink" href="#prisoner.server.webservice.PRISONER" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>PRISONER Web Service
+Exposes the functionality of PRISONER through a RESTful API.
+Participation clients should use this API to manage social objects.</p>
+<p>The PRISONER web service requires the following flow:</p>
+<p>1) Call / to handshake with PRISONER. Returns a PRISession header whose
+value must be passed to all future requests as a PRISession argument</p>
+<ol class="arabic" start="2">
+<li><dl class="first docutils">
+<dt>Call /begin with the following POST payload:</dt>
+<dd><p class="first last">&#8216;policy&#8217;: URL to your experiment&#8217;s privacy policy
+&#8216;design&#8217;: URL to your experimental design
+&#8216;participant&#8217;: The ID of the current participant
+&#8216;providers&#8217;: A comma-seperated list of services the participant
+must be authenticated with</p>
+</dd>
+</dl>
+</li>
+</ol>
+<p>3) PRISONER will return a URL your participant must visit to complete
+their consent and authentication flow. Call this and append an (escaped)
+argument &#8220;callback&#8221; - this is the URL your participant should be
+returned to, to begin using your experiment</p>
+<ol class="arabic" start="4">
+<li><dl class="first docutils">
+<dt>From this point onwards, use PRISONER to request objects:</dt>
+<dd><p class="first">/get/&lt;provider&gt;/&lt;object_name&gt;/&lt;payload&gt;/&lt;criteria&gt;</p>
+<p>eg. to get a participant&#8217;s favourite tracks by Pixies on Last.fm we query:
+/get/Lastfm/Track/session:Lastfm.id/x.artist==&#8221;Pixies&#8221;</p>
+<p>(for readability we have not escaped this query string - this
+must be safely encoded before making requests!)</p>
+<p class="last">Append a &#8216;?async&#8217; parameter to perform this request
+asynchronously.
+Call the same URL, but with a &#8216;?isready&#8217; parameter to get the
+result (if it&#8217;s not ready yet, expect blank response)</p>
+</dd>
+</dl>
+</li>
+</ol>
+<blockquote>
+<div><blockquote>
+<div><dl class="docutils">
+<dt>To publish objects:</dt>
+<dd><p class="first">/post/&lt;provider&gt;/&lt;object_name&gt;
+with a form-encoded payload of the data to publish.</p>
+<p class="last">eg. to publish a comment to my own Last.fm profile, we query:
+/post/Lastfm/Comment
+{&#8216;author&#8217;: session:Lastfm.id,
+&#8216;inReplyTo&#8217;: session:Lastfm.id,
+&#8216;content&#8217;: &#8220;Test comment&#8221; }</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt>To store experimental responses:</dt>
+<dd><p class="first">/response
+with a form-encoded payload matching the response schema in your
+experimental design.</p>
+<p class="last">eg. to publish a response to a question about a favourite track,
+we query:
+/response
+{&#8216;track&#8217;: 5343gt32-g43519500-223f,
+&#8216;answer&#8217;: &#8220;My response&#8221;,
+}</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>5) PRISONER provides a simple session layer for <em>temporarily</em> storing
+state information (eg. one set of responses by a participant in a multi-step
+form). To write to the session store call:</p>
+<blockquote>
+<div>/session/write/
+with a form-encoded &#8216;key&#8217; and &#8216;data&#8217; (any arbitrary data can be
+stored)</div></blockquote>
+<dl class="docutils">
+<dt>Later, to retrieve session data, call:</dt>
+<dd>/session/read/&lt;key&gt;</dd>
+</dl>
+<p>Note that the session store is <em>not</em> persistent, and there are no
+guarantees how long this data will be accessible. For permanent data, use the
+experiment response interface.</p>
+<p>Note that the PRISONER Web Service returns JSON objects corresponding to
+instances of Social Objects. Each object in a JSON response includes a &#8220;prisoner_id&#8221;
+attribute. Use this to subsequently relate a request to a previous
+object you received. PRISONER will lookup the original object based on
+this identifier. For example, in our experimentntal response above, we
+provided a track ID. This allows requests to be lightweight while
+PRISONER temporarily stores the complete version of that object.</p>
+<dl class="method">
+<dt id="prisoner.server.webservice.PRISONER.dispatch_request">
+<code class="descname">dispatch_request</code><span class="sig-paren">(</span><em>request</em>, <em>session</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.dispatch_request" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.server.webservice.PRISONER.find_nth">
+<code class="descname">find_nth</code><span class="sig-paren">(</span><em>haystack</em>, <em>needle</em>, <em>n</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.find_nth" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.server.webservice.PRISONER.get_builder_reference">
+<code class="descname">get_builder_reference</code><span class="sig-paren">(</span><em>request</em>, <em>session</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.get_builder_reference" title="Permalink to this definition">¶</a></dt>
+<dd><p>Each session has its own instance of PRISONER&#8217;s internals,
+keyed on the session cookie.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="prisoner.server.webservice.PRISONER.on_begin">
+<code class="descname">on_begin</code><span class="sig-paren">(</span><em>request</em>, <em>session</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.on_begin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.server.webservice.PRISONER.on_cancel">
+<code class="descname">on_cancel</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.on_cancel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.server.webservice.PRISONER.on_complete">
+<code class="descname">on_complete</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.on_complete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.server.webservice.PRISONER.on_confirm">
+<code class="descname">on_confirm</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.on_confirm" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.server.webservice.PRISONER.on_consent">
+<code class="descname">on_consent</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.on_consent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.server.webservice.PRISONER.on_fallback">
+<code class="descname">on_fallback</code><span class="sig-paren">(</span><em>request</em>, <em>wildcard</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.on_fallback" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.server.webservice.PRISONER.on_get_object">
+<code class="descname">on_get_object</code><span class="sig-paren">(</span><em>request</em>, <em>provider</em>, <em>object_name</em>, <em>payload</em>, <em>criteria=None</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.on_get_object" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a SocialObject of given type (object_name) from a
+given provider.
+The payload is the primary criteria for evaluating a request for
+the object, and must be interpretable by the receiving ServiceGateway. For
+example, providing a user ID may return instances of objects created by that
+user. Provide a lambda expression (criteria) to filter this
+request further (eg. only return objects matching a certain
+attribute value).</p>
+<p>For larger requests, an asynchronous request pattern is also
+provided (for AJAX calls). Make your request as usual, but
+append the argument &#8216;async&#8217;. This will immediately return if
+your request was valid. Periodically, call your request URL
+again, instead with the additional argument &#8216;isready&#8217;. This will
+return an empty response if the request has not been completed, or the full
+response object when it is.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="prisoner.server.webservice.PRISONER.on_handshake">
+<code class="descname">on_handshake</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.on_handshake" title="Permalink to this definition">¶</a></dt>
+<dd><p>This initial call provides the client with their session
+token. If response is good, call /begin providing the given
+PRISession value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="prisoner.server.webservice.PRISONER.on_invalidate">
+<code class="descname">on_invalidate</code><span class="sig-paren">(</span><em>request</em>, <em>session</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.on_invalidate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invalidate the current session, removing it from memory.
+Call this  at the end of the experiment to remove its footprint,
+or in the event of an irrecoverable error, from which you do not want the
+participant to recover without restarting the experiment flow</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="prisoner.server.webservice.PRISONER.on_post_response">
+<code class="descname">on_post_response</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.on_post_response" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.server.webservice.PRISONER.on_publish_object">
+<code class="descname">on_publish_object</code><span class="sig-paren">(</span><em>request</em>, <em>provider</em>, <em>object_name</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.on_publish_object" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.server.webservice.PRISONER.on_register">
+<code class="descname">on_register</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.on_register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register a participant. Requires a URL for the experimental
+design and privacy policy, and a form of columns to insert about this participant.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="prisoner.server.webservice.PRISONER.on_schema">
+<code class="descname">on_schema</code><span class="sig-paren">(</span><em>request</em>, <em>session</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.on_schema" title="Permalink to this definition">¶</a></dt>
+<dd><p>Builds the database schema matching this experimental design</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="prisoner.server.webservice.PRISONER.on_session_read">
+<code class="descname">on_session_read</code><span class="sig-paren">(</span><em>request</em>, <em>session</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.on_session_read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read the session data corresponding to the given key
+parameter. Session data is bound to the active PRISession.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="prisoner.server.webservice.PRISONER.on_session_timeout">
+<code class="descname">on_session_timeout</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.on_session_timeout" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.server.webservice.PRISONER.on_session_write">
+<code class="descname">on_session_write</code><span class="sig-paren">(</span><em>request</em>, <em>session</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.on_session_write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes arbitrary data to a temporary session. A
+session is bound to a PRISession, and is intended to retain state data
+during an experiment before committing to database.
+There is no guarantee how long the session will be
+valid for, so gracefully handle instances where expected data cannot
+be retrieved.</p>
+<p>To write session data, provide a POST form with a
+&#8220;key&#8221; value (used to retrieve the data later) and
+&#8220;data&#8221; (the arbitrary session data to store).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="prisoner.server.webservice.PRISONER.render_template">
+<code class="descname">render_template</code><span class="sig-paren">(</span><em>template_name</em>, <em>**context</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.render_template" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.server.webservice.PRISONER.set_builder_reference">
+<code class="descname">set_builder_reference</code><span class="sig-paren">(</span><em>request</em>, <em>session</em>, <em>builder</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.set_builder_reference" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.server.webservice.PRISONER.threaded_get_object">
+<code class="descname">threaded_get_object</code><span class="sig-paren">(</span><em>request</em>, <em>provider</em>, <em>object_name</em>, <em>payload</em>, <em>criteria=None</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.threaded_get_object" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.server.webservice.PRISONER.wsgi_app">
+<code class="descname">wsgi_app</code><span class="sig-paren">(</span><em>environ</em>, <em>start_response</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.wsgi_app" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="prisoner.server.webservice.create_app">
+<code class="descclassname">prisoner.server.webservice.</code><code class="descname">create_app</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.create_app" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-prisoner.server">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-prisoner.server" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="prisoner.tests.html" class="btn btn-neutral float-right" title="prisoner.tests package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="prisoner.persistence.html" class="btn btn-neutral" title="prisoner.persistence package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Luke Hutton.
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.2.3',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

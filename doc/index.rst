@@ -18,7 +18,7 @@ Features
 
 * Built-in support for Facebook, Twitter, and Last.fm with simple interfaces to add support for additional services
 
-* Simplified API for sensitively storing data collected from social network sites along with responses to experimental interventions, with support for any database engine with SQLAlchemy bindings
+* Simplified API for sensitively storing data collected from social network sites along with responses to experimental interventions, with support for any database engine with `SQLAlchemy bindings <http://docs.sqlalchemy.org/en/rel_1_0/dialects/index.html>`_
 
 * Declarative syntax for expressing the data collection requirements of an experiment to ensure only the data needed for an experiment can be collected.
 
@@ -43,8 +43,7 @@ interested in contributing to these features.
 
 If you have any issues deploying or using PRISONER, or have suggestions for how
 to improve the framework, please raise an issue on GitHub. We would be delighted
-if you would like to contribute code to PRISONER, and will accept pull requests
-with test coverage.
+if you would like to contribute code or improved documentation to PRISONER, and we will accept pull requests with test coverage.
 
 This documentation includes tutorials to help you run a PRISONER instance,
 build experiments which use social network data, and to package your
@@ -58,6 +57,7 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   tutorials
    prisoner
 
 

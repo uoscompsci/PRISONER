@@ -1,0 +1,455 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>prisoner.persistence package &mdash; PRISONER 0.2.3 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="PRISONER 0.2.3 documentation" href="index.html"/>
+        <link rel="up" title="prisoner package" href="prisoner.html"/>
+        <link rel="next" title="prisoner.server package" href="prisoner.server.html"/>
+        <link rel="prev" title="prisoner.gateway.tests package" href="prisoner.gateway.tests.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="index.html">
+        
+
+        
+          
+          <img src="_static/prisoner-logo.png" class="logo" />
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="prisoner.html">prisoner package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="prisoner.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="prisoner.gateway.html">prisoner.gateway package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#module-prisoner.gateway.FacebookGateway">prisoner.gateway.FacebookGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#module-prisoner.gateway.LastfmGateway">prisoner.gateway.LastfmGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#module-prisoner.gateway.ServiceGateway">prisoner.gateway.ServiceGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#module-prisoner.gateway.TwitterGateway">prisoner.gateway.TwitterGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#module-prisoner.gateway">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">prisoner.persistence package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-prisoner.persistence.PersistenceManager">prisoner.persistence.PersistenceManager module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-prisoner.persistence">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="prisoner.server.html">prisoner.server package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.server.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.server.html#module-prisoner.server.webservice">prisoner.server.webservice module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.server.html#module-prisoner.server">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="prisoner.tests.html">prisoner.tests package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.tests.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.tests.html#module-prisoner.tests.tests">prisoner.tests.tests module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.tests.html#module-prisoner.tests">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="prisoner.workflow.html">prisoner.workflow package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#module-prisoner.workflow.Exceptions">prisoner.workflow.Exceptions module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#module-prisoner.workflow.ExperimentBuilder">prisoner.workflow.ExperimentBuilder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#prisoner-workflow-policydocumentgenerator-module">prisoner.workflow.PolicyDocumentGenerator module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#module-prisoner.workflow.PolicyProcessor">prisoner.workflow.PolicyProcessor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#module-prisoner.workflow.SocialObjectGateway">prisoner.workflow.SocialObjectGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#module-prisoner.workflow">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="prisoner.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prisoner.html#module-prisoner.SocialObjects">prisoner.SocialObjects module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prisoner.html#module-prisoner">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">PRISONER</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="prisoner.html">prisoner package</a> &raquo;</li>
+      
+    <li>prisoner.persistence package</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/prisoner.persistence.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="prisoner-persistence-package">
+<h1>prisoner.persistence package<a class="headerlink" href="#prisoner-persistence-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-prisoner.persistence.PersistenceManager">
+<span id="prisoner-persistence-persistencemanager-module"></span><h2>prisoner.persistence.PersistenceManager module<a class="headerlink" href="#module-prisoner.persistence.PersistenceManager" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="prisoner.persistence.PersistenceManager.PersistenceManager">
+<em class="property">class </em><code class="descclassname">prisoner.persistence.PersistenceManager.</code><code class="descname">PersistenceManager</code><span class="sig-paren">(</span><em>exp_design=None</em>, <em>policy_processor=None</em>, <em>connection_string=None</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.persistence.PersistenceManager.PersistenceManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>The PersistenceManager manages the storage of all data, including
+participant metadata, experimental responses, and persistence of Social Objects.
+Storage of data is subject to the privacy policy for the experiment.
+Generally, participation clients do not directly instantiate a
+PersistenceManager, and where possible, friendlier interfaces are available
+through the ExperimentBuilder and SocialObjectsGateway.</p>
+<dl class="method">
+<dt id="prisoner.persistence.PersistenceManager.PersistenceManager.close_connection">
+<code class="descname">close_connection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.persistence.PersistenceManager.PersistenceManager.close_connection" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.persistence.PersistenceManager.PersistenceManager.do_build_schema">
+<code class="descname">do_build_schema</code><span class="sig-paren">(</span><em>drop_first=False</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.persistence.PersistenceManager.PersistenceManager.do_build_schema" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="prisoner.persistence.PersistenceManager.PersistenceManager.experimental_design">
+<code class="descname">experimental_design</code><a class="headerlink" href="#prisoner.persistence.PersistenceManager.PersistenceManager.experimental_design" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.persistence.PersistenceManager.PersistenceManager.get_existing_provider_auth">
+<code class="descname">get_existing_provider_auth</code><span class="sig-paren">(</span><em>participant_id</em>, <em>provider</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.persistence.PersistenceManager.PersistenceManager.get_existing_provider_auth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the given participant has been
+previously authenticated with the named provider. If so, returns the credentials
+stored. Otherwise, returns None, so participant should continue with consent
+flow.
+If credentials are found, a ServiceGateway should be provided with them. It
+should signal whether it is able to successfully authenticate with them. If not,
+it should attempt to reauthenticate server-side if possible (eg. request new
+session from API). If clientside intervention is required, it should signal
+this.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>participant_id</strong> (<em>int</em>) &#8211; ID of participant to authenticate</li>
+<li><strong>provider</strong> (<em>str</em>) &#8211; Name of provider to return authentication for</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Stored credentials or None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="prisoner.persistence.PersistenceManager.PersistenceManager.get_participant">
+<code class="descname">get_participant</code><span class="sig-paren">(</span><em>schema</em>, <em>participant_id</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.persistence.PersistenceManager.PersistenceManager.get_participant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve the participant with the given ID from the given
+schema.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>schema</strong> (<em>str</em>) &#8211; name of scema to get participant from</li>
+<li><strong>participant_id</strong> (<em>int</em>) &#8211; ID of participant to return</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">tuple - participant data from database</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="prisoner.persistence.PersistenceManager.PersistenceManager.get_props">
+<code class="descname">get_props</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.persistence.PersistenceManager.PersistenceManager.get_props" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the props collection in the experimental design and makes these
+available as a dict of dicts</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="prisoner.persistence.PersistenceManager.PersistenceManager.get_table">
+<code class="descname">get_table</code><span class="sig-paren">(</span><em>table_type</em>, <em>table_name</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.persistence.PersistenceManager.PersistenceManager.get_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an active connection to the requested table. Used
+internally for data access. Do not use this from participation
+clients. Instead, use managed data access interfaces where possible to
+ensure data are sanitised appropriately.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>table_type</strong> (<em>str</em>) &#8211; Type of table [response, participant, object]</li>
+<li><strong>table_name</strong> &#8211; Name of table to return</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Table - requested table</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="prisoner.persistence.PersistenceManager.PersistenceManager.post_response">
+<code class="descname">post_response</code><span class="sig-paren">(</span><em>schema</em>, <em>response</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.persistence.PersistenceManager.PersistenceManager.post_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes response to given schema.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="prisoner.persistence.PersistenceManager.PersistenceManager.post_response_json">
+<code class="descname">post_response_json</code><span class="sig-paren">(</span><em>sog</em>, <em>schema</em>, <em>response</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.persistence.PersistenceManager.PersistenceManager.post_response_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper to post_response for use by web services.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>schema</strong> (<em>str</em>) &#8211; Name of response schema to write to</li>
+<li><strong>response</strong> (<em>JSON object as str.</em>) &#8211; JSON object corresponding to the response schema.
+References to SocialObjects must consist of its prisoner_id (as originally
+received)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="prisoner.persistence.PersistenceManager.PersistenceManager.props">
+<code class="descname">props</code><a class="headerlink" href="#prisoner.persistence.PersistenceManager.PersistenceManager.props" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.persistence.PersistenceManager.PersistenceManager.rebuild_engine">
+<code class="descname">rebuild_engine</code><span class="sig-paren">(</span><em>connection_string</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.persistence.PersistenceManager.PersistenceManager.rebuild_engine" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="prisoner.persistence.PersistenceManager.PersistenceManager.register_participant">
+<code class="descname">register_participant</code><span class="sig-paren">(</span><em>schema</em>, <em>participant</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.persistence.PersistenceManager.PersistenceManager.register_participant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the participant data in given dictionary to the
+participant table in this database and return the ID</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>schema</strong> &#8211; name of participant table (must be of type</td>
+</tr>
+</tbody>
+</table>
+<p>&#8216;participant&#8217;)
+:type schema: str.
+:param participant: dictionary of data about participant
+:type participant: dict
+:returns: int &#8211; inserted row ID</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="prisoner.persistence.PersistenceManager.PersistenceManager.register_participant_with_provider">
+<code class="descname">register_participant_with_provider</code><span class="sig-paren">(</span><em>participant_id</em>, <em>provider</em>, <em>token</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.persistence.PersistenceManager.PersistenceManager.register_participant_with_provider" title="Permalink to this definition">¶</a></dt>
+<dd><p>Store access credentials with this provider for the given
+participant. Access token can be any object, so long as the
+relevant service gateway is able to interpet it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>participant_id</strong> (<em>int</em>) &#8211; Participant to register access token with</li>
+<li><strong>provider</strong> (<em>str</em>) &#8211; Name of provider to register access token with</li>
+<li><strong>token</strong> (<em>object</em>) &#8211; Access token used in authenticated calls</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">row as inserted in meta_table</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="prisoner.persistence.PersistenceManager.PersistenceManager.validate_design">
+<code class="descname">validate_design</code><span class="sig-paren">(</span><em>design</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.persistence.PersistenceManager.PersistenceManager.validate_design" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests that the given experimental design validates against the
+XML schema</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>design</strong> (<em>str</em>) &#8211; Path to experimental design</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body">IOError</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">ElementTree - parsed experimental design object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-prisoner.persistence">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-prisoner.persistence" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="prisoner.server.html" class="btn btn-neutral float-right" title="prisoner.server package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="prisoner.gateway.tests.html" class="btn btn-neutral" title="prisoner.gateway.tests package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Luke Hutton.
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.2.3',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
