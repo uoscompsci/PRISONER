@@ -149,25 +149,28 @@ class PRISONER(object):
 		t = self.jinja_env.get_template(template_name)
 		return Response(t.render(context), mimetype="text/html")
 
-	def get_builder_reference(self, request):
+	def get_builder_reference(self, request,session):
 		""" Each session has its own instance of PRISONER's internals,
 		keyed on the session cookie.
 		"""
 		#return self.session_internals[request.cookies.get("PRISession")]
-		return self.session_internals[request.args["PRISession"]]
+		return self.session_internals[session]
 
-	def set_builder_reference(self, request, builder):
-		prisession = request.args["PRISession"]
+	def set_builder_reference(self, request, session, builder):
+		#prisession = request.args["PRISession"]
+		prisession = session
 		self.session_internals[prisession] = builder
-		return self.get_builder_reference(request)
+		return self.get_builder_reference(request,session)
 
-	def on_invalidate(self, request):
+	def on_invalidate(self, request, session):
 		""" Invalidate the current session, removing it from memory.
 		Call this  at the end of the experiment to remove its footprint,
 		or in the event of an irrecoverable error, from which you do not want the
 		participant to recover without restarting the experiment flow
 		"""
-		priSession = request.args["PRISession"]
+		#priSession = request.args["PRISession"]
+		priSession = session
+
 		self.session_internals[priSession].sog.persistence.close_connection()
 
 		del self.session_internals[priSession]
@@ -192,8 +195,12 @@ class PRISONER(object):
 		""" Register a participant. Requires a URL for the experimental
 		design and privacy policy, and a form of columns to insert about this participant.
 		"""
+
+		print "form: %s" % request.form
 		builder = self.set_builder_reference(request,
 		ExperimentBuilder.ExperimentBuilder())
+
+
 
 		exp_design = request.form["design"]
 		policy = request.form["policy"]
@@ -214,15 +221,17 @@ class PRISONER(object):
 		write_out)
 		return Response(str(participant[0]))
 
-	def on_schema(self, request):
+	def on_schema(self, request, session):
 		""" Builds the database schema matching this experimental design
 		"""
-
-		builder = self.set_builder_reference(request,
+		print "on_schema called"
+		builder = self.set_builder_reference(request, session,
 		ExperimentBuilder.ExperimentBuilder())
+		print "on_schema got builder"
 
 		exp_design = request.form["design"]
 		policy = request.form["policy"]
+
 
 		builder.provide_privacy_policy(policy)
 		builder.provide_db_string(request.form["db"])
@@ -238,7 +247,7 @@ class PRISONER(object):
 
 
 
-	def on_session_write(self, request):
+	def on_session_write(self, request, session):
 		""" Writes arbitrary data to a temporary session. A
 		session is bound to a PRISession, and is intended to retain state data
 		during an experiment before committing to database.
@@ -251,16 +260,16 @@ class PRISONER(object):
 		"data" (the arbitrary session data to store).
 		"""
 		builder = self.get_builder_reference(request)
-		builder.session[request.args["PRISession"]][request.form["key"]] = request.form["data"]
+		builder.session[session][request.form["key"]] = request.form["data"]
 		return Response()
 
-	def on_session_read(self, request):
+	def on_session_read(self, request, session):
 		""" Read the session data corresponding to the given key
 		parameter. Session data is bound to the active PRISession. """
 		builder = self.get_builder_reference(request)
-		if request.args["key"] not in builder.session[request.args["PRISession"]]:
+		if request.args["key"] not in builder.session[session]:
 			return Response("Key not in session",status=404)
-		return Response(json.dumps(builder.session[request.args["PRISession"]][request.args["key"]]))
+		return Response(json.dumps(builder.session[session][request.args["key"]]))
 
 	def on_handshake(self, request):
 		""" This initial call provides the client with their session
@@ -270,7 +279,7 @@ class PRISONER(object):
 		return Response("Welcome to PRISONER. Now call /begin to "+\
 		"initialise your experiment, supplying the PRISession parameter.")
 
-	def on_begin(self, request):
+	def on_begin(self, request, session):
 		builder = self.set_builder_reference(request,ExperimentBuilder.ExperimentBuilder())
 
 		privacy_policy = request.form["policy"]
@@ -299,7 +308,7 @@ class PRISONER(object):
 			return re
 		else:
 			return Response("%s/start_consent?pctoken=%s&PRISession=%s" % (SERVER_URL,
-			builder.token, request.args["PRISession"]))
+			builder.token, session))
 		#return redirect(consent_url)
 
 	def on_post_response(self, request):
@@ -487,11 +496,11 @@ class PRISONER(object):
 	def on_session_timeout(self, request):
 		return self.render_template("session.html")
 
-	def dispatch_request(self, request):
+	def dispatch_request(self, request,session):
 		adapter = self.url_map.bind_to_environ(request.environ)
 		try:
 			endpoint, values = adapter.match()
-			return getattr(self, "on_" + endpoint)(request,
+			return getattr(self, "on_" + endpoint)(request, session=session,
 			**values)
 		except HTTPException, e:
 			return e
@@ -515,7 +524,7 @@ class PRISONER(object):
 		else:
 			request.session = self.session_store.get(sid)
 
-		response = self.dispatch_request(request)
+		response = self.dispatch_request(request,session=sid)
 
 		if "RequestRedirect" in type(response).__name__:
 			return response(environ,start_response)

@@ -1,4 +1,4 @@
-## PRISONER Version 0.2.3 (May 18, 2015)
+## PRISONER Version 0.2.3 (June 4th, 2015)
 
 ### New features
 
@@ -7,6 +7,11 @@
  should be maintained by the experimental application and used in requests.
  Experimental applications can further delegate this cookie to participation
  clients (eg. the participant's browser) for a single session identifier.
+
+### Miscellaneous
+
+* Web service has been refactored to use the Requests library for HTTP requests.
+Use of urllib in service gateways is deprecated.
 
 ## PRISONER Version 0.2.2 (May 18, 2015)
 
