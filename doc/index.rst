@@ -40,6 +40,14 @@ interested in contributing to these features.
 * Support the archiving of social network data and PRISONER workflows by generating metadata designed for ingest by research information systems.
 
 
+What PRISONER is not
+---------------------
+PRISONER is not:
+
+* a crawler. PRISONER is designed to support the execution of user studies which handle social network data, and is not designed for crawling or scraping data from these services where there is no direct intervention from a participant. As a rule of thumb, if your experiment would not require individual participants to authenticate your experiment to access data via their social network account, it is probably not the kind of experiment PRISONER can support.
+
+* a tool for "anonymising" social network data. Guaranteeing the anonymity of identifiable data while maintaining utility is not a trivial problem. PRISONER's support for sanitisations is to coarsen sensitive data as they are collected, and is not intended for anonymising data before release.
+
 
 If you have any issues deploying or using PRISONER, or have suggestions for how
 to improve the framework, please raise an issue on GitHub. We would be delighted

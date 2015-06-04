@@ -79,8 +79,11 @@
           
               <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="tutorials.html">Tutorials</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="tutorials.html#id1">Tutorials</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="">Getting started</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Getting started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#installing-prisoner-for-local-development">Installing PRISONER for local development</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#quickest-spin-up-a-docker-vm">Quickest: Spin-up a Docker VM</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -175,6 +178,31 @@
   <div class="section" id="getting-started">
 <h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
 <p>This tutorial helps you get up and running with a PRISONER instance.</p>
+<div class="section" id="installing-prisoner-for-local-development">
+<h2>Installing PRISONER for local development<a class="headerlink" href="#installing-prisoner-for-local-development" title="Permalink to this headline">¶</a></h2>
+<p>For developing experiments, you will probably want to run a PRISONER server locally on your development machine to quickly iterate. There are two ways to do
+this: using our pre-prepared Docker VM image, or pulling the latest release from
+GitHub.</p>
+<div class="section" id="quickest-spin-up-a-docker-vm">
+<h3>Quickest: Spin-up a Docker VM<a class="headerlink" href="#quickest-spin-up-a-docker-vm" title="Permalink to this headline">¶</a></h3>
+<p>If you have familiarity with the Docker environment, using the PRISONER Docker
+container is probably the easiest way to get up and running without having to
+worry about your environment and resolving dependencies. We have an image in Docker Hub which includes the latest release from our GitHub repository.</p>
+<p>This guide assumes you have installed Docker and are familiar with using it.</p>
+<p>To spin-up a PRISONER instance, run the following at the command line:</p>
+<div class="highlight-python"><div class="highlight"><pre>TODO: line to spin-up Docker
+</pre></div>
+</div>
+<p>Now, start-up the VM:</p>
+<div class="highlight-python"><div class="highlight"><pre>TODO: line to start instance
+</pre></div>
+</div>
+<p>Now, PRISONER&#8217;s development server has started on port 5000. Test that
+everything is working, and that Docker has correctly mapped the port by visiting
+localhost:&lt;mapped_port&gt;. Depending on your Docker configuration, you may have to
+access the underlying VM via an alternative IP.</p>
+</div>
+</div>
 </div>
 
 

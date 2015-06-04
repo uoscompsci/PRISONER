@@ -2,3 +2,31 @@ Getting started
 ===============
 
 This tutorial helps you get up and running with a PRISONER instance.
+
+Installing PRISONER for local development
+-------------------
+
+For developing experiments, you will probably want to run a PRISONER server locally on your development machine to quickly iterate. There are two ways to do
+this: using our pre-prepared Docker VM image, or pulling the latest release from
+GitHub.
+
+Quickest: Spin-up a Docker VM
+`````````````````````````````
+If you have familiarity with the Docker environment, using the PRISONER Docker
+container is probably the easiest way to get up and running without having to
+worry about your environment and resolving dependencies. We have an image in Docker Hub which includes the latest release from our GitHub repository.
+
+This guide assumes you have installed Docker and are familiar with using it.
+
+To spin-up a PRISONER instance, run the following at the command line::
+
+ TODO: line to spin-up Docker
+
+Now, start-up the VM::
+
+ TODO: line to start instance
+
+Now, PRISONER's development server has started on port 5000. Test that
+everything is working, and that Docker has correctly mapped the port by visiting
+localhost:<mapped_port>. Depending on your Docker configuration, you may have to
+access the underlying VM via an alternative IP.

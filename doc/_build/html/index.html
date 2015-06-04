@@ -77,7 +77,13 @@
           
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tutorials.gettingstarted.html">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.gettingstarted.html">Getting started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.gettingstarted.html#installing-prisoner-for-local-development">Installing PRISONER for local development</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tutorials.gettingstarted.html#quickest-spin-up-a-docker-vm">Quickest: Spin-up a Docker VM</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="prisoner.html">prisoner package</a><ul>
@@ -191,6 +197,14 @@ interested in contributing to these features.</p>
 <li>Automatic generation of consent forms based on the data-handling requirements of an experiment</li>
 <li>Improve the longevity of code by automatically mapping older API calls to newer API versions, gracefully degrading where individual calls can no longer be satisfied.</li>
 <li>Support the archiving of social network data and PRISONER workflows by generating metadata designed for ingest by research information systems.</li>
+</ul>
+</div>
+<div class="section" id="what-prisoner-is-not">
+<h2>What PRISONER is not<a class="headerlink" href="#what-prisoner-is-not" title="Permalink to this headline">¶</a></h2>
+<p>PRISONER is not:</p>
+<ul class="simple">
+<li>a crawler. PRISONER is designed to support the execution of user studies which handle social network data, and is not designed for crawling or scraping data from these services where there is no direct intervention from a participant. As a rule of thumb, if your experiment would not require individual participants to authenticate your experiment to access data via their social network account, it is probably not the kind of experiment PRISONER can support.</li>
+<li>a tool for &#8220;anonymising&#8221; social network data. Guaranteeing the anonymity of identifiable data while maintaining utility is not a trivial problem. PRISONER&#8217;s support for sanitisations is to coarsen sensitive data as they are collected, and is not intended for anonymising data before release.</li>
 </ul>
 <p>If you have any issues deploying or using PRISONER, or have suggestions for how
 to improve the framework, please raise an issue on GitHub. We would be delighted
