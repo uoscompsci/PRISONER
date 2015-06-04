@@ -15,7 +15,7 @@ Transformations are now composed at the transform level, NOT the attribute level
 eg. if a policy on an 'id' attribute on 'obj' calls for a 'reduce' transformation,
 rather than calling obj.transform_id(reduce,level), we now call obj.transform_reduce(id,level)
 
-This will significantly reduce the amount of duplicate code in gateways, but will break 
+This will significantly reduce the amount of duplicate code in gateways, but will break
 existing gateways. In most cases, unless you need to define your own transformations, you
 can entirely fallback on letting PRISONER's base transformations do the work.
 
@@ -39,7 +39,7 @@ class DateTimeJSONHandler(jsonpickle.handlers.BaseHandler):
 	def restore(self, data):
 		return datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S+0000")
 
-	
+
 
 class SocialObject(object):
 	""" SocialObjects are representations of social data, consumed and
@@ -47,7 +47,7 @@ class SocialObject(object):
 	provides a small number of general attributes, with each implementation
 	providing additional relevant attributes.
 	SocialObjects must also provide transformation logic for each attribute,
-	allowing each attribute to be sanitised to an appropriate level. 
+	allowing each attribute to be sanitised to an appropriate level.
 	"""
 	def __init__(self):
 		self._author = None
@@ -62,7 +62,7 @@ class SocialObject(object):
 		self._tags = None
 		self._provider = None
 		self.prisoner_id = None
-	
+
 		self._friendly_names = {
 		"author": "author",
 		"content": "content",
@@ -93,7 +93,7 @@ class SocialObject(object):
 		:param attribute: Attribute to get friendly name of
 		:type attribute: str
 		"""
-		return self._friendly_names[attribute]	
+		return self._friendly_names[attribute]
 
 	def base_transform_name(self, string, transformation, level):
 		""" The Base Social Objects package provides a number of
@@ -139,7 +139,7 @@ class SocialObject(object):
 		return string
 
 
-	""" 
+	"""
 	New-style transform for reduce.
 	This is just a wrapper around the old base_transform_name
 	"""
@@ -163,7 +163,7 @@ class SocialObject(object):
 	"""
 	###
 		This transform is deprecated! IT WON'T WORK. DON'T EVEN TRY.
-		See breaking note above for new-style transforms 
+		See breaking note above for new-style transforms
 	###
 
 	def transform_author(self, transformation, level):
@@ -193,7 +193,7 @@ class SocialObject(object):
 		this property as it may be difficult to sanitise and serialize.
 		"""
 		return self._content
-	
+
 	@content.setter
 	def content(self, value):
 		self._content = value
@@ -204,7 +204,7 @@ class SocialObject(object):
 		without any additional markup. For example, the name of a location, or a
 		person's full name. """
 		return self._displayName
-	
+
 	@displayName.setter
 	def displayName(self,value):
 		self._displayName = value
@@ -249,7 +249,7 @@ class SocialObject(object):
 	@published.setter
 	def published(self, value):
 		self._published = value
-	
+
 	@property
 	def tags(self):
 		""" A collection of SocialObjects associated with this object.
@@ -284,7 +284,7 @@ class SocialObject(object):
 class Address(SocialObject):
 	""" Generally used as an attribute of Place, encodes a textual
 	description of a physical address on Earth """
-	
+
 	def __init__(self):
 		super(Address, self).__init__()
 		self._formatted = None
@@ -374,7 +374,7 @@ class Comment(SocialObject):
 	def __init__(self):
 		super(Comment,self).__init__()
 		self._inReplyTo = None
-	
+
 	@property
 	def inReplyTo(self):
 		""" The SocialObject (or set of objects) this comment is in
@@ -394,7 +394,7 @@ class Event(SocialObject):
 		self._maybeAttending = None
 		self._notAttending = None
 		self._startTime = None
-	
+
 	@property
 	def attending(self):
 		""" A collection of People who have RSVP'd to an event """
@@ -452,7 +452,7 @@ class Image(SocialObject):
 	def fullImage(self):
 		""" A URI for a full-size version of this image. """
 		return self._fullImage
-	
+
 	@fullImage.setter
 	def fullImage(self, value):
 		self._fullImage = value
@@ -470,13 +470,13 @@ class Person(SocialObject):
 	def __init__(self):
 		super(Person,self).__init__()
 		self._image = None
-	
+
 	@property
 	def image(self):
 		""" An instance of Image used to visually represent this
 		Person."""
 		return self._image
-	
+
 	@image.setter
 	def image(self,value):
 		self._image = value

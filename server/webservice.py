@@ -195,8 +195,6 @@ class PRISONER(object):
 		builder = self.set_builder_reference(request,
 		ExperimentBuilder.ExperimentBuilder())
 
-
-
 		exp_design = request.form["design"]
 		policy = request.form["policy"]
 
