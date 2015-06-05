@@ -1,4 +1,4 @@
-Getting started
+Installing PRISONER
 ===============
 
 This tutorial helps you get up and running with a PRISONER instance.
@@ -53,3 +53,6 @@ From the PRISONER directory, run the following to start the local development se
 
 Make sure everything is working by visiting localhost:5000, where you should see
 a "Welcome to PRISONER" message.
+
+
+Next, we will write our first PRISONER experiment.

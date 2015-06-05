@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Getting started &mdash; PRISONER 0.2.3 documentation</title>
+  <title>Installing PRISONER &mdash; PRISONER 0.2.3 documentation</title>
   
 
   
@@ -34,8 +34,8 @@
   
     <link rel="top" title="PRISONER 0.2.3 documentation" href="index.html"/>
         <link rel="up" title="Tutorials" href="tutorials.html"/>
-        <link rel="next" title="prisoner package" href="prisoner.html"/>
-        <link rel="prev" title="Tutorials" href="tutorials.html"/> 
+        <link rel="next" title="Writing your first experiment" href="tutorials.helloworld.html"/>
+        <link rel="prev" title="Key concepts" href="tutorials.keyconcepts.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -79,12 +79,19 @@
           
               <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="tutorials.html">Tutorials</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.keyconcepts.html">Key concepts</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Installing PRISONER</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#installing-prisoner-for-local-development">Installing PRISONER for local development</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#spin-up-a-docker-vm">Spin-up a Docker VM</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#clone-from-github">Clone from GitHub</a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.helloworld.html">Writing your first experiment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.helloworld.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.helloworld.html#in-this-tutorial">In this tutorial</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.helloworld.html#privacy-policies">Privacy policies</a></li>
 </ul>
 </li>
 </ul>
@@ -163,7 +170,7 @@
       
           <li><a href="tutorials.html">Tutorials</a> &raquo;</li>
       
-    <li>Getting started</li>
+    <li>Installing PRISONER</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -176,8 +183,8 @@
 </div>
           <div role="main" class="document">
             
-  <div class="section" id="getting-started">
-<h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="installing-prisoner">
+<h1>Installing PRISONER<a class="headerlink" href="#installing-prisoner" title="Permalink to this headline">¶</a></h1>
 <p>This tutorial helps you get up and running with a PRISONER instance.</p>
 <div class="section" id="installing-prisoner-for-local-development">
 <h2>Installing PRISONER for local development<a class="headerlink" href="#installing-prisoner-for-local-development" title="Permalink to this headline">¶</a></h2>
@@ -200,7 +207,8 @@ worry about your environment and resolving dependencies. We have an image in Doc
 </div>
 <p>Now, PRISONER&#8217;s development server has started on port 5000. Test that
 everything is working, and that Docker has correctly mapped the port by visiting
-localhost:&lt;mapped_port&gt;. Depending on your Docker configuration, you may have to
+localhost:&lt;mapped_port&gt;, which should display a &#8220;Welcome to PRISONER&#8221; message.
+Depending on your Docker configuration, you may have to
 access the underlying VM via an alternative IP.</p>
 </div>
 <div class="section" id="clone-from-github">
@@ -216,6 +224,13 @@ at the command line to install any dependencies:</p>
 dependencies and avoid conflicts with your system Python configuration. See
 <a class="reference external" href="http://docs.python-guide.org/en/latest/dev/virtualenvs/">this guide</a> for more
 information about setting up virtual environments.</p>
+<p>From the PRISONER directory, run the following to start the local development server:</p>
+<div class="highlight-python"><div class="highlight"><pre>python server/prisoner.wsgi
+</pre></div>
+</div>
+<p>Make sure everything is working by visiting localhost:5000, where you should see
+a &#8220;Welcome to PRISONER&#8221; message.</p>
+<p>Next, we will write our first PRISONER experiment.</p>
 </div>
 </div>
 </div>
@@ -226,10 +241,10 @@ information about setting up virtual environments.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="prisoner.html" class="btn btn-neutral float-right" title="prisoner package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="tutorials.helloworld.html" class="btn btn-neutral float-right" title="Writing your first experiment" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="tutorials.html" class="btn btn-neutral" title="Tutorials" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="tutorials.keyconcepts.html" class="btn btn-neutral" title="Key concepts" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
