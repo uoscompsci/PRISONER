@@ -65,3 +65,13 @@ ethical and reproducibility perspectives:
    of experiments, the platform-agnostic nature of the privacy policy allows
    other researchers to replicate a study under the same constraints, even if
    they are not using PRISONER.
+
+Writing the privacy policy
+``````````````````````````
+Outside of the PRISONER directory, create a directory to store your experiment
+application. In there, create a new file called policy.xml. Populate it with the following:
+
+.. literalinclude:: code/tutorials.helloworld.policy.xml
+   :language: xml
+   
+So, what does this policy do?

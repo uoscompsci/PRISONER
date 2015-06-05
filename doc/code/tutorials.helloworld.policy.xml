@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<p:privacy-policy
+	xmlns:p="http://prisoner.cs.st-andrews.ac.uk/prisoner/privacy-policy"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://prisoner.cs.st-andrews.ac.uk/prisoner/privacy-policy privacy_policy.xsd">
+
+	<policy for="Facebook:User">
+		<attributes>
+			<attribute type="id">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="author">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="displayName">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="username">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="image">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="firstName">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="middleName">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="lastName">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="birthday">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+			<attribute type="gender">
+				<attribute-policy allow="retrieve"></attribute-policy>
+			</attribute>
+		</attributes>
+
+		<object-policy allow="retrieve">
+			<object-criteria>
+				<and-match>
+					<attribute-match match="author.id" on_object="session:Facebook.id" />
+				</and-match>
+			</object-criteria>
+		</object-policy>
+	</policy>
+</p:privacy-policy>
