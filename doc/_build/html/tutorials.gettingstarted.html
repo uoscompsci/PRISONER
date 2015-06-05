@@ -81,7 +81,8 @@
 <li class="toctree-l1 current"><a class="reference internal" href="tutorials.html">Tutorials</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="">Getting started</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#installing-prisoner-for-local-development">Installing PRISONER for local development</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#quickest-spin-up-a-docker-vm">Quickest: Spin-up a Docker VM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#spin-up-a-docker-vm">Spin-up a Docker VM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#clone-from-github">Clone from GitHub</a></li>
 </ul>
 </li>
 </ul>
@@ -183,8 +184,8 @@
 <p>For developing experiments, you will probably want to run a PRISONER server locally on your development machine to quickly iterate. There are two ways to do
 this: using our pre-prepared Docker VM image, or pulling the latest release from
 GitHub.</p>
-<div class="section" id="quickest-spin-up-a-docker-vm">
-<h3>Quickest: Spin-up a Docker VM<a class="headerlink" href="#quickest-spin-up-a-docker-vm" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="spin-up-a-docker-vm">
+<h3>Spin-up a Docker VM<a class="headerlink" href="#spin-up-a-docker-vm" title="Permalink to this headline">¶</a></h3>
 <p>If you have familiarity with the Docker environment, using the PRISONER Docker
 container is probably the easiest way to get up and running without having to
 worry about your environment and resolving dependencies. We have an image in Docker Hub which includes the latest release from our GitHub repository.</p>
@@ -201,6 +202,20 @@ worry about your environment and resolving dependencies. We have an image in Doc
 everything is working, and that Docker has correctly mapped the port by visiting
 localhost:&lt;mapped_port&gt;. Depending on your Docker configuration, you may have to
 access the underlying VM via an alternative IP.</p>
+</div>
+<div class="section" id="clone-from-github">
+<h3>Clone from GitHub<a class="headerlink" href="#clone-from-github" title="Permalink to this headline">¶</a></h3>
+<p>PRISONER is developed openly, with all active development pushed to GitHub.
+We recommend cloning the latest release tag rather than pulling from head for
+stability. From the directory where you cloned the repository, run the following
+at the command line to install any dependencies:</p>
+<div class="highlight-python"><div class="highlight"><pre>pip install -r requirements.txt
+</pre></div>
+</div>
+<p>We strongly recommend running PRISONER from within a virtualenv to isolate
+dependencies and avoid conflicts with your system Python configuration. See
+<a class="reference external" href="http://docs.python-guide.org/en/latest/dev/virtualenvs/">this guide</a> for more
+information about setting up virtual environments.</p>
 </div>
 </div>
 </div>

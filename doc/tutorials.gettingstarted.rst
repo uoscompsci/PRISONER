@@ -10,7 +10,7 @@ For developing experiments, you will probably want to run a PRISONER server loca
 this: using our pre-prepared Docker VM image, or pulling the latest release from
 GitHub.
 
-Quickest: Spin-up a Docker VM
+Spin-up a Docker VM
 `````````````````````````````
 If you have familiarity with the Docker environment, using the PRISONER Docker
 container is probably the easiest way to get up and running without having to
@@ -28,5 +28,28 @@ Now, start-up the VM::
 
 Now, PRISONER's development server has started on port 5000. Test that
 everything is working, and that Docker has correctly mapped the port by visiting
-localhost:<mapped_port>. Depending on your Docker configuration, you may have to
+localhost:<mapped_port>, which should display a "Welcome to PRISONER" message.
+Depending on your Docker configuration, you may have to
 access the underlying VM via an alternative IP.
+
+
+Clone from GitHub
+`````````````````````````````
+PRISONER is developed openly, with all active development pushed to GitHub.
+We recommend cloning the latest release tag rather than pulling from head for
+stability. From the directory where you cloned the repository, run the following
+at the command line to install any dependencies::
+
+ pip install -r requirements.txt
+
+We strongly recommend running PRISONER from within a virtualenv to isolate
+dependencies and avoid conflicts with your system Python configuration. See
+`this guide <http://docs.python-guide.org/en/latest/dev/virtualenvs/>`_ for more
+information about setting up virtual environments.
+
+From the PRISONER directory, run the following to start the local development server::
+
+ python server/prisoner.wsgi
+
+Make sure everything is working by visiting localhost:5000, where you should see
+a "Welcome to PRISONER" message.
