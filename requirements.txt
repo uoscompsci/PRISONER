@@ -11,6 +11,7 @@ mock
 nose
 oauth2
 pylast
+requests
 sqlalchemy
 tornado
 werkzeug

@@ -8,6 +8,14 @@
  Experimental applications can further delegate this cookie to participation
  clients (eg. the participant's browser) for a single session identifier.
 
+ * GetObject now accepts a dictionary of extra_args. This can be used to add
+  generic arguments to pass with object requests. At the moment, "limit" is the
+  only recognised arg, to return the top n items when a Collection is
+  requested. To maintain compatibility, avoid using service-specific args where
+  possible. Service gateways will be updated later to make full use of the
+  limit parameter, with some early support for this in
+  FacebookServiceGateway.Status()
+
 ### Miscellaneous
 
 * Web service has been refactored to use the Requests library for HTTP requests.

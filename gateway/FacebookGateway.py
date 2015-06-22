@@ -113,17 +113,16 @@ class FacebookServiceGateway(ServiceGateway):
 		self.access_token = None
 		self.session = None
 
-	def request_handler(self, request, operation, payload):
+	def request_handler(self, request, operation, payload, extra_args=None):
 		""" Wrapper around object requests. Used to inject any necessary debug headers
 		"""
-
+		self.props['args'] = extra_args
 		resp = request(operation, payload)
 		headers = {}
 		if "debug" in self.props:
 			headers['PRISONER-FB-Permissions'] = self.perms
 
 		#return ServiceGateway(resp, headers)
-		print "resp: %s" % resp
 		return WrappedResponse(resp, headers)
 
 
@@ -755,6 +754,14 @@ class FacebookServiceGateway(ServiceGateway):
 
 		elif (operation == "GET"):
 			try:
+				# do we have a limit
+				limit = None
+				if "limit" in self.props['args']:
+					limit = self.props['args']['limit']
+
+
+
+
 				# Get user ID and query Facebook for their info.
 				user_id = payload
 				status_coll = StatusList()
@@ -822,12 +829,18 @@ class FacebookServiceGateway(ServiceGateway):
 
 					# Compose next address.
 					page += 1
+					print "is %s > %s" % (len(status_list), limit)
+					if limit and len(status_list) >= limit:
+						break
 					if("paging" in result_set and "next" in result_set["paging"]):
 
 						next_address = result_set["paging"]["next"]
 						result_set = self.get_graph_data(next_address)
 					else:
 						break
+
+				if limit:
+					status_list = status_list[:limit]
 
 				# Add the status list to our collection.
 				status_coll.objects = status_list

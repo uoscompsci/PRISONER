@@ -25,7 +25,9 @@ import urllib2
 
 
 # set this to the URL of your PRISONER instance
-SERVER_URL = "https://prisoner.cs.st-andrews.ac.uk/prisoner"
+#SERVER_URL = "https://prisoner.cs.st-andrews.ac.uk/prisoner"
+#SERVER_URL = "http://localhost:5000"
+SERVER_URL = "http://prisoner-demo.org:5000"
 
 COOKIE_KEY = os.urandom(20)
 
@@ -149,18 +151,18 @@ class PRISONER(object):
 		t = self.jinja_env.get_template(template_name)
 		return Response(t.render(context), mimetype="text/html")
 
-	def get_builder_reference(self, request,session):
+	def get_builder_reference(self, request):
 		""" Each session has its own instance of PRISONER's internals,
 		keyed on the session cookie.
 		"""
 		#return self.session_internals[request.cookies.get("PRISession")]
-		return self.session_internals[session]
+		return self.session_internals[request.sessionid]
 
-	def set_builder_reference(self, request, session, builder):
+	def set_builder_reference(self, request, builder):
 		#prisession = request.args["PRISession"]
-		prisession = session
+		prisession = request.sessionid
 		self.session_internals[prisession] = builder
-		return self.get_builder_reference(request,session)
+		return self.get_builder_reference(request)
 
 	def on_invalidate(self, request, session):
 		""" Invalidate the current session, removing it from memory.
@@ -221,11 +223,11 @@ class PRISONER(object):
 		write_out)
 		return Response(str(participant[0]))
 
-	def on_schema(self, request, session):
+	def on_schema(self, request):
 		""" Builds the database schema matching this experimental design
 		"""
 		print "on_schema called"
-		builder = self.set_builder_reference(request, session,
+		builder = self.set_builder_reference(request,
 		ExperimentBuilder.ExperimentBuilder())
 		print "on_schema got builder"
 
@@ -276,10 +278,13 @@ class PRISONER(object):
 		token. If response is good, call /begin providing the given
 		PRISession value.
 		"""
-		return Response("Welcome to PRISONER. Now call /begin to "+\
+		response = Response("Welcome to PRISONER. Now call /begin to "+\
 		"initialise your experiment, supplying the PRISession parameter.")
+		return response
 
-	def on_begin(self, request, session):
+	def on_begin(self, request):
+		session = request.sessionid
+
 		builder = self.set_builder_reference(request,ExperimentBuilder.ExperimentBuilder())
 
 		privacy_policy = request.form["policy"]
@@ -307,8 +312,10 @@ class PRISONER(object):
 			re = Response(consent_url)
 			return re
 		else:
-			return Response("%s/start_consent?pctoken=%s&PRISession=%s" % (SERVER_URL,
+			response = Response("%s/start_consent?pctoken=%s&PRISession=%s" % (SERVER_URL,
 			builder.token, session))
+
+			return response
 		#return redirect(consent_url)
 
 	def on_post_response(self, request):
@@ -330,13 +337,13 @@ class PRISONER(object):
 
 
 	def threaded_get_object(self, request, provider, object_name, payload,
-	criteria=None):
+	criteria=None, extra_args=None):
 		jsonpickle.handlers.registry.register(datetime.datetime,
 		SocialObjects.DateTimeJSONHandler)
 
 		builder = self.get_builder_reference(request)
 		response = builder.sog.GetObjectJSON(provider, object_name, payload,
-		criteria)
+		criteria, extra_args)
 
 		resp = Response(response)
 		resp.headers["Content-Type"] = "application/json"
@@ -375,12 +382,20 @@ class PRISONER(object):
 			except:
 				return Response("{}")
 
+		extra_args = {}
+		if "limit" in request.args:
+			limit = int(request.args["limit"])
+			extra_args["limit"] = limit
+
+
 		return self.threaded_get_object(request, provider, object_name,
-		payload, criteria)
+		payload, criteria, extra_args)
 
 
 	""" START server handlers migrated from ExpBuilder """
 	def on_consent(self, request):
+		request.sessionid = request.args["PRISession"]
+
 		builder = self.get_builder_reference(request)
 		token = request.args["pctoken"]
 		resp = "Stand back. We're doing science.<br />"
@@ -496,16 +511,17 @@ class PRISONER(object):
 	def on_session_timeout(self, request):
 		return self.render_template("session.html")
 
-	def dispatch_request(self, request,session):
+	def dispatch_request(self, request):
 		adapter = self.url_map.bind_to_environ(request.environ)
+
 		try:
 			endpoint, values = adapter.match()
-			return getattr(self, "on_" + endpoint)(request, session=session,
+			return getattr(self, "on_" + endpoint)(request,
 			**values)
 		except HTTPException, e:
 			return e
 		except KeyError, e:
-			#raise
+			raise
 			return self.on_session_timeout(request)
 
 	def wsgi_app(self, environ, start_response):
@@ -521,15 +537,25 @@ class PRISONER(object):
 		if not sid:
 			request.session = self.session_store.new()
 			request.session["active"] = True
+			print "No session. Started %s" % request.session.sid
 		else:
-			request.session = self.session_store.get(sid)
+				request.session = self.session_store.get(sid)
 
-		response = self.dispatch_request(request,session=sid)
+				print "Got existing session %s" % (request.session.sid)
+
+				#request.session = self.session_store.new()
+				#request.session["active"] = True
+
+		request.sessionid = sid
+
+		response = self.dispatch_request(request)
 
 		if "RequestRedirect" in type(response).__name__:
+			print "Redirect!"
 			return response(environ,start_response)
 
 		if request.session.should_save:
+			print "Now setting cookie %s" % request.session.sid
 			self.session_store.save(request.session)
 			response.set_cookie("PRISession", request.session.sid)
 			#response.headers.add("PRISession", request.session.sid)
@@ -548,5 +574,6 @@ if __name__ == "__main__":
 	app = create_app()
 	#print app
 	print "Starting PRISONER Web Service..."
+	print "Templates at %s" % TEMPLATE_URL
 	run_simple("localhost", 5000, app, use_debugger=True, use_reloader=True,
-	static_files={"prisoner/static": TEMPLATE_URL})
+	static_files={"/static": TEMPLATE_URL})

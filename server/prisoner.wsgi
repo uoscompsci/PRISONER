@@ -26,7 +26,12 @@ from werkzeug.debug import DebuggedApplication
 from werkzeug.serving import run_simple
 app = server.webservice.create_app()
 print "Starting PRISONER Web Service..."
-TEMPLATE_URL = "/usr/bin/prisoner/static"
 
-run_simple("0.0.0.0", 5000, app, use_debugger=True, use_reloader=False,
+# DOCKER
+#TEMPLATE_URL = "/usr/bin/prisoner/static"
+
+# local dev
+TEMPLATE_URL =  os.path.join(dir, "../static")
+
+run_simple("0.0.0.0", 5000, app, use_debugger=True, use_reloader=True,
 static_files={"/static": TEMPLATE_URL})

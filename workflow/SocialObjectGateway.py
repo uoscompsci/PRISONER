@@ -25,9 +25,9 @@ class SocialObjectsGateway(object):
 	"""
 	This is a friendlier interface to PRISONER's internals,
 	which participation clients should access.
-	This coordinates access to other service gateways, and the management of experimental responses. 
+	This coordinates access to other service gateways, and the management of experimental responses.
 
-	A single instance of this object should be maintained throughout the lifecycle of an experimental application. 
+	A single instance of this object should be maintained throughout the lifecycle of an experimental application.
 	"""
 	def __init__(self, server_url=None):
 		self.privacy_policy = None
@@ -40,11 +40,11 @@ class SocialObjectsGateway(object):
 		self.gateways = {}
 
 		# maintains a PersistenceManager for DB interaction
-		self.persistence = None 
+		self.persistence = None
 		self.policy_processor = None
 
-		self.participant = None	
-	
+		self.participant = None
+
 		# stores instances of SocialObjects under a unique id so clients
 		# can refer to previous instances. TODO: this needs a simple
 		# layer of authentication. is the current user the owner of this
@@ -73,8 +73,8 @@ class SocialObjectsGateway(object):
 		self.cached_objects[ident] = object_to_cache
 		return ident
 
-	
-	
+
+
 	def request_authentication(self, provider, callback):
 		""" Call this if it is necessary to perform authenticated API
 		calls with a service gateway (usually required to write data as a person or to
@@ -97,7 +97,7 @@ class SocialObjectsGateway(object):
 		gateway = self.__getServiceGateway(provider)
 		authent_url = gateway.request_authentication(callback)
 
-		return authent_url	
+		return authent_url
 		# what url do i need to authetnicate?
 		# let the user consume the authent url and come back in their
 		# own time
@@ -119,7 +119,7 @@ class SocialObjectsGateway(object):
 		:type provider: str.
 		:param request: The request received from the provider when it
 		called the PRISONER callback. This should contain any parameters needed to
-		complete authentication 
+		complete authentication
 		:type request: werkzeug Request
 		"""
 		gateway = self.__getServiceGateway(provider)
@@ -145,7 +145,7 @@ class SocialObjectsGateway(object):
 		gateway = self.__getServiceGateway(provider)
 		auth_success = gateway.restore_authentication(access_token)
 		return auth_success
-	
+
 
 	def provide_privacy_policy(self, privacy_policy):
 		"""
@@ -160,7 +160,7 @@ class SocialObjectsGateway(object):
 			raise Exception("Privacy policy already defined. If \
 			you need to change it, start a new experiment.")
 
-		self.privacy_policy = privacy_policy	
+		self.privacy_policy = privacy_policy
 		self.policy_processor = PolicyProcessor(self.privacy_policy,
 		self)
 
@@ -193,20 +193,21 @@ class SocialObjectsGateway(object):
 		:type schema: str.
 		:param response: The response dictionary to write to the specified schema
 		:type response: dict
-		"""	
+		"""
 		if not self.persistence:
 			raise Exception("No experimental design supplied")
-	
-		self.persistence.post_response(schema, response)	
 
-	def GetObjectJSON(self, provider, object_type, payload, criteria):
+		self.persistence.post_response(schema, response)
+
+	def GetObjectJSON(self, provider, object_type, payload, criteria,
+	extra_args=None):
 		""" Interface for retrieving objects from a service gateway, for
-		consumption by web services.	
+		consumption by web services.
 
 		This differs from GetObject in some fundamental ways. GetObject
 		is more pythonic - you request objects by supplying relevant SocialObjects, and
 		you get SocialObject instances in return. This method however, receives
-		plain-text responses, and returns 
+		plain-text responses, and returns
 		JSON objects. Whereas GetObject expects a
 		semantically-appropriate SocialObject as the payload (eg. supply an instance of Person to
 		receive objects of a given type owned by that Person), this method expects a
@@ -223,19 +224,19 @@ class SocialObjectsGateway(object):
 		requests back to the full representation of the data. Note that subsequent
 		attempts to retrieve the cached object are subject to the privacy policy
 		sanitisation process of the *original* request.
-		""" 
+		"""
 		# evaluate payload
 		eval_payload = self.policy_processor._infer_object(payload)
 		eval_payload_obj = SocialObjects.SocialObject()
 		eval_payload_obj.id = eval_payload
-		
+
 		# use this to passthrough original object, not wrapped
 		# as a dumb SocialObject
 		eval_payload_obj = eval_payload
 
 		# call getobject with cleaned object
 		ret_object = self.GetObject(provider, object_type,
-		eval_payload_obj, True, criteria)
+		eval_payload_obj, True, criteria, extra_args)
 		# cache the object under a unique id, JSONify, return
 		if ret_object != None:
 			ident = self.cache_object(ret_object)
@@ -269,9 +270,9 @@ class SocialObjectsGateway(object):
 		:type to_cache: object
 		"""
 		self.internal_cache[key] = copy.deepcopy(to_cache)
-	
+
 	def GetObject(self, provider, object_type, payload, allow_many=False,
-	criteria = None):
+	criteria = None, extra_args = None):
 		"""
 		Interface for retrieving an object from a service gateway.
 		Requests are verified against the privacy policy, and returned objects are sanitised as appropriate.
@@ -303,21 +304,21 @@ class SocialObjectsGateway(object):
 		:returns: SocialObject -- sanitised for consumption by participation client
 		"""
 		headers = SARHeaders("GET", provider, object_type, payload)
-		
+
 		if not self.privacy_policy:
 			raise Exception("Provide a privacy policy before"\
 			" making requests.")
 		provider_gateway = self.__getServiceGateway(provider)
-		
+
 		processor = self.policy_processor
 
 		object_type = processor._validate_object_request("GET",
 		provider, object_type, payload)
-	
-		if "%s_%s" % (object_type, payload) not in self.internal_cache:		
+
+		if "%s_%s" % (object_type, payload) not in self.internal_cache:
 			gateway_attr = getattr(provider_gateway,object_type)
 			request_handler = getattr(provider_gateway,"request_handler")
-			response = request_handler(gateway_attr,"GET",payload)
+			response = request_handler(gateway_attr,"GET",payload, extra_args)
 			self.__add_to_cache("%s_%s" % (object_type,
 			payload), response)
 		else:
@@ -329,7 +330,7 @@ class SocialObjectsGateway(object):
 			new_coll = response.social_object
 			if criteria:
 				lambda_func = eval("lambda x: %s" % criteria)
-				response.social_object.objects = filter(lambda_func, response.social_object.objects)				
+				response.social_object.objects = filter(lambda_func, response.social_object.objects)
 			for resp in response.social_object.objects:
 				resp.provider = provider
 				response_obj = SocialActivityResponse(resp, headers)
@@ -354,7 +355,7 @@ class SocialObjectsGateway(object):
 			return sanitised_response
 
 	def get_service_gateway(self, provider):
-		""" External wrapper to internal function """		
+		""" External wrapper to internal function """
 		return self.__getServiceGateway(provider)
 
 	def __getServiceGateway(self, provider):
@@ -367,7 +368,7 @@ class SocialObjectsGateway(object):
 		"""
 		if provider in self.gateways:
 			return self.gateways[provider]
-		try:	
+		try:
 			provider_gateway = globals()["%sServiceGateway" %
 			provider](policy=self.policy_processor,props=self.props[provider])
 		except:
@@ -390,10 +391,10 @@ class SocialObjectsGateway(object):
 		headers = SARHeaders("POST", provider, object_type, payload)
 		if not self.privacy_policy:
 			raise Exception("Provide a privacy policy before"\
-			" making requests.")	
+			" making requests.")
 
 		provider_gateway = self.__getServiceGateway(provider)
-		
+
 		processor = PolicyProcessor(self.privacy_policy)
 		request_valid = processor._validate_object_request("POST",
 		provider, object_type, payload)
@@ -401,6 +402,5 @@ class SocialObjectsGateway(object):
 		gateway_attr = getattr(provider_gateway, object_type)
 		response = gateway_attr("POST",payload)
 		response_obj = SocialActivityResponse(response, headers)
-		
+
 		sanitised_response = processor._sanitise_object_request(response_obj)
-		
