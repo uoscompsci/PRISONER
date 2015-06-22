@@ -1,3 +1,7 @@
+""" The Facebook Service Gateway allows you to access Facebook from PRISONER experiments. In order to use Facebook, you must register an app with the Facebook Developers portal and provide three additional props
+in your experimental design file. The app_id and app_secret props correspond to the values for your app, and the api_version prop dictates which version of the Facebook API your experiment targets. At this time, only "2.0" is an acceptable API version. See the documentation on key concepts for guidance on using props in experimental designs.
+"""
+
 from prisoner.gateway.ServiceGateway import ServiceGateway, WrappedResponse
 import prisoner.SocialObjects as SocialObjects
 
