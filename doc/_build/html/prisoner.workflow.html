@@ -80,6 +80,11 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="tutorials.keyconcepts.html">Key concepts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.demo.html">Running the PRISONER demo</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#pre-requisites">Pre-requisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#start-the-docker-container">Start the Docker container</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials.gettingstarted.html">Installing PRISONER</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="tutorials.gettingstarted.html#installing-prisoner-for-local-development">Installing PRISONER for local development</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="tutorials.gettingstarted.html#spin-up-a-docker-vm">Spin-up a Docker VM</a></li>
@@ -566,7 +571,7 @@ This coordinates access to other service gateways, and the management of experim
 <p>A single instance of this object should be maintained throughout the lifecycle of an experimental application.</p>
 <dl class="method">
 <dt id="prisoner.workflow.SocialObjectGateway.SocialObjectsGateway.GetObject">
-<code class="descname">GetObject</code><span class="sig-paren">(</span><em>provider</em>, <em>object_type</em>, <em>payload</em>, <em>allow_many=False</em>, <em>criteria=None</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.workflow.SocialObjectGateway.SocialObjectsGateway.GetObject" title="Permalink to this definition">¶</a></dt>
+<code class="descname">GetObject</code><span class="sig-paren">(</span><em>provider</em>, <em>object_type</em>, <em>payload</em>, <em>allow_many=False</em>, <em>criteria=None</em>, <em>extra_args=None</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.workflow.SocialObjectGateway.SocialObjectsGateway.GetObject" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interface for retrieving an object from a service gateway.
 Requests are verified against the privacy policy, and returned objects are sanitised as appropriate.
 The payload and filter arguments are semantically distinct. See
@@ -604,13 +609,13 @@ eg. &#8216;&#8220;party&#8221; in x.tags&#8217;</li>
 
 <dl class="method">
 <dt id="prisoner.workflow.SocialObjectGateway.SocialObjectsGateway.GetObjectJSON">
-<code class="descname">GetObjectJSON</code><span class="sig-paren">(</span><em>provider</em>, <em>object_type</em>, <em>payload</em>, <em>criteria</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.workflow.SocialObjectGateway.SocialObjectsGateway.GetObjectJSON" title="Permalink to this definition">¶</a></dt>
+<code class="descname">GetObjectJSON</code><span class="sig-paren">(</span><em>provider</em>, <em>object_type</em>, <em>payload</em>, <em>criteria</em>, <em>extra_args=None</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.workflow.SocialObjectGateway.SocialObjectsGateway.GetObjectJSON" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interface for retrieving objects from a service gateway, for
 consumption by web services.</p>
 <p>This differs from GetObject in some fundamental ways. GetObject
 is more pythonic - you request objects by supplying relevant SocialObjects, and
 you get SocialObject instances in return. This method however, receives
-plain-text responses, and returns 
+plain-text responses, and returns
 JSON objects. Whereas GetObject expects a
 semantically-appropriate SocialObject as the payload (eg. supply an instance of Person to
 receive objects of a given type owned by that Person), this method expects a
@@ -692,7 +697,7 @@ and returns the identifier.</p>
 </tbody>
 </table>
 <p>called the PRISONER callback. This should contain any parameters needed to
-complete authentication 
+complete authentication
 :type request: werkzeug Request</p>
 </dd></dl>
 

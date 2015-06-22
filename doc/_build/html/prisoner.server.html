@@ -78,6 +78,32 @@
           
           
               <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.keyconcepts.html">Key concepts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.demo.html">Running the PRISONER demo</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#pre-requisites">Pre-requisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#start-the-docker-container">Start the Docker container</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.gettingstarted.html">Installing PRISONER</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.gettingstarted.html#installing-prisoner-for-local-development">Installing PRISONER for local development</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tutorials.gettingstarted.html#spin-up-a-docker-vm">Spin-up a Docker VM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorials.gettingstarted.html#clone-from-github">Clone from GitHub</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.helloworld.html">Writing your first experiment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.helloworld.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.helloworld.html#in-this-tutorial">In this tutorial</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.helloworld.html#privacy-policies">Privacy policies</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tutorials.helloworld.html#writing-the-privacy-policy">Writing the privacy policy</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1 current"><a class="reference internal" href="prisoner.html">prisoner package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="prisoner.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="prisoner.gateway.html">prisoner.gateway package</a><ul>
@@ -265,7 +291,7 @@ provided a track ID. This allows requests to be lightweight while
 PRISONER temporarily stores the complete version of that object.</p>
 <dl class="method">
 <dt id="prisoner.server.webservice.PRISONER.dispatch_request">
-<code class="descname">dispatch_request</code><span class="sig-paren">(</span><em>request</em>, <em>session</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.dispatch_request" title="Permalink to this definition">¶</a></dt>
+<code class="descname">dispatch_request</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.dispatch_request" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -275,14 +301,14 @@ PRISONER temporarily stores the complete version of that object.</p>
 
 <dl class="method">
 <dt id="prisoner.server.webservice.PRISONER.get_builder_reference">
-<code class="descname">get_builder_reference</code><span class="sig-paren">(</span><em>request</em>, <em>session</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.get_builder_reference" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_builder_reference</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.get_builder_reference" title="Permalink to this definition">¶</a></dt>
 <dd><p>Each session has its own instance of PRISONER&#8217;s internals,
 keyed on the session cookie.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="prisoner.server.webservice.PRISONER.on_begin">
-<code class="descname">on_begin</code><span class="sig-paren">(</span><em>request</em>, <em>session</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.on_begin" title="Permalink to this definition">¶</a></dt>
+<code class="descname">on_begin</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.on_begin" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -366,7 +392,7 @@ design and privacy policy, and a form of columns to insert about this participan
 
 <dl class="method">
 <dt id="prisoner.server.webservice.PRISONER.on_schema">
-<code class="descname">on_schema</code><span class="sig-paren">(</span><em>request</em>, <em>session</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.on_schema" title="Permalink to this definition">¶</a></dt>
+<code class="descname">on_schema</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.on_schema" title="Permalink to this definition">¶</a></dt>
 <dd><p>Builds the database schema matching this experimental design</p>
 </dd></dl>
 
@@ -403,12 +429,12 @@ be retrieved.</p>
 
 <dl class="method">
 <dt id="prisoner.server.webservice.PRISONER.set_builder_reference">
-<code class="descname">set_builder_reference</code><span class="sig-paren">(</span><em>request</em>, <em>session</em>, <em>builder</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.set_builder_reference" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_builder_reference</code><span class="sig-paren">(</span><em>request</em>, <em>builder</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.set_builder_reference" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="prisoner.server.webservice.PRISONER.threaded_get_object">
-<code class="descname">threaded_get_object</code><span class="sig-paren">(</span><em>request</em>, <em>provider</em>, <em>object_name</em>, <em>payload</em>, <em>criteria=None</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.threaded_get_object" title="Permalink to this definition">¶</a></dt>
+<code class="descname">threaded_get_object</code><span class="sig-paren">(</span><em>request</em>, <em>provider</em>, <em>object_name</em>, <em>payload</em>, <em>criteria=None</em>, <em>extra_args=None</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.server.webservice.PRISONER.threaded_get_object" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">

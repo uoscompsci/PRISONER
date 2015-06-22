@@ -35,7 +35,7 @@
     <link rel="top" title="PRISONER 0.2.3 documentation" href="index.html"/>
         <link rel="up" title="Tutorials" href="tutorials.html"/>
         <link rel="next" title="Writing your first experiment" href="tutorials.helloworld.html"/>
-        <link rel="prev" title="Key concepts" href="tutorials.keyconcepts.html"/> 
+        <link rel="prev" title="Running the PRISONER demo" href="tutorials.demo.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -80,6 +80,11 @@
               <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="tutorials.html">Tutorials</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="tutorials.keyconcepts.html">Key concepts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.demo.html">Running the PRISONER demo</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#pre-requisites">Pre-requisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#start-the-docker-container">Start the Docker container</a></li>
+</ul>
+</li>
 <li class="toctree-l2 current"><a class="current reference internal" href="">Installing PRISONER</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#installing-prisoner-for-local-development">Installing PRISONER for local development</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#spin-up-a-docker-vm">Spin-up a Docker VM</a></li>
@@ -91,7 +96,10 @@
 <li class="toctree-l2"><a class="reference internal" href="tutorials.helloworld.html">Writing your first experiment</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="tutorials.helloworld.html#prerequisites">Prerequisites</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tutorials.helloworld.html#in-this-tutorial">In this tutorial</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tutorials.helloworld.html#privacy-policies">Privacy policies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.helloworld.html#privacy-policies">Privacy policies</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tutorials.helloworld.html#writing-the-privacy-policy">Writing the privacy policy</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -198,13 +206,10 @@ container is probably the easiest way to get up and running without having to
 worry about your environment and resolving dependencies. We have an image in Docker Hub which includes the latest release from our GitHub repository.</p>
 <p>This guide assumes you have installed Docker and are familiar with using it.</p>
 <p>To spin-up a PRISONER instance, run the following at the command line:</p>
-<div class="highlight-python"><div class="highlight"><pre>TODO: line to spin-up Docker
+<div class="highlight-python"><div class="highlight"><pre>docker run -p 5000:5000 --name prisoner lhutton/prisoner
 </pre></div>
 </div>
-<p>Now, start-up the VM:</p>
-<div class="highlight-python"><div class="highlight"><pre>TODO: line to start instance
-</pre></div>
-</div>
+<p>This will pull the prisoner image from the DockerHub registry, and its prerequisites, which may take several minutes then start an instance of the container.</p>
 <p>Now, PRISONER&#8217;s development server has started on port 5000. Test that
 everything is working, and that Docker has correctly mapped the port by visiting
 localhost:&lt;mapped_port&gt;, which should display a &#8220;Welcome to PRISONER&#8221; message.
@@ -244,7 +249,7 @@ a &#8220;Welcome to PRISONER&#8221; message.</p>
         <a href="tutorials.helloworld.html" class="btn btn-neutral float-right" title="Writing your first experiment" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="tutorials.keyconcepts.html" class="btn btn-neutral" title="Key concepts" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="tutorials.demo.html" class="btn btn-neutral" title="Running the PRISONER demo" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

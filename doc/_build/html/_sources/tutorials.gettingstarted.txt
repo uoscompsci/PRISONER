@@ -20,11 +20,9 @@ This guide assumes you have installed Docker and are familiar with using it.
 
 To spin-up a PRISONER instance, run the following at the command line::
 
- TODO: line to spin-up Docker
+ docker run -p 5000:5000 --name prisoner lhutton/prisoner
 
-Now, start-up the VM::
-
- TODO: line to start instance
+This will pull the prisoner image from the DockerHub registry, and its prerequisites, which may take several minutes then start an instance of the container.
 
 Now, PRISONER's development server has started on port 5000. Test that
 everything is working, and that Docker has correctly mapped the port by visiting
