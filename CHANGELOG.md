@@ -8,13 +8,16 @@
  Experimental applications can further delegate this cookie to participation
  clients (eg. the participant's browser) for a single session identifier.
 
- * GetObject now accepts a dictionary of extra_args. This can be used to add
+* GetObject now accepts a dictionary of extra_args. This can be used to add
   generic arguments to pass with object requests. At the moment, "limit" is the
   only recognised arg, to return the top n items when a Collection is
   requested. To maintain compatibility, avoid using service-specific args where
   possible. Service gateways will be updated later to make full use of the
   limit parameter, with some early support for this in
   FacebookServiceGateway.Status()
+
+* PolicyProcessor has been refactored to significantly greatly improve maintainability, using a high-level model of the policy rather than constantly parsing the XML. In addition, objects are sanitised based on their *actual* type rather than the declared type of the service gateway function, to avoid any mismatches. This also means nested objects are now correctly sanitised. 
+
 
 ### Miscellaneous
 

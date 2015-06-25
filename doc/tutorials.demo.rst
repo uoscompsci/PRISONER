@@ -8,13 +8,9 @@ Prerequisites
 
 Facebook app
 ````````````
-The PRISONER demo uses data from Facebook. To run this demo, you will need to have a Facebook account to test the experiment with, and you will need to be a registered Facebook developer, and create an app which PRISONER can use to make authenticated requests to the PRISONER API.
+The PRISONER demo uses data from Facebook. To run this demo, you will need to have a Facebook account to test the experiment with, and you will need to be a registered Facebook developer, and create an app which PRISONER can use to make authenticated requests to the PRISONER API. Please follow these steps:
 
-If you are already familiar with the Facebook Developers interface, please create a new application, and note its App ID and App Secret, as you will need to provide PRISONER with these details when you start the demo application. In addition, please add "localhost" as an App Domain and Site URL under the app's settings.
-
-If you are not familiar with creating Facebook apps, please follow these steps:
-
-* Visit https://developers.facebook.com and follow the steps to register as a developer, if you are not already registered.
+* Visit https://developers.facebook.com and follow the steps to register as a developer, if you have not done so before.
 * From the navigation bar, click "My Apps > Add a new app > Website".
 * Provide a name for your experiment, such as "PRISONER Demo". The name you choose here is not significant.
 * Click "Skip quick start", then go to the "Settings" page. Enter "localhost" as the Site URL and App Domains.
@@ -26,15 +22,21 @@ You will need to be running `Docker <https://www.docker.com>`_ to run the demo c
 
 Start the Docker container
 ------------------------
+The quickest way to get started is to paste the following at the command line. This will download and run a small script which starts the Docker container. You can skip to the next section for more information.
 
-From the command-line, run the following to download the Docker image for the PRISONER demo and start the container::
+If you'd rather start the container manually, take these extra steps. If you are using boot2docker, for example if you are running OS X, you should run the following commands to correctly map the ports to the VirtualBox VM. If you are running Docker natively on Linux, you do not need to do this::
 
-  docker run -p 9000:9000 -p 5000:5000 --name prisoner-demo lhutton/prisoner-demo
+  VBoxManage controlvm boot2docker-vm natpf1 "prisoner,tcp,127.0.0.1,5000,,5000"
+  VBoxManage controlvm boot2docker-vm natpf1 "demo,tcp,127.0.0.1,9000,,9000"
 
-You will be prompted to enter the Facebook App ID and secret from the previous step. Then, you will be given a URL to visit to start testing the experiment.
+From the command line, run the following to download the Docker image for the PRISONER demo and start the container::
+
+  docker run -i -t -p 9000:9000 -p 5000:5000 --name prisoner-demo lhutton/prisoner-demo
 
 Running the demo
 ----------------
+When the container starts, you will be prompted to enter the Facebook App ID and secret you noted earlier. Then, you will be given a URL to visit to start testing the experiment.
+
 This demo shows the workflow of a trivial experiment which collects some data from your Facebook profile, and displays it in the browser. You can run this experiment to make sure that the PRISONER instance is working. You will see how PRISONER provides the bootstrapping interface to the experiment, showing some basic information about how the experiment works, and the process of authenticating with Facebook. You can look at how the demo is implemented by visiting /usr/bin/prisoner-demo. "demo.py" implements the server for the web experiment, and shows how the PRISONER session is instantiated, and how Facebook data are collected and displayed. In "static/policy/design.xml" you can see the privacy policy which constrains this experiment. If you are not familiar with the role of the policy, consider reviewing the "Writing your first experiment" tutorial.
 
 Modifying the demo

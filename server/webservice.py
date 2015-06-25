@@ -26,8 +26,7 @@ import urllib2
 
 # set this to the URL of your PRISONER instance
 #SERVER_URL = "https://prisoner.cs.st-andrews.ac.uk/prisoner"
-#SERVER_URL = "http://localhost:5000"
-SERVER_URL = "http://prisoner-demo.org:5000"
+SERVER_URL = "http://localhost:5000"
 
 COOKIE_KEY = os.urandom(20)
 
@@ -573,7 +572,7 @@ if __name__ == "__main__":
 	from werkzeug.serving import run_simple
 	app = create_app()
 	#print app
-	print "Starting PRISONER Web Service..."
-	print "Templates at %s" % TEMPLATE_URL
+	#print "Starting PRISONER Web Service..."
+	#print "Templates at %s" % TEMPLATE_URL
 	run_simple("localhost", 5000, app, use_debugger=True, use_reloader=True,
 	static_files={"/static": TEMPLATE_URL})
