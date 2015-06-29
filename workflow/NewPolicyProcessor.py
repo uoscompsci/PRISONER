@@ -9,6 +9,25 @@ PRIVACY_POLICY_XSD = os.path.join(dir, "../xsd/privacy_policy.xsd")
 
 op_match = {"GET": "retrieve", "POST": "publish", "PUT": "store"}
 
+class PolicyRule(object):
+    """ Encodes the policy for a single social object.
+    """
+
+    def __init__(self, policy_for):
+        pass
+
+    @def for_object():
+        doc = "The for_object property."
+        def fget(self):
+            return self._for_object
+        def fset(self, value):
+            self._for_object = value
+        def fdel(self):
+            del self._for_object
+        return locals()
+for_object = property(**for_object())
+
+
 class PolicyProcessor(object):
     """ This is a replacement for the old PolicyProcessor. It is NOT API
     compatible with the old one.
