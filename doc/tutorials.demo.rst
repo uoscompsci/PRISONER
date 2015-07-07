@@ -28,6 +28,10 @@ From the command line, run the following to download the Docker image for the PR
 
   docker run -i -t -p 9000:9000 -p 5000:5000 --name prisoner-demo lhutton/prisoner-demo
 
+If your /etc/resolv.conf points to 127.0.0.1 (default on Ubuntu installs since 12.04) Docker will try to use public DNS to resolve domains. In some configurations, this might not work (if you receive "Name or service not known" errors when trying to use this experiment, this is probably the cause), in which case you will need to manually provide a nameserver by running the container as follows:
+
+ docker run -i -t -p 9000:9000 -p 5000:5000 -dns [YOUR_NAMESERVER_HERE] --name prisoner-demo lhutton/prisoner-demo
+
 Running the demo
 ----------------
 When the container starts, you will be prompted to enter the Facebook App ID and secret you noted earlier. Then, you will be given a URL to visit to start testing the experiment.
@@ -42,7 +46,12 @@ You can look at how the demo is implemented by visiting /usr/bin/prisoner-demo. 
 
 Modifying the demo
 ------------------
-We can see how trivial modifications to the policy affect the execution of the experiment. For example, when you tried this experiment, you will have seen that your name was displayed, but not your politics and religion, even if you have provided this in your Facebook profile. In demo.py we make a request to the PRISONER API for a "User" object in our on_get() method, which retrieves a user's biographical attributes, so why are these missing? If we turn to policy.xml, we can see why. Note that in the policy element, we enumerate the gender, first name, and last name attributes, which we have "retrieve" policies for. This provides a whitelist of the data we can collect, so let's add the following religion and politics clauses after the "last name" attribute policy:
+We can see how trivial modifications to the policy affect the execution of the experiment. For example, when you tried this experiment, you will have seen that your name was displayed, but not your politics Moreover, note that few users were associated with Likes ex- plicitly revealing their attributes. For example, less than 5% of users labeled as gay were connected with explicitly gay groups, such as No H8 Campaign, “Being Gay,” “Gay Marriage,” “I love Being
+Fig. 4. Accuracy of selected predictions as a function of the number of available Likes. Accuracy is expressed as AUC (gender) and Pearson’s corre- lation coefficient (age and Openness). About 50% of users in this sample had at least 100 Likes and about 20% had at least 250 Likes. Note, that for gender (dichotomous variable) the random guessing baseline corresponds to an AUC = 0.50.
+Prediction accuracy of regression for numeric attributes and traits expressed by the Pearson correlation coefficient between predicted and ac- tual attribute values; all correlations are significant at the P < 0.001 level. The transparent bars indicate the questionnaire’s baseline accuracy, expressed in terms of test–retest reliability.
+￼5804 | www.pnas.org/cgi/doi/10.1073/pnas.1218772110
+Kosinski et al.
+￼Gay,” “We Didn’t Choose To Be Gay We Were Chosen.” Con- sequently, predictions rely on less informative but more popular Likes, such as “Britney Spears” or “Desperate Housewives” (both moderately indicative of being gay).and religion, even if you have provided this in your Facebook profile. In demo.py we make a request to the PRISONER API for a "User" object in our on_get() method, which retrieves a user's biographical attributes, so why are these missing? If we turn to policy.xml, we can see why. Note that in the policy element, we enumerate the gender, first name, and last name attributes, which we have "retrieve" policies for. This provides a whitelist of the data we can collect, so let's add the following religion and politics clauses after the "last name" attribute policy:
 
 .. code-block:: xml
 
