@@ -22,14 +22,7 @@ You will need to be running `Docker <https://www.docker.com>`_ to run the demo c
 
 Start the Docker container
 --------------------------
-The quickest way to get started is to paste the following at the command line. This will download and run a small script which starts the Docker container. You can skip to the next section to learn how to use the demo.
 
- TODO: url for demo_bootstrap.sh
-
-If you'd rather start the container manually, take these extra steps. If you are using boot2docker, for example if you are running OS X, you should run the following commands to correctly map the ports to the VirtualBox VM. If you are running Docker natively on Linux, you do not need to do this::
-
-  VBoxManage controlvm boot2docker-vm natpf1 "prisoner,tcp,127.0.0.1,5000,,5000"
-  VBoxManage controlvm boot2docker-vm natpf1 "demo,tcp,127.0.0.1,9000,,9000"
 
 From the command line, run the following to download the Docker image for the PRISONER demo and start the container::
 
@@ -39,7 +32,13 @@ Running the demo
 ----------------
 When the container starts, you will be prompted to enter the Facebook App ID and secret you noted earlier. Then, you will be given a URL to visit to start testing the experiment.
 
-This demo shows the workflow of a trivial experiment which collects some data from your Facebook profile, and displays it in the browser. You can run this experiment to make sure that the PRISONER instance is working. You will see how PRISONER provides the bootstrapping interface to the experiment, showing some basic information about how the experiment works, and the process of authenticating with Facebook. You can look at how the demo is implemented by visiting /usr/bin/prisoner-demo. "demo.py" implements the server for the web experiment, and shows how the PRISONER session is instantiated, and how Facebook data are collected and displayed. In "static/policy/design.xml" you can see the privacy policy which constrains this experiment. If you are not familiar with the role of the policy, consider reviewing the "Writing your first experiment" tutorial.
+This demo shows the workflow of a trivial experiment which collects some data from your Facebook profile, and displays it in the browser. You can run this experiment to make sure that the PRISONER instance is working. You will see how PRISONER provides the bootstrapping interface to the experiment, showing some basic information about how the experiment works, and the process of authenticating with Facebook.
+
+To view and edit the underlying files, you will need to open a shell on the Docker container::
+
+ docker exec -it prisoner-demo /bin/bash
+
+You can look at how the demo is implemented by visiting /usr/bin/prisoner-demo. "demo.py" implements the server for the web experiment, and shows how the PRISONER session is instantiated, and how Facebook data are collected and displayed. In "static/policy/design.xml" you can see the privacy policy which constrains this experiment. If you are not familiar with the role of the policy, consider reviewing the "Writing your first experiment" tutorial. This container includes vim for editing text files (TODO: include a simpler text editor too)
 
 Modifying the demo
 ------------------
