@@ -1,0 +1,325 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Running the PRISONER demo &mdash; PRISONER 0.2.3 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="PRISONER 0.2.3 documentation" href="index.html"/>
+        <link rel="up" title="Tutorials" href="tutorials.html"/>
+        <link rel="next" title="Installing PRISONER" href="tutorials.gettingstarted.html"/>
+        <link rel="prev" title="Key concepts" href="tutorials.keyconcepts.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="index.html">
+        
+
+        
+          
+          <img src="_static/prisoner-logo.png" class="logo" />
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="tutorials.html">Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tutorials.keyconcepts.html">Key concepts</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Running the PRISONER demo</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#prerequisites">Prerequisites</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#facebook-app">Facebook app</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#docker">Docker</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#start-the-docker-container">Start the Docker container</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#running-the-demo">Running the demo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#modifying-the-demo">Modifying the demo</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.gettingstarted.html">Installing PRISONER</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.gettingstarted.html#installing-prisoner-for-local-development">Installing PRISONER for local development</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tutorials.gettingstarted.html#spin-up-a-docker-vm">Spin-up a Docker VM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorials.gettingstarted.html#clone-from-github">Clone from GitHub</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.helloworld.html">Writing your first experiment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.helloworld.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.helloworld.html#in-this-tutorial">In this tutorial</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.helloworld.html#privacy-policies">Privacy policies</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tutorials.helloworld.html#writing-the-privacy-policy">Writing the privacy policy</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="prisoner.html">prisoner package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="prisoner.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="prisoner.gateway.html">prisoner.gateway package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#module-prisoner.gateway.FacebookGateway">prisoner.gateway.FacebookGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#module-prisoner.gateway.LastfmGateway">prisoner.gateway.LastfmGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#module-prisoner.gateway.ServiceGateway">prisoner.gateway.ServiceGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#module-prisoner.gateway.TwitterGateway">prisoner.gateway.TwitterGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#module-prisoner.gateway">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="prisoner.persistence.html">prisoner.persistence package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.persistence.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.persistence.html#module-prisoner.persistence.PersistenceManager">prisoner.persistence.PersistenceManager module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.persistence.html#module-prisoner.persistence">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="prisoner.server.html">prisoner.server package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.server.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.server.html#module-prisoner.server.webservice">prisoner.server.webservice module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.server.html#module-prisoner.server">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="prisoner.tests.html">prisoner.tests package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.tests.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.tests.html#module-prisoner.tests.tests">prisoner.tests.tests module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.tests.html#module-prisoner.tests">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="prisoner.workflow.html">prisoner.workflow package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#module-prisoner.workflow.Exceptions">prisoner.workflow.Exceptions module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#module-prisoner.workflow.ExperimentBuilder">prisoner.workflow.ExperimentBuilder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#prisoner-workflow-policydocumentgenerator-module">prisoner.workflow.PolicyDocumentGenerator module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#module-prisoner.workflow.PolicyProcessor">prisoner.workflow.PolicyProcessor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#module-prisoner.workflow.SocialObjectGateway">prisoner.workflow.SocialObjectGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#module-prisoner.workflow">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="prisoner.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prisoner.html#module-prisoner.SocialObjects">prisoner.SocialObjects module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prisoner.html#module-prisoner">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">PRISONER</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="tutorials.html">Tutorials</a> &raquo;</li>
+      
+    <li>Running the PRISONER demo</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/tutorials.demo.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="running-the-prisoner-demo">
+<h1>Running the PRISONER demo<a class="headerlink" href="#running-the-prisoner-demo" title="Permalink to this headline">¶</a></h1>
+<p>This tutorial helps you launch a Docker container with a self-contained instance of PRISONER and a demo web application which demonstrates how to use its basic functionality.</p>
+<div class="section" id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="facebook-app">
+<h3>Facebook app<a class="headerlink" href="#facebook-app" title="Permalink to this headline">¶</a></h3>
+<p>The PRISONER demo uses data from Facebook. To run this demo, you will need to have a Facebook account to test the experiment with, be a registered Facebook developer, and create an app which PRISONER can use to make authenticated requests to the PRISONER API. Please follow these steps:</p>
+<ul class="simple">
+<li>Visit <a class="reference external" href="https://developers.facebook.com">https://developers.facebook.com</a> and follow the steps to register as a developer, if you have not done so before.</li>
+<li>From the navigation bar, click &#8220;My Apps &gt; Add a new app &gt; Website&#8221;.</li>
+<li>Provide a name for your experiment, such as &#8220;PRISONER Demo&#8221;. The name you choose here is not significant.</li>
+<li>Click &#8220;Skip quick start&#8221;, then go to the &#8220;Settings&#8221; page. Enter &#8220;localhost&#8221; as the Site URL and App Domains.</li>
+<li>At the top of the screen, note the App ID and App Secret for this app. You will need to provide these to PRISONER later.</li>
+</ul>
+</div>
+<div class="section" id="docker">
+<h3>Docker<a class="headerlink" href="#docker" title="Permalink to this headline">¶</a></h3>
+<p>You will need to be running <a class="reference external" href="https://www.docker.com">Docker</a> to run the demo container. The Docker site provides guides to getting started for your platform.</p>
+</div>
+</div>
+<div class="section" id="start-the-docker-container">
+<h2>Start the Docker container<a class="headerlink" href="#start-the-docker-container" title="Permalink to this headline">¶</a></h2>
+<p>From the command line, run the following to download the Docker image for the PRISONER demo and start the container:</p>
+<div class="highlight-python"><div class="highlight"><pre>docker run -i -t -p 9000:9000 -p 5000:5000 --name prisoner-demo lhutton/prisoner-demo
+</pre></div>
+</div>
+<p>If your /etc/resolv.conf points to 127.0.0.1 (default on Ubuntu installs since 12.04) Docker will try to use public DNS to resolve domains. In some configurations, this might not work (if you receive &#8220;Name or service not known&#8221; errors when trying to use this experiment, this is probably the cause), in which case you will need to manually provide a nameserver by running the container as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre>docker run -i -t -p 9000:9000 -p 5000:5000 -dns [YOUR_NAMESERVER_HERE] --name prisoner-demo lhutton/prisoner-demo
+</pre></div>
+</div>
+</div>
+<div class="section" id="running-the-demo">
+<h2>Running the demo<a class="headerlink" href="#running-the-demo" title="Permalink to this headline">¶</a></h2>
+<p>When the container starts, you will be prompted to enter the Facebook App ID and secret you noted earlier. Then, you will be given a URL to visit to start testing the experiment.</p>
+<p>This demo shows the workflow of a trivial experiment which collects some data from your Facebook profile, and displays it in the browser. You can run this experiment to make sure that the PRISONER instance is working. You will see how PRISONER provides the bootstrapping interface to the experiment, showing some basic information about how the experiment works, and the process of authenticating with Facebook.</p>
+<p>To view and edit the underlying files, you will need to open a shell on the Docker container:</p>
+<div class="highlight-python"><div class="highlight"><pre>docker exec -it prisoner-demo /bin/bash
+</pre></div>
+</div>
+<p>You can look at how the demo is implemented by visiting /usr/bin/prisoner-demo. &#8220;demo.py&#8221; implements the server for the web experiment, and shows how the PRISONER session is instantiated, and how Facebook data are collected and displayed. In &#8220;static/policy/design.xml&#8221; you can see the privacy policy which constrains this experiment. If you are not familiar with the role of the policy, consider reviewing the &#8220;Writing your first experiment&#8221; tutorial. This container includes vim for editing text files (TODO: include a simpler text editor too)</p>
+</div>
+<div class="section" id="modifying-the-demo">
+<h2>Modifying the demo<a class="headerlink" href="#modifying-the-demo" title="Permalink to this headline">¶</a></h2>
+<p>We can see how trivial modifications to the policy affect the execution of the experiment. For example, when you tried this experiment, you will have seen that your name was displayed, but not your politics and religion, even if you have provided this in your Facebook profile. In demo.py we make a request to the PRISONER API for a &#8220;User&#8221; object in our on_get() method, which retrieves a user&#8217;s biographical attributes, so why are these missing? If we turn to policy.xml, we can see why. Note that in the policy element, we enumerate the gender, first name, and last name attributes, which we have &#8220;retrieve&#8221; policies for. This provides a whitelist of the data we can collect, so let&#8217;s add the following religion and politics clauses after the &#8220;last name&#8221; attribute policy:</p>
+<div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;attribute</span> <span class="na">type=</span><span class="s">&quot;religion&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;attribute-policy</span> <span class="na">allow=</span><span class="s">&quot;retrieve&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/attribute&gt;</span>
+
+<span class="nt">&lt;attribute</span> <span class="na">type=</span><span class="s">&quot;politicalViews&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;attribute-policy</span> <span class="na">allow=</span><span class="s">&quot;retrieve&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/attribute&gt;</span>
+</pre></div>
+</div>
+<p>If you now revisit the website for the demo experiment, and continue through the PRISONER bootstrap process, you will note that PRISONER automatically detects the changes to the policy and requests the appropriate additional Facebook permissions. Now, the missing attributes will be visible on the experimental results page.</p>
+<p>Similarly, you can modify any other aspect of this demo to see how you can request different types of data. To understand the data you can collect from Facebook using PRISONER, consult the documentation for the Facebook Service Gateway.</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="tutorials.gettingstarted.html" class="btn btn-neutral float-right" title="Installing PRISONER" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="tutorials.keyconcepts.html" class="btn btn-neutral" title="Key concepts" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Luke Hutton.
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.2.3',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

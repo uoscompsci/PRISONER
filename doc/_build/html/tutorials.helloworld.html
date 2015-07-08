@@ -1,0 +1,384 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Writing your first experiment &mdash; PRISONER 0.2.3 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="PRISONER 0.2.3 documentation" href="index.html"/>
+        <link rel="up" title="Tutorials" href="tutorials.html"/>
+        <link rel="next" title="prisoner package" href="prisoner.html"/>
+        <link rel="prev" title="Installing PRISONER" href="tutorials.gettingstarted.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="index.html">
+        
+
+        
+          
+          <img src="_static/prisoner-logo.png" class="logo" />
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="tutorials.html">Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tutorials.keyconcepts.html">Key concepts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.demo.html">Running the PRISONER demo</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#prerequisites">Prerequisites</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tutorials.demo.html#facebook-app">Facebook app</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorials.demo.html#docker">Docker</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#start-the-docker-container">Start the Docker container</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#running-the-demo">Running the demo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#modifying-the-demo">Modifying the demo</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.gettingstarted.html">Installing PRISONER</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.gettingstarted.html#installing-prisoner-for-local-development">Installing PRISONER for local development</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tutorials.gettingstarted.html#spin-up-a-docker-vm">Spin-up a Docker VM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorials.gettingstarted.html#clone-from-github">Clone from GitHub</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Writing your first experiment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#in-this-tutorial">In this tutorial</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#privacy-policies">Privacy policies</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#writing-the-privacy-policy">Writing the privacy policy</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="prisoner.html">prisoner package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="prisoner.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="prisoner.gateway.html">prisoner.gateway package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#module-prisoner.gateway.FacebookGateway">prisoner.gateway.FacebookGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#module-prisoner.gateway.LastfmGateway">prisoner.gateway.LastfmGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#module-prisoner.gateway.ServiceGateway">prisoner.gateway.ServiceGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#module-prisoner.gateway.TwitterGateway">prisoner.gateway.TwitterGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#module-prisoner.gateway">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="prisoner.persistence.html">prisoner.persistence package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.persistence.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.persistence.html#module-prisoner.persistence.PersistenceManager">prisoner.persistence.PersistenceManager module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.persistence.html#module-prisoner.persistence">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="prisoner.server.html">prisoner.server package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.server.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.server.html#module-prisoner.server.webservice">prisoner.server.webservice module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.server.html#module-prisoner.server">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="prisoner.tests.html">prisoner.tests package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.tests.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.tests.html#module-prisoner.tests.tests">prisoner.tests.tests module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.tests.html#module-prisoner.tests">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="prisoner.workflow.html">prisoner.workflow package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#module-prisoner.workflow.Exceptions">prisoner.workflow.Exceptions module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#module-prisoner.workflow.ExperimentBuilder">prisoner.workflow.ExperimentBuilder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#prisoner-workflow-policydocumentgenerator-module">prisoner.workflow.PolicyDocumentGenerator module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#module-prisoner.workflow.PolicyProcessor">prisoner.workflow.PolicyProcessor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#module-prisoner.workflow.SocialObjectGateway">prisoner.workflow.SocialObjectGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#module-prisoner.workflow">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="prisoner.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prisoner.html#module-prisoner.SocialObjects">prisoner.SocialObjects module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prisoner.html#module-prisoner">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">PRISONER</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="tutorials.html">Tutorials</a> &raquo;</li>
+      
+    <li>Writing your first experiment</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/tutorials.helloworld.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="writing-your-first-experiment">
+<h1>Writing your first experiment<a class="headerlink" href="#writing-your-first-experiment" title="Permalink to this headline">¶</a></h1>
+<p>Now that you have a PRISONER development server up and running, we are going to
+write a simple experiment which collects some data from a participant&#8217;s Facebook
+account, sanitises it, and displays it in the browser.</p>
+<div class="section" id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
+<p>This tutorial shows an experiment being written in Python, but as this is
+to only demonstrate how to use the PRISONER web service, this can be easily
+adapted to any other environment.</p>
+<p>This example requires a Facebook account to test, and assumes you are registered
+as a <a class="reference external" href="https://developers.facebook.com">Facebook developer</a>.</p>
+</div>
+<div class="section" id="in-this-tutorial">
+<h2>In this tutorial<a class="headerlink" href="#in-this-tutorial" title="Permalink to this headline">¶</a></h2>
+<p>PRISONER experiments consist of three elements, which we will introduce and
+develop during this tutorial:</p>
+<ul class="simple">
+<li>Your experimental application</li>
+<li>An XML privacy policy</li>
+<li>An XML experimental design</li>
+</ul>
+</div>
+<div class="section" id="privacy-policies">
+<h2>Privacy policies<a class="headerlink" href="#privacy-policies" title="Permalink to this headline">¶</a></h2>
+<p>Privacy policies are XML documents which outline the types of data your
+experiment needs to collect or publish to social network sites. They contain
+rules that place constraints on how your experiment handles data.
+For a given type of data (for example, a tweet, or a Facebook user profile),
+the policy answers the following questions:</p>
+<ul class="simple">
+<li>Is my experiment able to handle this data type?</li>
+<li>Can my experiment retrieve, store, or publish this data type, or a combination of these?</li>
+<li>Under which conditions can I retrieve, store, or publish this data type?</li>
+<li>Which attributes of this data type can my experiment retrieve, store, or publish?</li>
+<li>Which attributes need to be sanitised as they are retrieved, stored, or published?</li>
+</ul>
+<p>Encoding this information in a policy file yields some advantages from both
+ethical and reproducibility perspectives:</p>
+<ul class="simple">
+<li>Policies can be written &#8220;offline&#8221; before you write any code. This allows you
+to iterate on the appropriate data-handling strategy for your experiment,
+including engagement with IRB or ethics boards, until you arrive at a final
+set of constraints for your experiment.</li>
+<li>PRISONER enforces this policy at runtime, so that if the experimental code you are writing attempts to violate its constraints, you cannot inadvertently collect more data than needed for your experiment.</li>
+<li>The standardised representation of the policy allows other documents to be
+automatically and consistently generated, such as consent forms for
+participants which reflect the actual data-handling practices of a study, or
+human-readable summaries of the study&#8217;s design for review by IRB or ethics
+boards.</li>
+<li>Privacy policies are effectively a workflow standard for social network
+experiments, and allow the protocols for studies to be shared. While ideally
+coupled with the underlying experimental code to support full reproducibility
+of experiments, the platform-agnostic nature of the privacy policy allows
+other researchers to replicate a study under the same constraints, even if
+they are not using PRISONER.</li>
+</ul>
+<div class="section" id="writing-the-privacy-policy">
+<h3>Writing the privacy policy<a class="headerlink" href="#writing-the-privacy-policy" title="Permalink to this headline">¶</a></h3>
+<p>Outside of the PRISONER directory, create a directory to store your experiment
+application. In there, create a new file called policy.xml. Populate it with the following:</p>
+<div class="highlight-xml"><div class="highlight"><pre><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+
+<span class="nt">&lt;p:privacy-policy</span>
+	<span class="na">xmlns:p=</span><span class="s">&quot;http://prisoner.cs.st-andrews.ac.uk/prisoner/privacy-policy&quot;</span>
+	<span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>
+	<span class="na">xsi:schemaLocation=</span><span class="s">&quot;http://prisoner.cs.st-andrews.ac.uk/prisoner/privacy-policy privacy_policy.xsd&quot;</span><span class="nt">&gt;</span>
+
+	<span class="nt">&lt;policy</span> <span class="na">for=</span><span class="s">&quot;Facebook:User&quot;</span><span class="nt">&gt;</span>
+		<span class="nt">&lt;attributes&gt;</span>
+			<span class="nt">&lt;attribute</span> <span class="na">type=</span><span class="s">&quot;id&quot;</span><span class="nt">&gt;</span>
+				<span class="nt">&lt;attribute-policy</span> <span class="na">allow=</span><span class="s">&quot;retrieve&quot;</span><span class="nt">&gt;&lt;/attribute-policy&gt;</span>
+			<span class="nt">&lt;/attribute&gt;</span>
+			<span class="nt">&lt;attribute</span> <span class="na">type=</span><span class="s">&quot;author&quot;</span><span class="nt">&gt;</span>
+				<span class="nt">&lt;attribute-policy</span> <span class="na">allow=</span><span class="s">&quot;retrieve&quot;</span><span class="nt">&gt;&lt;/attribute-policy&gt;</span>
+			<span class="nt">&lt;/attribute&gt;</span>
+			<span class="nt">&lt;attribute</span> <span class="na">type=</span><span class="s">&quot;displayName&quot;</span><span class="nt">&gt;</span>
+				<span class="nt">&lt;attribute-policy</span> <span class="na">allow=</span><span class="s">&quot;retrieve&quot;</span><span class="nt">&gt;&lt;/attribute-policy&gt;</span>
+			<span class="nt">&lt;/attribute&gt;</span>
+			<span class="nt">&lt;attribute</span> <span class="na">type=</span><span class="s">&quot;username&quot;</span><span class="nt">&gt;</span>
+				<span class="nt">&lt;attribute-policy</span> <span class="na">allow=</span><span class="s">&quot;retrieve&quot;</span><span class="nt">&gt;&lt;/attribute-policy&gt;</span>
+			<span class="nt">&lt;/attribute&gt;</span>
+			<span class="nt">&lt;attribute</span> <span class="na">type=</span><span class="s">&quot;image&quot;</span><span class="nt">&gt;</span>
+				<span class="nt">&lt;attribute-policy</span> <span class="na">allow=</span><span class="s">&quot;retrieve&quot;</span><span class="nt">&gt;&lt;/attribute-policy&gt;</span>
+			<span class="nt">&lt;/attribute&gt;</span>
+			<span class="nt">&lt;attribute</span> <span class="na">type=</span><span class="s">&quot;firstName&quot;</span><span class="nt">&gt;</span>
+				<span class="nt">&lt;attribute-policy</span> <span class="na">allow=</span><span class="s">&quot;retrieve&quot;</span><span class="nt">&gt;&lt;/attribute-policy&gt;</span>
+			<span class="nt">&lt;/attribute&gt;</span>
+			<span class="nt">&lt;attribute</span> <span class="na">type=</span><span class="s">&quot;middleName&quot;</span><span class="nt">&gt;</span>
+				<span class="nt">&lt;attribute-policy</span> <span class="na">allow=</span><span class="s">&quot;retrieve&quot;</span><span class="nt">&gt;&lt;/attribute-policy&gt;</span>
+			<span class="nt">&lt;/attribute&gt;</span>
+			<span class="nt">&lt;attribute</span> <span class="na">type=</span><span class="s">&quot;lastName&quot;</span><span class="nt">&gt;</span>
+				<span class="nt">&lt;attribute-policy</span> <span class="na">allow=</span><span class="s">&quot;retrieve&quot;</span><span class="nt">&gt;&lt;/attribute-policy&gt;</span>
+			<span class="nt">&lt;/attribute&gt;</span>
+			<span class="nt">&lt;attribute</span> <span class="na">type=</span><span class="s">&quot;birthday&quot;</span><span class="nt">&gt;</span>
+				<span class="nt">&lt;attribute-policy</span> <span class="na">allow=</span><span class="s">&quot;retrieve&quot;</span><span class="nt">&gt;&lt;/attribute-policy&gt;</span>
+			<span class="nt">&lt;/attribute&gt;</span>
+			<span class="nt">&lt;attribute</span> <span class="na">type=</span><span class="s">&quot;gender&quot;</span><span class="nt">&gt;</span>
+				<span class="nt">&lt;attribute-policy</span> <span class="na">allow=</span><span class="s">&quot;retrieve&quot;</span><span class="nt">&gt;&lt;/attribute-policy&gt;</span>
+			<span class="nt">&lt;/attribute&gt;</span>
+		<span class="nt">&lt;/attributes&gt;</span>
+
+		<span class="nt">&lt;object-policy</span> <span class="na">allow=</span><span class="s">&quot;retrieve&quot;</span><span class="nt">&gt;</span>
+			<span class="nt">&lt;object-criteria&gt;</span>
+				<span class="nt">&lt;and-match&gt;</span>
+					<span class="nt">&lt;attribute-match</span> <span class="na">match=</span><span class="s">&quot;author.id&quot;</span> <span class="na">on_object=</span><span class="s">&quot;session:Facebook.id&quot;</span> <span class="nt">/&gt;</span>
+				<span class="nt">&lt;/and-match&gt;</span>
+			<span class="nt">&lt;/object-criteria&gt;</span>
+		<span class="nt">&lt;/object-policy&gt;</span>
+	<span class="nt">&lt;/policy&gt;</span>
+<span class="nt">&lt;/p:privacy-policy&gt;</span>
+</pre></div>
+</div>
+<p>So, what does this policy do? Simply, it enumerates the objects we can collect, and the attributes of those objects we can collect. The policy file includes a clear hierarchy where we define policy elements for each data type, which contains a collection of attributes we can process, and an object-policy which describes the criteria under which we can collect objects of this type. In this experiment, we want to collect some biographical information about the participant in this experiment, so our policy is for the User object provided by Facebook. The Facebook prefix defines the namespace, which means we are explicitly requesting Facebook&#8217;s representation of a User, and is not generalisable to the other social network sites that PRISONER supports. This means we can access Facebook-specific attributes, but at the cost of making our experiment harder to adapt for other services. Because we only want to collect data about the current participant, we provide an object-policy which dictates that we can only collect a User object if it matches the ID of the participant. This ensures our experiment can not inadvertantly collect more sensitive data than we need, such as the identitfy of the participant&#8217;s friends. Although we now have criteria for collecting the objects themselves, the objects PRISONER returns will have no attributes. Therefore, we must specifically enumerate the attributes we need in the attributes collection of this policy. Each policy element enables us to retrieve that attribute. We could add additional attribute-policy elements for each attribute to also enable us to store those attributes if we later wish to persist these data, but this is not necessary for this experiment.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="prisoner.html" class="btn btn-neutral float-right" title="prisoner package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="tutorials.gettingstarted.html" class="btn btn-neutral" title="Installing PRISONER" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Luke Hutton.
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.2.3',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
