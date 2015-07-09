@@ -30,7 +30,7 @@ From the command line, run the following to download the Docker image for the PR
 
 If your /etc/resolv.conf points to 127.0.0.1 (default on Ubuntu installs since 12.04) Docker will try to use public DNS to resolve domains. In some configurations, this might not work (if you receive "Name or service not known" errors when trying to use this experiment, this is probably the cause), in which case you will need to manually provide a nameserver by running the container as follows::
 
- docker run -i -t -p 9000:9000 -p 5000:5000 -dns [YOUR_NAMESERVER_HERE] --name prisoner-demo lhutton/prisoner-demo
+ docker run -i -t -p 9000:9000 -p 5000:5000 --dns [YOUR_NAMESERVER_HERE] --name prisoner-demo lhutton/prisoner-demo
 
 Running the demo
 ----------------

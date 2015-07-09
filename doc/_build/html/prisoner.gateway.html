@@ -106,6 +106,7 @@
 <li class="toctree-l4"><a class="reference internal" href="tutorials.helloworld.html#writing-the-privacy-policy">Writing the privacy policy</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.helloworld.html#experimental-designs">Experimental designs</a></li>
 </ul>
 </li>
 </ul>
@@ -1565,18 +1566,11 @@ which allows the gateway to inject additional metadata to be handled elsewhere</
 <div class="section" id="module-prisoner.gateway.TwitterGateway">
 <span id="prisoner-gateway-twittergateway-module"></span><h2>prisoner.gateway.TwitterGateway module<a class="headerlink" href="#module-prisoner.gateway.TwitterGateway" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="prisoner.gateway.TwitterGateway.Timeline">
-<em class="property">class </em><code class="descclassname">prisoner.gateway.TwitterGateway.</code><code class="descname">Timeline</code><a class="headerlink" href="#prisoner.gateway.TwitterGateway.Timeline" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="prisoner.html#prisoner.SocialObjects.Person" title="prisoner.SocialObjects.Person"><code class="xref py py-class docutils literal"><span class="pre">prisoner.SocialObjects.Person</span></code></a></p>
-<p>Representation of a user object on Facebook.
-Users are essentially the backbone of the Facebook service and such objects can contain a great deal of information.
-User objects will not always have values for all their attributes, as Facebook does not require users to provide 
-allthis information.</p>
-<dl class="attribute">
-<dt id="prisoner.gateway.TwitterGateway.Timeline.id">
-<code class="descname">id</code><a class="headerlink" href="#prisoner.gateway.TwitterGateway.Timeline.id" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<dt id="prisoner.gateway.TwitterGateway.Tweet">
+<em class="property">class </em><code class="descclassname">prisoner.gateway.TwitterGateway.</code><code class="descname">Tweet</code><a class="headerlink" href="#prisoner.gateway.TwitterGateway.Tweet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="prisoner.html#prisoner.SocialObjects.Note" title="prisoner.SocialObjects.Note"><code class="xref py py-class docutils literal"><span class="pre">prisoner.SocialObjects.Note</span></code></a></p>
+<p>A tweet is a single post shared to Twitter, derived from the base
+Note object.</p>
 </dd></dl>
 
 <dl class="class">
