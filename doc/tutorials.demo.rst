@@ -30,7 +30,7 @@ From the command line, run the following to download the Docker image for the PR
 
 If your /etc/resolv.conf points to 127.0.0.1 (default on Ubuntu installs since 12.04) Docker will try to use public DNS to resolve domains. In some configurations, this might not work (if you receive "Name or service not known" errors when trying to use this experiment, this is probably the cause), in which case you will need to manually provide a nameserver by running the container as follows::
 
- docker run -i -t -p 9000:9000 -p 5000:5000 --dns [YOUR_NAMESERVER_HERE] --name prisoner-demo lhutton/prisoner-demo
+ docker run -i -t -p 9000:9000 -p 5000:5000 --dns=[YOUR_NAMESERVER_HERE] --name prisoner-demo lhutton/prisoner-demo
 
 Running the demo
 ----------------
@@ -61,3 +61,21 @@ We can see how trivial modifications to the policy affect the execution of the e
 If you now revisit the website for the demo experiment, and continue through the PRISONER bootstrap process, you will note that PRISONER automatically detects the changes to the policy and requests the appropriate additional Facebook permissions. Now, the missing attributes will be visible on the experimental results page.
 
 Similarly, you can modify any other aspect of this demo to see how you can request different types of data. To understand the data you can collect from Facebook using PRISONER, consult the documentation for the Facebook Service Gateway.
+
+Packaging the modified demo
+---------------------------
+Now that we've made these changes, perhaps we want to package up the changes we've made so others can reproduce our version of the experiment. Docker allows us to commit the changes we've made within a container and build a new image from that, which we can use to restore the state of this container at any time, or share with others. To do this, run the following::
+
+ docker commit prisoner-demo [YOUR_NAME]/prisoner-demo-mod
+
+Now, if you run::
+
+ docker images
+
+You will see prisoner-demo-mod among your cached images. From here, you could publish this to Docker Hub to make it publicly visible::
+
+  docker push [YOUR_NAME]/prisoner-demo-mod
+
+Then, anyone else can pull and run your image, or you can simply run this container later as above, by running::
+
+   docker run -i -t -p 9000:9000 -p 5000:5000 --name prisoner-demo-mod lhutton/prisoner-demo-mod
