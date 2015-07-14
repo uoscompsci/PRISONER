@@ -62,9 +62,43 @@ If you now revisit the website for the demo experiment, and continue through the
 
 Similarly, you can modify any other aspect of this demo to see how you can request different types of data. To understand the data you can collect from Facebook using PRISONER, consult the documentation for the Facebook Service Gateway.
 
+Saving data
+-----------
+When running an experiment, we usually want to save some data, which might take the form of some data we collected from a social network site, coupled with data provided by a participant, such as questionnaire responses. PRISONER provides a mechanism for saving data that works similarly to retrieving data from services. It ensures we can only store the data that we absolutely need for our experiment, and can help us apply any sanitisations to remove unnecessarily sensitive data before they are stored, while maintaining as association with additional data provided by participants during the course of an experiment.
+
+We can test this by clicking the "Store this user profile" button, which will save the user profile object we summarise at the top of the screen to the database which PRISONER initialised when we started the experiment.
+
+However, when we click this, we get an error. Why? Just like retrieving data, our policy needs to enable storing social objects on a per-object, and per-attribute basis. Let's quickly amend our policy.xml file to let us save the name attributes of our user object, but not religion and politics. Within both the firstName and lastName elements, where we already have a "retrieve" attribute-policy, add the following:
+
+.. code-block:: xml
+
+ 			<attribute-policy allow="store" />
+
+Then, after the "retrieve" object-policy, add the following:
+
+.. code-block:: xml
+
+   <object-policy allow="store">
+   <object-criteria>
+    <attribute-match match="author.id" on_object="session:Facebook.id" />
+   </object-criteria>
+  </object-policy>
+
+What did this do? The "store" object-policy tells PRISONER we can now store objects of the type Facebook:User, so long as it matches the current participant, while the two "store" attribute-policies only allow us to store these attributes.
+
+Let's reload the experiment, and try to save the object again. This time, you should be told this was successful. But what can we do with these data? Let's go back to our shell on the Docker container and run the following::
+
+ sqlite3
+ .open /tmp/prisoner_demo.db
+ SELECT * from response;
+
+Here you will see a JSON representation of the User object we just saved. Note that the attributes, such as religion and gender, have been nullified, while the name is still visible. From here, we can run our own analyses on these results, or share the SQLite database with others.
+
+
+
 Packaging the modified demo
 ---------------------------
-Now that we've made these changes, perhaps we want to package up the changes we've made so others can reproduce our version of the experiment. Docker allows us to commit the changes we've made within a container and build a new image from that, which we can use to restore the state of this container at any time, or share with others. To do this, run the following::
+Now that we've made these changes, perhaps we want to package up the changes we've made, including our now-populated database, so others can reproduce our version of the experiment or run analyses with our results. Docker allows us to commit the changes we've made within a container and build a new image from that, which we can use to restore the state of this container at any time, or share with others. To do this, run the following::
 
  docker commit prisoner-demo [YOUR_NAME]/prisoner-demo-mod
 

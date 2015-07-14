@@ -320,6 +320,9 @@ class PersistenceManager(object):
 
 				san_obj = self.policy_processor._sanitise_object_request(response)
 
+				if not san_obj:
+					raise Exception("Could not write to database. %s failed validation" % column.get("mapTo"))
+
 				# # insert object to corresponding table
 				# mapTable = self.object_tables[mapTo.split(":")[1]]
 				# obj_to_insert = {}
@@ -339,7 +342,8 @@ class PersistenceManager(object):
 		# insert response
 		table = self.response_tables[schema]
 		insert = table.insert()
-		insert.execute(response_out)
+		result = insert.execute(response_out)
+
 
 	def do_build_schema(self, drop_first=False):
 		return self.__build_schema(drop_first)

@@ -89,6 +89,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#start-the-docker-container">Start the Docker container</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#running-the-demo">Running the demo</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#modifying-the-demo">Modifying the demo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#saving-data">Saving data</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#packaging-the-modified-demo">Packaging the modified demo</a></li>
 </ul>
 </li>
@@ -256,9 +257,34 @@
 <p>If you now revisit the website for the demo experiment, and continue through the PRISONER bootstrap process, you will note that PRISONER automatically detects the changes to the policy and requests the appropriate additional Facebook permissions. Now, the missing attributes will be visible on the experimental results page.</p>
 <p>Similarly, you can modify any other aspect of this demo to see how you can request different types of data. To understand the data you can collect from Facebook using PRISONER, consult the documentation for the Facebook Service Gateway.</p>
 </div>
+<div class="section" id="saving-data">
+<h2>Saving data<a class="headerlink" href="#saving-data" title="Permalink to this headline">¶</a></h2>
+<p>When running an experiment, we usually want to save some data, which might take the form of some data we collected from a social network site, coupled with data provided by a participant, such as questionnaire responses. PRISONER provides a mechanism for saving data that works similarly to retrieving data from services. It ensures we can only store the data that we absolutely need for our experiment, and can help us apply any sanitisations to remove unnecessarily sensitive data before they are stored, while maintaining as association with additional data provided by participants during the course of an experiment.</p>
+<p>We can test this by clicking the &#8220;Store this user profile&#8221; button, which will save the user profile object we summarise at the top of the screen to the database which PRISONER initialised when we started the experiment.</p>
+<p>However, when we click this, we get an error. Why? Just like retrieving data, our policy needs to enable storing social objects on a per-object, and per-attribute basis. Let&#8217;s quickly amend our policy.xml file to let us save the name attributes of our user object, but not religion and politics. Within both the firstName and lastName elements, where we already have a &#8220;retrieve&#8221; attribute-policy, add the following:</p>
+<div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;attribute-policy</span> <span class="na">allow=</span><span class="s">&quot;store&quot;</span> <span class="nt">/&gt;</span>
+</pre></div>
+</div>
+<p>Then, after the &#8220;retrieve&#8221; object-policy, add the following:</p>
+<div class="highlight-xml"><div class="highlight"><pre> <span class="nt">&lt;object-policy</span> <span class="na">allow=</span><span class="s">&quot;store&quot;</span><span class="nt">&gt;</span>
+ <span class="nt">&lt;object-criteria&gt;</span>
+  <span class="nt">&lt;attribute-match</span> <span class="na">match=</span><span class="s">&quot;author.id&quot;</span> <span class="na">on_object=</span><span class="s">&quot;session:Facebook.id&quot;</span> <span class="nt">/&gt;</span>
+ <span class="nt">&lt;/object-criteria&gt;</span>
+<span class="nt">&lt;/object-policy&gt;</span>
+</pre></div>
+</div>
+<p>What did this do? The &#8220;store&#8221; object-policy tells PRISONER we can now store objects of the type Facebook:User, so long as it matches the current participant, while the two &#8220;store&#8221; attribute-policies only allow us to store these attributes.</p>
+<p>Let&#8217;s reload the experiment, and try to save the object again. This time, you should be told this was successful. But what can we do with these data? Let&#8217;s go back to our shell on the Docker container and run the following:</p>
+<div class="highlight-python"><div class="highlight"><pre>sqlite3
+.open /tmp/prisoner_demo.db
+SELECT * from response;
+</pre></div>
+</div>
+<p>Here you will see a JSON representation of the User object we just saved. Note that the attributes, such as religion and gender, have been nullified, while the name is still visible. From here, we can run our own analyses on these results, or share the SQLite database with others.</p>
+</div>
 <div class="section" id="packaging-the-modified-demo">
 <h2>Packaging the modified demo<a class="headerlink" href="#packaging-the-modified-demo" title="Permalink to this headline">¶</a></h2>
-<p>Now that we&#8217;ve made these changes, perhaps we want to package up the changes we&#8217;ve made so others can reproduce our version of the experiment. Docker allows us to commit the changes we&#8217;ve made within a container and build a new image from that, which we can use to restore the state of this container at any time, or share with others. To do this, run the following:</p>
+<p>Now that we&#8217;ve made these changes, perhaps we want to package up the changes we&#8217;ve made, including our now-populated database, so others can reproduce our version of the experiment or run analyses with our results. Docker allows us to commit the changes we&#8217;ve made within a container and build a new image from that, which we can use to restore the state of this container at any time, or share with others. To do this, run the following:</p>
 <div class="highlight-python"><div class="highlight"><pre>docker commit prisoner-demo [YOUR_NAME]/prisoner-demo-mod
 </pre></div>
 </div>

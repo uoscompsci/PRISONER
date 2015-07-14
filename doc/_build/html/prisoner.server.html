@@ -89,6 +89,8 @@
 <li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#start-the-docker-container">Start the Docker container</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#running-the-demo">Running the demo</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#modifying-the-demo">Modifying the demo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#saving-data">Saving data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#packaging-the-modified-demo">Packaging the modified demo</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials.gettingstarted.html">Installing PRISONER</a><ul>
@@ -106,6 +108,7 @@
 <li class="toctree-l4"><a class="reference internal" href="tutorials.helloworld.html#writing-the-privacy-policy">Writing the privacy policy</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.helloworld.html#experimental-designs">Experimental designs</a></li>
 </ul>
 </li>
 </ul>
@@ -250,10 +253,10 @@ result (if it&#8217;s not ready yet, expect blank response)</p>
 <div><blockquote>
 <div><dl class="docutils">
 <dt>To publish objects:</dt>
-<dd><p class="first">/post/&lt;provider&gt;/&lt;object_name&gt;
+<dd><p class="first">/publish/&lt;provider&gt;/&lt;object_name&gt;
 with a form-encoded payload of the data to publish.</p>
 <p class="last">eg. to publish a comment to my own Last.fm profile, we query:
-/post/Lastfm/Comment
+/publish/Lastfm/Comment
 {&#8216;author&#8217;: session:Lastfm.id,
 &#8216;inReplyTo&#8217;: session:Lastfm.id,
 &#8216;content&#8217;: &#8220;Test comment&#8221; }</p>
@@ -262,7 +265,7 @@ with a form-encoded payload of the data to publish.</p>
 </div></blockquote>
 <dl class="docutils">
 <dt>To store experimental responses:</dt>
-<dd><p class="first">/response
+<dd><p class="first">/post
 with a form-encoded payload matching the response schema in your
 experimental design.</p>
 <p class="last">eg. to publish a response to a question about a favourite track,
