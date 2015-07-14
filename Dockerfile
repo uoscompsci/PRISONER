@@ -11,7 +11,7 @@ LABEL Description="This image prepares a virtual environment with the dependenci
 
 # creates a virtual environment for PRISONER
 RUN echo "deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -sc) main universe" >> /etc/apt/sources.list
-RUN apt-get update && apt-get install -y python python-dev python-distribute python-pip libxml2-dev libxslt1-dev zlib1g-dev vim
+RUN apt-get update && apt-get install -y python python-dev python-distribute python-pip libxml2-dev libxslt1-dev zlib1g-dev vim sqlite3 libsqlite3-dev
 
 COPY ./ /usr/bin/prisoner/
 

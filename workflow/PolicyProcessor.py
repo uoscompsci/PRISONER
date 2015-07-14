@@ -481,6 +481,18 @@ class PolicyProcessor(object):
 		attributes_collection = self.privacy_policy.xpath(xpath)
 		for attribute in attributes_collection[0]:
 			curr_attribute = attribute.get("type")
+
+			xpath = "attribute-policy[@allow='%s']" % op_match[response.headers.operation]
+			att_path = attribute.xpath(xpath)
+
+			if att_path:
+				valid_attr_policy = True
+			else:
+				valid_attr_policy = False
+
+
+			# TODO: allow support for attribute criteria. deprecated below
+			"""
 			xpath = "attribute-policy[@allow='%s']//attribute-criteria" % op_match[response.headers.operation]
 			att_path = attribute.xpath(xpath)
 			if att_path:
@@ -489,6 +501,9 @@ class PolicyProcessor(object):
 				att_path[0])
 			else:
 				valid_attr_policy = True
+			"""
+
+
 			if not valid_attr_policy:
 				pass
 			else:
