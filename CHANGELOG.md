@@ -1,4 +1,9 @@
-## PRISONER Version 0.2.3 (June 4th, 2015)
+## PRISONER Version 0.2.4 (Future)
+### New features
+
+* PolicyProcessor has been refactored to significantly greatly improve maintainability, using a high-level model of the policy rather than constantly parsing the XML. In addition, objects are sanitised based on their *actual* type rather than the declared type of the service gateway function, to avoid any mismatches. This also means nested objects are now correctly sanitised.
+
+## PRISONER Version 0.2.3 (Indev)
 
 ### New features
 
@@ -16,13 +21,12 @@
   limit parameter, with some early support for this in
   FacebookServiceGateway.Status()
 
-* PolicyProcessor has been refactored to significantly greatly improve maintainability, using a high-level model of the policy rather than constantly parsing the XML. In addition, objects are sanitised based on their *actual* type rather than the declared type of the service gateway function, to avoid any mismatches. This also means nested objects are now correctly sanitised. 
-
-
 ### Miscellaneous
 
 * Web service has been refactored to use the Requests library for HTTP requests.
 Use of urllib in service gateways is deprecated.
+
+* The PersistenceManager API now correctly sanitises and saves social objects.
 
 ## PRISONER Version 0.2.2 (May 18, 2015)
 

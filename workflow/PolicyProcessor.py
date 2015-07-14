@@ -452,6 +452,7 @@ class PolicyProcessor(object):
 		op_match[response.headers.operation])
 		xpath_res = self.privacy_policy.xpath(xpath)
 
+
 		if not xpath_res:
 			xpath = "//policy[@for='%s']//object-policy[@allow='%s']//object-criteria" \
 			% (response.headers.object_type,

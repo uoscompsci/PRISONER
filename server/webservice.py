@@ -3,7 +3,7 @@ from werkzeug.contrib.sessions import SessionMiddleware, FilesystemSessionStore
 from werkzeug.formparser import parse_form_data
 from werkzeug.wrappers import Request, Response, BaseRequest
 from werkzeug.routing import Map, Rule
-from werkzeug.exceptions import HTTPException, NotFound
+from werkzeug.exceptions  	import HTTPException, NotFound
 from werkzeug.wsgi import SharedDataMiddleware
 from werkzeug.utils import redirect, cached_property
 
@@ -71,17 +71,17 @@ class PRISONER(object):
 		result (if it's not ready yet, expect blank response)
 
 	  To publish objects:
-		/post/<provider>/<object_name>
+		/publish/<provider>/<object_name>
 		with a form-encoded payload of the data to publish.
 
 		eg. to publish a comment to my own Last.fm profile, we query:
-		/post/Lastfm/Comment
+		/publish/Lastfm/Comment
 		{'author': session:Lastfm.id,
 		'inReplyTo': session:Lastfm.id,
 		'content': "Test comment" }
 
 	 To store experimental responses:
-		/response
+		/post
 		with a form-encoded payload matching the response schema in your
 		experimental design.
 
