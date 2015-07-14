@@ -223,6 +223,11 @@
 </div>
 <div class="section" id="start-the-docker-container">
 <h2>Start the Docker container<a class="headerlink" href="#start-the-docker-container" title="Permalink to this headline">¶</a></h2>
+<p>If you are using boot2docker, for example if you are running OS X, you should run the following commands to correctly map the ports to the VirtualBox VM. If you are running Docker natively on Linux, you do not need to do this:</p>
+<div class="highlight-python"><div class="highlight"><pre>VBoxManage controlvm boot2docker-vm natpf1 &quot;prisoner,tcp,127.0.0.1,5000,,5000&quot;
+VBoxManage controlvm boot2docker-vm natpf1 &quot;demo,tcp,127.0.0.1,9000,,9000&quot;
+</pre></div>
+</div>
 <p>From the command line, run the following to download the Docker image for the PRISONER demo and start the container:</p>
 <div class="highlight-python"><div class="highlight"><pre>docker run -i -t -p 9000:9000 -p 5000:5000 --name prisoner-demo lhutton/prisoner-demo
 </pre></div>
