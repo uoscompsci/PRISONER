@@ -228,6 +228,11 @@
 VBoxManage controlvm boot2docker-vm natpf1 &quot;demo,tcp,127.0.0.1,9000,,9000&quot;
 </pre></div>
 </div>
+<p>To avoid port conflicts after using the Docker container, you should run the following when you&#8217;re done:</p>
+<div class="highlight-python"><div class="highlight"><pre>VBoxManage controlvm boot2docker-vm natpf1 delete prisoner
+VBoxManage controlvm boot2docker-vm natpf1 delete demo
+</pre></div>
+</div>
 <p>From the command line, run the following to download the Docker image for the PRISONER demo and start the container:</p>
 <div class="highlight-python"><div class="highlight"><pre>docker run -i -t -p 9000:9000 -p 5000:5000 --name prisoner-demo lhutton/prisoner-demo
 </pre></div>

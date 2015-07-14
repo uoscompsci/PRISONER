@@ -28,6 +28,11 @@ If you are using boot2docker, for example if you are running OS X, you should ru
  VBoxManage controlvm boot2docker-vm natpf1 "prisoner,tcp,127.0.0.1,5000,,5000"
  VBoxManage controlvm boot2docker-vm natpf1 "demo,tcp,127.0.0.1,9000,,9000"
 
+To avoid port conflicts after using the Docker container, you should run the following when you're done::
+
+ VBoxManage controlvm boot2docker-vm natpf1 delete prisoner
+ VBoxManage controlvm boot2docker-vm natpf1 delete demo
+
 From the command line, run the following to download the Docker image for the PRISONER demo and start the container::
 
   docker run -i -t -p 9000:9000 -p 5000:5000 --name prisoner-demo lhutton/prisoner-demo
