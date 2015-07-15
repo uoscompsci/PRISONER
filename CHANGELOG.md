@@ -1,9 +1,9 @@
-## PRISONER Version 0.2.4 (Future)
+## PRISONER Version 0.2.4 (Indev)
 ### New features
 
 * PolicyProcessor has been refactored to significantly greatly improve maintainability, using a high-level model of the policy rather than constantly parsing the XML. In addition, objects are sanitised based on their *actual* type rather than the declared type of the service gateway function, to avoid any mismatches. This also means nested objects are now correctly sanitised.
 
-## PRISONER Version 0.2.3 (Indev)
+## PRISONER Version 0.2.3 (July 15, 2015)
 
 ### New features
 
