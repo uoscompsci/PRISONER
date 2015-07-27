@@ -10,9 +10,6 @@
 			<attribute type="id">
 				<attribute-policy allow="retrieve"></attribute-policy>
 			</attribute>
-			<attribute type="author">
-				<attribute-policy allow="retrieve"></attribute-policy>
-			</attribute>
 			<attribute type="displayName">
 				<attribute-policy allow="retrieve"></attribute-policy>
 			</attribute>
@@ -41,9 +38,7 @@
 
 		<object-policy allow="retrieve">
 			<object-criteria>
-				<and-match>
-					<attribute-match match="author.id" on_object="session:Facebook.id" />
-				</and-match>
+					<attribute-match match="id" on_object="session:Facebook.id" />
 			</object-criteria>
 		</object-policy>
 	</policy>

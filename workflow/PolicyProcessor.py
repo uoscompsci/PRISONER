@@ -428,6 +428,100 @@ class PolicyProcessor(object):
 
 	def _sanitise_object_request(self, response):
 		"""
+		This sanitises each attribute of an object recursively based on its actual type, rather than the named attributes within the policy.
+		This is a drop-in replacement until it is considered stable
+		"""
+
+		# get most specialised policy
+		# prepare an empty sanitised object of correct type
+		# for each attribute IN OBJECT
+		# if not a SO, check for policy, then sanitise
+		# if SO, prepare a SAR, and call recursively
+		# set this attribute of sanitised object to response from recursive call, or transformed attribute, or original attribute, as necessary
+		# return sanitised object
+
+		if response.headers == None:
+			raise Exception("Response has no headers, so cannot " + \
+			"be sanitised. No object will be returned.")
+
+		policy_object_type = self.__get_most_specialised_policy_for_object(response.headers.provider,
+		response.content)
+		response.headers.object_type = policy_object_type
+
+		xpath = "//policy[@for='%s:%s']//object-policy[@allow='%s']//object-criteria" \
+		% (response.content.provider, response.headers.object_type,
+		op_match[response.headers.operation])
+		xpath_res = self.privacy_policy.xpath(xpath)
+
+
+		if not xpath_res:
+			xpath = "//policy[@for='%s']//object-policy[@allow='%s']//object-criteria" \
+			% (response.headers.object_type,
+			op_match[response.headers.operation])
+			xpath_res = self.privacy_policy.xpath(xpath)
+			ns = False
+		else:
+			ns = True
+		if ns:
+			object_type = "%s:%s" % (response.content.provider,
+			response.headers.object_type)
+		else:
+			object_type = response.headers.object_type
+
+		valid_object_policy = self.__validate_criteria(response,
+		xpath_res[0])
+
+		if not valid_object_policy:
+			return None
+
+		sanitised_object = response.content.__class__()
+
+		for attribute, value in response.content.__dict__.iteritems():
+			if issubclass(value,SocialObject):
+				headers = SARHeaders(response.headers.operation, response.headers.provider, policy_object_type, response.headers.payload)
+
+				response_obj = SocialActivityResponse(value, headers)
+				response = self._sanitise_object_request(response_obj)
+
+				setattr(sanitised_object,attribute,response)
+
+			else:
+				xpath = "//policy[@for='%s']//attributes//attribute[@type='%s']//attribute-policy[@allow='%s']" % (response,headers.object_type, attribute, op_match[response.headers.operation])
+
+				att_path = self.privacy_policy.xpath(xpath)
+
+				if att_path:
+					valid_attr_policy = True
+				else:
+					valid_attr_policy = False
+
+				if valid_attr_policy:
+					transforms = attribute.xpath("%s/transformations" % xpath)
+					if transforms:
+						for transform in transforms[0]:
+								#obj_ref = getattr(response.content,curr_attribute)
+								obj_ref = response.content
+
+								if transform.tag is etree.Comment:
+									continue
+								trans_ref = getattr(obj_ref,
+								"transform_%s" % transform.get("type"))
+								to_transform = getattr(obj_ref, attribute)
+								transformed = trans_ref(to_transform, transform.get("level"))
+								setattr(sanitised_object, attribute, transformed)
+
+
+					else:
+						setattr(sanitised_object, attribute,
+						getattr(response.content, attribute))
+		sanitised_object.provider = response.content.provider
+		return sanitised_object
+
+
+
+
+	def OLD_sanitise_object_request(self, response):
+		"""
 		Sanitises a request - this reduces a Social Object to only the
 		fields allowed by the privacy policy, and applies any transformations required by the policy.
 
@@ -484,6 +578,7 @@ class PolicyProcessor(object):
 
 			xpath = "attribute-policy[@allow='%s']" % op_match[response.headers.operation]
 			att_path = attribute.xpath(xpath)
+
 
 			if att_path:
 				valid_attr_policy = True

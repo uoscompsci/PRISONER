@@ -1,7 +1,14 @@
 ## PRISONER Version 0.2.4 (Indev)
-### New features
 
-* PolicyProcessor has been refactored to significantly greatly improve maintainability, using a high-level model of the policy rather than constantly parsing the XML. In addition, objects are sanitised based on their *actual* type rather than the declared type of the service gateway function, to avoid any mismatches. This also means nested objects are now correctly sanitised.
+### Bug fixes
+
+* Objects are sanitised based on their *actual* type rather than the declared type of the service gateway function, to avoid any mismatches. This also means nested objects are now correctly sanitised.
+
+### Miscellaneous
+
+* Facebook Service Gateway no longer provides author attributes for Users (to avoid recursive validation). Use the id attribute to verify the Facebook ID of a user. Other Facebook objects still provide author attributes.
+
+
 
 ## PRISONER Version 0.2.3 (July 15, 2015)
 
