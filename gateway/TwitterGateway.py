@@ -78,25 +78,17 @@ class TwitterServiceGateway(ServiceGateway):
 		self.token = oauth2.Token(self.access_token, self.access_token_secret)
 		self.client = oauth2.Client(self.consumer, self.token)
 
-		self.timeline_url = 'https://api.twitter.com/1.1/statuses/user_timeline.json?'
-		self.timeline_params = {"user_id": self.content_json['user_id'],
-								"count": 50}
-								#"include_rts": 1,
-								#"exclude_replies":1}
+		# self.timeline_url = 'https://api.twitter.com/1.1/statuses/user_timeline.json?'
+		# self.timeline_params = {"user_id": self.content_json['user_id'],
+		# 						"count": 50}
+		# 						#"include_rts": 1,
+		# 						#"exclude_replies":1}
+		#
+		# self.timeline_request = self.timeline_url + urllib.urlencode(self.timeline_params)
+		#
+		# self.resp, self.content = self.client.request(self.timeline_request, "GET")
+		#
 
-		self.timeline_request = self.timeline_url + urllib.urlencode(self.timeline_params)
-
-		self.resp, self.content = self.client.request(self.timeline_request, "GET")
-		#TEMPTEMPTEMPTEMPTEMPTEMPTEMPTEMPTEMPTEMPTEMPTEMPTEMPTEMPTEMPTEMPTEMPTEMPTEMP
-
-
-
-		auth_user = Timeline()
-		#auth_user.id = self.content_json['user_id']
-		auth_user.id = self.content
-
-		# Set up session.
-		self.session = auth_user
 
 		return self.access_token
 
@@ -108,18 +100,40 @@ class TwitterServiceGateway(ServiceGateway):
 
 		return self.session
 
-	def Timeline(self, operation, payload):
-		"""
-		Performs operations relating to people's musical tastes.
-		Currently only supports GET operations, so we can just get the bands a person / user likes.
+	def User(self, operation, payload):
+		""" Gets the user profile of a user.
 
-		:param operation: The operation to perform. (GET)
+		:param operation: (GET) user
 		:type operation: str
-		:param payload: A User() or Person() whose ID is either a Facebook UID or username.
-		:type payload: SocialObject
-		:returns: A list of the bands this person likes.
+		:param payload: A Person or User whose ID is a Twitter user ID
+		:type payload: Person
+		:returns: User object populated by profile
 		"""
 
+		api_url = "https://api.twitter.com/1.1/users/show.json"
+		api_params = {'user_id':payload}
+
+		api_request = api_url + urllib.urlencode(api_params)
+
+		resp, content = self.client.request(api_request,"GET")
+		user = User()
+
+		user_json = json.loads(content)
+		user.displayName = user_json['name']
+
+		return user
+
+
+	def Tweet(self, operation, payload):
+		"""
+		Requests all tweets by a given user.
+
+		:param operation: (GET) tweets
+		:type operation: str
+		:param payload: A Person whose ID is a Twitter ID
+		:type payload: Person
+		:returns: A list of Tweet objects
+		"""
 		self.timeline_url = 'https://api.twitter.com/1.1/statuses/user_timeline.json?'
 		self.timeline_params = {"user_id": payload,
 								"count": 50}
@@ -130,24 +144,80 @@ class TwitterServiceGateway(ServiceGateway):
 
 		self.resp, self.content = self.client.request(self.timeline_request, "GET")
 
-		# Get user ID and query Facebook for their info.
-		timeline_id = payload
-		# Create user object.
 		timeline = Timeline()
-		timeline.id = timeline_id
+		tweet_list = []
 
-		# Create author object for future use.
 		author = SocialObjects.Person()
-		author.id = timeline_id
-		timeline.author = author
+		author.id = payload
 
-		url_user = "https://api.twitter.com/1.1/statuses/user_timeline.json?count=200&user_id="
+		tweets = json.loads(self.content)
+		for tweet in tweets:
+			this_tweet = Tweet()
+			this_tweet.author = author
+			this_tweet.published = tweet['created_at']
+			this_tweet.content = tweet['text']
+			tweet_list.append(this_tweet)
+
+		timeline.objects = tweet_list
 		return timeline
+
+	# def Timeline(self, operation, payload):
+	# 	"""
+	# 	Performs operations relating to people's musical tastes.
+	# 	Currently only supports GET operations, so we can just get the bands a person / user likes.
+	#
+	# 	:param operation: The operation to perform. (GET)
+	# 	:type operation: str
+	# 	:param payload: A User() or Person() whose ID is either a Facebook UID or username.
+	# 	:type payload: SocialObject
+	# 	:returns: A list of the bands this person likes.
+	# 	"""
+	#
+	# 	self.timeline_url = 'https://api.twitter.com/1.1/statuses/user_timeline.json?'
+	# 	self.timeline_params = {"user_id": payload,
+	# 							"count": 50}
+	# 							#"include_rts": 1,
+	# 							#"exclude_replies":1}
+	#
+	# 	self.timeline_request = self.timeline_url + urllib.urlencode(self.timeline_params)
+	#
+	# 	self.resp, self.content = self.client.request(self.timeline_request, "GET")
+	#
+	# 	# Get user ID and query Facebook for their info.
+	# 	timeline_id = payload
+	# 	# Create user object.
+	# 	timeline = Timeline()
+	# 	timeline.id = timeline_id
+	#
+	# 	# Create author object for future use.
+	# 	author = SocialObjects.Person()
+	# 	author.id = timeline_id
+	# 	timeline.author = author
+	#
+	# 	url_user = "https://api.twitter.com/1.1/statuses/user_timeline.json?count=200&user_id="
+	# 	return timeline
+
+class User(SocialObjects.Person):
+	""" A Twitter User
+	"""
+
+	def __init__(self):
+		super(User, self).__init__()
+
+class Timeline(SocialObjects.Collection):
+	""" A collection of Tweets
+	"""
+
+	def __init__(self):
+		super(Timeline, self).__init__()
 
 class Tweet(SocialObjects.Note):
 	""" A tweet is a single post shared to Twitter, derived from the base
 	Note object.
 	"""
+
+	def __init__(self):
+		super(Tweet, self).__init__()
 
 # class Timeline(SocialObjects.Collection):
 # 	"""
