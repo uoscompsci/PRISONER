@@ -307,7 +307,7 @@ class FacebookServiceGateway(ServiceGateway):
 				user = User()
 
 				# Create author object for future use.
-				author = SocialObjects.Person()
+				author = User()
 				author.id = user_id
 				user.author = author
 
@@ -370,6 +370,7 @@ class FacebookServiceGateway(ServiceGateway):
 					# Loop through places and add to list.
 					for place in education_list:
 						this_place = SocialObjects.Place()
+						this_place.author = author
 						this_place.id = place["school"]["id"]
 						this_place.displayName = place["school"]["name"]
 						edu_list.append(this_place)

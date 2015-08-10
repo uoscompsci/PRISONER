@@ -22,7 +22,6 @@ You will need to be running `Docker <https://www.docker.com>`_ to run the demo c
 
 Start the Docker container
 --------------------------
-
 If you are using boot2docker, for example if you are running OS X, you should run the following commands to correctly map the ports to the VirtualBox VM. If you are running Docker natively on Linux, you do not need to do this::
 
  VBoxManage controlvm boot2docker-vm natpf1 "prisoner,tcp,127.0.0.1,5000,,5000"

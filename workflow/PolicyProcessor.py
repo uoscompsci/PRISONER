@@ -368,8 +368,9 @@ class PolicyProcessor(object):
 			raise RuntimePrivacyPolicyParserError("Criteria "+\
 			"produced an unexpected result - is it well-formed?")
 		elif criteria_stack[0] == False:
+			return False
 			raise NotImplementedError("tried to validate as none")
-		else:
+		else:	
 			return True
 
 	def __get_most_specialised_policy_for_object(self, provider, test_object):
@@ -396,10 +397,10 @@ class PolicyProcessor(object):
 			# is a non-namespaced policy?
 
 			xpath = "//policy[@for='base:%s']" % obj.__name__
-
+			print "looking for %s" % xpath
 			xpath_res = self.privacy_policy.xpath(xpath)
 			if xpath_res:
-
+				print "found!"
 				return obj.__name__
 		return False
 
@@ -446,18 +447,20 @@ class PolicyProcessor(object):
 
 		policy_object_type = self.__get_most_specialised_policy_for_object(response.headers.provider,
 		response.content)
+		print "policy object type is %s" %policy_object_type										
 		response.headers.object_type = policy_object_type
 
 		xpath = "//policy[@for='%s:%s']//object-policy[@allow='%s']//object-criteria" \
 		% (response.content.provider, response.headers.object_type,
 		op_match[response.headers.operation])
+		print "try to find xpath %s" % xpath
 		xpath_res = self.privacy_policy.xpath(xpath)
 
 
 		if not xpath_res:
-			xpath = "//policy[@for='%s']//object-policy[@allow='%s']//object-criteria" \
-			% (response.headers.object_type,
-			op_match[response.headers.operation])
+			xpath = "//policy[@for='base:%s']//object-policy[@allow='%s']//object-criteria"\
+			% (response.headers.object_type,op_match[response.headers.operation])
+			print "try to find xpath %s" % xpath
 			xpath_res = self.privacy_policy.xpath(xpath)
 			ns = False
 		else:
@@ -468,6 +471,10 @@ class PolicyProcessor(object):
 		else:
 			object_type = response.headers.object_type
 
+		if not xpath_res:
+			# no base object, fail criteria
+			return None
+
 		valid_object_policy = self.__validate_criteria(response,
 		xpath_res[0])
 
@@ -477,18 +484,25 @@ class PolicyProcessor(object):
 		sanitised_object = response.content.__class__()
 
 		for attribute, value in response.content.__dict__.iteritems():
-			if not issubclass(value,Collection) and issubclass(value,SocialObject):
-				headers = SARHeaders(response.headers.operation, response.headers.provider, policy_object_type, response.headers.payload)
+			print "%s, %s" % (attribute, value)
+			if not issubclass(value.__class__,SocialObjects.Collection) and issubclass(value.__class__,SocialObjects.SocialObject):
+				headers = SARHeaders(response.headers.operation, response.headers.provider,
+					type(value).__name__, response.headers.payload)
+				print "headers of type %s" % (type(value).__name__)
 
 				response_obj = SocialActivityResponse(value, headers)
-				response = self._sanitise_object_request(response_obj)
+				this_response = self._sanitise_object_request(response_obj)
 
-				setattr(sanitised_object,attribute,response)
+				print "setting %s = %s on sanitised" % (attribute, this_response)
+				setattr(sanitised_object,attribute,this_response)
 
 			else:
-				xpath = "//policy[@for='%s']//attributes//attribute[@type='%s']//attribute-policy[@allow='%s']" % (response,headers.object_type, attribute, op_match[response.headers.operation])
+				if attribute[0] == "_":
+					attribute = attribute[1:]
+				xpath = "//policy[@for='%s:%s']//attributes//attribute[@type='%s']//attribute-policy[@allow='%s']" %(response.headers.provider, response.headers.object_type, attribute,op_match [response.headers.operation])
 
 				att_path = self.privacy_policy.xpath(xpath)
+				print "att_path: %s for xpath %s" % (att_path, xpath)
 
 				if att_path:
 					valid_attr_policy = True
@@ -496,7 +510,7 @@ class PolicyProcessor(object):
 					valid_attr_policy = False
 
 				if valid_attr_policy:
-					transforms = attribute.xpath("%s/transformations" % xpath)
+					transforms = self.privacy_policy.xpath("%s//transformations" % xpath)
 					if transforms:
 						for transform in transforms[0]:
 								#obj_ref = getattr(response.content,curr_attribute)
@@ -512,6 +526,7 @@ class PolicyProcessor(object):
 
 
 					else:
+						print "attr: %s on sanitised object set to  %s" % (attribute, getattr(response.content, attribute))
 						setattr(sanitised_object, attribute,
 						getattr(response.content, attribute))
 		sanitised_object.provider = response.content.provider
@@ -644,6 +659,9 @@ class PolicyProcessor(object):
 			to_match_obj =	self._infer_attributes(to_match,
 			response.content)
 
+			print "match obj: %s" % response.content
+			print "match %s on %s" % (to_match, on_object)
+			print "is %s == %s" % (to_match_obj, on_object_obj)
 			if to_match_obj == on_object_obj:
 				return True
 			else:
