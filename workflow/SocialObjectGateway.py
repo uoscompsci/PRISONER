@@ -367,12 +367,20 @@ class SocialObjectsGateway(object):
 			:returns: ServiceGateway
 		"""
 		if provider in self.gateways:
-			return self.gateways[provider]
+			return self.gateways[provider]	
+
+		if provider in self.props:
+			props = self.props[provider]
+		else:
+			props = None
+
+
 		try:
 			provider_gateway = globals()["%sServiceGateway" %
-			provider](policy=self.policy_processor,props=self.props[provider])
+			provider](policy=self.policy_processor,props=props)
 		except:
-			raise ServiceGatewayNotFound(provider)
+			raise
+			#raise ServiceGatewayNotFound(provider)
 		self.gateways[provider] = provider_gateway
 		return provider_gateway
 

@@ -1,7 +1,8 @@
-from prisoner.gateway.ServiceGateway import ServiceGateway
+from prisoner.gateway.ServiceGateway import ServiceGateway, WrappedResponse
 import prisoner.SocialObjects as SocialObjects
 
 
+import json
 import urlparse
 import oauth2
 import datetime
@@ -14,12 +15,13 @@ class TwitterServiceGateway(ServiceGateway):
 	This gateway supports reading a user's timeline and publishing tweets on
 	their behalf, with support for geo-tagged content.
 	"""
-	def __init__(self):
+	def __init__(self, policy=None, props=None):
+		self.props = props
 		self.service_name = "Twitter"
 		self.service_description = "Micro-blogging service"
 
-		self.consumer_key = ''
-		self.consumer_secret = ''
+		self.consumer_key = props['api_key']
+		self.consumer_secret = props['api_secret']
 
 		self.request_token_url = 'https://api.twitter.com/oauth/request_token'
 		self.access_token_url = 'https://api.twitter.com/oauth/access_token'
@@ -31,6 +33,16 @@ class TwitterServiceGateway(ServiceGateway):
 
 		self.access_token = None
 
+	def request_handler(self, request, operation, payload, extra_args=None):
+		""" Wrapper around object requests. Used to inject any necessary debug headers
+		"""
+		self.props['args'] = extra_args
+		resp = request(operation, payload)
+		headers = {}
+		if "debug" in self.props:
+			pass
+
+		return WrappedResponse(resp, headers)
 
 	def request_authentication(self, callback):
 		"""
@@ -78,6 +90,10 @@ class TwitterServiceGateway(ServiceGateway):
 		self.token = oauth2.Token(self.access_token, self.access_token_secret)
 		self.client = oauth2.Client(self.consumer, self.token)
 
+		auth_user = User()
+		auth_user.id = self.content_json['user_id']
+		self.session = auth_user
+
 		# self.timeline_url = 'https://api.twitter.com/1.1/statuses/user_timeline.json?'
 		# self.timeline_params = {"user_id": self.content_json['user_id'],
 		# 						"count": 50}
@@ -91,6 +107,21 @@ class TwitterServiceGateway(ServiceGateway):
 
 
 		return self.access_token
+
+	def restore_authentication(self, access_token):
+		"""
+		Provides a mechanism to restore a session. (Essentially refresh an access token)
+		Twitter does not allow access tokens to be refreshed. However, if the user is
+		forced to go through the
+		authentication process again, it will be done transparently so long as the PRISONER app has not requested
+		additional permissions.
+
+		:param access_token: The current access token held for this user.
+		:type access_token: str
+		:returns: False, thus forcing the authentication process to take place again. (Transparently)
+		"""
+
+		return False
 
 	def Session(self):
 		"""
@@ -110,8 +141,9 @@ class TwitterServiceGateway(ServiceGateway):
 		:returns: User object populated by profile
 		"""
 
-		api_url = "https://api.twitter.com/1.1/users/show.json"
+		api_url = "https://api.twitter.com/1.1/users/show.json?"
 		api_params = {'user_id':payload}
+
 
 		api_request = api_url + urllib.urlencode(api_params)
 
