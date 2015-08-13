@@ -244,7 +244,7 @@ class FacebookServiceGateway(ServiceGateway):
 		expires = response["expires"][0]
 
 		# Create a User() object for the authenticated user.
-		auth_user = User()
+		auth_user = Person()
 
 		# Query Facebook to get the authenticated user's ID and username.
 		result_set = self.get_graph_data("/me")
@@ -284,7 +284,7 @@ class FacebookServiceGateway(ServiceGateway):
 		return self.session
 
 
-	def User(self, operation, payload):
+	def Person(self, operation, payload):
 		"""
 		Performs operations relating to people's profile information.
 		Currently only supports GET operations. This allows us to, given a suitable payload such as a Person() or
@@ -304,10 +304,10 @@ class FacebookServiceGateway(ServiceGateway):
 				user_details = self.get_graph_data("/" + user_id)
 
 				# Create user object.
-				user = User()
+				user = Person()
 
 				# Create author object for future use.
-				author = User()
+				author = Person()
 				author.id = user_id
 				user.author = author
 
@@ -438,7 +438,7 @@ class FacebookServiceGateway(ServiceGateway):
 				user.relationshipStatus = self.get_value(user_details, "relationship_status")
 
 				# Make a User object for the user's significant other.
-				sig_other = User()
+				sig_other = Person()
 				sig_other_info = self.get_value(user_details, "significant_other")
 
 				# Info exists.
@@ -449,7 +449,7 @@ class FacebookServiceGateway(ServiceGateway):
 
 				# No info.
 				else:
-					user.significantOther = User()
+					user.significantOther = Person()
 
 				# Get the user's profile picture.
 				img = SocialObjects.Image()
@@ -462,7 +462,7 @@ class FacebookServiceGateway(ServiceGateway):
 			except:
 				print "User() function exception:"
 				print sys.exc_info()[0]
-				return User()
+				return Person()
 
 		else:
 			raise NotImplementedError("Operation not supported.")
@@ -729,7 +729,7 @@ class FacebookServiceGateway(ServiceGateway):
 			raise NotImplementedException("Operation not supported.")
 
 
-	def Status(self, operation, payload):
+	def Note(self, operation, payload):
 		"""
 		Performs operations on a user's status updates.
 		Currently only supports GET operations. This lets us retrieve a user's entire backlog of status updates.
@@ -800,7 +800,7 @@ class FacebookServiceGateway(ServiceGateway):
 							# Ensure the current user posted this update and it is a valid status object.
 							if (((status_type == "status") or (status_type == "link") or (status_type == "photo")) and (status_author == user_id)):
 								# Set basic info.
-								this_status = Status()
+								this_status = Note()
 
 								author = SocialObjects.Person()
 								author.id = user_id
@@ -900,7 +900,7 @@ class FacebookServiceGateway(ServiceGateway):
 					# For each friend in this batch...
 					for friend in this_data:
 						# Get basic info for this friend.
-						this_friend = User()
+						this_friend = Person()
 						this_friend.id = self.get_value(friend, "id")
 						this_friend.displayName = self.get_value(friend, "name")
 						this_friend.url = "https://www.facebook.com/" + this_friend.id
@@ -1332,7 +1332,7 @@ class FacebookServiceGateway(ServiceGateway):
 
 				# Loop through likes and add them to our list.
 				for person in have_liked:
-					this_person = User()
+					this_person = Person()
 					this_person.id = self.get_value(person, "id")
 					this_person.displayName = self.get_value(person, "name")
 					likes.append(this_person)
@@ -1474,7 +1474,7 @@ class FacebookServiceGateway(ServiceGateway):
 
 			# Loop through the tags and add them to our list.
 			for person in are_tagged:
-				this_person = User()
+				this_person = Person()
 				this_person.id = self.get_value(person, "id")
 				this_person.displayName = self.get_value(person, "name")
 				tags.append(this_person)
@@ -1507,7 +1507,7 @@ class FacebookServiceGateway(ServiceGateway):
 
 				# Create a User object for each like...
 				for person in have_liked:
-					this_person = User()
+					this_person = Person()
 					this_person.id = person["id"]
 					this_person.displayName = person["name"]
 					likes.append(this_person)
@@ -1669,7 +1669,7 @@ class FacebookServiceGateway(ServiceGateway):
 			return datetime.datetime.strptime(time, "%m/%d/%Y")
 
 
-class User(SocialObjects.Person):
+class Person(SocialObjects.Person):
 	"""
 	Representation of a user object on Facebook.
 	Users are essentially the backbone of the Facebook service and such objects can contain a great deal of information.
@@ -1678,7 +1678,7 @@ class User(SocialObjects.Person):
 	"""
 
 	def __init__(self):
-		super(User, self).__init__()
+		super(Person, self).__init__()
 		self._provider = "Facebook"	# String
 		self._username = None	# String
 		self._firstName = None	# String
@@ -1932,7 +1932,7 @@ class Friends(SocialObjects.Collection):
 
 
 
-class Status(SocialObjects.Note):
+class Note(SocialObjects.Note):
 	"""
 	Representation of a status object on Facebook.
 	Status updates are short posts by Facebook users. They can either be entirely textual or contain a link or a photo.
@@ -1941,7 +1941,7 @@ class Status(SocialObjects.Note):
 	"""
 
 	def __init__(self):
-		super(Status, self).__init__()
+		super(Note, self).__init__()
 		self._provider = "Facebook"	# String
 		self._privacy = None	# String
 		self._likes = None	# Collection of users

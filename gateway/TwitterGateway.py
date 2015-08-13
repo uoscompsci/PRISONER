@@ -90,7 +90,7 @@ class TwitterServiceGateway(ServiceGateway):
 		self.token = oauth2.Token(self.access_token, self.access_token_secret)
 		self.client = oauth2.Client(self.consumer, self.token)
 
-		auth_user = User()
+		auth_user = Person()
 		auth_user.id = self.content_json['user_id']
 		self.session = auth_user
 
@@ -131,7 +131,7 @@ class TwitterServiceGateway(ServiceGateway):
 
 		return self.session
 
-	def User(self, operation, payload):
+	def Person(self, operation, payload):
 		""" Gets the user profile of a user.
 
 		:param operation: (GET) user
@@ -148,17 +148,19 @@ class TwitterServiceGateway(ServiceGateway):
 		api_request = api_url + urllib.urlencode(api_params)
 
 		resp, content = self.client.request(api_request,"GET")
-		user = User()
+		user = Person()
 
 		user_json = json.loads(content)
+		print "user json: %s" % user_json
+		user.id = payload
 		user.displayName = user_json['name']
 
 		return user
 
 
-	def Tweet(self, operation, payload):
-		"""
-		Requests all tweets by a given user.
+	def Note(self, operation, payload):
+		""" Requests all
+		tweets by a given user.
 
 		:param operation: (GET) tweets
 		:type operation: str
@@ -184,13 +186,15 @@ class TwitterServiceGateway(ServiceGateway):
 
 		tweets = json.loads(self.content)
 		for tweet in tweets:
-			this_tweet = Tweet()
+			this_tweet = Note()
 			this_tweet.author = author
 			this_tweet.published = tweet['created_at']
 			this_tweet.content = tweet['text']
 			tweet_list.append(this_tweet)
 
 		timeline.objects = tweet_list
+
+		print "returning timeline!"
 		return timeline
 
 	# def Timeline(self, operation, payload):
@@ -229,12 +233,12 @@ class TwitterServiceGateway(ServiceGateway):
 	# 	url_user = "https://api.twitter.com/1.1/statuses/user_timeline.json?count=200&user_id="
 	# 	return timeline
 
-class User(SocialObjects.Person):
+class Person(SocialObjects.Person):
 	""" A Twitter User
 	"""
 
 	def __init__(self):
-		super(User, self).__init__()
+		super(Person, self).__init__()
 
 class Timeline(SocialObjects.Collection):
 	""" A collection of Tweets
@@ -243,13 +247,13 @@ class Timeline(SocialObjects.Collection):
 	def __init__(self):
 		super(Timeline, self).__init__()
 
-class Tweet(SocialObjects.Note):
+class Note(SocialObjects.Note):
 	""" A tweet is a single post shared to Twitter, derived from the base
 	Note object.
 	"""
 
 	def __init__(self):
-		super(Tweet, self).__init__()
+		super(Note, self).__init__()
 
 # class Timeline(SocialObjects.Collection):
 # 	"""

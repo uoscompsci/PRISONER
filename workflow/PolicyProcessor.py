@@ -460,7 +460,7 @@ class PolicyProcessor(object):
 		if not xpath_res:
 			xpath = "//policy[@for='base:%s']//object-policy[@allow='%s']//object-criteria"\
 			% (response.headers.object_type,op_match[response.headers.operation])
-			print "try to find xpath %s" % xpath
+			print "try to find xpath! %s" % xpath
 			xpath_res = self.privacy_policy.xpath(xpath)
 			ns = False
 		else:
@@ -473,6 +473,7 @@ class PolicyProcessor(object):
 
 		if not xpath_res:
 			# no base object, fail criteria
+			print "i have no base object so fail"
 			return None
 
 		valid_object_policy = self.__validate_criteria(response,

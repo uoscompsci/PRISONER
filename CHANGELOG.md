@@ -1,12 +1,18 @@
 ## PRISONER Version 0.2.4 (Indev)
 
+### New features
+
+* Facebook and Twitter gateways now use the same class names as the base Social Objects spec where appropriate (eg. "Status" and "Tweet" become "Note"), to simplify policy-writing.
+
 ### Bug fixes
 
-* Objects are sanitised based on their *actual* type rather than the declared type of the service gateway function, to avoid any mismatches. This also means nested objects are now correctly sanitised.
+* Objects are sanitised based on their actual type rather than the declared type of the service gateway function, to avoid any mismatches. This also means nested objects are now correctly sanitised.
 
 ### Miscellaneous
 
 * Facebook Service Gateway no longer provides author attributes for Users (to avoid recursive validation). Use the id attribute to verify the Facebook ID of a user. Other Facebook objects still provide author attributes.
+
+
 
 
 
