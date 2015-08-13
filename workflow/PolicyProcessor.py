@@ -191,7 +191,7 @@ class PolicyProcessor(object):
 			return object_type.split(":")[1]
 
 
-	def _infer_object(self, object_name):
+	def _infer_object(self, object_name, provider=None):
 		""" Infers object type based on object definition in a privacy policy.
 
 		:param object_name: Object name with an optional namespace component
@@ -240,7 +240,10 @@ class PolicyProcessor(object):
 			obj_ref = obj_components[1].split(".")
 			# split again on . - 1st component is service gateway,
 			# rest is session obj ref
-			gateway = self.sog.get_service_gateway(obj_ref[0])
+			if obj_ref[0] != "Service":
+				gateway = self.sog.get_service_gateway(obj_ref[0])
+			else:
+				gateway = self.sog.get_service_gateway(provider)
 			gateway_session = gateway.Session()
 
 			concat_attrs = ""
@@ -283,7 +286,7 @@ class PolicyProcessor(object):
 				parse_rec = getattr(parse_rec,meth)
 		return parse_rec
 
-	def __validate_criteria(self, response, tree):
+	def __validate_criteria(self, response, tree, provider=None):
 		""" Validates an object against the object and attribute criteria in the given policy.
 
 		:param response: The response object to test
@@ -418,7 +421,7 @@ class PolicyProcessor(object):
 			provider_gateway, class_name)
 
 		except:
-			obj = self._infer_object(class_name)
+			obj = self._infer_object(class_name,provider)
 
 		inst = obj()
 		# call get_most_specialised with this instance
@@ -477,7 +480,7 @@ class PolicyProcessor(object):
 			return None
 
 		valid_object_policy = self.__validate_criteria(response,
-		xpath_res[0])
+		xpath_res[0],provider=response.content.provider)
 
 		if not valid_object_policy:
 			return None
@@ -642,7 +645,7 @@ class PolicyProcessor(object):
 		sanitised_object.provider = response.content.provider
 		return sanitised_object
 
-	def __test_criteria(self, element, response):
+	def __test_criteria(self, element, response, provider=None):
 		""" Tests that an object passes a single logical test within object or attribute criteria.
 		Used internally when validating objects
 
@@ -656,7 +659,7 @@ class PolicyProcessor(object):
 			to_match = element.get("match")
 			on_object = element.get("on_object")
 
-			on_object_obj = self._infer_object(on_object)
+			on_object_obj = self._infer_object(on_object, provider=provider)
 			to_match_obj =	self._infer_attributes(to_match,
 			response.content)
 
