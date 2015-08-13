@@ -4,9 +4,13 @@
 
 * Facebook and Twitter gateways now use the same class names as the base Social Objects spec where appropriate (eg. "Status" and "Tweet" become "Note"), to simplify policy-writing.
 
+* Abstract policies can now refer to session objects for the current service by using the special session:Service object. eg. the current user's ID is represented as "session:Service.id".
+
+
 ### Bug fixes
 
 * Objects are sanitised based on their actual type rather than the declared type of the service gateway function, to avoid any mismatches. This also means nested objects are now correctly sanitised.
+
 
 ### Miscellaneous
 
