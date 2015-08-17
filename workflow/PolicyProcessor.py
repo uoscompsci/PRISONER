@@ -212,6 +212,8 @@ class PolicyProcessor(object):
 
 		ns = obj_components[0]
 
+		print "namespace is %s" % ns
+
 		if len(obj_components) == 1 or len(obj_components[1]) < 1:
 			raise RuntimePrivacyPolicyParserError("No valid object "+ \
 			"reference supplied in %s. Did you use the right namespace?" % obj_components+\
@@ -329,7 +331,8 @@ class PolicyProcessor(object):
 					elif top_element.tag not in logical_elements:
 						# evaluate element and add
 						# result to working set
-						working_stack_set.append(self.__test_criteria(top_element,response))
+						working_stack_set.append(self.__test_criteria(top_element,response,
+							provider=provider))
 					else:
 						# evaluate everything in set
 						# according to this operator,
@@ -360,7 +363,7 @@ class PolicyProcessor(object):
 			while(len(criteria_stack) > 0):
 				top_element = criteria_stack.pop()
 				working_set.append(self.__test_criteria(top_element,
-				response))
+				response, provider=provider))
 			if False in working_set:
 				criteria_stack.append(False)
 			else:
@@ -458,7 +461,7 @@ class PolicyProcessor(object):
 		op_match[response.headers.operation])
 		print "try to find xpath %s" % xpath
 		xpath_res = self.privacy_policy.xpath(xpath)
-
+		use_base = False
 
 		if not xpath_res:
 			xpath = "//policy[@for='base:%s']//object-policy[@allow='%s']//object-criteria"\
@@ -466,6 +469,7 @@ class PolicyProcessor(object):
 			print "try to find xpath! %s" % xpath
 			xpath_res = self.privacy_policy.xpath(xpath)
 			ns = False
+			use_base = True
 		else:
 			ns = True
 		if ns:
@@ -479,8 +483,10 @@ class PolicyProcessor(object):
 			print "i have no base object so fail"
 			return None
 
+		print "request provider is %s" % response.content.provider
+		print "header provider is %s" % response.headers.provider
 		valid_object_policy = self.__validate_criteria(response,
-		xpath_res[0],provider=response.content.provider)
+		xpath_res[0],provider=response.headers.provider)
 
 		if not valid_object_policy:
 			return None
@@ -503,7 +509,11 @@ class PolicyProcessor(object):
 			else:
 				if attribute[0] == "_":
 					attribute = attribute[1:]
-				xpath = "//policy[@for='%s:%s']//attributes//attribute[@type='%s']//attribute-policy[@allow='%s']" %(response.headers.provider, response.headers.object_type, attribute,op_match [response.headers.operation])
+				if not use_base:
+					xpath = "//policy[@for='%s:%s']//attributes//attribute[@type='%s']//attribute-policy[@allow='%s']" %(response.headers.provider, response.headers.object_type, attribute,op_match [response.headers.operation])
+				else:
+					xpath = "//policy[@for='base:%s']//attributes//attribute[@type='%s']//attribute-policy[@allow='%s']" %(response.headers.object_type, attribute,op_match [response.headers.operation])
+
 
 				att_path = self.privacy_policy.xpath(xpath)
 				print "att_path: %s for xpath %s" % (att_path, xpath)
@@ -659,6 +669,7 @@ class PolicyProcessor(object):
 			to_match = element.get("match")
 			on_object = element.get("on_object")
 
+			print "test criteria with provider %s" % provider
 			on_object_obj = self._infer_object(on_object, provider=provider)
 			to_match_obj =	self._infer_attributes(to_match,
 			response.content)
