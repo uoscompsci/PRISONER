@@ -52,7 +52,7 @@ class FacebookServiceGateway(ServiceGateway):
 			"Note": ["user_status", "user_posts", "read_stream", "publish_actions"],
 			"Friends": ["user_friends"],
 			"Album": ["user_photos"],
-			"Photo": ["user_photos"],
+			"Image": ["user_photos"],
 			"Checkin": ["user_tagged_places"]
 		}
 
@@ -1152,7 +1152,7 @@ class FacebookServiceGateway(ServiceGateway):
 					# For each photo in this batch...
 					for photo in this_data:
 						# Create photo object and set basic info.
-						this_photo = Photo()
+						this_photo = Image()
 						this_photo.id = self.get_value(photo, "id")
 						this_photo.displayName = self.get_value(photo, "name")
 						this_photo.published = self.str_to_time(self.get_value(photo, "created_time"))
@@ -1211,7 +1211,7 @@ class FacebookServiceGateway(ServiceGateway):
 					result_set = self.get_graph_data(next_address)
 
 				# Create a collection object for the photos.
-				photo_album = Photos()
+				photo_album = Images()
 				photo_album.objects = photo_obj_list
 				photo_album.author = author
 
@@ -1222,7 +1222,7 @@ class FacebookServiceGateway(ServiceGateway):
 				print "Photo() function exception:"
 				#raise
 				print sys.exc_info()[0]
-				return Photos()
+				return Images()
 
 		else:
 			raise NotImplementedException("Operation not supported")
@@ -2135,7 +2135,7 @@ class Albums(SocialObjects.Collection):
 		super(Albums, self).__init__()
 
 
-class Photo(SocialObjects.Image):
+class Image(SocialObjects.Image):
 	"""
 	Representation of a photo object on Facebook.
 	Photos are images uploaded by users or applications. As well as the standard attributes inherited from SocialObject,
@@ -2144,7 +2144,7 @@ class Photo(SocialObjects.Image):
 	"""
 
 	def __init__(self):
-		super(Photo, self).__init__()
+		super(Image, self).__init__()
 		self._provider = "Facebook"	# String
 		self._position = None	# Integer
 		self._image = None	# Image
@@ -2244,13 +2244,13 @@ class Photo(SocialObjects.Image):
 		self._comments = value
 
 
-class Photos(SocialObjects.Collection):
+class Images(SocialObjects.Collection):
 	"""
 	Lightweight collection class for representing collections of photos.
 	"""
 
 	def __init__(self):
-		super(Photos, self).__init__()
+		super(Images, self).__init__()
 
 
 class Tags(SocialObjects.Collection):
