@@ -34,7 +34,7 @@ class FacebookServiceGateway(ServiceGateway):
 
 		# map from object names to the required FB permission(s)
 		self.perm_maps = {
-			"User":["public_profile"],
+			"Person":["public_profile"],
 			"education":["user_education_history"],
 			"work": ["user_work_history"],
 			"relationshipStatus":["user_relationships"],
@@ -49,7 +49,7 @@ class FacebookServiceGateway(ServiceGateway):
 			"Like": ["user_likes"],
 			"Movie": ["user_likes"],
 			"Book": ["user_likes"],
-			"Status": ["user_status", "user_posts", "read_stream", "publish_actions"],
+			"Note": ["user_status", "user_posts", "read_stream", "publish_actions"],
 			"Friends": ["user_friends"],
 			"Album": ["user_photos"],
 			"Photo": ["user_photos"],

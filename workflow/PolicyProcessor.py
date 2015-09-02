@@ -494,7 +494,7 @@ class PolicyProcessor(object):
 		sanitised_object = response.content.__class__()
 
 		for attribute, value in response.content.__dict__.iteritems():
-			print "%s, %s" % (attribute, value)
+			#print "%s, %s" % (attribute, value)
 			if not issubclass(value.__class__,SocialObjects.Collection) and issubclass(value.__class__,SocialObjects.SocialObject):
 				headers = SARHeaders(response.headers.operation, response.headers.provider,
 					type(value).__name__, response.headers.payload)
