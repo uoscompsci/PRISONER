@@ -154,11 +154,9 @@ class PRISONER(object):
 		""" Each session has its own instance of PRISONER's internals,
 		keyed on the session cookie.
 		"""
-		#return self.session_internals[request.cookies.get("PRISession")]
 		return self.session_internals[request.sessionid]
 
 	def set_builder_reference(self, request, builder):
-		#prisession = request.args["PRISession"]
 		prisession = request.sessionid
 		self.session_internals[prisession] = builder
 		return self.get_builder_reference(request)
@@ -169,7 +167,6 @@ class PRISONER(object):
 		or in the event of an irrecoverable error, from which you do not want the
 		participant to recover without restarting the experiment flow
 		"""
-		#priSession = request.args["PRISession"]
 		priSession = session
 
 		self.session_internals[priSession].sog.persistence.close_connection()
@@ -197,7 +194,6 @@ class PRISONER(object):
 		design and privacy policy, and a form of columns to insert about this participant.
 		"""
 
-		print "form: %s" % request.form
 		builder = self.set_builder_reference(request,
 		ExperimentBuilder.ExperimentBuilder())
 
@@ -225,10 +221,9 @@ class PRISONER(object):
 	def on_schema(self, request):
 		""" Builds the database schema matching this experimental design
 		"""
-		print "on_schema called"
+
 		builder = self.set_builder_reference(request,
 		ExperimentBuilder.ExperimentBuilder())
-		print "on_schema got builder"
 
 		exp_design = request.form["design"]
 		policy = request.form["policy"]
@@ -315,7 +310,6 @@ class PRISONER(object):
 			builder.token, session))
 
 			return response
-		#return redirect(consent_url)
 
 	def on_post_response(self, request):
 		builder = self.get_builder_reference(request)
@@ -393,29 +387,7 @@ class PRISONER(object):
 
 	""" START server handlers migrated from ExpBuilder """
 	def on_consent(self, request):
-		request.sessionid = request.args["PRISession"]
-
-		builder = self.get_builder_reference(request)
-		token = request.args["pctoken"]
-		resp = "Stand back. We're doing science.<br />"
-		if(token != builder.token):
-			resp += "Token %s is not %s" % (token, builder.token)
-			return Response(resp)
-		else:
-			confirm_url = "%s/confirm?pctoken=%s&PRISession=%s" % (SERVER_URL,
-			builder.token, request.args["PRISession"])
-
-			"""
-			resp += "(human readable consent here) <br/><br />" +\
-			"Go <a href='%s'>here</a> if you agree to " % confirm_url+\
-			"the invisible information here."
-			#return Response(resp)
-			re = Response(resp)
-			re.content_type = "text/html"
-			return re
-			"""
-			return self.render_template("start.html",next_link = confirm_url,
-			exp_contact=builder.contact, exp_name=builder.title)
+		raise Exception("No consent prpvider")
 
 
 	def on_confirm(self, request):
@@ -525,39 +497,27 @@ class PRISONER(object):
 
 	def wsgi_app(self, environ, start_response):
 		request = Request(environ)
-		#sid = request.cookies.get("PRISession")
+
 		sid = request.cookies.get("PRISession")
-		#try:
-			#sid = request.args["PRISession"]
-		#except:
-		#	sid = None
 		if sid == "":
 			sid = None
 		if not sid:
 			request.session = self.session_store.new()
 			request.session["active"] = True
-			print "No session. Started %s" % request.session.sid
 		else:
 				request.session = self.session_store.get(sid)
 
-				print "Got existing session %s" % (request.session.sid)
-
-				#request.session = self.session_store.new()
-				#request.session["active"] = True
 
 		request.sessionid = sid
 
 		response = self.dispatch_request(request)
 
 		if "RequestRedirect" in type(response).__name__:
-			print "Redirect!"
 			return response(environ,start_response)
 
 		if request.session.should_save:
-			print "Now setting cookie %s" % request.session.sid
 			self.session_store.save(request.session)
 			response.set_cookie("PRISession", request.session.sid)
-			#response.headers.add("PRISession", request.session.sid)
 		return response(environ, start_response)
 
 	def __call__(self, environ, start_response):
@@ -571,8 +531,5 @@ def create_app():
 if __name__ == "__main__":
 	from werkzeug.serving import run_simple
 	app = create_app()
-	#print app
-	#print "Starting PRISONER Web Service..."
-	#print "Templates at %s" % TEMPLATE_URL
 	run_simple("localhost", 5000, app, use_debugger=True, use_reloader=True,
 	static_files={"/static": TEMPLATE_URL})

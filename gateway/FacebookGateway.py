@@ -83,35 +83,9 @@ class FacebookServiceGateway(ServiceGateway):
 		r = random.random()
 		self.state = md5.new(str(r)).hexdigest()
 
-		# Permissions. (We'll ask for them ALL for now)
-		user_permissions = "user_about_me,user_activities,user_birthday,user_checkins,user_education_history,user_events," +\
-		"user_groups,user_hometown,user_interests,user_likes,user_location,user_notes,user_photos,user_questions,user_relationships," +\
-		"user_relationship_details,user_religion_politics,user_status,user_subscriptions,user_videos,user_website,user_work_history,email"
-		friend_permissions = "friends_about_me,friends_activities,friends_birthday,friends_checkins,friends_education_history," +\
-		"friends_events,friends_groups,friends_hometown,friends_interests,friends_likes,friends_location,friends_notes,friends_photos," +\
-		"friends_questions,friends_relationships,friends_relationship_details,friends_religion_politics,friends_status,friends_subscriptions," +\
-		"friends_videos,friends_website,friends_work_history"
-		extended_permissions = "read_friendlists,read_insights,read_mailbox,read_requests,read_stream,xmpp_login,ads_management,create_event," +\
-		"manage_friendlists,manage_notifications,user_online_presence,friends_online_presence,publish_checkins,publish_stream,rsvp_event,user_tagged_places"
-
-		# this is a terrible pattern
-		# just do this until individual apps can provide their permissions in bootstrap
-
-		#mobiad_permissions = "user_about_me,user_checkins,friends_about_me,read_stream,publish_checkins,publish_stream"
-
-		consent_permissions = "user_about_me,user_checkins,user_education_history,user_hometown,user_likes,user_location,user_photos,user_religion_politics,user_status,user_work_history,user_friends,read_stream,user_birthday"
-
 		# Set the scope for our app. (What permissions do we need?)
-
-#		self.scope = user_permissions + "," + friend_permissions + "," + 			extended_permissions # get all perms
-
-		#self.scope = mobiad_permissions #get mobiad perms
-
-		#self.scope = consent_permissions
-
 		self.scope = str(self.perms).strip("[]").replace(" ","").replace("'","")
 
-		print "scope is %s" % self.scope
 
 		# Placeholders.
 		self.access_token = None
@@ -126,7 +100,6 @@ class FacebookServiceGateway(ServiceGateway):
 		if "debug" in self.props:
 			headers['PRISONER-FB-Permissions'] = self.perms
 
-		#return ServiceGateway(resp, headers)
 		return WrappedResponse(resp, headers)
 
 
@@ -199,7 +172,6 @@ class FacebookServiceGateway(ServiceGateway):
 
 		# Compose request URI.
 		uri = self.auth_request_uri + urllib.urlencode(params)
-		print "Request URI: " + uri
 
 		return uri
 
@@ -215,8 +187,7 @@ class FacebookServiceGateway(ServiceGateway):
 		"""
 
 		# Before doing this, could check that our state value matches the state returned by Facebook. (Later addition)
-		facebook_code = None
-		#facebook_code = request # Uncomment me if testing with a known code.
+		facebook_code = None		
 
 		if (request.args.has_key("code")):
 			facebook_code = request.args['code']
@@ -234,7 +205,6 @@ class FacebookServiceGateway(ServiceGateway):
 		# Load the token request URI and get its response parameters.
 		token_request_uri = self.auth_token_uri + urllib.urlencode(params)
 		response = urlparse.parse_qs(urllib.urlopen(token_request_uri).read())
-		print "Response: " + str(response)
 
 		# Parse response to get access token and expiry date.
 		access_token = None
@@ -253,9 +223,6 @@ class FacebookServiceGateway(ServiceGateway):
 
 		# Set up session.
 		self.session = auth_user
-
-		print "Access token: " + self.access_token
-		print "Token expires in: " + expires + " secs"
 
 		return self.access_token
 
@@ -764,9 +731,6 @@ class FacebookServiceGateway(ServiceGateway):
 				if "limit" in self.props['args']:
 					limit = self.props['args']['limit']
 
-
-
-
 				# Get user ID and query Facebook for their info.
 				user_id = payload
 				status_coll = StatusList()
@@ -834,7 +798,6 @@ class FacebookServiceGateway(ServiceGateway):
 
 					# Compose next address.
 					page += 1
-					print "is %s > %s" % (len(status_list), limit)
 					if limit and len(status_list) >= limit:
 						break
 					if("paging" in result_set and "next" in result_set["paging"]):
@@ -879,7 +842,6 @@ class FacebookServiceGateway(ServiceGateway):
 		if (operation == "GET"):
 			try:
 				# Get user ID and query Facebook for their friends.
-				print "friends payload: %s " % payload
 				user_id = payload
 				fields = "name,id,hometown,location,education,work"
 				result_set = self.get_graph_data("/" + user_id + "/friends?fields=%s" % fields)
@@ -906,81 +868,6 @@ class FacebookServiceGateway(ServiceGateway):
 						this_friend.url = "https://www.facebook.com/" + this_friend.id
 
 						user_details = friend
-
-						"""
-						# Get a list detailing the user's education history.
-						education_list = self.get_value(user_details, "education")
-						edu_coll = SocialObjects.Collection()
-						edu_coll.author = author
-
-						# Education information exists.
-						if ((education_list) and (len(education_list) > 0)):
-							# Create list to hold places.
-							edu_list = []
-
-							# Loop through places and add to list.
-							for place in education_list:
-								this_place = SocialObjects.Place()
-								this_place.id = place["school"]["id"]
-								this_place.displayName = place["school"]["name"]
-								edu_list.append(this_place)
-
-							edu_coll.objects = edu_list
-
-						# Add education info to User object.
-						this_friend.education = edu_coll
-
-						# Get a list detailing the user's work history.
-						work_coll = SocialObjects.Collection()
-						work_coll.author = author
-						work_history = self.get_value(user_details, "work")
-
-						# Info exists.
-						if ((work_history) and (len(work_history) > 0)):
-							# Create Collection object to hold work history.
-							work_list = []
-
-							# Loop through places and add to list.
-							for place in work_history:
-								this_place = SocialObjects.Place()
-								this_place.id = place["employer"]["id"]
-								this_place.displayName = place["employer"]["name"]
-								work_list.append(this_place)
-
-							work_coll.objects = work_list
-
-
-						# Add work info to User object.
-						this_friend.work = work_coll
-
-						# Make a Place object for the user's hometown.
-						hometown_place = SocialObjects.Place()
-						hometown_info = self.get_value(user_details, "hometown")
-
-						# Hometown supplied.
-						if (hometown_info):
-							hometown_place.id = hometown_info["id"]
-							hometown_place.displayName = hometown_info["name"]
-							this_friend.hometown = hometown_place
-
-						# Not supplied, so use an empty Place object.
-						else:
-							this_friend.hometown = SocialObjects.Place()
-
-						# Make a Place object for the user's current location.
-						location_place = SocialObjects.Place()
-						location_info = self.get_value(user_details, "location")
-
-						# Location supplied.
-						if (location_info):
-							location_place.id = location_info["id"]
-							location_place.displayName = location_info["name"]
-							this_friend.location = location_place
-
-						# Location not supplied.
-						else:
-							this_friend.location = SocialObjects.Place()
-						"""
 
 						# Create author object for this friend. (User "has" their friends)
 						author = SocialObjects.Person()
@@ -1256,7 +1143,6 @@ class FacebookServiceGateway(ServiceGateway):
 				while ((result_set.has_key("data")) and (len(result_set["data"]) > 0)):
 					# Grab the current batch of check-ins.
 					this_data = result_set["data"]
-					print "checkin: %s" % this_data
 					# Loop through each check-in on this page.
 					for checkin in this_data:
 						# Get and set basic info.

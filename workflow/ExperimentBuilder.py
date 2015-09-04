@@ -116,7 +116,6 @@ class ExperimentBuilder(object):
 		the rest of the workflow (such as the SocialObjectGateway) """ 
 		
 		self.sog.persistence.do_build_schema(drop_first=True)
-		print "Schema built without error"
 	
 	
 	def build(self, callback_url):
@@ -154,13 +153,10 @@ class ExperimentBuilder(object):
 				can_auth = self.sog.restore_authentication(provider,
 				provider_auth)
 				if can_auth:
-					print "Already authenticated with %s" % provider
 					self.providers.remove(provider)	
 
 		# no providers to authenticate
 		if not self.providers:
-			#callback()
-			print "no authent! go to %s" % callback_url
 			return callback_url
 
 		# indicate server needs to do a consent flow

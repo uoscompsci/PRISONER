@@ -45,7 +45,6 @@ class BaseSocialObjectGatewayTestCase(unittest.TestCase):
 
 	@patch('prisoner.workflow.PolicyProcessor.PolicyProcessor._infer_object')
 	def ProcessorInferObject_returns_Person(*args, **kwargs):
-		print "i are stub"
 
 		test_object = SocialObjects.Person()
 		return test_object

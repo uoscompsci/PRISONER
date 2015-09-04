@@ -212,8 +212,6 @@ class PolicyProcessor(object):
 
 		ns = obj_components[0]
 
-		print "namespace is %s" % ns
-
 		if len(obj_components) == 1 or len(obj_components[1]) < 1:
 			raise RuntimePrivacyPolicyParserError("No valid object "+ \
 			"reference supplied in %s. Did you use the right namespace?" % obj_components+\
@@ -403,10 +401,8 @@ class PolicyProcessor(object):
 			# is a non-namespaced policy?
 
 			xpath = "//policy[@for='base:%s']" % obj.__name__
-			print "looking for %s" % xpath
 			xpath_res = self.privacy_policy.xpath(xpath)
 			if xpath_res:
-				print "found!"
 				return obj.__name__
 		return False
 
@@ -453,20 +449,17 @@ class PolicyProcessor(object):
 
 		policy_object_type = self.__get_most_specialised_policy_for_object(response.headers.provider,
 		response.content)
-		print "policy object type is %s" %policy_object_type										
 		response.headers.object_type = policy_object_type
 
 		xpath = "//policy[@for='%s:%s']//object-policy[@allow='%s']//object-criteria" \
 		% (response.content.provider, response.headers.object_type,
 		op_match[response.headers.operation])
-		print "try to find xpath %s" % xpath
 		xpath_res = self.privacy_policy.xpath(xpath)
 		use_base = False
 
 		if not xpath_res:
 			xpath = "//policy[@for='base:%s']//object-policy[@allow='%s']//object-criteria"\
 			% (response.headers.object_type,op_match[response.headers.operation])
-			print "try to find xpath! %s" % xpath
 			xpath_res = self.privacy_policy.xpath(xpath)
 			ns = False
 			use_base = True
@@ -480,11 +473,8 @@ class PolicyProcessor(object):
 
 		if not xpath_res:
 			# no base object, fail criteria
-			print "i have no base object so fail"
 			return None
 
-		print "request provider is %s" % response.content.provider
-		print "header provider is %s" % response.headers.provider
 		valid_object_policy = self.__validate_criteria(response,
 		xpath_res[0],provider=response.headers.provider)
 
@@ -494,16 +484,13 @@ class PolicyProcessor(object):
 		sanitised_object = response.content.__class__()
 
 		for attribute, value in response.content.__dict__.iteritems():
-			#print "%s, %s" % (attribute, value)
 			if not issubclass(value.__class__,SocialObjects.Collection) and issubclass(value.__class__,SocialObjects.SocialObject):
 				headers = SARHeaders(response.headers.operation, response.headers.provider,
 					type(value).__name__, response.headers.payload)
-				print "headers of type %s" % (type(value).__name__)
 
 				response_obj = SocialActivityResponse(value, headers)
 				this_response = self._sanitise_object_request(response_obj)
 
-				print "setting %s = %s on sanitised" % (attribute, this_response)
 				setattr(sanitised_object,attribute,this_response)
 
 			else:
@@ -516,7 +503,6 @@ class PolicyProcessor(object):
 
 
 				att_path = self.privacy_policy.xpath(xpath)
-				print "att_path: %s for xpath %s" % (att_path, xpath)
 
 				if att_path:
 					valid_attr_policy = True
@@ -527,7 +513,6 @@ class PolicyProcessor(object):
 					transforms = self.privacy_policy.xpath("%s//transformations" % xpath)
 					if transforms:
 						for transform in transforms[0]:
-								#obj_ref = getattr(response.content,curr_attribute)
 								obj_ref = response.content
 
 								if transform.tag is etree.Comment:
@@ -540,7 +525,6 @@ class PolicyProcessor(object):
 
 
 					else:
-						print "attr: %s on sanitised object set to  %s" % (attribute, getattr(response.content, attribute))
 						setattr(sanitised_object, attribute,
 						getattr(response.content, attribute))
 		sanitised_object.provider = response.content.provider
@@ -635,7 +619,6 @@ class PolicyProcessor(object):
 				transforms = attribute.xpath("attribute-policy/transformations")
 				if transforms:
 					for transform in transforms[0]:
-							#obj_ref = getattr(response.content,curr_attribute)
 							obj_ref = response.content
 
 							if transform.tag is etree.Comment:
@@ -669,14 +652,10 @@ class PolicyProcessor(object):
 			to_match = element.get("match")
 			on_object = element.get("on_object")
 
-			print "test criteria with provider %s" % provider
 			on_object_obj = self._infer_object(on_object, provider=provider)
 			to_match_obj =	self._infer_attributes(to_match,
 			response.content)
 
-			print "match obj: %s" % response.content
-			print "match %s on %s" % (to_match, on_object)
-			print "is %s == %s" % (to_match_obj, on_object_obj)
 			if to_match_obj == on_object_obj:
 				return True
 			else:

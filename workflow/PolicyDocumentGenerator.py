@@ -9,6 +9,8 @@ class PolicyDocumentGenerator(object):
 	know exactly how an experimental application will collect, store, and generate
 	data about them. This exposes generators for HTML, LaTeX, among others, with the
 	ability to define your own generators for specific output formats.
+
+	This is in-development, concept stuff. Do not use in production!
 	"""
 
 	def __init__(self, policy, design, format):

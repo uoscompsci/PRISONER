@@ -10,7 +10,7 @@ from prisoner.gateway.ServiceGateway import *
 #EXPERIMENTAL_DESIGN_XSD = "../xsd/experimental_design.xsd"
 
 dir = os.path.dirname(__file__)
-print dir
+
 EXPERIMENTAL_DESIGN_XSD =  os.path.join(dir, "../xsd/experimental_design.xsd")
 
 class PersistenceManager(object):
@@ -100,7 +100,6 @@ class PersistenceManager(object):
 		"""
 		if not design:
 			raise IOError("Experimental design not found at path")
-		print "Validating experimental design at %s" % design
 		xsd_file = open(EXPERIMENTAL_DESIGN_XSD)
 		schema = etree.XMLSchema(etree.parse(xsd_file))
 
@@ -140,7 +139,6 @@ class PersistenceManager(object):
 		:returns: tuple - participant data from database
 		"""
 		table = self.get_table("participant",schema)
-		print table.c
 		result = table.select(table.c.id==participant_id).execute().fetchone()
 		return result
 
@@ -154,7 +152,6 @@ class PersistenceManager(object):
 		props = self.experimental_design.xpath("//prop")
 		out_props = {}
 		for prop in props:
-			print prop
 			if prop.get('for') not in out_props:
 				out_props[prop.get('for')] = {}
 			out_props[prop.get('for')][prop.get('key')] = prop.get('value')
@@ -234,7 +231,6 @@ class PersistenceManager(object):
 		insert.execute(response)
 
 		res = table.select().execute()
-		print res.fetchone()
 
 	def get_existing_provider_auth(self, participant_id, provider):
 		""" Checks if the given participant has been
@@ -289,7 +285,6 @@ class PersistenceManager(object):
 				mapped_obj = sog.cached_objects[obj_id]
 				json_obj[column.get("name")] = mapped_obj
 
-		print json_obj
 		return self.post_response(schema, json_obj)
 
 	def post_response(self, schema, response):
@@ -323,17 +318,6 @@ class PersistenceManager(object):
 				if not san_obj:
 					raise Exception("Could not write to database. %s failed validation" % column.get("mapTo"))
 
-				# # insert object to corresponding table
-				# mapTable = self.object_tables[mapTo.split(":")[1]]
-				# obj_to_insert = {}
-				# for mapCol in mapTable.columns:
-				# 	if mapCol.name == "id":
-				# 		continue
-				# 	mapCol = mapCol.name
-				# 	obj_to_insert[mapCol] = getattr(san_obj, mapCol)
-				# # place id of inserted object in map column
-				# mapInsert = mapTable.insert()
-				# mapId = mapInsert.execute(obj_to_insert).lastrowid
 
 				san_obj_json = jsonpickle.encode(san_obj)
 				response_out[column.get("name")]  = san_obj_json
