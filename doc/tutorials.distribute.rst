@@ -27,6 +27,116 @@ needs to be able to understand how to setup and run an instance of PRISONER to
 get things working.
 
 In this guide we cover some best practices for distributing PRISONER
-experiments. Please note this guidance is not final and may not cover all
+experiments, outlining a few scenarios which involve packaging your experiment
+in different ways. Please note this guidance is not final and may not cover all
 scenarios. We welcome
 suggestions or improvements as GitHub issues or pull requests.
+
+1) Sharing code and PRISONER policies
+-------------------
+Making the source code for your experiment available online is a great
+first step to allowing others to see how your experiment works, and reproduce
+it. The Software Sustainability Institute provides `lots of guidance on this
+subject
+<http://software.ac.uk/resources/guides/choosing-repository-your-software-project>`_.
+
+We recommend using GitHub, as you can `assign a DOI to individual releases of
+your
+repository <https://guides.github.com/activities/citable-code/>`_ using Zenodo,
+which can make it easier for others to `cite your experiment software
+<http://software.ac.uk/so-exactly-what-software-did-you-use>`_. 
+
+Within your repository, you should include the two PRISONER policy files
+your experiment requires: the privacy policy and experimental design. While this
+will not be sufficient for others to execute the experiment
+without access to an instance of PRISONER itself, these policy files are an
+excellent way of distributing a list of constraints about the data-handling
+requirements of your experiment, which may not be obvious from the source code
+alone. 
+
+Before distributing your experiment, please make sure your experimental design
+file does not include any hard-coded API keys. In your documentation, make sure
+you point out that users must supply their own API keys as necessary.
+
+In the documentation for your project, linking to `the PRISONER website
+<http://prisoner.cs.st-andrews.ac.uk>`_ lets others find out more about the
+framework, so they can choose whether to download it themselves in order to
+execute the experiment.
+
+Finally, we ask you to let us know that you're sharing a PRISONER experiment,
+which you can do by `email <mailto:lh49 [at] st-andrews.ac.uk>`_ or `Twitter
+<http://twitter.com/EthicsPRISONER>`_. It's useful for us to be able to monitor
+how widely used our tools are, and we can also give your experiment a shout-out
+to help people find it! 
+
+2) Forking PRISONER on GitHub
+-------------------------
+While the above is clearly better than nothing, it falls a little short of our
+reproducibility goal as it falls on anyone wishing to replicate your study to
+manage their own instance of PRISONER.
+
+One way to simplify this is to distribute your experiment as a fork of PRISONER
+on GitHub, with your experiment-specific code added to the repository. This has
+a number of advantages:
+
+* Your experiment is clearly bound to a specific release of PRISONER avoiding
+issues with mismatched versions
+
+* If you have made any modifications to PRISONER, their relationship to the
+canonical version is easier to track, and you can also push changes upstream to
+help make PRISONER better!
+
+* The visibility of your experiment will be helped by its direct relationship to
+the base PRISONER repository, and we can help promote interesting uses of
+PRISONER to achieve better impact.
+
+* It helps us monitor usage of PRISONER with no additional effort on your part.
+
+* As your repository includes a full release of PRISONER, people don't need to
+go to any further effort to get your experiment running.
+
+3) Release a virtual machine image
+-----------------------------
+If your experiment has complex software or environmental dependencies which can
+impede distribution, you may wish to consider a virtual machine image, either as
+a full VM (`recomputation.org has guidance on
+this <http://recomputation.org/resources>`_) or as a Docker image.
+
+We recommend using `Docker 
+<https://docs.docker.com/articles/dockerfile_best-practices/>`_ as you can
+distribute a relatively lightweight image of your experimental code and PRISONER
+policies, while expressing any other environmental dependencies. Anyone else
+running Docker can then pull your image and instantiate a container with an
+executable version of your experiment and PRISONER server.
+
+A guide to using Docker is beyond the scope of this document, but to help you
+get started, we provide PRISONER itself, and a separate working example, as
+Docker images via Docker Hub. `This tutorial
+<http://prisoner.cs.st-andrews.ac.uk/docs/tutorials.demo.html>`_ explains how to
+run our example Docker experiment. To see how we build this Docker image,
+derived from a base PRISONER image see (TODO: deeplink to example on GitHub). 
+
+We recommend distributing both a PRISONER fork as above, and a Docker image
+(either via Docker Hub or a private Docker registry). This approach has some
+further advantages:
+
+* Maximises the sustainability of your experiment, as most environmental
+dependencies have been abstracted from the user.
+
+* Consistency for the end-user. While each GitHub repository may have its own
+dependencies and
+installation procedures, once someone has learned how to pull and run one Docker
+image, they can run any experiment in the same manner.
+
+
+Final thoughts
+------------
+In this guide, we've introduced a few ways you can distribute your PRISONER
+experiments, which trade-offs between upfront complexity and the ease with which
+others can reproduce your experiment. The scenarios we discuss here are based on
+our own experience in conducting and distributing experiments, and should not be
+considered the final word. Ultimately, you should choose whichever workflow
+suits you, and please share your own recommendations with us and the community
+via GitHub. We will update this document with alternative distribution
+strategies which emerge.
+
