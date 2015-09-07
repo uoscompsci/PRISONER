@@ -1,6 +1,6 @@
 # PRISONER
 
-PRISONER is a framework for running ehtical and reproducible social network experiments.
+PRISONER is a framework for running ethical and reproducible social network experiments.
 
 ## Getting started
 - Before installing PRISONER on your own, you can try our [Docker-based demo]
