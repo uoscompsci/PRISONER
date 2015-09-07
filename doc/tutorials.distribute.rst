@@ -123,7 +123,7 @@ further advantages:
 Final thoughts
 ------------
 In this guide, we've introduced a few ways you can distribute your PRISONER
-experiments, which trade-offs between upfront complexity and the ease with which
+experiments, with trade-offs between upfront complexity and the ease with which
 others can reproduce your experiment. The scenarios we discuss here are based on
 our own experience in conducting and distributing experiments, and should not be
 considered the final word. Ultimately, you should choose whichever workflow
