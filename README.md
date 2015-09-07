@@ -28,3 +28,6 @@ experiment which is ready to run. You can [run it for yourself]
 (http://prisoner.cs.st-andrews.ac.uk/docs/tutorials.demo.html) or simply [clone
 the source](https://github.com/uoscompsci/PRISONERDemo) to take a look at how it
 works.
+
+## License
+PRISONER is [BSD licensed](./LICENSE).
