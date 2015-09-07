@@ -1,0 +1,8 @@
+The quickest way to get started is to paste the following at the command line. This will download and run a small script which starts the Docker container. You can skip to the next section to learn how to use the demo.
+
+  TODO: url for demo_bootstrap.sh
+
+ If you'd rather start the container manually, take these extra steps. If you are using boot2docker, for example if you are running OS X, you should run the following commands to correctly map the ports to the VirtualBox VM. If you are running Docker natively on Linux, you do not need to do this::
+
+   VBoxManage controlvm boot2docker-vm natpf1 "prisoner,tcp,127.0.0.1,5000,,5000"
+   VBoxManage controlvm boot2docker-vm natpf1 "demo,tcp,127.0.0.1,9000,,9000"

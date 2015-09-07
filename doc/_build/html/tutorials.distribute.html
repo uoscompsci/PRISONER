@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Search &mdash; PRISONER 0.2.3 documentation</title>
+  <title>Best practices for distributing PRISONER experiments &mdash; PRISONER 0.2.3 documentation</title>
   
 
   
@@ -32,7 +32,10 @@
   
 
   
-    <link rel="top" title="PRISONER 0.2.3 documentation" href="index.html"/> 
+    <link rel="top" title="PRISONER 0.2.3 documentation" href="index.html"/>
+        <link rel="up" title="Tutorials" href="tutorials.html"/>
+        <link rel="next" title="prisoner package" href="prisoner.html"/>
+        <link rel="prev" title="Writing your first experiment" href="tutorials.helloworld.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -60,7 +63,7 @@
 
         
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="#" method="get">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -74,8 +77,8 @@
         
           
           
-              <ul>
-<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a><ul>
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="tutorials.html">Tutorials</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="tutorials.keyconcepts.html">Key concepts</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials.demo.html">Running the PRISONER demo</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#prerequisites">Prerequisites</a><ul>
@@ -109,11 +112,11 @@
 <li class="toctree-l3"><a class="reference internal" href="tutorials.helloworld.html#experimental-designs">Experimental designs</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="tutorials.distribute.html">Best practices for distributing PRISONER experiments</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="tutorials.distribute.html#sharing-code-and-prisoner-policies">1) Sharing code and PRISONER policies</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tutorials.distribute.html#forking-prisoner-on-github">2) Forking PRISONER on GitHub</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tutorials.distribute.html#release-a-virtual-machine-image">3) Release a virtual machine image</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tutorials.distribute.html#final-thoughts">Final thoughts</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Best practices for distributing PRISONER experiments</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sharing-code-and-prisoner-policies">1) Sharing code and PRISONER policies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#forking-prisoner-on-github">2) Forking PRISONER on GitHub</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#release-a-virtual-machine-image">3) Release a virtual machine image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#final-thoughts">Final thoughts</a></li>
 </ul>
 </li>
 </ul>
@@ -190,8 +193,14 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li></li>
+          <li><a href="tutorials.html">Tutorials</a> &raquo;</li>
+      
+    <li>Best practices for distributing PRISONER experiments</li>
       <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/tutorials.distribute.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
   </ul>
@@ -199,22 +208,119 @@
 </div>
           <div role="main" class="document">
             
-  <noscript>
-  <div id="fallback" class="admonition warning">
-    <p class="last">
-      Please activate JavaScript to enable the search
-      functionality.
-    </p>
-  </div>
-  </noscript>
+  <div class="section" id="best-practices-for-distributing-prisoner-experiments">
+<h1>Best practices for distributing PRISONER experiments<a class="headerlink" href="#best-practices-for-distributing-prisoner-experiments" title="Permalink to this headline">¶</a></h1>
+<p>PRISONER encourages reproducibility of social network studies, but in practice,
+the ability for others to reproduce your experiments is dependent on what you are
+willing to share with the community. Placing your code in an online archive or
+public version control repository, via GitHub for example, is a good way of
+letting others examine and run your code.</p>
+<p>This approach, however, has some limitations. Distributing software in this way
+does not make it easy to resolve package dependencies, and if others are not
+running the same operating system as you, or other environmental variables
+differ, it may be difficult or impossible to execute your experiment.</p>
+<p>Specifically, if you are developing a PRISONER experiment, you will need to
+distribute your PRISONER policies, and someone hoping to execute your experiment
+needs to be able to understand how to setup and run an instance of PRISONER to
+get things working.</p>
+<p>In this guide we cover some best practices for distributing PRISONER
+experiments, outlining a few scenarios which involve packaging your experiment
+in different ways. Please note this guidance is not final and may not cover all
+scenarios. We welcome
+suggestions or improvements as GitHub issues or pull requests.</p>
+<div class="section" id="sharing-code-and-prisoner-policies">
+<h2>1) Sharing code and PRISONER policies<a class="headerlink" href="#sharing-code-and-prisoner-policies" title="Permalink to this headline">¶</a></h2>
+<p>Making the source code for your experiment available online is a great
+first step to allowing others to see how your experiment works, and reproduce
+it. The Software Sustainability Institute provides <a class="reference external" href="http://software.ac.uk/resources/guides/choosing-repository-your-software-project">lots of guidance on this
+subject</a>.</p>
+<p>We recommend using GitHub, as you can <a class="reference external" href="https://guides.github.com/activities/citable-code/">assign a DOI to individual releases of
+your
+repository</a> using Zenodo,
+which can make it easier for others to <a class="reference external" href="http://software.ac.uk/so-exactly-what-software-did-you-use">cite your experiment software</a>.</p>
+<p>Within your repository, you should include the two PRISONER policy files
+your experiment requires: the privacy policy and experimental design. While this
+will not be sufficient for others to execute the experiment
+without access to an instance of PRISONER itself, these policy files are an
+excellent way of distributing a list of constraints about the data-handling
+requirements of your experiment, which may not be obvious from the source code
+alone.</p>
+<p>Before distributing your experiment, please make sure your experimental design
+file does not include any hard-coded API keys. In your documentation, make sure
+you point out that users must supply their own API keys as necessary.</p>
+<p>In the documentation for your project, linking to <a class="reference external" href="http://prisoner.cs.st-andrews.ac.uk">the PRISONER website</a> lets others find out more about the
+framework, so they can choose whether to download it themselves in order to
+execute the experiment.</p>
+<p>Finally, we ask you to let us know that you&#8217;re sharing a PRISONER experiment,
+which you can do by <a class="reference external" href="mailto:lh49[at]st-andrews&#46;ac&#46;uk">email</a> or <a class="reference external" href="http://twitter.com/EthicsPRISONER">Twitter</a>. It&#8217;s useful for us to be able to monitor
+how widely used our tools are, and we can also give your experiment a shout-out
+to help people find it!</p>
+</div>
+<div class="section" id="forking-prisoner-on-github">
+<h2>2) Forking PRISONER on GitHub<a class="headerlink" href="#forking-prisoner-on-github" title="Permalink to this headline">¶</a></h2>
+<p>While the above is clearly better than nothing, it falls a little short of our
+reproducibility goal as it falls on anyone wishing to replicate your study to
+manage their own instance of PRISONER.</p>
+<p>One way to simplify this is to distribute your experiment as a fork of PRISONER
+on GitHub, with your experiment-specific code added to the repository. This has
+a number of advantages:</p>
+<ul class="simple">
+<li>Your experiment is clearly bound to a specific release of PRISONER avoiding issues with mismatched versions</li>
+<li>If you have made any modifications to PRISONER, their relationship to the canonical version is easier to track, and you can also push changes upstream to help make PRISONER better!</li>
+<li>The visibility of your experiment will be helped by its direct relationship to the base PRISONER repository, and we can help promote interesting uses of PRISONER to achieve better impact.</li>
+<li>It helps us monitor usage of PRISONER with no additional effort on your part.</li>
+<li>As your repository includes a full release of PRISONER, people don&#8217;t need to go to any further effort to get your experiment running.</li>
+</ul>
+</div>
+<div class="section" id="release-a-virtual-machine-image">
+<h2>3) Release a virtual machine image<a class="headerlink" href="#release-a-virtual-machine-image" title="Permalink to this headline">¶</a></h2>
+<p>If your experiment has complex software or environmental dependencies which can
+impede distribution, you may wish to consider a virtual machine image, either as
+a full VM (<a class="reference external" href="http://recomputation.org/resources">recomputation.org has guidance on
+this</a>) or as a Docker image.</p>
+<p>We recommend using <a class="reference external" href="https://docs.docker.com/articles/dockerfile_best-practices/">Docker</a> as you can
+distribute a relatively lightweight image of your experimental code and PRISONER
+policies, while expressing any other environmental dependencies. Anyone else
+running Docker can then pull your image and instantiate a container with an
+executable version of your experiment and PRISONER server.</p>
+<p>A guide to using Docker is beyond the scope of this document, but to help you
+get started, we provide PRISONER itself, and a separate working example, as
+Docker images via Docker Hub. <a class="reference external" href="http://prisoner.cs.st-andrews.ac.uk/docs/tutorials.demo.html">This tutorial</a> explains how to
+run our example Docker experiment. To see how we build this Docker image,
+derived from a base PRISONER image see (TODO: deeplink to example on GitHub).</p>
+<p>We recommend distributing both a PRISONER fork as above, and a Docker image
+(either via Docker Hub or a private Docker registry). This approach has some
+further advantages:</p>
+<ul class="simple">
+<li>Maximises the sustainability of your experiment, as most environmental dependencies have been abstracted from the user.</li>
+<li>Consistency for the end-user. While each GitHub repository may have its own dependencies and installation procedures, once someone has learned how to pull and run one Docker image, they can run any experiment in the same manner.</li>
+</ul>
+</div>
+<div class="section" id="final-thoughts">
+<h2>Final thoughts<a class="headerlink" href="#final-thoughts" title="Permalink to this headline">¶</a></h2>
+<p>In this guide, we&#8217;ve introduced a few ways you can distribute your PRISONER
+experiments, which trade-offs between upfront complexity and the ease with which
+others can reproduce your experiment. The scenarios we discuss here are based on
+our own experience in conducting and distributing experiments, and should not be
+considered the final word. Ultimately, you should choose whichever workflow
+suits you, and please share your own recommendations with us and the community
+via GitHub. We will update this document with alternative distribution
+strategies which emerge.</p>
+</div>
+</div>
 
-  
-  <div id="search-results">
-  
-  </div>
 
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="prisoner.html" class="btn btn-neutral float-right" title="prisoner package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="tutorials.helloworld.html" class="btn btn-neutral" title="Writing your first experiment" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>
@@ -252,7 +358,6 @@
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="_static/searchtools.js"></script>
 
   
 
@@ -268,14 +373,7 @@
           SphinxRtdTheme.StickyNav.enable();
       });
   </script>
-  
-  <script type="text/javascript">
-    jQuery(function() { Search.loadIndex("searchindex.js"); });
-  </script>
-  
-  <script type="text/javascript" id="searchindexloader"></script>
    
-
 
 </body>
 </html>

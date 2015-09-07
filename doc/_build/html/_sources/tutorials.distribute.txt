@@ -12,7 +12,7 @@ Best practices for distributing PRISONER experiments
 .. Packaging your experiment
 .. ---------------------
 PRISONER encourages reproducibility of social network studies, but in practice,
-others' ability to reproduce your experiments is dependent on what you are
+the ability for others to reproduce your experiments is dependent on what you are
 willing to share with the community. Placing your code in an online archive or
 public version control repository, via GitHub for example, is a good way of
 letting others examine and run your code.
