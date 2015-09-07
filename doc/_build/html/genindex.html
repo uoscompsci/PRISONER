@@ -81,6 +81,7 @@
 <li class="toctree-l2"><a class="reference internal" href="tutorials.demo.html">Running the PRISONER demo</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#prerequisites">Prerequisites</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="tutorials.demo.html#facebook-app">Facebook app</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorials.demo.html#twitter-app">Twitter app</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tutorials.demo.html#docker">Docker</a></li>
 </ul>
 </li>
@@ -109,6 +110,7 @@
 <li class="toctree-l3"><a class="reference internal" href="tutorials.helloworld.html#experimental-designs">Experimental designs</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.distribute.html">Best practices for distributing PRISONER experiments</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="prisoner.html">prisoner package</a><ul>
@@ -296,13 +298,13 @@
   </dt>
 
       
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.User.bio">bio (prisoner.gateway.FacebookGateway.User attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Person.bio">bio (prisoner.gateway.FacebookGateway.Person attribute)</a>
   </dt>
 
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.User.birthday">birthday (prisoner.gateway.FacebookGateway.User attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Person.birthday">birthday (prisoner.gateway.FacebookGateway.Person attribute)</a>
   </dt>
 
       
@@ -397,11 +399,11 @@
 
       <dd><dl>
         
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Photo.comments">(prisoner.gateway.FacebookGateway.Photo attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Image.comments">(prisoner.gateway.FacebookGateway.Image attribute)</a>
   </dt>
 
         
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Status.comments">(prisoner.gateway.FacebookGateway.Status attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Note.comments">(prisoner.gateway.FacebookGateway.Note attribute)</a>
   </dt>
 
       </dl></dd>
@@ -508,11 +510,11 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.User.education">education (prisoner.gateway.FacebookGateway.User attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Person.education">education (prisoner.gateway.FacebookGateway.Person attribute)</a>
   </dt>
 
       
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.User.email">email (prisoner.gateway.FacebookGateway.User attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Person.email">email (prisoner.gateway.FacebookGateway.Person attribute)</a>
   </dt>
 
       
@@ -548,7 +550,7 @@
   </dt>
 
       
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.User.firstName">firstName (prisoner.gateway.FacebookGateway.User attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Person.firstName">firstName (prisoner.gateway.FacebookGateway.Person attribute)</a>
   </dt>
 
       
@@ -580,7 +582,7 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.User.gender">gender (prisoner.gateway.FacebookGateway.User attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Person.gender">gender (prisoner.gateway.FacebookGateway.Person attribute)</a>
   </dt>
 
       
@@ -738,13 +740,13 @@
 
       </dl></dd>
       
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Photo.height">height (prisoner.gateway.FacebookGateway.Photo attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Image.height">height (prisoner.gateway.FacebookGateway.Image attribute)</a>
   </dt>
 
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.User.hometown">hometown (prisoner.gateway.FacebookGateway.User attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Person.hometown">hometown (prisoner.gateway.FacebookGateway.Person attribute)</a>
   </dt>
 
   </dl></td>
@@ -758,9 +760,15 @@
   </dt>
 
       
-  <dt><a href="prisoner.html#prisoner.SocialObjects.Image">Image (class in prisoner.SocialObjects)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Image">Image (class in prisoner.gateway.FacebookGateway)</a>
   </dt>
 
+      <dd><dl>
+        
+  <dt><a href="prisoner.html#prisoner.SocialObjects.Image">(class in prisoner.SocialObjects)</a>
+  </dt>
+
+      </dl></dd>
       
   <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Checkin.image">image (prisoner.gateway.FacebookGateway.Checkin attribute)</a>
   </dt>
@@ -771,11 +779,11 @@
   </dt>
 
         
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Page.image">(prisoner.gateway.FacebookGateway.Page attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Image.image">(prisoner.gateway.FacebookGateway.Image attribute)</a>
   </dt>
 
         
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Photo.image">(prisoner.gateway.FacebookGateway.Photo attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Page.image">(prisoner.gateway.FacebookGateway.Page attribute)</a>
   </dt>
 
       </dl></dd>
@@ -789,6 +797,10 @@
   </dt>
 
       </dl></dd>
+      
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Images">Images (class in prisoner.gateway.FacebookGateway)</a>
+  </dt>
+
       
   <dt><a href="prisoner.gateway.tests.html#prisoner.gateway.tests.LastfmGatewayTests.ImageTestCase">ImageTestCase (class in prisoner.gateway.tests.LastfmGatewayTests)</a>
   </dt>
@@ -816,7 +828,7 @@
   </dt>
 
       
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.User.interestedIn">interestedIn (prisoner.gateway.FacebookGateway.User attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Person.interestedIn">interestedIn (prisoner.gateway.FacebookGateway.Person attribute)</a>
   </dt>
 
       
@@ -838,7 +850,7 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.User.languages">languages (prisoner.gateway.FacebookGateway.User attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Person.languages">languages (prisoner.gateway.FacebookGateway.Person attribute)</a>
   </dt>
 
       
@@ -846,7 +858,7 @@
   </dt>
 
       
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.User.lastName">lastName (prisoner.gateway.FacebookGateway.User attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Person.lastName">lastName (prisoner.gateway.FacebookGateway.Person attribute)</a>
   </dt>
 
       
@@ -869,16 +881,16 @@
 
       <dd><dl>
         
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Photo.likes">(prisoner.gateway.FacebookGateway.Photo attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Image.likes">(prisoner.gateway.FacebookGateway.Image attribute)</a>
   </dt>
 
         
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Status.likes">(prisoner.gateway.FacebookGateway.Status attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Note.likes">(prisoner.gateway.FacebookGateway.Note attribute)</a>
   </dt>
 
       </dl></dd>
       
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Status.link">link (prisoner.gateway.FacebookGateway.Status attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Note.link">link (prisoner.gateway.FacebookGateway.Note attribute)</a>
   </dt>
 
       
@@ -886,7 +898,7 @@
   </dt>
 
       
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.User.location">location (prisoner.gateway.FacebookGateway.User attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Person.location">location (prisoner.gateway.FacebookGateway.Person attribute)</a>
   </dt>
 
       <dd><dl>
@@ -906,7 +918,7 @@
   </dt>
 
       
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.User.middleName">middleName (prisoner.gateway.FacebookGateway.User attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Person.middleName">middleName (prisoner.gateway.FacebookGateway.Person attribute)</a>
   </dt>
 
       
@@ -944,9 +956,29 @@
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="prisoner.html#prisoner.SocialObjects.Note">Note (class in prisoner.SocialObjects)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Note">Note (class in prisoner.gateway.FacebookGateway)</a>
   </dt>
 
+      <dd><dl>
+        
+  <dt><a href="prisoner.html#prisoner.SocialObjects.Note">(class in prisoner.SocialObjects)</a>
+  </dt>
+
+        
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.TwitterGateway.Note">(class in prisoner.gateway.TwitterGateway)</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.FacebookServiceGateway.Note">Note() (prisoner.gateway.FacebookGateway.FacebookServiceGateway method)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.TwitterGateway.TwitterServiceGateway.Note">(prisoner.gateway.TwitterGateway.TwitterServiceGateway method)</a>
+  </dt>
+
+      </dl></dd>
   </dl></td>
 </tr></table>
 
@@ -959,6 +991,10 @@
 
       
   <dt><a href="prisoner.html#prisoner.SocialObjects.Collection.objects">objects (prisoner.SocialObjects.Collection attribute)</a>
+  </dt>
+
+      
+  <dt><a href="prisoner.workflow.html#prisoner.workflow.PolicyProcessor.PolicyProcessor.OLD_sanitise_object_request">OLD_sanitise_object_request() (prisoner.workflow.PolicyProcessor.PolicyProcessor method)</a>
   </dt>
 
       
@@ -1074,19 +1110,31 @@
   </dt>
 
       
-  <dt><a href="prisoner.html#prisoner.SocialObjects.Person">Person (class in prisoner.SocialObjects)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Person">Person (class in prisoner.gateway.FacebookGateway)</a>
   </dt>
 
+      <dd><dl>
+        
+  <dt><a href="prisoner.html#prisoner.SocialObjects.Person">(class in prisoner.SocialObjects)</a>
+  </dt>
+
+        
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.TwitterGateway.Person">(class in prisoner.gateway.TwitterGateway)</a>
+  </dt>
+
+      </dl></dd>
       
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Photo">Photo (class in prisoner.gateway.FacebookGateway)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.FacebookServiceGateway.Person">Person() (prisoner.gateway.FacebookGateway.FacebookServiceGateway method)</a>
   </dt>
 
+      <dd><dl>
+        
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.TwitterGateway.TwitterServiceGateway.Person">(prisoner.gateway.TwitterGateway.TwitterServiceGateway method)</a>
+  </dt>
+
+      </dl></dd>
       
   <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.FacebookServiceGateway.Photo">Photo() (prisoner.gateway.FacebookGateway.FacebookServiceGateway method)</a>
-  </dt>
-
-      
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Photos">Photos (class in prisoner.gateway.FacebookGateway)</a>
   </dt>
 
       
@@ -1110,11 +1158,11 @@
   </dt>
 
       
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.User.politicalViews">politicalViews (prisoner.gateway.FacebookGateway.User attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Person.politicalViews">politicalViews (prisoner.gateway.FacebookGateway.Person attribute)</a>
   </dt>
 
       
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Photo.position">position (prisoner.gateway.FacebookGateway.Photo attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Image.position">position (prisoner.gateway.FacebookGateway.Image attribute)</a>
   </dt>
 
       <dd><dl>
@@ -1187,12 +1235,12 @@
   <dt><a href="prisoner.gateway.html#module-prisoner.gateway.ServiceGateway">prisoner.gateway.ServiceGateway (module)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="prisoner.gateway.tests.html#module-prisoner.gateway.tests">prisoner.gateway.tests (module)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="prisoner.gateway.tests.html#module-prisoner.gateway.tests.FacebookGatewayTests">prisoner.gateway.tests.FacebookGatewayTests (module)</a>
   </dt>
@@ -1271,7 +1319,7 @@
 
       <dd><dl>
         
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Status.privacy">(prisoner.gateway.FacebookGateway.Status attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Note.privacy">(prisoner.gateway.FacebookGateway.Note attribute)</a>
   </dt>
 
       </dl></dd>
@@ -1370,11 +1418,11 @@
   </dt>
 
       
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.User.relationshipStatus">relationshipStatus (prisoner.gateway.FacebookGateway.User attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Person.relationshipStatus">relationshipStatus (prisoner.gateway.FacebookGateway.Person attribute)</a>
   </dt>
 
       
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.User.religion">religion (prisoner.gateway.FacebookGateway.User attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Person.religion">religion (prisoner.gateway.FacebookGateway.Person attribute)</a>
   </dt>
 
   </dl></td>
@@ -1414,6 +1462,10 @@
   <dt><a href="prisoner.gateway.html#prisoner.gateway.ServiceGateway.ServiceGateway.request_handler">(prisoner.gateway.ServiceGateway.ServiceGateway method)</a>
   </dt>
 
+        
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.TwitterGateway.TwitterServiceGateway.request_handler">(prisoner.gateway.TwitterGateway.TwitterServiceGateway method)</a>
+  </dt>
+
       </dl></dd>
       
   <dt><a href="prisoner.html#prisoner.SocialObjects.DateTimeJSONHandler.restore">restore() (prisoner.SocialObjects.DateTimeJSONHandler method)</a>
@@ -1430,6 +1482,10 @@
 
         
   <dt><a href="prisoner.gateway.html#prisoner.gateway.ServiceGateway.ServiceGateway.restore_authentication">(prisoner.gateway.ServiceGateway.ServiceGateway method)</a>
+  </dt>
+
+        
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.TwitterGateway.TwitterServiceGateway.restore_authentication">(prisoner.gateway.TwitterGateway.TwitterServiceGateway method)</a>
   </dt>
 
         
@@ -1516,19 +1572,19 @@
 
       </dl></dd>
       
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.User.significantOther">significantOther (prisoner.gateway.FacebookGateway.User attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Person.significantOther">significantOther (prisoner.gateway.FacebookGateway.Person attribute)</a>
   </dt>
 
       
   <dt><a href="prisoner.gateway.html#prisoner.gateway.ServiceGateway.WrappedResponse.social_object">social_object (prisoner.gateway.ServiceGateway.WrappedResponse attribute)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="prisoner.gateway.html#prisoner.gateway.ServiceGateway.SocialActivityResponse">SocialActivityResponse (class in prisoner.gateway.ServiceGateway)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="prisoner.html#prisoner.SocialObjects.SocialObject">SocialObject (class in prisoner.SocialObjects)</a>
   </dt>
@@ -1547,14 +1603,6 @@
 
       
   <dt><a href="prisoner.html#prisoner.SocialObjects.Event.startTime">startTime (prisoner.SocialObjects.Event attribute)</a>
-  </dt>
-
-      
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Status">Status (class in prisoner.gateway.FacebookGateway)</a>
-  </dt>
-
-      
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.FacebookServiceGateway.Status">Status() (prisoner.gateway.FacebookGateway.FacebookServiceGateway method)</a>
   </dt>
 
       
@@ -1588,7 +1636,7 @@
   </dt>
 
       
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Photo.tags">tags (prisoner.gateway.FacebookGateway.Photo attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Image.tags">tags (prisoner.gateway.FacebookGateway.Image attribute)</a>
   </dt>
 
       <dd><dl>
@@ -1731,12 +1779,12 @@
   <dt><a href="prisoner.workflow.tests.html#prisoner.workflow.tests.PolicyProcessorTests.InferObjectTestCase.test_invalid_social_gateway">test_invalid_social_gateway() (prisoner.workflow.tests.PolicyProcessorTests.InferObjectTestCase method)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="prisoner.workflow.tests.html#prisoner.workflow.tests.PolicyProcessorTests.SanitiseObjectRequestTestCase.test_logic_failOnAnd">test_logic_failOnAnd() (prisoner.workflow.tests.PolicyProcessorTests.SanitiseObjectRequestTestCase method)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="prisoner.workflow.tests.html#prisoner.workflow.tests.PolicyProcessorTests.SanitiseObjectRequestTestCase.test_logic_failOnImplicitAnd">test_logic_failOnImplicitAnd() (prisoner.workflow.tests.PolicyProcessorTests.SanitiseObjectRequestTestCase method)</a>
   </dt>
@@ -1826,15 +1874,15 @@
   </dt>
 
       
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Photo.thumbnail">thumbnail (prisoner.gateway.FacebookGateway.Photo attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Image.thumbnail">thumbnail (prisoner.gateway.FacebookGateway.Image attribute)</a>
   </dt>
 
       
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.TwitterGateway.TwitterServiceGateway.Timeline">Timeline() (prisoner.gateway.TwitterGateway.TwitterServiceGateway method)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.TwitterGateway.Timeline">Timeline (class in prisoner.gateway.TwitterGateway)</a>
   </dt>
 
       
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.User.timezone">timezone (prisoner.gateway.FacebookGateway.User attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Person.timezone">timezone (prisoner.gateway.FacebookGateway.Person attribute)</a>
   </dt>
 
       
@@ -1862,10 +1910,6 @@
   </dt>
 
       
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.TwitterGateway.Tweet">Tweet (class in prisoner.gateway.TwitterGateway)</a>
-  </dt>
-
-      
   <dt><a href="prisoner.gateway.html#prisoner.gateway.TwitterGateway.TwitterServiceGateway">TwitterServiceGateway (class in prisoner.gateway.TwitterGateway)</a>
   </dt>
 
@@ -1880,25 +1924,17 @@
   </dt>
 
       
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.User.updatedTime">updatedTime (prisoner.gateway.FacebookGateway.User attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Person.updatedTime">updatedTime (prisoner.gateway.FacebookGateway.Person attribute)</a>
   </dt>
 
       
   <dt><a href="prisoner.html#prisoner.SocialObjects.SocialObject.url">url (prisoner.SocialObjects.SocialObject attribute)</a>
   </dt>
 
-      
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.User">User (class in prisoner.gateway.FacebookGateway)</a>
-  </dt>
-
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.FacebookServiceGateway.User">User() (prisoner.gateway.FacebookGateway.FacebookServiceGateway method)</a>
-  </dt>
-
-      
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.User.username">username (prisoner.gateway.FacebookGateway.User attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Person.username">username (prisoner.gateway.FacebookGateway.Person attribute)</a>
   </dt>
 
       
@@ -1936,11 +1972,11 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Photo.width">width (prisoner.gateway.FacebookGateway.Photo attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Image.width">width (prisoner.gateway.FacebookGateway.Image attribute)</a>
   </dt>
 
       
-  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.User.work">work (prisoner.gateway.FacebookGateway.User attribute)</a>
+  <dt><a href="prisoner.gateway.html#prisoner.gateway.FacebookGateway.Person.work">work (prisoner.gateway.FacebookGateway.Person attribute)</a>
   </dt>
 
       
@@ -1971,6 +2007,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2015, Luke Hutton.
+      Last updated on Sep 07, 2015.
     </p>
   </div>
   Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.

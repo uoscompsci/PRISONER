@@ -11,3 +11,4 @@ that you follow the first three tutorials.
  tutorials.demo
  tutorials.gettingstarted
  tutorials.helloworld
+ tutorials.distribute

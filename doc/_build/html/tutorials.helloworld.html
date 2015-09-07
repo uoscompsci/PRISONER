@@ -34,7 +34,7 @@
   
     <link rel="top" title="PRISONER 0.2.3 documentation" href="index.html"/>
         <link rel="up" title="Tutorials" href="tutorials.html"/>
-        <link rel="next" title="prisoner package" href="prisoner.html"/>
+        <link rel="next" title="Best practices for distributing PRISONER experiments" href="tutorials.distribute.html"/>
         <link rel="prev" title="Installing PRISONER" href="tutorials.gettingstarted.html"/> 
 
   
@@ -83,12 +83,15 @@
 <li class="toctree-l2"><a class="reference internal" href="tutorials.demo.html">Running the PRISONER demo</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#prerequisites">Prerequisites</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="tutorials.demo.html#facebook-app">Facebook app</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorials.demo.html#twitter-app">Twitter app</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tutorials.demo.html#docker">Docker</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#start-the-docker-container">Start the Docker container</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#running-the-demo">Running the demo</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#modifying-the-demo">Modifying the demo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#saving-data">Saving data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#packaging-the-modified-demo">Packaging the modified demo</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials.gettingstarted.html">Installing PRISONER</a><ul>
@@ -109,6 +112,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#experimental-designs">Experimental designs</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.distribute.html">Best practices for distributing PRISONER experiments</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="prisoner.html">prisoner package</a><ul>
@@ -271,9 +275,6 @@ application. In there, create a new file called policy.xml. Populate it with the
 			<span class="nt">&lt;attribute</span> <span class="na">type=</span><span class="s">&quot;id&quot;</span><span class="nt">&gt;</span>
 				<span class="nt">&lt;attribute-policy</span> <span class="na">allow=</span><span class="s">&quot;retrieve&quot;</span><span class="nt">&gt;&lt;/attribute-policy&gt;</span>
 			<span class="nt">&lt;/attribute&gt;</span>
-			<span class="nt">&lt;attribute</span> <span class="na">type=</span><span class="s">&quot;author&quot;</span><span class="nt">&gt;</span>
-				<span class="nt">&lt;attribute-policy</span> <span class="na">allow=</span><span class="s">&quot;retrieve&quot;</span><span class="nt">&gt;&lt;/attribute-policy&gt;</span>
-			<span class="nt">&lt;/attribute&gt;</span>
 			<span class="nt">&lt;attribute</span> <span class="na">type=</span><span class="s">&quot;displayName&quot;</span><span class="nt">&gt;</span>
 				<span class="nt">&lt;attribute-policy</span> <span class="na">allow=</span><span class="s">&quot;retrieve&quot;</span><span class="nt">&gt;&lt;/attribute-policy&gt;</span>
 			<span class="nt">&lt;/attribute&gt;</span>
@@ -302,9 +303,7 @@ application. In there, create a new file called policy.xml. Populate it with the
 
 		<span class="nt">&lt;object-policy</span> <span class="na">allow=</span><span class="s">&quot;retrieve&quot;</span><span class="nt">&gt;</span>
 			<span class="nt">&lt;object-criteria&gt;</span>
-				<span class="nt">&lt;and-match&gt;</span>
-					<span class="nt">&lt;attribute-match</span> <span class="na">match=</span><span class="s">&quot;author.id&quot;</span> <span class="na">on_object=</span><span class="s">&quot;session:Facebook.id&quot;</span> <span class="nt">/&gt;</span>
-				<span class="nt">&lt;/and-match&gt;</span>
+					<span class="nt">&lt;attribute-match</span> <span class="na">match=</span><span class="s">&quot;id&quot;</span> <span class="na">on_object=</span><span class="s">&quot;session:Facebook.id&quot;</span> <span class="nt">/&gt;</span>
 			<span class="nt">&lt;/object-criteria&gt;</span>
 		<span class="nt">&lt;/object-policy&gt;</span>
 	<span class="nt">&lt;/policy&gt;</span>
@@ -349,7 +348,7 @@ this experiment.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="prisoner.html" class="btn btn-neutral float-right" title="prisoner package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="tutorials.distribute.html" class="btn btn-neutral float-right" title="Best practices for distributing PRISONER experiments" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="tutorials.gettingstarted.html" class="btn btn-neutral" title="Installing PRISONER" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -362,6 +361,7 @@ this experiment.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2015, Luke Hutton.
+      Last updated on Sep 07, 2015.
     </p>
   </div>
   Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.

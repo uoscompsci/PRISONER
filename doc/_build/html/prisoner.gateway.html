@@ -83,6 +83,7 @@
 <li class="toctree-l2"><a class="reference internal" href="tutorials.demo.html">Running the PRISONER demo</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#prerequisites">Prerequisites</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="tutorials.demo.html#facebook-app">Facebook app</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorials.demo.html#twitter-app">Twitter app</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tutorials.demo.html#docker">Docker</a></li>
 </ul>
 </li>
@@ -111,6 +112,7 @@
 <li class="toctree-l3"><a class="reference internal" href="tutorials.helloworld.html#experimental-designs">Experimental designs</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.distribute.html">Best practices for distributing PRISONER experiments</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="reference internal" href="prisoner.html">prisoner package</a><ul class="current">
@@ -353,7 +355,7 @@ supplied payload ID.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>operation</strong> (<em>str</em>) &#8211; The operation to perform. (GET)</li>
-<li><strong>payload</strong> (<a class="reference internal" href="prisoner.html#prisoner.SocialObjects.Person" title="prisoner.SocialObjects.Person"><em>Person</em></a>) &#8211; A User() or Person() whose ID is either a Facebook UID or username.</li>
+<li><strong>payload</strong> (<a class="reference internal" href="#prisoner.gateway.FacebookGateway.FacebookServiceGateway.Person" title="prisoner.gateway.FacebookGateway.FacebookServiceGateway.Person"><em>Person</em></a>) &#8211; A User() or Person() whose ID is either a Facebook UID or username.</li>
 </ul>
 </td>
 </tr>
@@ -420,7 +422,7 @@ Only supports GET operations. This lets us retrieve someone&#8217;s entire frien
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>operation</strong> (<em>str</em>) &#8211; The operation to perform. (GET)</li>
-<li><strong>payload</strong> (<a class="reference internal" href="prisoner.html#prisoner.SocialObjects.Person" title="prisoner.SocialObjects.Person"><em>Person</em></a>) &#8211; A User() or Person() whose ID is either a Facebook UID or username.</li>
+<li><strong>payload</strong> (<a class="reference internal" href="#prisoner.gateway.FacebookGateway.FacebookServiceGateway.Person" title="prisoner.gateway.FacebookGateway.FacebookServiceGateway.Person"><em>Person</em></a>) &#8211; A User() or Person() whose ID is either a Facebook UID or username.</li>
 </ul>
 </td>
 </tr>
@@ -498,6 +500,55 @@ Currently only supports GET operations, so we can just get the bands a person / 
 </dd></dl>
 
 <dl class="method">
+<dt id="prisoner.gateway.FacebookGateway.FacebookServiceGateway.Note">
+<code class="descname">Note</code><span class="sig-paren">(</span><em>operation</em>, <em>payload</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.FacebookGateway.FacebookServiceGateway.Note" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs operations on a user&#8217;s status updates.
+Currently only supports GET operations. This lets us retrieve a user&#8217;s entire backlog of status updates.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>operation</strong> (<em>str</em>) &#8211; The operation to perform. (GET)</li>
+<li><strong>payload</strong> (<a class="reference internal" href="prisoner.html#prisoner.SocialObjects.SocialObject" title="prisoner.SocialObjects.SocialObject"><em>SocialObject</em></a>) &#8211; A User() or Person() whose ID is either a Facebook UID or username.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A collection representing this person&#8217;s backlog of status updates.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>For POST payloads:</dt>
+<dd>payload must be a dictionary with all mandatory (and any optional) fields of a Status object}</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="prisoner.gateway.FacebookGateway.FacebookServiceGateway.Person">
+<code class="descname">Person</code><span class="sig-paren">(</span><em>operation</em>, <em>payload</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.FacebookGateway.FacebookServiceGateway.Person" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs operations relating to people&#8217;s profile information.
+Currently only supports GET operations. This allows us to, given a suitable payload such as a Person() or
+User() object, retrieve the information they have added to Facebook. (Eg: Full name, education, religion...)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>operation</strong> (<em>str</em>) &#8211; The operation to perform. (GET)</li>
+<li><strong>payload</strong> (<a class="reference internal" href="prisoner.html#prisoner.SocialObjects.SocialObject" title="prisoner.SocialObjects.SocialObject"><em>SocialObject</em></a>) &#8211; A Person() or User() object whose ID is either a Facebook UID or username.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A User() object with all available attributes populated.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="prisoner.gateway.FacebookGateway.FacebookServiceGateway.Photo">
 <code class="descname">Photo</code><span class="sig-paren">(</span><em>operation</em>, <em>payload</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.FacebookGateway.FacebookServiceGateway.Photo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs operations on images.
@@ -526,55 +577,6 @@ to get any photos they&#8217;re tagged in.</p>
 <code class="descname">Session</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.FacebookGateway.FacebookServiceGateway.Session" title="Permalink to this definition">¶</a></dt>
 <dd><p>The Facebook session exposes the authenticated user as an instance of User().
 Can also be accessed in the same way as Person() as this class simply extends it.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="prisoner.gateway.FacebookGateway.FacebookServiceGateway.Status">
-<code class="descname">Status</code><span class="sig-paren">(</span><em>operation</em>, <em>payload</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.FacebookGateway.FacebookServiceGateway.Status" title="Permalink to this definition">¶</a></dt>
-<dd><p>Performs operations on a user&#8217;s status updates.
-Currently only supports GET operations. This lets us retrieve a user&#8217;s entire backlog of status updates.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>operation</strong> (<em>str</em>) &#8211; The operation to perform. (GET)</li>
-<li><strong>payload</strong> (<a class="reference internal" href="prisoner.html#prisoner.SocialObjects.SocialObject" title="prisoner.SocialObjects.SocialObject"><em>SocialObject</em></a>) &#8211; A User() or Person() whose ID is either a Facebook UID or username.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A collection representing this person&#8217;s backlog of status updates.</p>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="docutils">
-<dt>For POST payloads:</dt>
-<dd>payload must be a dictionary with all mandatory (and any optional) fields of a Status object}</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="prisoner.gateway.FacebookGateway.FacebookServiceGateway.User">
-<code class="descname">User</code><span class="sig-paren">(</span><em>operation</em>, <em>payload</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.FacebookGateway.FacebookServiceGateway.User" title="Permalink to this definition">¶</a></dt>
-<dd><p>Performs operations relating to people&#8217;s profile information.
-Currently only supports GET operations. This allows us to, given a suitable payload such as a Person() or
-User() object, retrieve the information they have added to Facebook. (Eg: Full name, education, religion...)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>operation</strong> (<em>str</em>) &#8211; The operation to perform. (GET)</li>
-<li><strong>payload</strong> (<a class="reference internal" href="prisoner.html#prisoner.SocialObjects.SocialObject" title="prisoner.SocialObjects.SocialObject"><em>SocialObject</em></a>) &#8211; A Person() or User() object whose ID is either a Facebook UID or username.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A User() object with all available attributes populated.</p>
-</td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 <dl class="method">
@@ -865,6 +867,71 @@ Also converts Facebook&#8217;s MM/DD/YYYY format used for birthdays.</p>
 </dd></dl>
 
 <dl class="class">
+<dt id="prisoner.gateway.FacebookGateway.Image">
+<em class="property">class </em><code class="descclassname">prisoner.gateway.FacebookGateway.</code><code class="descname">Image</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="prisoner.html#prisoner.SocialObjects.Image" title="prisoner.SocialObjects.Image"><code class="xref py py-class docutils literal"><span class="pre">prisoner.SocialObjects.Image</span></code></a></p>
+<p>Representation of a photo object on Facebook.
+Photos are images uploaded by users or applications. As well as the standard attributes inherited from SocialObject,
+a photo also has additional specialised attributes such as position, width and height.
+A photo also contains Image() objects to represent both the full-size image as well as thumbnails.</p>
+<dl class="attribute">
+<dt id="prisoner.gateway.FacebookGateway.Image.comments">
+<code class="descname">comments</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Image.comments" title="Permalink to this definition">¶</a></dt>
+<dd><p>The comments on this photo.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="prisoner.gateway.FacebookGateway.Image.height">
+<code class="descname">height</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Image.height" title="Permalink to this definition">¶</a></dt>
+<dd><p>The height of this photo. (Pixels)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="prisoner.gateway.FacebookGateway.Image.image">
+<code class="descname">image</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Image.image" title="Permalink to this definition">¶</a></dt>
+<dd><p>The full size version of this photo.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="prisoner.gateway.FacebookGateway.Image.likes">
+<code class="descname">likes</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Image.likes" title="Permalink to this definition">¶</a></dt>
+<dd><p>The people who&#8217;ve liked this photo.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="prisoner.gateway.FacebookGateway.Image.position">
+<code class="descname">position</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Image.position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Position of this photo in its album.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="prisoner.gateway.FacebookGateway.Image.tags">
+<code class="descname">tags</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Image.tags" title="Permalink to this definition">¶</a></dt>
+<dd><p>The people who are tagged in this photo.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="prisoner.gateway.FacebookGateway.Image.thumbnail">
+<code class="descname">thumbnail</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Image.thumbnail" title="Permalink to this definition">¶</a></dt>
+<dd><p>The thumbnail image for this photo.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="prisoner.gateway.FacebookGateway.Image.width">
+<code class="descname">width</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Image.width" title="Permalink to this definition">¶</a></dt>
+<dd><p>The width of this photo. (Pixels)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="prisoner.gateway.FacebookGateway.Images">
+<em class="property">class </em><code class="descclassname">prisoner.gateway.FacebookGateway.</code><code class="descname">Images</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Images" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="prisoner.html#prisoner.SocialObjects.Collection" title="prisoner.SocialObjects.Collection"><code class="xref py py-class docutils literal"><span class="pre">prisoner.SocialObjects.Collection</span></code></a></p>
+<p>Lightweight collection class for representing collections of photos.</p>
+</dd></dl>
+
+<dl class="class">
 <dt id="prisoner.gateway.FacebookGateway.Like">
 <em class="property">class </em><code class="descclassname">prisoner.gateway.FacebookGateway.</code><code class="descname">Like</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Like" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#prisoner.gateway.FacebookGateway.Page" title="prisoner.gateway.FacebookGateway.Page"><code class="xref py py-class docutils literal"><span class="pre">prisoner.gateway.FacebookGateway.Page</span></code></a></p>
@@ -893,6 +960,40 @@ Also converts Facebook&#8217;s MM/DD/YYYY format used for birthdays.</p>
 </dd></dl>
 
 <dl class="class">
+<dt id="prisoner.gateway.FacebookGateway.Note">
+<em class="property">class </em><code class="descclassname">prisoner.gateway.FacebookGateway.</code><code class="descname">Note</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Note" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="prisoner.html#prisoner.SocialObjects.Note" title="prisoner.SocialObjects.Note"><code class="xref py py-class docutils literal"><span class="pre">prisoner.SocialObjects.Note</span></code></a></p>
+<p>Representation of a status object on Facebook.
+Status updates are short posts by Facebook users. They can either be entirely textual or contain a link or a photo.
+As well as the basic attributes, status updates also contain a privacy setting as well as a collection of likes and
+comments.</p>
+<dl class="attribute">
+<dt id="prisoner.gateway.FacebookGateway.Note.comments">
+<code class="descname">comments</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Note.comments" title="Permalink to this definition">¶</a></dt>
+<dd><p>The comments on this status update.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="prisoner.gateway.FacebookGateway.Note.likes">
+<code class="descname">likes</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Note.likes" title="Permalink to this definition">¶</a></dt>
+<dd><p>The people who liked this status update.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="prisoner.gateway.FacebookGateway.Note.link">
+<code class="descname">link</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Note.link" title="Permalink to this definition">¶</a></dt>
+<dd><p>A link to an external resource embedded in this status update</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="prisoner.gateway.FacebookGateway.Note.privacy">
+<code class="descname">privacy</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Note.privacy" title="Permalink to this definition">¶</a></dt>
+<dd><p>The privacy setting for this status update. (Eg: Friends)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="prisoner.gateway.FacebookGateway.Page">
 <em class="property">class </em><code class="descclassname">prisoner.gateway.FacebookGateway.</code><code class="descname">Page</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Page" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="prisoner.html#prisoner.SocialObjects.SocialObject" title="prisoner.SocialObjects.SocialObject"><code class="xref py py-class docutils literal"><span class="pre">prisoner.SocialObjects.SocialObject</span></code></a></p>
@@ -911,100 +1012,131 @@ Pages are used to represent entities like bands, books, films and so on.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="prisoner.gateway.FacebookGateway.Photo">
-<em class="property">class </em><code class="descclassname">prisoner.gateway.FacebookGateway.</code><code class="descname">Photo</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Photo" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="prisoner.html#prisoner.SocialObjects.Image" title="prisoner.SocialObjects.Image"><code class="xref py py-class docutils literal"><span class="pre">prisoner.SocialObjects.Image</span></code></a></p>
-<p>Representation of a photo object on Facebook.
-Photos are images uploaded by users or applications. As well as the standard attributes inherited from SocialObject,
-a photo also has additional specialised attributes such as position, width and height.
-A photo also contains Image() objects to represent both the full-size image as well as thumbnails.</p>
+<dt id="prisoner.gateway.FacebookGateway.Person">
+<em class="property">class </em><code class="descclassname">prisoner.gateway.FacebookGateway.</code><code class="descname">Person</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Person" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="prisoner.html#prisoner.SocialObjects.Person" title="prisoner.SocialObjects.Person"><code class="xref py py-class docutils literal"><span class="pre">prisoner.SocialObjects.Person</span></code></a></p>
+<p>Representation of a user object on Facebook.
+Users are essentially the backbone of the Facebook service and such objects can contain a great deal of information.
+User objects will not always have values for all their attributes, as Facebook does not require users to provide
+allthis information.</p>
 <dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.Photo.comments">
-<code class="descname">comments</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Photo.comments" title="Permalink to this definition">¶</a></dt>
-<dd><p>The comments on this photo.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.Photo.height">
-<code class="descname">height</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Photo.height" title="Permalink to this definition">¶</a></dt>
-<dd><p>The height of this photo. (Pixels)</p>
+<dt id="prisoner.gateway.FacebookGateway.Person.bio">
+<code class="descname">bio</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Person.bio" title="Permalink to this definition">¶</a></dt>
+<dd><p>This person&#8217;s short biography.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.Photo.image">
-<code class="descname">image</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Photo.image" title="Permalink to this definition">¶</a></dt>
-<dd><p>The full size version of this photo.</p>
+<dt id="prisoner.gateway.FacebookGateway.Person.birthday">
+<code class="descname">birthday</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Person.birthday" title="Permalink to this definition">¶</a></dt>
+<dd><p>This person&#8217;s birthday.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.Photo.likes">
-<code class="descname">likes</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Photo.likes" title="Permalink to this definition">¶</a></dt>
-<dd><p>The people who&#8217;ve liked this photo.</p>
+<dt id="prisoner.gateway.FacebookGateway.Person.education">
+<code class="descname">education</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Person.education" title="Permalink to this definition">¶</a></dt>
+<dd><p>This person&#8217;s education history.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.Photo.position">
-<code class="descname">position</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Photo.position" title="Permalink to this definition">¶</a></dt>
-<dd><p>Position of this photo in its album.</p>
+<dt id="prisoner.gateway.FacebookGateway.Person.email">
+<code class="descname">email</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Person.email" title="Permalink to this definition">¶</a></dt>
+<dd><p>This person&#8217;s email address.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.Photo.tags">
-<code class="descname">tags</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Photo.tags" title="Permalink to this definition">¶</a></dt>
-<dd><p>The people who are tagged in this photo.</p>
+<dt id="prisoner.gateway.FacebookGateway.Person.firstName">
+<code class="descname">firstName</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Person.firstName" title="Permalink to this definition">¶</a></dt>
+<dd><p>This person&#8217;s first name.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.Photo.thumbnail">
-<code class="descname">thumbnail</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Photo.thumbnail" title="Permalink to this definition">¶</a></dt>
-<dd><p>The thumbnail image for this photo.</p>
+<dt id="prisoner.gateway.FacebookGateway.Person.gender">
+<code class="descname">gender</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Person.gender" title="Permalink to this definition">¶</a></dt>
+<dd><p>This person&#8217;s gender.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.Photo.width">
-<code class="descname">width</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Photo.width" title="Permalink to this definition">¶</a></dt>
-<dd><p>The width of this photo. (Pixels)</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="prisoner.gateway.FacebookGateway.Photos">
-<em class="property">class </em><code class="descclassname">prisoner.gateway.FacebookGateway.</code><code class="descname">Photos</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Photos" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="prisoner.html#prisoner.SocialObjects.Collection" title="prisoner.SocialObjects.Collection"><code class="xref py py-class docutils literal"><span class="pre">prisoner.SocialObjects.Collection</span></code></a></p>
-<p>Lightweight collection class for representing collections of photos.</p>
-</dd></dl>
-
-<dl class="class">
-<dt id="prisoner.gateway.FacebookGateway.Status">
-<em class="property">class </em><code class="descclassname">prisoner.gateway.FacebookGateway.</code><code class="descname">Status</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Status" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="prisoner.html#prisoner.SocialObjects.Note" title="prisoner.SocialObjects.Note"><code class="xref py py-class docutils literal"><span class="pre">prisoner.SocialObjects.Note</span></code></a></p>
-<p>Representation of a status object on Facebook.
-Status updates are short posts by Facebook users. They can either be entirely textual or contain a link or a photo.
-As well as the basic attributes, status updates also contain a privacy setting as well as a collection of likes and
-comments.</p>
-<dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.Status.comments">
-<code class="descname">comments</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Status.comments" title="Permalink to this definition">¶</a></dt>
-<dd><p>The comments on this status update.</p>
+<dt id="prisoner.gateway.FacebookGateway.Person.hometown">
+<code class="descname">hometown</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Person.hometown" title="Permalink to this definition">¶</a></dt>
+<dd><p>This person&#8217;s hometown.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.Status.likes">
-<code class="descname">likes</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Status.likes" title="Permalink to this definition">¶</a></dt>
-<dd><p>The people who liked this status update.</p>
+<dt id="prisoner.gateway.FacebookGateway.Person.interestedIn">
+<code class="descname">interestedIn</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Person.interestedIn" title="Permalink to this definition">¶</a></dt>
+<dd><p>This person&#8217;s sexual orientation.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.Status.link">
-<code class="descname">link</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Status.link" title="Permalink to this definition">¶</a></dt>
-<dd><p>A link to an external resource embedded in this status update</p>
+<dt id="prisoner.gateway.FacebookGateway.Person.languages">
+<code class="descname">languages</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Person.languages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Languages this person can speak.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.Status.privacy">
-<code class="descname">privacy</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Status.privacy" title="Permalink to this definition">¶</a></dt>
-<dd><p>The privacy setting for this status update. (Eg: Friends)</p>
+<dt id="prisoner.gateway.FacebookGateway.Person.lastName">
+<code class="descname">lastName</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Person.lastName" title="Permalink to this definition">¶</a></dt>
+<dd><p>This person&#8217;s last name.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="prisoner.gateway.FacebookGateway.Person.location">
+<code class="descname">location</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Person.location" title="Permalink to this definition">¶</a></dt>
+<dd><p>This person&#8217;s current location.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="prisoner.gateway.FacebookGateway.Person.middleName">
+<code class="descname">middleName</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Person.middleName" title="Permalink to this definition">¶</a></dt>
+<dd><p>This person&#8217;s middle name.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="prisoner.gateway.FacebookGateway.Person.politicalViews">
+<code class="descname">politicalViews</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Person.politicalViews" title="Permalink to this definition">¶</a></dt>
+<dd><p>This person&#8217;s political preferences.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="prisoner.gateway.FacebookGateway.Person.relationshipStatus">
+<code class="descname">relationshipStatus</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Person.relationshipStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>This person&#8217;s relationship status.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="prisoner.gateway.FacebookGateway.Person.religion">
+<code class="descname">religion</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Person.religion" title="Permalink to this definition">¶</a></dt>
+<dd><p>This person&#8217;s religion.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="prisoner.gateway.FacebookGateway.Person.significantOther">
+<code class="descname">significantOther</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Person.significantOther" title="Permalink to this definition">¶</a></dt>
+<dd><p>This person&#8217;s significant other.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="prisoner.gateway.FacebookGateway.Person.timezone">
+<code class="descname">timezone</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Person.timezone" title="Permalink to this definition">¶</a></dt>
+<dd><p>This person&#8217;s timezone. (Offset from UTC)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="prisoner.gateway.FacebookGateway.Person.updatedTime">
+<code class="descname">updatedTime</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Person.updatedTime" title="Permalink to this definition">¶</a></dt>
+<dd><p>When this person last updated their Facebook profile.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="prisoner.gateway.FacebookGateway.Person.username">
+<code class="descname">username</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Person.username" title="Permalink to this definition">¶</a></dt>
+<dd><p>This person&#8217;s Facebook username.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="prisoner.gateway.FacebookGateway.Person.work">
+<code class="descname">work</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.Person.work" title="Permalink to this definition">¶</a></dt>
+<dd><p>This person&#8217;s work history.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1022,136 +1154,6 @@ comments.</p>
 <dd><p>Bases: <a class="reference internal" href="prisoner.html#prisoner.SocialObjects.Collection" title="prisoner.SocialObjects.Collection"><code class="xref py py-class docutils literal"><span class="pre">prisoner.SocialObjects.Collection</span></code></a></p>
 <p>Lightweight collection class for representing collections of tags.
 Tags are simply User() objects that have been tagged in a photo or status.</p>
-</dd></dl>
-
-<dl class="class">
-<dt id="prisoner.gateway.FacebookGateway.User">
-<em class="property">class </em><code class="descclassname">prisoner.gateway.FacebookGateway.</code><code class="descname">User</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.User" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="prisoner.html#prisoner.SocialObjects.Person" title="prisoner.SocialObjects.Person"><code class="xref py py-class docutils literal"><span class="pre">prisoner.SocialObjects.Person</span></code></a></p>
-<p>Representation of a user object on Facebook.
-Users are essentially the backbone of the Facebook service and such objects can contain a great deal of information.
-User objects will not always have values for all their attributes, as Facebook does not require users to provide
-allthis information.</p>
-<dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.User.bio">
-<code class="descname">bio</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.User.bio" title="Permalink to this definition">¶</a></dt>
-<dd><p>This person&#8217;s short biography.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.User.birthday">
-<code class="descname">birthday</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.User.birthday" title="Permalink to this definition">¶</a></dt>
-<dd><p>This person&#8217;s birthday.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.User.education">
-<code class="descname">education</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.User.education" title="Permalink to this definition">¶</a></dt>
-<dd><p>This person&#8217;s education history.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.User.email">
-<code class="descname">email</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.User.email" title="Permalink to this definition">¶</a></dt>
-<dd><p>This person&#8217;s email address.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.User.firstName">
-<code class="descname">firstName</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.User.firstName" title="Permalink to this definition">¶</a></dt>
-<dd><p>This person&#8217;s first name.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.User.gender">
-<code class="descname">gender</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.User.gender" title="Permalink to this definition">¶</a></dt>
-<dd><p>This person&#8217;s gender.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.User.hometown">
-<code class="descname">hometown</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.User.hometown" title="Permalink to this definition">¶</a></dt>
-<dd><p>This person&#8217;s hometown.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.User.interestedIn">
-<code class="descname">interestedIn</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.User.interestedIn" title="Permalink to this definition">¶</a></dt>
-<dd><p>This person&#8217;s sexual orientation.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.User.languages">
-<code class="descname">languages</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.User.languages" title="Permalink to this definition">¶</a></dt>
-<dd><p>Languages this person can speak.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.User.lastName">
-<code class="descname">lastName</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.User.lastName" title="Permalink to this definition">¶</a></dt>
-<dd><p>This person&#8217;s last name.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.User.location">
-<code class="descname">location</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.User.location" title="Permalink to this definition">¶</a></dt>
-<dd><p>This person&#8217;s current location.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.User.middleName">
-<code class="descname">middleName</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.User.middleName" title="Permalink to this definition">¶</a></dt>
-<dd><p>This person&#8217;s middle name.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.User.politicalViews">
-<code class="descname">politicalViews</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.User.politicalViews" title="Permalink to this definition">¶</a></dt>
-<dd><p>This person&#8217;s political preferences.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.User.relationshipStatus">
-<code class="descname">relationshipStatus</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.User.relationshipStatus" title="Permalink to this definition">¶</a></dt>
-<dd><p>This person&#8217;s relationship status.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.User.religion">
-<code class="descname">religion</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.User.religion" title="Permalink to this definition">¶</a></dt>
-<dd><p>This person&#8217;s religion.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.User.significantOther">
-<code class="descname">significantOther</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.User.significantOther" title="Permalink to this definition">¶</a></dt>
-<dd><p>This person&#8217;s significant other.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.User.timezone">
-<code class="descname">timezone</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.User.timezone" title="Permalink to this definition">¶</a></dt>
-<dd><p>This person&#8217;s timezone. (Offset from UTC)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.User.updatedTime">
-<code class="descname">updatedTime</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.User.updatedTime" title="Permalink to this definition">¶</a></dt>
-<dd><p>When this person last updated their Facebook profile.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.User.username">
-<code class="descname">username</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.User.username" title="Permalink to this definition">¶</a></dt>
-<dd><p>This person&#8217;s Facebook username.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="prisoner.gateway.FacebookGateway.User.work">
-<code class="descname">work</code><a class="headerlink" href="#prisoner.gateway.FacebookGateway.User.work" title="Permalink to this definition">¶</a></dt>
-<dd><p>This person&#8217;s work history.</p>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="function">
@@ -1568,47 +1570,82 @@ which allows the gateway to inject additional metadata to be handled elsewhere</
 <div class="section" id="module-prisoner.gateway.TwitterGateway">
 <span id="prisoner-gateway-twittergateway-module"></span><h2>prisoner.gateway.TwitterGateway module<a class="headerlink" href="#module-prisoner.gateway.TwitterGateway" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="prisoner.gateway.TwitterGateway.Tweet">
-<em class="property">class </em><code class="descclassname">prisoner.gateway.TwitterGateway.</code><code class="descname">Tweet</code><a class="headerlink" href="#prisoner.gateway.TwitterGateway.Tweet" title="Permalink to this definition">¶</a></dt>
+<dt id="prisoner.gateway.TwitterGateway.Note">
+<em class="property">class </em><code class="descclassname">prisoner.gateway.TwitterGateway.</code><code class="descname">Note</code><a class="headerlink" href="#prisoner.gateway.TwitterGateway.Note" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="prisoner.html#prisoner.SocialObjects.Note" title="prisoner.SocialObjects.Note"><code class="xref py py-class docutils literal"><span class="pre">prisoner.SocialObjects.Note</span></code></a></p>
 <p>A tweet is a single post shared to Twitter, derived from the base
 Note object.</p>
 </dd></dl>
 
 <dl class="class">
+<dt id="prisoner.gateway.TwitterGateway.Person">
+<em class="property">class </em><code class="descclassname">prisoner.gateway.TwitterGateway.</code><code class="descname">Person</code><a class="headerlink" href="#prisoner.gateway.TwitterGateway.Person" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="prisoner.html#prisoner.SocialObjects.Person" title="prisoner.SocialObjects.Person"><code class="xref py py-class docutils literal"><span class="pre">prisoner.SocialObjects.Person</span></code></a></p>
+<p>A Twitter User</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="prisoner.gateway.TwitterGateway.Timeline">
+<em class="property">class </em><code class="descclassname">prisoner.gateway.TwitterGateway.</code><code class="descname">Timeline</code><a class="headerlink" href="#prisoner.gateway.TwitterGateway.Timeline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="prisoner.html#prisoner.SocialObjects.Collection" title="prisoner.SocialObjects.Collection"><code class="xref py py-class docutils literal"><span class="pre">prisoner.SocialObjects.Collection</span></code></a></p>
+<p>A collection of Tweets</p>
+</dd></dl>
+
+<dl class="class">
 <dt id="prisoner.gateway.TwitterGateway.TwitterServiceGateway">
-<em class="property">class </em><code class="descclassname">prisoner.gateway.TwitterGateway.</code><code class="descname">TwitterServiceGateway</code><a class="headerlink" href="#prisoner.gateway.TwitterGateway.TwitterServiceGateway" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">prisoner.gateway.TwitterGateway.</code><code class="descname">TwitterServiceGateway</code><span class="sig-paren">(</span><em>policy=None</em>, <em>props=None</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.TwitterGateway.TwitterServiceGateway" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#prisoner.gateway.ServiceGateway.ServiceGateway" title="prisoner.gateway.ServiceGateway.ServiceGateway"><code class="xref py py-class docutils literal"><span class="pre">prisoner.gateway.ServiceGateway.ServiceGateway</span></code></a></p>
 <p>Service Gateway for Twitter.</p>
 <p>This gateway supports reading a user&#8217;s timeline and publishing tweets on
 their behalf, with support for geo-tagged content.</p>
 <dl class="method">
-<dt id="prisoner.gateway.TwitterGateway.TwitterServiceGateway.Session">
-<code class="descname">Session</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.TwitterGateway.TwitterServiceGateway.Session" title="Permalink to this definition">¶</a></dt>
-<dd><p>The Facebook session exposes the authenticated user as an instance of User().
-Can also be accessed in the same way as Person() as this class simply extends it.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="prisoner.gateway.TwitterGateway.TwitterServiceGateway.Timeline">
-<code class="descname">Timeline</code><span class="sig-paren">(</span><em>operation</em>, <em>payload</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.TwitterGateway.TwitterServiceGateway.Timeline" title="Permalink to this definition">¶</a></dt>
-<dd><p>Performs operations relating to people&#8217;s musical tastes.
-Currently only supports GET operations, so we can just get the bands a person / user likes.</p>
+<dt id="prisoner.gateway.TwitterGateway.TwitterServiceGateway.Note">
+<code class="descname">Note</code><span class="sig-paren">(</span><em>operation</em>, <em>payload</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.TwitterGateway.TwitterServiceGateway.Note" title="Permalink to this definition">¶</a></dt>
+<dd><p>Requests all
+tweets by a given user.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>operation</strong> (<em>str</em>) &#8211; The operation to perform. (GET)</li>
-<li><strong>payload</strong> (<a class="reference internal" href="prisoner.html#prisoner.SocialObjects.SocialObject" title="prisoner.SocialObjects.SocialObject"><em>SocialObject</em></a>) &#8211; A User() or Person() whose ID is either a Facebook UID or username.</li>
+<li><strong>operation</strong> (<em>str</em>) &#8211; (GET) tweets</li>
+<li><strong>payload</strong> (<a class="reference internal" href="#prisoner.gateway.FacebookGateway.FacebookServiceGateway.Person" title="prisoner.gateway.FacebookGateway.FacebookServiceGateway.Person"><em>Person</em></a>) &#8211; A Person whose ID is a Twitter ID</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A list of the bands this person likes.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A list of Tweet objects</p>
 </td>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="method">
+<dt id="prisoner.gateway.TwitterGateway.TwitterServiceGateway.Person">
+<code class="descname">Person</code><span class="sig-paren">(</span><em>operation</em>, <em>payload</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.TwitterGateway.TwitterServiceGateway.Person" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the user profile of a user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>operation</strong> (<em>str</em>) &#8211; (GET) user</li>
+<li><strong>payload</strong> (<a class="reference internal" href="#prisoner.gateway.FacebookGateway.FacebookServiceGateway.Person" title="prisoner.gateway.FacebookGateway.FacebookServiceGateway.Person"><em>Person</em></a>) &#8211; A Person or User whose ID is a Twitter user ID</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">User object populated by profile</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="prisoner.gateway.TwitterGateway.TwitterServiceGateway.Session">
+<code class="descname">Session</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.TwitterGateway.TwitterServiceGateway.Session" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Facebook session exposes the authenticated user as an instance of User().
+Can also be accessed in the same way as Person() as this class simply extends it.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1646,6 +1683,32 @@ Returns a URI at which the user can confirm access to their profile by the appli
 :return: URI the user must visit in order to authenticate.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="prisoner.gateway.TwitterGateway.TwitterServiceGateway.request_handler">
+<code class="descname">request_handler</code><span class="sig-paren">(</span><em>request</em>, <em>operation</em>, <em>payload</em>, <em>extra_args=None</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.TwitterGateway.TwitterServiceGateway.request_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around object requests. Used to inject any necessary debug headers</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="prisoner.gateway.TwitterGateway.TwitterServiceGateway.restore_authentication">
+<code class="descname">restore_authentication</code><span class="sig-paren">(</span><em>access_token</em><span class="sig-paren">)</span><a class="headerlink" href="#prisoner.gateway.TwitterGateway.TwitterServiceGateway.restore_authentication" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides a mechanism to restore a session. (Essentially refresh an access token)
+Twitter does not allow access tokens to be refreshed. However, if the user is
+forced to go through the
+authentication process again, it will be done transparently so long as the PRISONER app has not requested
+additional permissions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>access_token</strong> (<em>str</em>) &#8211; The current access token held for this user.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">False, thus forcing the authentication process to take place again. (Transparently)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -1673,6 +1736,7 @@ Returns a URI at which the user can confirm access to their profile by the appli
   <div role="contentinfo">
     <p>
         &copy; Copyright 2015, Luke Hutton.
+      Last updated on Sep 07, 2015.
     </p>
   </div>
   Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
