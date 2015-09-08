@@ -1,22 +1,15 @@
-Best practices for distributing PRISONER experiments
+Best practices for distributing reproducible PRISONER experiments
 ============================================
 
-.. PRISONER is designed to make social network studies more reproducible, by
-.. providing formats for encoding key information about the data-handling
-.. constraints of your experiment. This guide outlines best
-.. practices for sharing your PRISONER experiments with others. Please note, this
-.. is a living document which does not cover all scenarios. If you have any
-.. feedback or improvements, please raise an issue on GitHub or submit a pull
-.. request.
+PRISONER aims to help make social network studies more reproducible, but what does that mean in practice, and what do you need to do to make your experiments reproducible?
 
-.. Packaging your experiment
-.. ---------------------
-PRISONER encourages reproducibility of social network studies, but in practice,
-others' ability to reproduce your experiments is dependent on what you are
-willing to share with the community. Placing your code in an online archive or
+First of all, when we talk about reproducibility, we mean *someone else can reproduce the methodology of your experiment*. This is distinctive from *replicating* or *recomputing* a result, where you might want to verify that an algorithm produces a certain result given a certain input. This distinction is important, because it means we need to make sure that others have access to all of the resources needed to reproduce your experiment. This probably doesn't just mean the source code for your experimental software, or the scripts you used to perform stats, but all manner of details, including how participants were recruited, what types of data were collected about them, and how they were briefed before taking part in the study.
+
+We suggest that reproducibility hinges on three components: the availability of **code**, **methodology**, and **data**. In this guide we discuss how you can work towards adequate sharing of your code and methodology. While making available the source code for your PRISONER-based experiments achieves the former, it may only make a limited contribution to the latter. Sharing your PRISONER policy files, however, can be very helpful, as it encodes useful information about how you collect and process data in your experiment, which can aid others reproducing your experiments, even if they choose not to use PRISONER themselves.
+
+Placing your code in an online archive or
 public version control repository, via GitHub for example, is a good way of
 letting others examine and run your code.
-
 This approach, however, has some limitations. Distributing software in this way
 does not make it easy to resolve package dependencies, and if others are not
 running the same operating system as you, or other environmental variables

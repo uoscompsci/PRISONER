@@ -1,435 +1,227 @@
 
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>gateway Package &mdash; PRISONER 0.2.3 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="PRISONER 0.2.3 documentation" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="index.html">
+        
+
+        
+          
+          <img src="_static/prisoner-logo.png" class="logo" />
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.keyconcepts.html">Key concepts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.demo.html">Running the PRISONER demo</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#prerequisites">Prerequisites</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tutorials.demo.html#facebook-app">Facebook app</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorials.demo.html#twitter-app">Twitter app</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorials.demo.html#docker">Docker</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#start-the-docker-container">Start the Docker container</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#running-the-demo">Running the demo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#modifying-the-demo">Modifying the demo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#saving-data">Saving data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.demo.html#packaging-the-modified-demo">Packaging the modified demo</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.gettingstarted.html">Installing PRISONER</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.gettingstarted.html#installing-prisoner-for-local-development">Installing PRISONER for local development</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tutorials.gettingstarted.html#spin-up-a-docker-vm">Spin-up a Docker VM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorials.gettingstarted.html#clone-from-github">Clone from GitHub</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.helloworld.html">Writing your first experiment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.helloworld.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.helloworld.html#in-this-tutorial">In this tutorial</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.helloworld.html#privacy-policies">Privacy policies</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tutorials.helloworld.html#writing-the-privacy-policy">Writing the privacy policy</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.helloworld.html#experimental-designs">Experimental designs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.distribute.html">Best practices for distributing reproducible PRISONER experiments</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.distribute.html#sharing-code-and-prisoner-policies">1) Sharing code and PRISONER policies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.distribute.html#forking-prisoner-on-github">2) Forking PRISONER on GitHub</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.distribute.html#release-a-virtual-machine-image">3) Release a virtual machine image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials.distribute.html#final-thoughts">Final thoughts</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="prisoner.html">prisoner package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="prisoner.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="prisoner.gateway.html">prisoner.gateway package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#prisoner-gateway-facebookgateway-module">prisoner.gateway.FacebookGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#prisoner-gateway-lastfmgateway-module">prisoner.gateway.LastfmGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#prisoner-gateway-servicegateway-module">prisoner.gateway.ServiceGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#prisoner-gateway-twittergateway-module">prisoner.gateway.TwitterGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.gateway.html#module-contents">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="prisoner.persistence.html">prisoner.persistence package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.persistence.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.persistence.html#prisoner-persistence-persistencemanager-module">prisoner.persistence.PersistenceManager module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.persistence.html#module-contents">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="prisoner.server.html">prisoner.server package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.server.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.server.html#prisoner-server-webservice-module">prisoner.server.webservice module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.server.html#module-contents">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="prisoner.tests.html">prisoner.tests package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.tests.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.tests.html#prisoner-tests-tests-module">prisoner.tests.tests module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.tests.html#module-contents">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="prisoner.workflow.html">prisoner.workflow package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#prisoner-workflow-exceptions-module">prisoner.workflow.Exceptions module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#prisoner-workflow-experimentbuilder-module">prisoner.workflow.ExperimentBuilder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#prisoner-workflow-policydocumentgenerator-module">prisoner.workflow.PolicyDocumentGenerator module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#prisoner-workflow-policyprocessor-module">prisoner.workflow.PolicyProcessor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#prisoner-workflow-socialobjectgateway-module">prisoner.workflow.SocialObjectGateway module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prisoner.workflow.html#module-contents">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="prisoner.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prisoner.html#prisoner-socialobjects-module">prisoner.SocialObjects module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prisoner.html#module-contents">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">PRISONER</a>
+      </nav>
 
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>gateway Package &mdash; PRISONER 0.1 documentation</title>
-    
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
-        VERSION:     '0.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="PRISONER 0.1 documentation" href="index.html" />
-    <link rel="up" title="src Package" href="src.html" />
-    <link rel="next" title="tests Package" href="src.gateway.tests.html" />
-    <link rel="prev" title="src Package" href="src.html" /> 
-  </head>
-  <body>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="src.gateway.tests.html" title="tests Package"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="src.html" title="src Package"
-             accesskey="P">previous</a> |</li>
-        <li><a href="index.html">PRISONER 0.1 documentation</a> &raquo;</li>
-          <li><a href="modules.html" >&lt;no title&gt;</a> &raquo;</li>
-          <li><a href="src.html" accesskey="U">src Package</a> &raquo;</li> 
-      </ul>
-    </div>  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body">
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>gateway Package</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/src.gateway.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
             
   <div class="section" id="gateway-package">
 <h1>gateway Package<a class="headerlink" href="#gateway-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
-<h2><tt class="xref py py-mod docutils literal"><span class="pre">gateway</span></tt> Package<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
-<span class="target" id="module-src.gateway"></span></div>
-<div class="section" id="module-src.gateway.LastfmGateway">
-<span id="lastfmgateway-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">LastfmGateway</span></tt> Module<a class="headerlink" href="#module-src.gateway.LastfmGateway" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="src.gateway.LastfmGateway.LastfmServiceGateway">
-<em class="property">class </em><tt class="descclassname">src.gateway.LastfmGateway.</tt><tt class="descname">LastfmServiceGateway</tt><big>(</big><em>access_token=None</em><big>)</big><a class="headerlink" href="#src.gateway.LastfmGateway.LastfmServiceGateway" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#src.gateway.ServiceGateway.ServiceGateway" title="src.gateway.ServiceGateway.ServiceGateway"><tt class="xref py py-class docutils literal"><span class="pre">src.gateway.ServiceGateway.ServiceGateway</span></tt></a></p>
-<p>ServiceGateway for Last.fm. This is a concrete implementation to
-demonstrate how to build experimental applications which consume data from, and
-publish data to, Last.fm</p>
-<p>This ServiceGateway supports a number of core Social Objects, and
-introduces a range of its own to represent site-specific constructs such as
-Tracks and Playlists, etc.</p>
-<p>This gateway uses a modified version of pylast to interact with Last.fm
-API</p>
-<dl class="method">
-<dt id="src.gateway.LastfmGateway.LastfmServiceGateway.Comment">
-<tt class="descname">Comment</tt><big>(</big><em>operation</em>, <em>payload</em><big>)</big><a class="headerlink" href="#src.gateway.LastfmGateway.LastfmServiceGateway.Comment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Performs operations on Comment objects. Supports GET and
-POST operations.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>operation</strong> (<em>str</em>) &#8211; The operation to perform (GET, POST)</li>
-<li><strong>payload</strong> (<em>SocialObject</em>) &#8211; Provide a Comment object. Will be posted as a shout to
-the profile of the inReplyTo attribute.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="src.gateway.LastfmGateway.LastfmServiceGateway.Image">
-<tt class="descname">Image</tt><big>(</big><em>operation</em>, <em>payload</em><big>)</big><a class="headerlink" href="#src.gateway.LastfmGateway.LastfmServiceGateway.Image" title="Permalink to this definition">¶</a></dt>
-<dd><p>Performs operations on Image objects. Only supports GET
-operations.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>operation</strong> (<em>str</em>) &#8211; The operation to perform (GET)</li>
-<li><strong>payload</strong> (<em>SocialObject</em>) &#8211; Provide a Person object, to return that user&#8217;s profile
-image</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<p>:returns Image &#8211; image of requested object</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="src.gateway.LastfmGateway.LastfmServiceGateway.Session">
-<tt class="descname">Session</tt><big>(</big><big>)</big><a class="headerlink" href="#src.gateway.LastfmGateway.LastfmServiceGateway.Session" title="Permalink to this definition">¶</a></dt>
-<dd><p>The Last.fm session exposes the authenticated
-user as a Person instance</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="src.gateway.LastfmGateway.LastfmServiceGateway.Track">
-<tt class="descname">Track</tt><big>(</big><em>operation</em>, <em>payload</em><big>)</big><a class="headerlink" href="#src.gateway.LastfmGateway.LastfmServiceGateway.Track" title="Permalink to this definition">¶</a></dt>
-<dd><p>Performs operations on Track objects. Only supports the GET
-operation (you can get a user&#8217;s tracks, you can&#8217;t create them).</p>
-<p>Returns a set of Tracks depending on the payload.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>operation</strong> (<em>str</em>) &#8211; The operation to perform (GET)</li>
-<li><strong>payload</strong> (<em>SocialObject</em>) &#8211; Provide a Person (whose id is username) to return a set
-of that user&#8217;s Loved Tracks</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">list[track] - set of tracks matching criteria</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="src.gateway.LastfmGateway.LastfmServiceGateway.complete_authentication">
-<tt class="descname">complete_authentication</tt><big>(</big><em>request</em><big>)</big><a class="headerlink" href="#src.gateway.LastfmGateway.LastfmServiceGateway.complete_authentication" title="Permalink to this definition">¶</a></dt>
-<dd><p>Completes authentication. Request passed via authentication flow
-must contain a token argument as returned by Last.fm. We pass this to Last.fm to
-return a session key (lasts indefinitely) for making authenticated calls on this
-user.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>request</strong> (<em>HTTPRequest</em>) &#8211; Request from first stage of authentication</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Session key to persist for this user</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="src.gateway.LastfmGateway.LastfmServiceGateway.request_authentication">
-<tt class="descname">request_authentication</tt><big>(</big><em>callback</em><big>)</big><a class="headerlink" href="#src.gateway.LastfmGateway.LastfmServiceGateway.request_authentication" title="Permalink to this definition">¶</a></dt>
-<dd><p>Instigates first of Last.fm&#8217;s two-stage authentication.
-Returns a URL for the participant to confirm access to their profile by this
-application.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>callback</strong> (<em>str</em>) &#8211; PRISONER&#8217;s authentication flow URL. The
-participant must go here after authenticating with Last.fm to continue the flow</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="src.gateway.LastfmGateway.LastfmServiceGateway.restore_authentication">
-<tt class="descname">restore_authentication</tt><big>(</big><em>access_token</em><big>)</big><a class="headerlink" href="#src.gateway.LastfmGateway.LastfmServiceGateway.restore_authentication" title="Permalink to this definition">¶</a></dt>
-<dd><p>Restores previously authenticated session. Last.fm session
-keys last indefinitely so this just provides pylast with the old session key and
-hope it works</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>access_token</strong> (<em>str</em>) &#8211; Last.fm session key received from previous
-auth attempt</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">boolean - was auth successful?</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="src.gateway.LastfmGateway.Playlist">
-<em class="property">class </em><tt class="descclassname">src.gateway.LastfmGateway.</tt><tt class="descname">Playlist</tt><a class="headerlink" href="#src.gateway.LastfmGateway.Playlist" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">SocialObjects.Collection</span></tt></p>
-</dd></dl>
-
-<dl class="class">
-<dt id="src.gateway.LastfmGateway.Track">
-<em class="property">class </em><tt class="descclassname">src.gateway.LastfmGateway.</tt><tt class="descname">Track</tt><a class="headerlink" href="#src.gateway.LastfmGateway.Track" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">SocialObjects.SocialObject</span></tt></p>
-<dl class="attribute">
-<dt id="src.gateway.LastfmGateway.Track.artist">
-<tt class="descname">artist</tt><a class="headerlink" href="#src.gateway.LastfmGateway.Track.artist" title="Permalink to this definition">¶</a></dt>
-<dd><p>String identifying artist of this track.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="src.gateway.LastfmGateway.Track.get_friendly_name">
-<tt class="descname">get_friendly_name</tt><big>(</big><em>attribute</em><big>)</big><a class="headerlink" href="#src.gateway.LastfmGateway.Track.get_friendly_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="src.gateway.LastfmGateway.Track.tag">
-<tt class="descname">tag</tt><a class="headerlink" href="#src.gateway.LastfmGateway.Track.tag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set of tags associated with this track</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="src.gateway.LastfmGateway.Track.title">
-<tt class="descname">title</tt><a class="headerlink" href="#src.gateway.LastfmGateway.Track.title" title="Permalink to this definition">¶</a></dt>
-<dd><p>The title of this track.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="src.gateway.LastfmGateway.Track.transform_artist">
-<tt class="descname">transform_artist</tt><big>(</big><em>transformation</em>, <em>level</em><big>)</big><a class="headerlink" href="#src.gateway.LastfmGateway.Track.transform_artist" title="Permalink to this definition">¶</a></dt>
-<dd><p>Applies anonymising transformation to the artist attribute.
-Uses the base_transform_name transformation</p>
-</dd></dl>
-
-</dd></dl>
-
+<h2><code class="xref py py-mod docutils literal"><span class="pre">gateway</span></code> Package<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-src.gateway.ServiceGateway">
-<span id="servicegateway-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">ServiceGateway</span></tt> Module<a class="headerlink" href="#module-src.gateway.ServiceGateway" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="src.gateway.ServiceGateway.SARHeaders">
-<em class="property">class </em><tt class="descclassname">src.gateway.ServiceGateway.</tt><tt class="descname">SARHeaders</tt><big>(</big><em>operation</em>, <em>provider</em>, <em>object_type</em>, <em>payload</em><big>)</big><a class="headerlink" href="#src.gateway.ServiceGateway.SARHeaders" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
-<p>SARHeaders contain information about the request for a SocialObject.
-They are used within the validation/sanitisation process as part of a
-SocialActivityResponse. They may also be used to audit the requests made for
-objects.</p>
-<dl class="attribute">
-<dt id="src.gateway.ServiceGateway.SARHeaders.object_type">
-<tt class="descname">object_type</tt><a class="headerlink" href="#src.gateway.ServiceGateway.SARHeaders.object_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>The name of the SocialObject type to use. This must be a
-core SocialObject or provided by the ServiceGateway indicated in the provider
-attribute.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="src.gateway.ServiceGateway.SARHeaders.operation">
-<tt class="descname">operation</tt><a class="headerlink" href="#src.gateway.ServiceGateway.SARHeaders.operation" title="Permalink to this definition">¶</a></dt>
-<dd><p>The operation to be performed by this request. These map to
-HTTP methods (GET, POST etc.)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="src.gateway.ServiceGateway.SARHeaders.payload">
-<tt class="descname">payload</tt><a class="headerlink" href="#src.gateway.ServiceGateway.SARHeaders.payload" title="Permalink to this definition">¶</a></dt>
-<dd><p>The criteria for a request, or object to publish.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="src.gateway.ServiceGateway.SARHeaders.provider">
-<tt class="descname">provider</tt><a class="headerlink" href="#src.gateway.ServiceGateway.SARHeaders.provider" title="Permalink to this definition">¶</a></dt>
-<dd><p>The provider this request is intended for. Must map to a
-ServiceGateway</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="src.gateway.ServiceGateway.ServiceGateway">
-<em class="property">class </em><tt class="descclassname">src.gateway.ServiceGateway.</tt><tt class="descname">ServiceGateway</tt><a class="headerlink" href="#src.gateway.ServiceGateway.ServiceGateway" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
-<p>Service Gateways make external providers of social data accessible to
-the rest of PRISONER. They accept sanitised requests for Social Objects, and
-make the appropriate API calls to return well-formed social objects. They also
-accept requests to publish social objects to services, converting these to the
-representations expected by that API.</p>
-<p>This is an abstract interface - concrete implementations subclass this
-and provide methods corresponding to each Social Object they implement,
-with the signature def ObjectType(self, operation, payload).</p>
-<p>See examples of concrete implementations for examples of this.</p>
-<p>ServiceGateways must adhere to the following conventions:</p>
-<ul class="simple">
-<li>exist as a package &lt;GatewayName&gt;ServiceGateway.py within the gateway
-module</li>
-<li>contain a class called &lt;GatewayName&gt;ServiceGateway which subclasses
-ServiceGateway</li>
-</ul>
-<dl class="method">
-<dt id="src.gateway.ServiceGateway.ServiceGateway.Image">
-<tt class="descname">Image</tt><big>(</big><em>operation</em>, <em>payload</em><big>)</big><a class="headerlink" href="#src.gateway.ServiceGateway.ServiceGateway.Image" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform operations on ServiceGateway to publish and retrieve
-Image objects</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>operation</strong> (<em>str</em>) &#8211; The operation to perform (eg. GET, POST)</li>
-<li><strong>payload</strong> (<em>SocialObject</em>) &#8211; Object to perform operation with, eg. GET
-objects matching criteria, or POST this object to service</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="src.gateway.ServiceGateway.ServiceGateway.Session">
-<tt class="descname">Session</tt><big>(</big><big>)</big><a class="headerlink" href="#src.gateway.ServiceGateway.ServiceGateway.Session" title="Permalink to this definition">¶</a></dt>
-<dd><p>Each ServiceGateway can maintain a Session object, which
-contains limited information that is needed to persist throughout the session
-with the service. This should <em>not</em> be used as a way of caching social objects
-to circumvent the usual GetObject interface. The session is intended to store,
-for example, metadata about the authenticated participant so that it is possible
-to relate the participant to their service username, etc.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="src.gateway.ServiceGateway.ServiceGateway.complete_authentication">
-<tt class="descname">complete_authentication</tt><big>(</big><em>request</em><big>)</big><a class="headerlink" href="#src.gateway.ServiceGateway.ServiceGateway.complete_authentication" title="Permalink to this definition">¶</a></dt>
-<dd><p>Second stage of authentication. Request contains the
-response from the client-side authentication, which should
-contain access tokens required to complete the authentication process.</p>
-<p>Do not implement this method if the service does not perform
-authenticated requests.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>request</strong> (<em>HTTPRequest</em>) &#8211; Request with clientside authentication tokens</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="src.gateway.ServiceGateway.ServiceGateway.request_authentication">
-<tt class="descname">request_authentication</tt><big>(</big><em>callback=None</em><big>)</big><a class="headerlink" href="#src.gateway.ServiceGateway.ServiceGateway.request_authentication" title="Permalink to this definition">¶</a></dt>
-<dd><p>First stage of two-stage authentication. Participation
-client has requested that participant is authenticated with this service.</p>
-<p>For most authentication schemes, return a URL the participant can visit to
-authenticate themselves with the service. After completing this stage, the user
-must be redirected to the callback URL.</p>
-<p>Do not implement this method if the service does not perform
-authenticated requests.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>callback</strong> (<em>str</em>) &#8211; URL that PRISONER has determined participant
-must visit after authenticating with service.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="src.gateway.ServiceGateway.ServiceGateway.restore_authentication">
-<tt class="descname">restore_authentication</tt><big>(</big><em>access_token</em><big>)</big><a class="headerlink" href="#src.gateway.ServiceGateway.ServiceGateway.restore_authentication" title="Permalink to this definition">¶</a></dt>
-<dd><p>Similar to complete_authentication(), except directly
-providing the access token needed by the gateway to restore an existing session.
-We can&#8217;t guarantee the token is still valid, so the gateway should return a
-boolean value to indicate whether the attempt was successful. If not, it may be
-necessary to complete the clientside request/complete flow.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>access_token</strong> (<em>object</em>) &#8211; Object needed by service gateway to restore
-authentication</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">boolean - was authentication attempt succesful?</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="src.gateway.ServiceGateway.SocialActivityResponse">
-<em class="property">class </em><tt class="descclassname">src.gateway.ServiceGateway.</tt><tt class="descname">SocialActivityResponse</tt><big>(</big><em>content</em>, <em>headers</em><big>)</big><a class="headerlink" href="#src.gateway.ServiceGateway.SocialActivityResponse" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
-<p>SocialActivityResponse wraps a SocialObject received from a service
-gateway. It provides the original object alongside headers relating to the
-request from the participation clients. These headers are used to validate the
-request, and sanitise the response object.</p>
-<dl class="attribute">
-<dt id="src.gateway.ServiceGateway.SocialActivityResponse.content">
-<tt class="descname">content</tt><a class="headerlink" href="#src.gateway.ServiceGateway.SocialActivityResponse.content" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="src.gateway.ServiceGateway.SocialActivityResponse.headers">
-<tt class="descname">headers</tt><a class="headerlink" href="#src.gateway.ServiceGateway.SocialActivityResponse.headers" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<div class="section" id="lastfmgateway-module">
+<h2><code class="xref py py-mod docutils literal"><span class="pre">LastfmGateway</span></code> Module<a class="headerlink" href="#lastfmgateway-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="servicegateway-module">
+<h2><code class="xref py py-mod docutils literal"><span class="pre">ServiceGateway</span></code> Module<a class="headerlink" href="#servicegateway-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="subpackages">
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="src.gateway.tests.html">tests Package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="src.gateway.tests.html#id1"><tt class="docutils literal"><span class="pre">tests</span></tt> Package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src.gateway.tests.html#module-src.gateway.tests.LastfmGatewayTests"><tt class="docutils literal"><span class="pre">LastfmGatewayTests</span></tt> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src.gateway.tests.html#module-src.gateway.tests.SocialGatewayTests"><tt class="docutils literal"><span class="pre">SocialGatewayTests</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.gateway.tests.html#id1"><code class="docutils literal"><span class="pre">tests</span></code> Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.gateway.tests.html#lastfmgatewaytests-module"><code class="docutils literal"><span class="pre">LastfmGatewayTests</span></code> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.gateway.tests.html#socialgatewaytests-module"><code class="docutils literal"><span class="pre">SocialGatewayTests</span></code> Module</a></li>
 </ul>
 </li>
 </ul>
@@ -439,74 +231,60 @@ request, and sanitise the response object.</p>
 
 
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">gateway Package</a><ul>
-<li><a class="reference internal" href="#id1"><tt class="docutils literal"><span class="pre">gateway</span></tt> Package</a></li>
-<li><a class="reference internal" href="#module-src.gateway.LastfmGateway"><tt class="docutils literal"><span class="pre">LastfmGateway</span></tt> Module</a></li>
-<li><a class="reference internal" href="#module-src.gateway.ServiceGateway"><tt class="docutils literal"><span class="pre">ServiceGateway</span></tt> Module</a></li>
-<li><a class="reference internal" href="#subpackages">Subpackages</a><ul>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
+          <footer>
+  
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="src.html"
-                        title="previous chapter">src Package</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="src.gateway.tests.html"
-                        title="next chapter">tests Package</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/src.gateway.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Luke Hutton.
+      Last updated on Sep 08, 2015.
     </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="src.gateway.tests.html" title="tests Package"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="src.html" title="src Package"
-             >previous</a> |</li>
-        <li><a href="index.html">PRISONER 0.1 documentation</a> &raquo;</li>
-          <li><a href="modules.html" >&lt;no title&gt;</a> &raquo;</li>
-          <li><a href="src.html" >src Package</a> &raquo;</li> 
-      </ul>
-    </div>
-    <div class="footer">
-        &copy; Copyright 2012, Luke Hutton.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
-    </div>
-  </body>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.2.3',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
 </html>
