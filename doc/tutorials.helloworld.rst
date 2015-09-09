@@ -149,4 +149,9 @@ Finally, we provide a PRISONER secret. This is a passphrase which you will
 provide to PRISONER whenever you make administrative commands, such as
 initialising an experiment, to make sure you are authorised to do this.
 
+Writing the experiment app
+---------------------
+We're two thirds of the way there! These two policy files do a lot of the work
+in telling PRISONER what your experiment needs to do. From these two files,
+PRISONER can create an entire pre-briefing structure and authentication flow.
 
