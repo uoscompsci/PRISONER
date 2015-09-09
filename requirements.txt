@@ -14,4 +14,5 @@ pylast
 requests
 sqlalchemy
 tornado
+unittest2
 werkzeug

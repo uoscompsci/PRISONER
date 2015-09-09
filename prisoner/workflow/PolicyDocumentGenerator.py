@@ -1,6 +1,6 @@
 import lxml.etree as etree
 
-from workflow import SocialObjectGateway
+from prisoner.workflow import SocialObjectGateway
 
 class PolicyDocumentGenerator(object):
 	""" The PolicyDocumentGenerator generates human-readable versions of
