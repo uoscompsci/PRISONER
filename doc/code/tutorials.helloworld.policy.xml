@@ -5,7 +5,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://prisoner.cs.st-andrews.ac.uk/prisoner/privacy-policy privacy_policy.xsd">
 
-	<policy for="Facebook:User">
+	<policy for="Facebook:Person">
 		<attributes>
 			<attribute type="id">
 				<attribute-policy allow="retrieve"></attribute-policy>

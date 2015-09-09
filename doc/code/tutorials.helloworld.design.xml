@@ -1,0 +1,22 @@
+<p:experimental-design xmlns:p="http://prisoner.cs.st-andrews.ac.uk/prisoner/experimental_design"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://prisoner.cs.st-andrews.ac.uk/prisoner/experimental_design.xsd">
+
+	<experiment name="PRISONER Tutorial">
+		<tables>
+			<table name="participant" type="participant">
+				<column name="email" type="string"/>
+			</table>
+
+			<table name="response" type="response">
+				<column name="participant_id" type="string" />
+				<column name="user" mapTo="Facebook:Person" />
+			</table>
+		</tables>
+		<props>
+			<prop for="Facebook" key="app_id" value="$APP_ID" />
+			<prop for="Facebook" key="app_secret" value="$APP_SECRET" />
+			<prop for="Facebook" key="api_version" value="2.0" />
+			<prop for="PRISONER" key="secret" value="prisonerTutorialSecret" />
+		</props>
+	</experiment>
+</p:experimental-design>

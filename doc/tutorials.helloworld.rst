@@ -1,6 +1,10 @@
 Writing your first experiment
 =============================
 
+**Please note, this tutorial is a work-in-progress and not complete. In the
+meantime, we recommend reviewing the :doc:`PRISONER demo </tutorials.demo>` for
+an understanding of how to build a simple experiment.**
+
 Now that you have a PRISONER development server up and running, we are going to
 write a simple experiment which collects some data from a participant's Facebook
 account, sanitises it, and displays it in the browser.
@@ -9,10 +13,13 @@ Prerequisites
 -------------
 This tutorial shows an experiment being written in Python, but as this is
 to only demonstrate how to use the PRISONER web service, this can be easily
-adapted to any other environment.
+adapted to any other environment. This guide assumes a working understanding of
+XML files.
 
 This example requires a Facebook account to test, and assumes you are registered
-as a `Facebook developer <https://developers.facebook.com>`_.
+as a `Facebook developer <https://developers.facebook.com>`_. You will need to
+create a Facebook app, and make a note of its App ID and Secret. A short guide
+to doing this is available in our :doc:`demo tutorial </tutorials.demo>`.
 
 In this tutorial
 ----------------
@@ -88,7 +95,7 @@ means we can access Facebook-specific attributes, but at the cost of making our
 experiment harder to adapt for other services. Because we only want to collect
 data about the current participant, we provide an object-policy which dictates
 that we can only collect a User object if it matches the ID of the participant.
-This ensures our experiment can not inadvertantly collect more sensitive data
+This ensures our experiment can not inadvertently collect more sensitive data
 than we need, such as the identitfy of the participant's friends. Although we
 now have criteria for collecting the objects themselves, the objects PRISONER
 returns will have no attributes. Therefore, we must specifically enumerate the
@@ -102,4 +109,44 @@ Later, when we write the experimental application, we will provide PRISONER with
 
 Experimental designs
 ----------------
-Experimental design files provide PRISONER with basic metadata about your experiment, such as its name and the contact details of the researcher, properties for specific services such as API keys, and the structure of any data you wish to store so PRISONER can manage the database appropriately. 
+Experimental design files provide PRISONER with basic metadata about your
+experiment, such as its name, properties for specific services such as API keys, and the structure of any data you wish to store so PRISONER can manage the database appropriately. 
+
+Writing the experimental design
+``````````````````````````````
+In the same directory where you wrote your privacy policy, add another file
+called design.xml, and populate it with the following:
+
+.. literalinclude:: code/tutorials.helloworld.design.xml
+   :language: xml
+
+What does this design do? First of all, note that in the tables element, we
+specify two tables. The first is marked as a "participant" table, which
+indicates to PRISONER that the table stores metadata about individual
+participants. This allows PRISONER's internal record of an individual
+participant, including their service-specific session identifiers, to be related
+to the metadata that is specific to your experiment. In this case, we identify
+participants by their email address.
+
+Our second table is marked as a "response" table, which lets PRISONER know that
+data collected during the course of an experiment can be stored here. For the
+purposes of this tutorial, we will store the participant's Facebook profile
+along with our identifier for that participant. 
+
+The schema we have provided here does not directly translate to the underlying
+database which PRISONER will instantiate on our behalf. The "mapTo" syntax in
+our response table means PRISONER will store the representation of a Facebook
+profile in a metatable, which individual response records will be related to.
+Rather than directly accessing the database, PRISONER recommends you use its
+persistence API to store responses and retrieve them, with fully-formed social
+objects returned as part of the response, where appropriate. 
+
+Finally, we provide some properties, or "props", which provide miscellaneous
+metadata PRISONER needs to provide your experiment. Because we are using
+Facebook, we must provide the App ID and secret for our app which we noted
+earlier, so make sure you edit the file with these values as appropriate.
+Finally, we provide a PRISONER secret. This is a passphrase which you will
+provide to PRISONER whenever you make administrative commands, such as
+initialising an experiment, to make sure you are authorised to do this.
+
+
