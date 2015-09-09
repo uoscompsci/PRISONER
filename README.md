@@ -4,17 +4,18 @@ PRISONER is a framework for running ethical and reproducible social network expe
 
 ## Getting started
 - Before installing PRISONER on your own, you can try our [Docker-based demo]
-(http://prisoner.cs.st-andrews.ac.uk/docs/tutorials.demo.html) if you'd like a
+(http://prisoner.readthedocs.org/en/latest/tutorials.demo.html) if you'd like a
 guided tour of an existing PRISONER experiment.
 - Follow the [Installation Guide]
-(http://prisoner.cs.st-andrews.ac.uk/docs/tutorials.gettingstarted.html) to
+(http://prisoner.readthedocs.org/en/latest/tutorials.gettingstarted.html) to
 install PRISONER locally.
 - Follow the [Writing your first experiment]
-(http://prisoner.cs.st-andrews.ac.uk/docs/tutorials.helloworld.html) tutorial to
+(http://prisoner.readthedocs.org/en/latest/tutorials.helloworld.html) tutorial to
 build a simple experiment which collects data from Facebook.
 
 ## Getting help
-- Read the [documentation](http://prisoner.cs.st-andrews.ac.uk/docs). As well as
+- Read the [documentation](http://prisoner.readthedocs.org/en/latest/). As well
+as
 tutorials to help you get started, there's a full API reference, including a
 guide to the capabilities of each service gateway.
 - Reach out to us on [Twitter](https://twitter.com/EthicsPRISONER).
