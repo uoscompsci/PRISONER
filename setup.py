@@ -8,7 +8,7 @@ setup(name='PRISONER',
       author='Luke Hutton',
       author_email='lh49@st-andrews.ac.uk',
       license='BSD',
-      packages=['gateway','persistence','server','tests','tools','workflow'],
+      packages=['prisoner'],
       zip_safe=False,
       install_requires=[
           ],
