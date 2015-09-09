@@ -1,11 +1,30 @@
 Best practices for distributing reproducible PRISONER experiments
 ============================================
 
-PRISONER aims to help make social network studies more reproducible, but what does that mean in practice, and what do you need to do to make your experiments reproducible?
+PRISONER aims to help make social network studies more reproducible, but what
+does that mean in practice, and what do you need to do to make your
+experiments reproducible?
 
-First of all, when we talk about reproducibility, we mean *someone else can reproduce the methodology of your experiment*. This is distinctive from *replicating* or *recomputing* a result, where you might want to verify that an algorithm produces a certain result given a certain input. This distinction is important, because it means we need to make sure that others have access to all of the resources needed to reproduce your experiment. This probably doesn't just mean the source code for your experimental software, or the scripts you used to perform stats, but all manner of details, including how participants were recruited, what types of data were collected about them, and how they were briefed before taking part in the study.
+First of all, when we talk about reproducibility, we mean *someone else can
+reproduce the methodology of your experiment*. This is distinctive from
+*replicating* or *recomputing* a result, where you might want to verify that
+an algorithm produces a certain result given a certain input. This distinction
+is important, because it means we need to make sure that others have access to
+all of the resources needed to reproduce your experiment. This probably
+doesn't just mean the source code for your experimental software, or the
+scripts you used to perform stats, but all manner of details, including how
+participants were recruited, what types of data were collected about them, and
+how they were briefed before taking part in the study.
 
-We suggest that reproducibility hinges on three components: the availability of **code**, **methodology**, and **data**. In this guide we discuss how you can work towards adequate sharing of your code and methodology. While making available the source code for your PRISONER-based experiments achieves the former, it may only make a limited contribution to the latter. Sharing your PRISONER policy files, however, can be very helpful, as it encodes useful information about how you collect and process data in your experiment, which can aid others reproducing your experiments, even if they choose not to use PRISONER themselves.
+We suggest that reproducibility hinges on three components: the availability
+of **code**, **methodology**, and **data**. In this guide we discuss how you
+can work towards adequate sharing of your code and methodology. While making
+available the source code for your PRISONER-based experiments achieves the
+former, it may only make a limited contribution to the latter. Sharing your
+PRISONER policy files, however, can be very helpful, as it encodes useful
+information about how you collect and process data in your experiment, which
+can aid others reproducing your experiments, even if they choose not to use
+PRISONER themselves.
 
 Placing your code in an online archive or
 public version control repository, via GitHub for example, is a good way of
@@ -101,8 +120,9 @@ A guide to using Docker is beyond the scope of this document, but to help you
 get started, we provide PRISONER itself, and a separate working example, as
 Docker images via Docker Hub. `This tutorial
 <http://prisoner.cs.st-andrews.ac.uk/docs/tutorials.demo.html>`_ explains how to
-run our example Docker experiment. To see how we build this Docker image,
-derived from a base PRISONER image see (TODO: deeplink to example on GitHub). 
+run our example Docker experiment.
+.. To see how we build this Docker image,
+.. derived from a base PRISONER image see (TODO: deeplink to example on GitHub). 
 
 We recommend distributing both a PRISONER fork as above, and a Docker image
 (either via Docker Hub or a private Docker registry). This approach has some
