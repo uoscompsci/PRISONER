@@ -1,9 +1,9 @@
 Writing your first experiment
 =============================
 
-**Please note, this tutorial is a work-in-progress and not complete. In the
+Please note, this tutorial is a work-in-progress and not complete. In the
 meantime, we recommend reviewing the :doc:`PRISONER demo </tutorials.demo>` for
-an understanding of how to build a simple experiment.**
+an understanding of how to build a simple experiment.
 
 Now that you have a PRISONER development server up and running, we are going to
 write a simple experiment which collects some data from a participant's Facebook
