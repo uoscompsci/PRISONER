@@ -16,6 +16,16 @@ class TwitterServiceGateway(ServiceGateway):
 	their behalf, with support for geo-tagged content.
 	"""
 	def __init__(self, policy=None, props=None):
+		"""
+		Initialises instance of Twitter Gateway with credentials from experimental
+		design
+
+		:param policy: instance of PolicyProcessor
+		:type policy: PolicyProcessor
+		:param props: Dictionary of Twitter-specific properties
+		:type props: dict
+		"""
+
 		self.props = props
 		self.service_name = "Twitter"
 		self.service_description = "Micro-blogging service"
@@ -34,8 +44,20 @@ class TwitterServiceGateway(ServiceGateway):
 		self.access_token = None
 
 	def request_handler(self, request, operation, payload, extra_args=None):
-		""" Wrapper around object requests. Used to inject any necessary debug headers
+		""" Wrapper around object requests. Used to inject any necessary debug headers.
+
+		:param request: A method instance on this service gateway
+		:type request: method
+		:param operation: A HTTP method of this request (ie. GET or POST)
+		:type operation: str
+		:param payload: The criteria for this request, ie. which objects to retrieve,
+		or data to publish
+		:param extra_args: A dictionary of arguments to further filter this query
+		(eg. limit)
+		:type extra_args: dict
+		:returns: A WrappedResponse with any additional headers injected
 		"""
+
 		self.props['args'] = extra_args
 		resp = request(operation, payload)
 		headers = {}
@@ -46,11 +68,13 @@ class TwitterServiceGateway(ServiceGateway):
 
 	def request_authentication(self, callback):
 		"""
-		Initiates Facebook's authentication process.
+		Initiates Twitter's authentication process.
 		Returns a URI at which the user can confirm access to their profile by the application.
 
-		:param callback: PRISONER's authentication flow URL. User must be redirected here after registering with Facebook
+		:param callback: PRISONER's authentication flow URL. User must be redirected
+		here after registering with Twitter
 		in order to continue the flow.
+
 		:type callback: str
 		:return: URI the user must visit in order to authenticate.
 		"""
@@ -67,8 +91,7 @@ class TwitterServiceGateway(ServiceGateway):
 
 	def complete_authentication(self, request):
 		"""
-		Completes authentication. Extracts the "code" param that Facebook provided and exchanges it for an
-		access token so we can make authenticated calls on behalf of the user.
+		Final stage of authentication flow.
 
 		:param request: Response from the first stage of authentication.
 		:type request: HTTPRequest
@@ -94,17 +117,6 @@ class TwitterServiceGateway(ServiceGateway):
 		auth_user.id = self.content_json['user_id']
 		self.session = auth_user
 
-		# self.timeline_url = 'https://api.twitter.com/1.1/statuses/user_timeline.json?'
-		# self.timeline_params = {"user_id": self.content_json['user_id'],
-		# 						"count": 50}
-		# 						#"include_rts": 1,
-		# 						#"exclude_replies":1}
-		#
-		# self.timeline_request = self.timeline_url + urllib.urlencode(self.timeline_params)
-		#
-		# self.resp, self.content = self.client.request(self.timeline_request, "GET")
-		#
-
 
 		return self.access_token
 
@@ -125,8 +137,7 @@ class TwitterServiceGateway(ServiceGateway):
 
 	def Session(self):
 		"""
-		The Facebook session exposes the authenticated user as an instance of User().
-		Can also be accessed in the same way as Person() as this class simply extends it.
+		The Twitter session exposes the authenticated user as an instance of Person().
 		"""
 
 		return self.session
@@ -197,42 +208,6 @@ class TwitterServiceGateway(ServiceGateway):
 		print "returning timeline!"
 		return timeline
 
-	# def Timeline(self, operation, payload):
-	# 	"""
-	# 	Performs operations relating to people's musical tastes.
-	# 	Currently only supports GET operations, so we can just get the bands a person / user likes.
-	#
-	# 	:param operation: The operation to perform. (GET)
-	# 	:type operation: str
-	# 	:param payload: A User() or Person() whose ID is either a Facebook UID or username.
-	# 	:type payload: SocialObject
-	# 	:returns: A list of the bands this person likes.
-	# 	"""
-	#
-	# 	self.timeline_url = 'https://api.twitter.com/1.1/statuses/user_timeline.json?'
-	# 	self.timeline_params = {"user_id": payload,
-	# 							"count": 50}
-	# 							#"include_rts": 1,
-	# 							#"exclude_replies":1}
-	#
-	# 	self.timeline_request = self.timeline_url + urllib.urlencode(self.timeline_params)
-	#
-	# 	self.resp, self.content = self.client.request(self.timeline_request, "GET")
-	#
-	# 	# Get user ID and query Facebook for their info.
-	# 	timeline_id = payload
-	# 	# Create user object.
-	# 	timeline = Timeline()
-	# 	timeline.id = timeline_id
-	#
-	# 	# Create author object for future use.
-	# 	author = SocialObjects.Person()
-	# 	author.id = timeline_id
-	# 	timeline.author = author
-	#
-	# 	url_user = "https://api.twitter.com/1.1/statuses/user_timeline.json?count=200&user_id="
-	# 	return timeline
-
 class Person(SocialObjects.Person):
 	""" A Twitter User
 	"""
@@ -255,20 +230,3 @@ class Note(SocialObjects.Note):
 	def __init__(self):
 		super(Note, self).__init__()
 
-# class Timeline(SocialObjects.Collection):
-# 	"""
-# 	Timelines are collections of
-# 	"""
-#
-# 	def __init__(self):
-# 		super(Timeline, self).__init__()
-# 		self._provider = "Twitter"	# String
-# 		self._id = None	# String
-#
-# 	@property
-# 	def id(self):
-# 		return self._id
-#
-# 	@id.setter
-# 	def id(self, value):
-# 		self._id = value
