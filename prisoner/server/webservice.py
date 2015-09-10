@@ -147,16 +147,35 @@ class PRISONER(object):
 		self.jinja_env = Environment(loader=FileSystemLoader(TEMPLATE_URL), autoescape=True)
 
 	def render_template(self, template_name, **context):
+		"""
+		Return the given template populated with content
+		:param template_name: Name of the template file to render
+		:type template_name: str
+		:param context: Additional context
+		:returns: Response
+		"""
+
 		t = self.jinja_env.get_template(template_name)
 		return Response(t.render(context), mimetype="text/html")
 
 	def get_builder_reference(self, request):
 		""" Each session has its own instance of PRISONER's internals,
 		keyed on the session cookie.
+
+		:param request: Current HTTP request
+		:returns: The ExperimentBuilder for this session
 		"""
 		return self.session_internals[request.sessionid]
 
 	def set_builder_reference(self, request, builder):
+		""" Attach this ExperimentBuilder to the current session.
+
+		:param request: Current HTTP request
+		:param builder: Instance of ExperimentBuilder to Attach
+		:type builder: ExperimentBuilder
+		:returns: ExperimentBuilder
+		"""
+
 		prisession = request.sessionid
 		self.session_internals[prisession] = builder
 		return self.get_builder_reference(request)
@@ -166,6 +185,10 @@ class PRISONER(object):
 		Call this  at the end of the experiment to remove its footprint,
 		or in the event of an irrecoverable error, from which you do not want the
 		participant to recover without restarting the experiment flow
+
+		:param request: Current HTTP request
+		:param session: Session ID to invalidate
+		:type session: str
 		"""
 		priSession = session
 

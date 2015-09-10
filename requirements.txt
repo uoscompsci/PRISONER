@@ -15,4 +15,4 @@ requests
 sqlalchemy
 tornado
 unittest2
-werkzeug
+#werkzeug
