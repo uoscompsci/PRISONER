@@ -1,7 +1,3 @@
-""" The Facebook Service Gateway allows you to access Facebook from PRISONER experiments. In order to use Facebook, you must register an app with the Facebook Developers portal and provide three additional props
-in your experimental design file. The app_id and app_secret props correspond to the values for your app, and the api_version prop dictates which version of the Facebook API your experiment targets. At this time, only "2.0" is an acceptable API version. See the documentation on key concepts for guidance on using props in experimental designs.
-"""
-
 from prisoner.gateway.ServiceGateway import ServiceGateway, WrappedResponse
 import prisoner.SocialObjects as SocialObjects
 
@@ -21,13 +17,31 @@ class FacebookServiceGateway(ServiceGateway):
 	"""
 	Service gateway for Facebook.
 	This gateway interacts with Facebook directly by making calls via the network's Social Graph API.
+
+	The Facebook Service Gateway allows you to access Facebook from PRISONER
+	experiments. In order to use Facebook, you must register an app with the
+	Facebook Developers portal and provide three additional props in your
+	experimental design file. The app_id and app_secret props correspond to the
+	values for your app, and the api_version prop dictates which version of the
+	Facebook API your experiment targets. At this time, only "2.0" is an
+	acceptable API version. See the documentation on key concepts for guidance on
+	using props in experimental designs.
+
 	"""
 
 
 	def __init__(self, access_token=None, props={}, policy=None):
 		"""
 		Initialises itself with PRISONER's App ID and App Secret.
+
+		:param access_token: This parameter is deprecated.
+		:type access_token: str
+		:param props: Dictionary of Facebook-specific properties.
+		:type props: dict
+		:type policy: The current PolicyProcessor instance.
+		:type policy: PolicyProcessor
 		"""
+		
 
 		self.props = props
 		self.policy = policy
@@ -92,8 +106,21 @@ class FacebookServiceGateway(ServiceGateway):
 		self.session = None
 
 	def request_handler(self, request, operation, payload, extra_args=None):
-		""" Wrapper around object requests. Used to inject any necessary debug headers
+		""" Wrapper around object requests. Used to inject any necessary debug headers.
+
+		:param request: A method instance on this service gateway
+		:type request: method
+		:param operation: A HTTP method of this request (ie. GET or POST)
+		:type operation: str
+		:param payload: The criteria for this request, ie. which objects to retrieve,
+		or data to publish
+		:param extra_args: A dictionary of arguments to further filter this query
+		(eg. limit)
+		:type extra_args: dict
+		:returns: A WrappedResponse with any additional headers injected
+
 		"""
+
 		self.props['args'] = extra_args
 		resp = request(operation, payload)
 		headers = {}
@@ -141,13 +168,6 @@ class FacebookServiceGateway(ServiceGateway):
 		return perms
 
 
-
-
-
-
-
-
-
 	def request_authentication(self, callback):
 		"""
 		Initiates Facebook's authentication process.
@@ -156,7 +176,7 @@ class FacebookServiceGateway(ServiceGateway):
 		:param callback: PRISONER's authentication flow URL. User must be redirected here after registering with Facebook
 		in order to continue the flow.
 		:type callback: str
-		:return: URI the user must visit in order to authenticate.
+		:returns: URI the user must visit in order to authenticate.
 		"""
 
 		# Save the callback URI as our redirect. This is required by Facebook / OAuth.
@@ -246,6 +266,8 @@ class FacebookServiceGateway(ServiceGateway):
 		"""
 		The Facebook session exposes the authenticated user as an instance of User().
 		Can also be accessed in the same way as Person() as this class simply extends it.
+
+		:returns: session object
 		"""
 
 		return self.session
@@ -254,14 +276,14 @@ class FacebookServiceGateway(ServiceGateway):
 	def Person(self, operation, payload):
 		"""
 		Performs operations relating to people's profile information.
-		Currently only supports GET operations. This allows us to, given a suitable payload such as a Person() or
-		User() object, retrieve the information they have added to Facebook. (Eg: Full name, education, religion...)
+		Currently only supports GET operations. This allows us to, given a suitable
+		payload such as a Person() object, retrieve the information they have added to Facebook. (Eg: Full name, education, religion...)
 
 		:param operation: The operation to perform. (GET)
 		:type operation: str
-		:param payload: A Person() or User() object whose ID is either a Facebook UID or username.
+		:param payload: A Person() object whose ID is either a Facebook UID or username.
 		:type payload: SocialObject
-		:returns: A User() object with all available attributes populated.
+		:returns: A Person() object with all available attributes populated.
 		"""
 
 		if (operation == "GET"):
@@ -441,7 +463,7 @@ class FacebookServiceGateway(ServiceGateway):
 
 		:param operation: The operation to perform. (GET)
 		:type operation: str
-		:param payload: A User() or Person() whose ID is either a Facebook UID or username.
+		:param payload: A Person() whose ID is either a Facebook UID or username.
 		:type payload: SocialObject
 		:returns: A list of the bands this person likes.
 		"""
@@ -506,7 +528,7 @@ class FacebookServiceGateway(ServiceGateway):
 
 		:param operation: The operation to perform. (GET)
 		:type operation: str
-		:param payload: A User() or Person() whose ID is either a Facebook UID or username.
+		:param payload: A Person() whose ID is either a Facebook UID or username.
 		:type payload: SocialObject
 		:returns: A list of pages this person likes.
 		"""
@@ -576,7 +598,7 @@ class FacebookServiceGateway(ServiceGateway):
 
 		:param operation: The operation to perform. (GET)
 		:type operation: str
-		:param payload: A User() or Person() whose ID is either a Facebook UID or username.
+		:param payload: A Person() whose ID is either a Facebook UID or username.
 		:type payload: SocialObject
 		:returns: A list of the movies this person likes.
 		"""
@@ -640,7 +662,7 @@ class FacebookServiceGateway(ServiceGateway):
 
 		:param operation: The operation to perform. (GET)
 		:type operation: str
-		:param payload: A User() or Person() whose ID is either a Facebook UID or username.
+		:param payload: A Person() whose ID is either a Facebook UID or username.
 		:type payload: SocialObject
 		:returns: A list of the books this person likes.
 		"""
@@ -703,12 +725,9 @@ class FacebookServiceGateway(ServiceGateway):
 
 		:param operation: The operation to perform. (GET)
 		:type operation: str
-		:param payload: A User() or Person() whose ID is either a Facebook UID or username.
+		:param payload: A Person() whose ID is either a Facebook UID or username.
 		:type payload: SocialObject
 		:returns: A collection representing this person's backlog of status updates.
-
-		For POST payloads:
-			payload must be a dictionary with all mandatory (and any optional) fields of a Status object}
 		"""
 		if(operation == "POST"):
 			# convert SO dict to fb call
@@ -721,7 +740,6 @@ class FacebookServiceGateway(ServiceGateway):
 				privacy = "{'value':'CUSTOM', 'allow': '%s'}" % payload.privacy
 				call_dict['privacy'] = privacy
 			response = self.post_graph_data("/me/feed", call_dict)
-
 
 
 		elif (operation == "GET"):
@@ -834,7 +852,7 @@ class FacebookServiceGateway(ServiceGateway):
 
 		:param operation: The operation to perform. (GET)
 		:type operation: str
-		:param payload: A User() or Person() whose ID is either a Facebook UID or username.
+		:param payload: A Person() whose ID is either a Facebook UID or username.
 		:type payload: Person
 		:returns: A collection representing this person's friends list.
 		"""
@@ -911,7 +929,7 @@ class FacebookServiceGateway(ServiceGateway):
 
 		:param operation: The operation to perform. (GET)
 		:type operation: str
-		:param payload: A User() or Person() whose ID is either a Facebook UID or username.
+		:param payload: A Person() whose ID is either a Facebook UID or username.
 		:type payload: Person
 		:returns: A collection representing this person / object's photo albums.
 		"""
@@ -1122,7 +1140,7 @@ class FacebookServiceGateway(ServiceGateway):
 
 		:param operation: The operation to perform. (GET)
 		:type operation: str
-		:param payload: The User() or Person() object to retrieve check-in information for.
+		:param payload: The Person() object to retrieve check-in information for.
 		:type payload: SocialObject
 		:returns: A collection of objects representing check-ins.
 		"""
