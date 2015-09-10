@@ -21,6 +21,7 @@ class PersistenceManager(object):
 	PersistenceManager, and where possible, friendlier interfaces are available
 	through the ExperimentBuilder and SocialObjectsGateway.
 	"""
+
 	def __init__(self, exp_design = None, policy_processor=None,
 	connection_string=None):
 		""" Instantiate a PersistenceManager by supplying an experimental
@@ -32,6 +33,8 @@ class PersistenceManager(object):
 		:param policy_processor: Instance of PolicyProcessor used to
 		validate and sanitise requests to store data
 		:type policy_processor: PolicyProcessor
+		:param connection_string: The connection string for the underlying database
+		:type connection_string: str
 		"""
 
 		self.response_tables = {}
@@ -74,6 +77,7 @@ class PersistenceManager(object):
 		:param value: Path to experimental design file
 		:type value: str
 		"""
+
 		self._experimental_design = self.validate_design(value)
 		# instance DB
 		exp_element = self._experimental_design.xpath("//experiment")[0]
@@ -98,6 +102,7 @@ class PersistenceManager(object):
 		:raises: IOError
 		:returns: ElementTree - parsed experimental design object
 		"""
+
 		if not design:
 			raise IOError("Experimental design not found at path")
 		xsd_file = open(EXPERIMENTAL_DESIGN_XSD)
@@ -125,6 +130,7 @@ class PersistenceManager(object):
 		:param table_name: Name of table to return
 		:returns: Table - requested table
 		"""
+
 		table_dict = getattr(self, "%s_tables" % table_type)
 		return table_dict[table_name]
 
@@ -138,6 +144,7 @@ class PersistenceManager(object):
 		:type participant_id: int
 		:returns: tuple - participant data from database
 		"""
+
 		table = self.get_table("participant",schema)
 		result = table.select(table.c.id==participant_id).execute().fetchone()
 		return result
@@ -145,7 +152,10 @@ class PersistenceManager(object):
 	def get_props(self):
 		""" Parses the props collection in the experimental design and makes these
 		available as a dict of dicts
+
+		:returns: dict of dicts of props
 		"""
+
 		if self._props:
 			return self._props
 
@@ -172,6 +182,7 @@ class PersistenceManager(object):
 		:type participant: dict
 		:returns: int -- inserted row ID
 		"""
+
 		response = participant
 		if schema not in self.participant_tables:
 			raise Exception("Participant schema not found")
@@ -224,6 +235,7 @@ class PersistenceManager(object):
 		:type token: object
 		:returns: row as inserted in meta_table
 		"""
+
 		table = self.meta_participant_table
 		insert = table.insert()
 		response = {"participant_id": participant_id, "provider": provider,
@@ -249,6 +261,7 @@ class PersistenceManager(object):
 		:type provider: str
 		:returns: Stored credentials or None
 		"""
+
 		table = self.meta_participant_table
 		result = table.select(and_(table.c.participant_id==participant_id,
 		table.c.provider == provider)).execute().fetchone()
@@ -261,6 +274,8 @@ class PersistenceManager(object):
 	def post_response_json(self, sog, schema, response):
 		""" Wrapper to post_response for use by web services.
 
+		:param sog: Current instance of SocialObjectsGateway
+		:type sog: SocialObjectsGateway
 		:param schema: Name of response schema to write to
 		:type schema: str
 		:param response:
@@ -269,6 +284,7 @@ class PersistenceManager(object):
 			received)
 		:type response: JSON object as str.
 		"""
+
 		if schema not in self.response_tables:
 			raise Exception("Schema not found")
 
@@ -288,7 +304,14 @@ class PersistenceManager(object):
 		return self.post_response(schema, json_obj)
 
 	def post_response(self, schema, response):
-		""" Writes response to given schema. """
+		""" Writes response to given schema.
+
+		:param schema: Schema to write to
+		:type schema: str
+		:param response: Response data to write
+		:type response: dict
+		"""
+
 		if not self.experimental_design:
 			raise Exception("No experimental design")
 
@@ -336,19 +359,23 @@ class PersistenceManager(object):
 		self.engine.dispose()
 
 
-	"""
-	Parses the experimental design and constructs relevant tables, classes,
-	and meta_tables (for relating tables to objects).
-
-	if drop_first is True, tables will be rebuilt on the DB, all data lost.
-	THIS IS A BAD THING TO DO ACCIDENTALLY.
-
-	This uses SQLAlchemy to generate classes bound to an engine of whatever
-	database (by default, SQLite for testing) - this should support just
-	about any DB-API friendly database, but no guarantees. And if you want
-	to use any DB-specific features, you'll want to roll your own DB layer.
-	"""
 	def __build_schema(self, drop_first=False):
+		"""
+		Parses the experimental design and constructs relevant tables, classes,
+		and meta_tables (for relating tables to objects).
+
+		if drop_first is True, tables will be rebuilt on the DB, all data lost.
+		THIS IS A BAD THING TO DO ACCIDENTALLY.
+
+		This uses SQLAlchemy to generate classes bound to an engine of whatever
+		database (by default, SQLite for testing) - this should support just
+		about any DB-API friendly database, but no guarantees. And if you want
+		to use any DB-specific features, you'll want to roll your own DB layer.
+
+		:param drop_first: Should database be trashed first?
+		:type drop_first: boolean
+		"""
+		
 		tables = self.experimental_design.xpath("//tables")[0]
 
 		if drop_first:
