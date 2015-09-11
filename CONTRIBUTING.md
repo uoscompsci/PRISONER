@@ -42,7 +42,7 @@ PRISONER working and not sure how to go about something.
 ## Getting in touch
 
 You can also reach us by [Twitter](https://twitter.com/EthicsPRISONER) or our
-Facebook group.
+[Facebook group](https://www.facebook.com/groups/848295018572351).
 
 ## License
 Contributions to PRISONER are under a BSD license.
