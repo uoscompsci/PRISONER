@@ -25,6 +25,9 @@ to accept (we are trying to improve our coverage after all!) and we are open to
 starting new branches to host interesting new features that aren't ready for the
 mainstream!
 
+If you wish to append to or improve existing documentation, please go ahead
+and raise a pull request! 
+
 ## Bugs
 
 ### Known issues
