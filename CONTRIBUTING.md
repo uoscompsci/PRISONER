@@ -12,7 +12,9 @@ PRISONER is being developed completely openly, with all changes pushed
 immediately to GitHub. This means, `master` is very unsafe, and you generally
 don't want to clone from there. We are working on improving test coverage as a
 priority, but currently this is a major weakness for us, so expect a lot of bad
-commits here. 
+commits here. We will regularly push out releases which are semantically
+versioned, but please note that PRISONER is still volatile and there will
+probably be frequent breaking changes.
 
 ## Pull requests
 
