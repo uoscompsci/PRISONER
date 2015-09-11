@@ -40,6 +40,12 @@ class ExperimentBuilder(object):
 		self.last_touch = None
 
 	def get_props(self, who_for=None):
+		""" Retrieve the props for a given target (eg. PRISONER or a provider)
+
+		:param who_for: the target to retrieve props for
+		:type who_for: str
+		"""
+
 		props = self.sog.persistence.props
 
 		if not who_for:
@@ -48,6 +54,12 @@ class ExperimentBuilder(object):
 			return props[who_for]
 
 	def provide_db_string(self, db_string):
+		""" Set connection string for this experiment.
+
+		:param db_string: conncetion string
+		:type db_string: str
+		"""
+
 		self.connection_string = db_string
 
 	def provide_title(self, title):
@@ -139,9 +151,9 @@ class ExperimentBuilder(object):
 		(many authentication flows expect a URL callback). This flow
 		must return a token to persist alongside the Participant.
 
-		: param callback: A callable to be invoked only when consent is
+		: param callback_url: A callable to be invoked only when consent is
 		confirmed - ie. the entrypoint for the participation client
-		:type callback: callable
+		:type callback_url: callable
 		: returns: URL participant must visit to begin consent flow
 		"""
 		# does authenticated participant already have a meta row?
