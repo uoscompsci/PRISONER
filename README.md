@@ -26,8 +26,9 @@ bug.
 ## Examples
 - We have prepared a Docker image which contains a Facebook and Twitter
 experiment which is ready to run. You can [run it for yourself]
-(http://prisoner.cs.st-andrews.ac.uk/docs/tutorials.demo.html) or simply [clone
-the source](https://github.com/uoscompsci/PRISONERDemo) to take a look at how it
+(http://prisoner.cs.st-andrews.ac.uk/docs/tutorials.demo.html) or simply [look
+at
+the source](https://github.com/uoscompsci/PRISONER/tree/master/examples/dockerdemo) to take a look at how it
 works.
 
 ## License

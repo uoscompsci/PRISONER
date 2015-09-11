@@ -7,7 +7,7 @@ that you follow the first three tutorials.
 
 .. toctree::
 
- tutorials.keyconcepts
+ .. tutorials.keyconcepts
  tutorials.demo
  tutorials.gettingstarted
  tutorials.helloworld

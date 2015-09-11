@@ -88,8 +88,9 @@ While the above is clearly better than nothing, it falls a little short of our
 reproducibility goal as it falls on anyone wishing to replicate your study to
 manage their own instance of PRISONER.
 
-One way to simplify this is to distribute your experiment as a fork of PRISONER
-on GitHub, with your experiment-specific code added to the repository. This has
+One way to simplify this is to distribute your experiment as `a fork of PRISONER
+on GitHub` <https://github.com/uoscompsci/PRISONER>`_, with your
+experiment-specific code added to the repository. This has
 a number of advantages:
 
 * Your experiment is clearly bound to a specific release of PRISONER avoiding issues with mismatched versions
@@ -124,7 +125,8 @@ run our example Docker experiment.
 .. To see how we build this Docker image,
 .. derived from a base PRISONER image see (TODO: deeplink to example on GitHub). 
 
-We recommend distributing both a PRISONER fork as above, and a Docker image
+We recommend distributing both a `PRISONER fork
+<https://github.com/uoscompsci/PRISONER>`_ as above, and a Docker image
 (either via Docker Hub or a private Docker registry). This approach has some
 further advantages:
 
@@ -140,7 +142,8 @@ experiments, with trade-offs between upfront complexity and the ease with which
 others can reproduce your experiment. The scenarios we discuss here are based on
 our own experience in conducting and distributing experiments, and should not be
 considered the final word. Ultimately, you should choose whichever workflow
-suits you, and please share your own recommendations with us and the community
-via GitHub. We will update this document with alternative distribution
+suits you, and please share your own recommendations with us and `the community
+via GitHub <https://github.com/uoscompsci/PRISONER>`_. We will update this
+document with alternative distribution
 strategies which emerge.
 

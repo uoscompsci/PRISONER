@@ -29,8 +29,7 @@ Please follow these steps to create a Twitter app:
 * Visit https://dev.twitter.com and click "Manage Your Apps" in the footer.
 * Click "Create new app" and provide the required details.
 * The "Callback URL" most be a non-empty value. As PRISONER dynamically provides
-a callback, the callback given here is irrelevant. For example, you can supply
-your homepage or http://prisoner.cs.st-andrews.ac.uk
+a callback, the callback given here is irrelevant. For example, you can supplyyour homepage or http://prisoner.cs.st-andrews.ac.uk
 * Click "Create your Twitter application".
 * Go to the "Keys and access tokens" tab and make a note of the API key and
 secret, which you will need later.

@@ -7,7 +7,7 @@ Installing PRISONER for local development
 -------------------
 
 For developing experiments, you will probably want to run a PRISONER server locally on your development machine to quickly iterate. There are two ways to do
-this: using our pre-prepared Docker VM image, or pulling the latest release from
+this: using our pre-prepared Docker VM image, or cloning the latest release from
 GitHub.
 
 Spin-up a Docker VM
@@ -33,8 +33,19 @@ access the underlying VM via an alternative IP.
 
 Clone from GitHub
 `````````````````````````````
-PRISONER is developed openly, with all active development pushed to GitHub.
-We recommend cloning the latest release tag rather than pulling from head for
+
+Prerequisites
+~~~~~~~~~~
+PRISONER should work on any platform which supports Python 2.7. PRISONER is not
+compatible with Python 3.
+
+Installing PRISONER
+~~~~~~~~~~~~~~~~
+PRISONER is developed openly, with all active development pushed to `GitHub
+<https://github.com/uoscompsci/PRISONER>`_.
+We recommend cloning `the latest release
+<https://github.com/uoscompsci/PRISONER/releases>`_ rather than pulling from
+head for
 stability. From the directory where you cloned the repository, run the following
 at the command line to install any dependencies::
 
@@ -52,5 +63,4 @@ From the PRISONER directory, run the following to start the local development se
 Make sure everything is working by visiting localhost:5000, where you should see
 a "Welcome to PRISONER" message.
 
-
-Next, we will write our first PRISONER experiment.
+In the next tutorial, we cover writing your first PRISONER experiment.
