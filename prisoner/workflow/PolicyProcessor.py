@@ -33,7 +33,13 @@ class PolicyProcessor(object):
 		However, if you choose to ignore that and instantiate your own
 		anyway, provide the path to an XML file, which will be
 		immediately validated.
+
+		:param policy: url of XML file
+		:type policy: str
+		:param sog: bound instance of SocialObjectsGateway
+		:type sog: SocialObjectsGateway
 		"""
+
 		self._privacy_policy = None
 		if policy:
 			self.privacy_policy = policy
@@ -184,7 +190,11 @@ class PolicyProcessor(object):
 	def __get_clean_object_name(self, object_type):
 		""" Return an object's type without a namespace component, if one is provided
 
+		:param object_type: the dirty class name
+		:type object_type: str
+		:returns: clean object_type
 		"""
+
 		if ":" not in object_type:
 			return object_type
 		else:
@@ -196,9 +206,12 @@ class PolicyProcessor(object):
 
 		:param object_name: Object name with an optional namespace component
 		:type object_name: str.
+		:param provider: the name of the service this object belongs to
+		:type provider: str
 		:returns: instance of an object
 		:raises: RuntimePrivacyPolicyParserError, ServiceGatewayNotFoundError
 		"""
+
 		base_namespaces = ["literal","session","participant","base"]
 
 		try:
@@ -293,6 +306,8 @@ class PolicyProcessor(object):
 		:type response: SocialObject
 		:param tree: A valid privacy policy subtree
 		:type tree: ElementTree
+		:param provider: The name of the service this object belongs to
+		:type provider: str
 		:raises: RuntimePrivacyPolicyParserError
 		:returns: boolean - whether or not object passed criteria
 		"""
@@ -383,6 +398,8 @@ class PolicyProcessor(object):
 		If I have a Playlist which subclasses Collection, and only a
 		policy for Collection, this will return Collection.
 
+		:param provider: the name of the service to validate policy against
+		:type provider: str
 		:param test_object: Object to find policy for
 		:type test_object: str
 		:returns: str -- matching policy object
@@ -411,7 +428,13 @@ class PolicyProcessor(object):
 		class_name is a string, not an instance of the object to test.
 		Attempts to infer the class before getting the best-fitting
 		policy
+
+		:param provider: the name of the service this class belongs to
+		:type provider: str
+		:param class_name: name of the class to get policy for
+		:type class_name: str
 		"""
+
 		# try inferring namespaced object
 		try:
 			provider_gateway = globals()["%sGateway" %
@@ -431,8 +454,11 @@ class PolicyProcessor(object):
 
 	def _sanitise_object_request(self, response):
 		"""
-		This sanitises each attribute of an object recursively based on its actual type, rather than the named attributes within the policy.
-		This is a drop-in replacement until it is considered stable
+		This sanitises each attribute of an object recursively based on its actual type,
+		rather than the named attributes within the policy.
+		
+		:param response: the response to sanitise
+		:returns: sanitised version of object in response
 		"""
 
 		# get most specialised policy
@@ -533,111 +559,6 @@ class PolicyProcessor(object):
 
 
 
-	def OLD_sanitise_object_request(self, response):
-		"""
-		Sanitises a request - this reduces a Social Object to only the
-		fields allowed by the privacy policy, and applies any transformations required by the policy.
-
-		:param response: Object to sanitise
-		:type response: SocialActivityResponse
-		:returns: SocialObject -- sanitised object
-		"""
-		if response.headers == None:
-			raise Exception("Response has no headers, so cannot " + \
-			"be sanitised. No object will be returned.")
-
-		policy_object_type = self.__get_most_specialised_policy_for_object(response.headers.provider,
-		response.content)
-		response.headers.object_type = policy_object_type
-
-		# did the object policy allow us to collect this?
-
-		# try to get a service-specific policy for this object type
-		# otherwise, fall-back on a base object type
-		xpath = "//policy[@for='%s:%s']//object-policy[@allow='%s']//object-criteria" \
-		% (response.content.provider, response.headers.object_type,
-		op_match[response.headers.operation])
-		xpath_res = self.privacy_policy.xpath(xpath)
-
-
-		if not xpath_res:
-			xpath = "//policy[@for='%s']//object-policy[@allow='%s']//object-criteria" \
-			% (response.headers.object_type,
-			op_match[response.headers.operation])
-			xpath_res = self.privacy_policy.xpath(xpath)
-			ns = False
-		else:
-			ns = True
-		if ns:
-			object_type = "%s:%s" % (response.content.provider,
-			response.headers.object_type)
-		else:
-			object_type = response.headers.object_type
-
-		valid_object_policy = self.__validate_criteria(response,
-		xpath_res[0])
-
-		if not valid_object_policy:
-			return None
-
-		# recompose object - only include attributes with an
-		# attribute-policy
-		sanitised_object = response.content.__class__()
-
-		xpath = "//policy[@for='%s']//attributes" % object_type
-		attributes_collection = self.privacy_policy.xpath(xpath)
-		for attribute in attributes_collection[0]:
-			curr_attribute = attribute.get("type")
-
-			xpath = "attribute-policy[@allow='%s']" % op_match[response.headers.operation]
-			att_path = attribute.xpath(xpath)
-
-
-			if att_path:
-				valid_attr_policy = True
-			else:
-				valid_attr_policy = False
-
-
-			# TODO: allow support for attribute criteria. deprecated below
-			"""
-			xpath = "attribute-policy[@allow='%s']//attribute-criteria" % op_match[response.headers.operation]
-			att_path = attribute.xpath(xpath)
-			if att_path:
-				# TODO: block requests without any criteria
-				valid_attr_policy = self.__validate_criteria(response,
-				att_path[0])
-			else:
-				valid_attr_policy = True
-			"""
-
-
-			if not valid_attr_policy:
-				pass
-			else:
-				# apply any transforms for this attribute
-				transforms = attribute.xpath("attribute-policy/transformations")
-				if transforms:
-					for transform in transforms[0]:
-							obj_ref = response.content
-
-							if transform.tag is etree.Comment:
-								continue
-							trans_ref = getattr(obj_ref,
-							"transform_%s" % transform.get("type"))
-							to_transform = getattr(obj_ref, curr_attribute)
-							transformed = trans_ref(to_transform, transform.get("level"))
-							setattr(sanitised_object, curr_attribute, transformed)
-
-
-				else:
-					setattr(sanitised_object,
-					curr_attribute,
-					getattr(response.content, curr_attribute))
-
-		sanitised_object.provider = response.content.provider
-		return sanitised_object
-
 	def __test_criteria(self, element, response, provider=None):
 		""" Tests that an object passes a single logical test within object or attribute criteria.
 		Used internally when validating objects
@@ -646,6 +567,8 @@ class PolicyProcessor(object):
 		:type element: lxml Element
 		:param response: Contains object to test
 		:type response: SocialActivityResponse
+		:param provider: the service this object belongs to
+		:type provider: str
 		:returns: bool -- did object pass criteria?
 		"""
 		if element.tag == "attribute-match":
