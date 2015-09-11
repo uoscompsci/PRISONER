@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+	<title>PRISONER Demonstration</title>
+	<link rel="stylesheet" type="text/css" href="/static/style.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+	<script type="text/javascript">
+	$(document).ready(function() {
+
+		$(".save_link").click(function() {
+			var jqxhr = $.get("/store?prisoner_id={{me.prisoner_id}}", function() {
+				$(".save_link").text("Data stored successfully!");
+				$(".save_link").css("color","green");
+			})
+			.fail(function() {
+				$(".save_link").text("Data could not be saved. Is the policy valid?");
+				$(".save_link").css("color","red");
+			});
+
+	});
+	});
+
+	</script>
+</head>
+
+<body>
+	<div id="page">
+		<h1>PRISONER Demonstration</h1>
+		<p>This experiment displays the last ten
+		{% if provider == "Facebook" %}
+			status updates
+		{% elseif provider == "Twitter" %}
+			tweets
+		{% endif %}
+		from your profile
+		and some biographical attributes to test that the policy for this experiment
+		is correct.</p>
+
+			<p>This is a demonstration of the PRISONER framework and its code is
+				available from <a href="">GitHub</a>. No personal data are stored.</p>
+
+			<h2>About you</h2>
+			<ul>
+				<li>Name: {{me._displayName}}</li>
+				<li>Gender: {{me._gender}} </li>
+				<li>Political views: {{me._politicalViews}} </li>
+				<li>Religion: {{me._religion}} </li>
+			</ul>
+
+			<a href="#" class="save_link">Store this user profile</a>
+
+		<h2>Your recent shared posts</h2>
+
+	{% for post in status._objects %}
+		<div class="status">
+			{% if provider == "Facebook" %}
+			<span class="status_content"><a href="https://www.facebook.com/{{ post._id}}" target="_blank">
+			{% elseif provider == "Twitter" %}
+			<span class="status_content"><a href="https://www.twitter.com/{
+			{me._displayName}}/statuses/{{post._id}}"target="_blank">
+			{% endif %}
+
+			{{ post._content }}</a></span>
+			<span class="status_date">{{ post._published }}</span>
+		</div>
+
+		<hr />
+{% endfor %}
+
+
+	</div>
+</body>
+
+
+</html>

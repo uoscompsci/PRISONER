@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:privacy-policy
+	xmlns:p="http://prisoner.cs.st-andrews.ac.uk/prisoner/privacy-policy"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://prisoner.cs.st-andrews.ac.uk/prisoner/privacy-policy privacy_policy.xsd">
+
+	<policy for="Facebook:Person">
+		<attributes>
+			<attribute type="author">
+				<attribute-policy allow="retrieve" />
+			</attribute>
+
+			<attribute type="gender">
+				<attribute-policy allow="retrieve" />
+			</attribute>
+
+			<attribute type="firstName">
+				<attribute-policy allow="retrieve" />
+			</attribute>
+
+			<attribute type="lastName">
+				<attribute-policy allow="retrieve" />
+			</attribute>
+
+			<attribute type="displayName">
+				<attribute-policy allow="retrieve" />
+			</attribute>
+	</attributes>
+
+		<object-policy allow="retrieve">
+			<object-criteria>
+				<attribute-match match="author.id" on_object="session:Facebook.id" />
+			</object-criteria>
+		</object-policy>
+	</policy>
+
+	<policy for="Facebook:Note">
+		<attributes>
+			<attribute type="id">
+				<attribute-policy allow="retrieve">
+				</attribute-policy>
+			</attribute>
+
+			<attribute type="likes">
+				<attribute-policy allow="retrieve" />
+			</attribute>
+
+			<attribute type="content">
+				<attribute-policy allow="retrieve">
+				</attribute-policy>
+			</attribute>
+
+			<attribute type="published">
+				<attribute-policy allow="retrieve">
+				</attribute-policy>
+			</attribute>
+		</attributes>
+
+		<object-policy allow="retrieve">
+			<object-criteria>
+				<attribute-match match="author.id" on_object="session:Facebook.id" />
+			</object-criteria>
+		</object-policy>
+	</policy>
+
+
+	<policy for="base:Person">
+		<attributes>
+			<attribute type="displayName">
+				<attribute-policy allow="retrieve" />
+			</attribute>
+
+			<attribute type="id">
+				<attribute-policy allow="retrieve" />
+			</attribute>
+		</attributes>
+
+		<object-policy allow="retrieve">
+			<object-criteria>
+				<attribute-match match="id" on_object="session:Service.id" />
+			</object-criteria>
+		</object-policy>
+	</policy>
+
+
+	<policy for="base:Note">
+		<attributes>
+			<attribute type="id">
+				<attribute-policy allow="retrieve">
+				</attribute-policy>
+			</attribute>
+
+			<attribute type="content">
+				<attribute-policy allow="retrieve">
+				</attribute-policy>
+			</attribute>
+
+			<attribute type="published">
+				<attribute-policy allow="retrieve">
+				</attribute-policy>
+			</attribute>
+		</attributes>
+
+		<object-policy allow="retrieve">
+			<object-criteria>
+				<attribute-match match="author.id" on_object="session:Service.id" />
+			</object-criteria>
+		</object-policy>
+	</policy>
+
+</p:privacy-policy>
+
