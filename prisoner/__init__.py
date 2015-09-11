@@ -7,5 +7,3 @@ import gateway
 import persistence
 import tests
 import server
-
-import libs

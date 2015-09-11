@@ -1,3 +1,0 @@
-[submodule "libs/werkzeug"]
-	path = libs/werkzeug
-	url = https://github.com/barneyboo/werkzeug.git
