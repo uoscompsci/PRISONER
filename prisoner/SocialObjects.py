@@ -139,40 +139,34 @@ class SocialObject(object):
 		return string
 
 
-	"""
-	New-style transform for reduce.
-	This is just a wrapper around the old base_transform_name
-	"""
 	def transform_reduce(self, content, level):
+		"""
+		New-style transform for reduce.
+		This is just a wrapper around the old base_transform_name
+
+		:param content: the content to be transformed, which will be cast to a string
+		:param level: the level to reduce to.
+		:returns: reduced content
+		"""
+
 		return self.base_transform_name(str(content), "reduce", level)
 
-	"""
-	Hashes content using given algorithm.
-	Currently only supports SHA224
-	"""
 	def transform_hash(self, content, level="sha224"):
+		"""
+		Hashes content using given algorithm.
+		Currently only supports SHA224
+
+		:param content: the content to be hashed
+		:param level: the hashing algorithm to use (only supports sha224)
+		:returns: hashed object
+		"""
+
 		levels = ["sha224"]
 		if level not in levels:
 			raise InvalidTransformationLevelError(level)
 		else:
 			if level == "sha224":
 				return hashlib.sha224(content).hexdigest()
-
-
-
-	"""
-	###
-		This transform is deprecated! IT WON'T WORK. DON'T EVEN TRY.
-		See breaking note above for new-style transforms
-	###
-
-	def transform_author(self, transformation, level):
-		#Applies sanitising transformations to the author attribute,
-		#using the base name transformation (see base_transform_name()).
-		#This assumes the author is an instance of Person.
-		self.author.displayName = self.base_transform_name(self.author.displayName,
-		transformation, level)
-	"""
 
 	@property
 	def author(self):
