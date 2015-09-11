@@ -199,12 +199,24 @@ class PRISONER(object):
 
 
 	def on_cancel(self, request):
+		""" Call if the participant does not provide consent and revokes
+		participation. Should also invalidate and remove any session identifiers.
+
+		:param request: Current HTTP request
+		"""
+
 		builder = self.get_builder_reference(request)
 		return self.render_template("cancel.html",
 		exp_contact=builder.contact, exp_name=builder.title)
 
 	def __validate_secret(self, builder, request):
-			""" Validates that the secure request provided the correct secret """
+			""" Validates that the secure request provided the correct secret.
+
+			:param builder: The current ExperimentBuilder
+			:type builder: ExperimentBuilder
+			:param request: The current HTTP request
+			"""
+
 			secret = request.form['secret']
 			design_secret = builder.get_props("PRISONER")['secret']
 			if secret != design_secret:
@@ -215,6 +227,9 @@ class PRISONER(object):
 	def on_register(self, request):
 		""" Register a participant. Requires a URL for the experimental
 		design and privacy policy, and a form of columns to insert about this participant.
+
+		:param request: Current HTTP request
+		:returns: HTTP response to confirm the ID of the registered participant
 		"""
 
 		builder = self.set_builder_reference(request,
@@ -242,7 +257,10 @@ class PRISONER(object):
 		return Response(str(participant[0]))
 
 	def on_schema(self, request):
-		""" Builds the database schema matching this experimental design
+		""" Builds the database schema matching this experimental design.
+
+		:param request: Current HTTP request
+		:returns: Response to confirm the schema was built successfully.
 		"""
 
 		builder = self.set_builder_reference(request,
@@ -263,9 +281,6 @@ class PRISONER(object):
 		return Response("Schema built")
 
 
-
-
-
 	def on_session_write(self, request, session):
 		""" Writes arbitrary data to a temporary session. A
 		session is bound to a PRISession, and is intended to retain state data
@@ -277,14 +292,25 @@ class PRISONER(object):
 		To write session data, provide a POST form with a
 		"key" value (used to retrieve the data later) and
 		"data" (the arbitrary session data to store).
+
+		:param request: Current HTTP request including session data to write
+		:param session: The session to write data to
+		:returns: Empty response if successful
 		"""
+
 		builder = self.get_builder_reference(request)
 		builder.session[session][request.form["key"]] = request.form["data"]
 		return Response()
 
 	def on_session_read(self, request, session):
 		""" Read the session data corresponding to the given key
-		parameter. Session data is bound to the active PRISession. """
+		parameter. Session data is bound to the active PRISession.
+
+		:param request: Current HTTP request with a key argument of which data to read
+		:param session: Session we're reading data from
+		:returns: HTTP response with JSON object of returned data
+		 """
+
 		builder = self.get_builder_reference(request)
 		if request.args["key"] not in builder.session[session]:
 			return Response("Key not in session",status=404)
@@ -294,12 +320,41 @@ class PRISONER(object):
 		""" This initial call provides the client with their session
 		token. If response is good, call /begin providing the given
 		PRISession value.
+
+		:param request: Current HTTP response
+		:returns: HTTP response to confirm handshake.
 		"""
+
 		response = Response("Welcome to PRISONER. Now call /begin to "+\
 		"initialise your experiment, supplying the PRISession parameter.")
 		return response
 
 	def on_begin(self, request):
+		""" 
+		Initialises the flow of an experiment. This endpoint must be provided with the
+		following arguments:
+
+		policy: the URL to the privacy policy XML file
+
+		design: the URL to the experimental design XML file
+
+		title: the name of the experiment
+
+		contact: the email address of the researcher
+
+		db: a connection string (must have SQLAlchemy bindings to be supported) for
+		PRISONER to store data to
+		participant: form data to register the current participant
+
+		providers: a comma-delimited list of all social network sites this experiment
+		connects to
+
+		callback: which URL for your experiment to redirect the participant to after
+		successful authentication
+
+		:type request: HTTP Request containing all outlined data
+		:returns: Response for participant to be redirected to
+		"""
 		session = request.sessionid
 
 		builder = self.set_builder_reference(request,ExperimentBuilder.ExperimentBuilder())
@@ -335,6 +390,15 @@ class PRISONER(object):
 			return response
 
 	def on_post_response(self, request):
+		"""
+		Writes response data to the given response schema. Provide a form with:
+		schema: the name of the schema to write to
+		response: json data of response to write
+
+		:type request: HTTP response with schema and response data
+		:returns: HTTP Response with the written data
+		"""
+
 		builder = self.get_builder_reference(request)
 		schema = request.form["schema"]
 		response = request.form["response"]
@@ -344,6 +408,16 @@ class PRISONER(object):
 		return Response(post_response)
 
 	def on_publish_object(self, request, provider, object_name):
+		"""
+		Publishes the given data as a social object to the given service.
+
+		:param request: HTTP request with the required payload as a HTTP form
+		:param provider: the name of the service to publish to
+		:type provider: str
+		:param object_name: The class of object being published
+		:type object_name: str
+		"""
+
 		builder = self.get_builder_reference(request)
 
 		payload = request.form["payload"]
@@ -354,6 +428,24 @@ class PRISONER(object):
 
 	def threaded_get_object(self, request, provider, object_name, payload,
 	criteria=None, extra_args=None):
+		"""
+		Wrapper around the SocialObjectGateway GetObjectJSON method to retrieve social
+		objects as JSON, then return as response. This should not be called directly,
+		but is intended to be called by the on_get_object handler.
+
+		:param request: Current HTTP request
+		:param provider: The service to retreive data from
+		:type provider: str
+		:param object_name: The class of object being retrieved
+		:type object_name: str
+		:param payload: The criteria to retrieve objects by
+		:param criteria: Optional lambda function to filter request by
+		:param extra_args: Dictionary of generic arguments to filter on. Currently
+		only limit is (partially) supported
+		:type extra_args: dict
+		:returns: Response with a JSON object of requested data
+		"""
+
 		jsonpickle.handlers.registry.register(datetime.datetime,
 		SocialObjects.DateTimeJSONHandler)
 
@@ -384,7 +476,20 @@ class PRISONER(object):
 		again, instead with the additional argument 'isready'. This will
 		return an empty response if the request has not been completed, or the full
 		response object when it is.
+
+		:param request: Current HTTP request. If a limit argument is provided this
+		will be pushed to an extra_args dictionary for filtering in gateways. Provide
+		an async parameter to perform request asynchronously, or an isready parameter
+		to check if a previous async request for the same data is ready.
+		:param provider: The service to retrieve data from
+		:type provider: str
+		:param object_name: The class name of object being retrieved
+		:param payload: Query argument of object to be retrieved, ie. object ID
+		:param criteria: Lambda function for filtering objects before being returned
+		:returns: A JSON response of the returned object, or an empty JSON object if
+		request is happening asynchronously, or existing async request is not ready
 		"""
+
 		builder = self.get_builder_reference(request)
 		if "async" in request.args:
 			thread.start_new_thread(self.threaded_get_object, (request,
@@ -408,12 +513,29 @@ class PRISONER(object):
 		payload, criteria, extra_args)
 
 
-	""" START server handlers migrated from ExpBuilder """
 	def on_consent(self, request):
+		"""
+		This is a stub for a future consent generator framework.
+		This does not do anything, do not use it!
+		"""
 		raise Exception("No consent prpvider")
 
 
 	def on_confirm(self, request):
+		"""
+		Provides the authentication flow to redirect participant through
+		authentication for each requested provider.
+		Request must provide the following arguments:
+
+		pctoken: the authentication token provided earlier in the flow
+		provider: the name of the service participant is being authenticated against
+		PRISession: current session identifier from cookie
+
+		:param request: HTTP request with above arguments provided
+		:returns: Redirect response to service authentication or to complete
+		authentication flow
+		"""
+
 		builder = self.get_builder_reference(request)
 		token = request.args["pctoken"]
 		providers = builder.providers
@@ -421,6 +543,7 @@ class PRISONER(object):
 		try:
 			current_provider = request.args["provider"]
 			if current_provider not in providers:
+				#TODO: friendly error here				
 				resp = "Invalid provider."
 				return Response(resp)
 			providers.pop()
@@ -470,6 +593,16 @@ class PRISONER(object):
 		return redirect(url)
 
 	def on_complete(self, request):
+		""" Called at the end of the authentication flow. Redirects participant to the
+		callback provided at the start of the experiment.
+		Request must provide cbprovider and PRISession arguments to identify this
+		session and provider flow.
+
+		:param request: The current HTTP request
+		:returns: redirect to experiment callback or /cancel if participant
+		invalidates entry
+		"""
+
 		builder = self.get_builder_reference(request)
 
 		callback_provider = request.args["cbprovider"]
@@ -484,6 +617,14 @@ class PRISONER(object):
 
 
 	def on_fallback(self, request, wildcard):
+		""" If an invalid URL is provided, try to rewrite and redirect it in case
+		something malformed it.
+
+		:param request: current HTTP request
+		:param wildcard: Not used
+		:returns: redirect to rewritten URL
+		"""
+
 		url = urllib.unquote(request.url)
 		dup_mark = self.find_nth(url, "?", 2)
 		urlli = list(url)
@@ -493,19 +634,35 @@ class PRISONER(object):
 		return redirect(url)
 
 	def find_nth(self, haystack, needle, n):
+		""" 
+		Utility method for fallback endpoint.
+
+		:param haystack: search for nth item in here
+		:param needle: search nth this in haystack
+		:param n: this is n!
+		:returns: found needle
+		"""
+
 		start = haystack.find(needle)
 		while start >= 0 and n > 1:
 			start = haystack.find(needle, start+len(needle))
 			n -= 1
 		return start
 
-
-	""" END ExpBuilder migration"""
-
 	def on_session_timeout(self, request):
+		"""
+		Participant is redirected here if their session key is not found
+
+		:param request: Current HTTP request
+		:returns: Response rendering the expired session template
+		"""
 		return self.render_template("session.html")
 
 	def dispatch_request(self, request):
+		""" Internal handler to get from URL mapping to the right response handler
+		:param request: Current HTTP request
+		"""
+
 		adapter = self.url_map.bind_to_environ(request.environ)
 
 		try:
@@ -519,6 +676,13 @@ class PRISONER(object):
 			return self.on_session_timeout(request)
 
 	def wsgi_app(self, environ, start_response):
+		""" Exposes the server as a WSGI application. Handles session injection and
+		request dispatch.
+
+		":param environ: The environment for this request
+		:param start_response: Initial response for app
+		:returns: Response
+		"""
 		request = Request(environ)
 
 		sid = request.cookies.get("PRISession")
@@ -544,14 +708,19 @@ class PRISONER(object):
 		return response(environ, start_response)
 
 	def __call__(self, environ, start_response):
+		""" Internal method for dispatching WSGI app.
+		"""
 		return self.wsgi_app(environ, start_response)
 
 
 def create_app():
+	""" Instantiates server instance.
+	"""
 	app = PRISONER()
 	return app
 
 if __name__ == "__main__":
+	# initialise WSGI app for testing. Not for production use.
 	from werkzeug.serving import run_simple
 	app = create_app()
 	run_simple("localhost", 5000, app, use_debugger=True, use_reloader=True,
