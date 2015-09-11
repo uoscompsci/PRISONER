@@ -1,3 +1,7 @@
+## PRISONER Version 1.0.0 (September 11, 2015)
+
+No new functionality. This is the public release of v0.2.4.
+
 ## PRISONER Version 0.2.4 (September 4, 2015)
 
 ### New features
