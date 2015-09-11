@@ -13,11 +13,11 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http:/
 			</table>
 		</tables>
 		<props>
-			<prop for="Facebook" key="app_id" value="480015708841416" />
-			<prop for="Facebook" key="app_secret" value="b7f0a352ecec552feeb765d8dee8def2" />
+			<prop for="Facebook" key="app_id" value="" />
+			<prop for="Facebook" key="app_secret" value="" />
 			<prop for="Facebook" key="api_version" value="2.0" />
-			<prop for="Twitter" key="api_key" value="AqclRyTs2ndVskLcTYFZWjLUX" />
-			<prop for="Twitter" key="api_secret" value="qSktvNfvpLgJ6aXnm52nSzsRaD5RVu7rY4oQWe2pnYC1Fq1M65" />
+			<prop for="Twitter" key="api_key" value="" />
+			<prop for="Twitter" key="api_secret" value="" />
 			<prop for="PRISONER" key="secret" value="prisonerdemosecret" />
 		</props>
 	</experiment>
