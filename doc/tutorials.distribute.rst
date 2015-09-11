@@ -89,7 +89,7 @@ reproducibility goal as it falls on anyone wishing to replicate your study to
 manage their own instance of PRISONER.
 
 One way to simplify this is to distribute your experiment as `a fork of PRISONER
-on GitHub` <https://github.com/uoscompsci/PRISONER>`_, with your
+on GitHub <https://github.com/uoscompsci/PRISONER>`_, with your
 experiment-specific code added to the repository. This has
 a number of advantages:
 
@@ -122,8 +122,9 @@ get started, we provide PRISONER itself, and a separate working example, as
 Docker images via Docker Hub. `This tutorial
 <http://prisoner.cs.st-andrews.ac.uk/docs/tutorials.demo.html>`_ explains how to
 run our example Docker experiment.
-.. To see how we build this Docker image,
-.. derived from a base PRISONER image see (TODO: deeplink to example on GitHub). 
+To see how we build this Docker image,
+derived from a base PRISONER image see the `source for the demo
+<https://github.com/uoscompsci/PRISONER/tree/master/examples/dockerdemo>`_. 
 
 We recommend distributing both a `PRISONER fork
 <https://github.com/uoscompsci/PRISONER>`_ as above, and a Docker image
