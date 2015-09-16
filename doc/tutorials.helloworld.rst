@@ -153,5 +153,25 @@ Writing the experiment app
 ---------------------
 We're two thirds of the way there! These two policy files do a lot of the work
 in telling PRISONER what your experiment needs to do. From these two files,
-PRISONER can create an entire pre-briefing structure and authentication flow.
+PRISONER can create an entire pre-briefing structure and authentication flow,
+and is now able to enforce constraints on our experiment's data collection.
+
+Let's put this into action by writing a small web app. In this example, we're
+using Python and the WSGI library Werkzeug, but you can choose to follow along
+in an alternative environment of your choosing. As PRISONER is exposed as a web
+service, your application just consists of your experiment-specific logic, along
+with some simple HTTP requests to PRISONER to initialise an experiment and
+retrieve the appropriate data.
+
+Our experimental application consists of four functions:
+* Initialise the PRISONER experiment with the policy files we have prepared, and
+allow PRISONER to authenticate our participant with Facebook
+
+* Collect some data from the participant's Facebook profile
+
+* Present the collected data to the participant
+
+* Store a response from the participant along with a sanitised subset of the
+collected data in the PRISONER database.
+
 
