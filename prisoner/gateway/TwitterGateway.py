@@ -162,9 +162,10 @@ class TwitterServiceGateway(ServiceGateway):
 		user = Person()
 
 		user_json = json.loads(content)
-		print "user json: %s" % user_json
 		user.id = payload
 		user.displayName = user_json['name']
+		user.followers = user_json['followers_count']
+		user.following = user_json['friends_count']
 
 		return user
 
@@ -201,6 +202,8 @@ class TwitterServiceGateway(ServiceGateway):
 			this_tweet.author = author
 			this_tweet.published = tweet['created_at']
 			this_tweet.content = tweet['text']
+			this_tweet.favorites = tweet['favorite_count']
+			this_tweet.retweets = tweet['retweet_count']
 			tweet_list.append(this_tweet)
 
 		timeline.objects = tweet_list
@@ -214,6 +217,8 @@ class Person(SocialObjects.Person):
 
 	def __init__(self):
 		super(Person, self).__init__()
+		self._followers = None
+		self._following = None
 
 class Timeline(SocialObjects.Collection):
 	""" A collection of Tweets
@@ -229,4 +234,24 @@ class Note(SocialObjects.Note):
 
 	def __init__(self):
 		super(Note, self).__init__()
+		self._favorites = None
+		self._retweets = None
+
+	@property
+	def favorites(self):
+	    return self._favorites
+
+
+	@favorites.setter	
+	def favorites(self, value):
+		self._favorites = value
+
+	@property
+	def retweets(self):
+	    return self._retweets
+
+	@retweets.setter
+	def retweets(self, value):
+		self._retweets = value
+	
 

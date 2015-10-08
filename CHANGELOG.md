@@ -7,6 +7,12 @@ object-policy can be set to
 explicitly prohibit any processing of this attribute. This is implied if there
 is no policy set, so only required to invalidate an inherited policy.
 
+* Support for "expression-match" in object criteria allowing a request to be
+approved if some object-scoped expression matches a given value.
+
+* TwitterGateway now exposes the number of favorites and retweets on a Note, and
+lists of followers/following People for each Person.
+
 ### Bug fixes
 
 * Privacy policies now cascade correctly. A policy for a specific service will
