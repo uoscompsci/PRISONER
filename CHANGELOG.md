@@ -15,6 +15,8 @@ lists of followers/following People for each Person.
 
 ### Bug fixes
 
+* Critical bug preventing authentication has been fixed.
+
 * Privacy policies now cascade correctly. A policy for a specific service will
 inherit policies for a base object, if there are any. Use the new
 attribute-policy type "none" to invalidate an inherited attribute policy.
