@@ -518,7 +518,7 @@ class PRISONER(object):
 		This is a stub for a future consent generator framework.
 		This does not do anything, do not use it!
 		"""
-		raise Exception("No consent prpvider")
+		raise Exception("No consent provider")
 
 
 	def on_confirm(self, request):

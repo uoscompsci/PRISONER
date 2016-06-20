@@ -1,11 +1,11 @@
 # Dockerfile for PRISONER Demonstration
 # http://prisoner.cs.st-andrews.ac.uk
 
-# Version 0.1
-# Last updated June 10th 2015
+# Version 0.1.1
+# Last updated June 20th 2016
 
 FROM lhutton/prisoner
-MAINTAINER Luke Hutton <lh49@st-andrews.ac.uk>
+MAINTAINER Luke Hutton <luke.hutton@open.ac.uk>
 LABEL Description="This image prepares an environment for a trivial demonstration of PRISONER."
 
 COPY ./ /usr/bin/prisoner-demo
