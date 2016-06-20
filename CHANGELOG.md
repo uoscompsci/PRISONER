@@ -1,3 +1,26 @@
+## PRISONER Version 1.1.0 (June 20, 2016)
+
+### New features
+
+* In addition to "store" and "retrieve", a "none" attribute-policy or
+object-policy can be set to
+explicitly prohibit any processing of this attribute. This is implied if there
+is no policy set, so only required to invalidate an inherited policy.
+
+* Support for "expression-match" in object criteria allowing a request to be
+approved if some object-scoped expression matches a given value.
+
+* TwitterGateway now exposes the number of favorites and retweets on a Note, and
+lists of followers/following People for each Person.
+
+### Bug fixes
+
+* Critical bug preventing authentication has been fixed.
+
+* Privacy policies now cascade correctly. A policy for a specific service will
+inherit policies for a base object, if there are any. Use the new
+attribute-policy type "none" to invalidate an inherited attribute policy.
+
 ## PRISONER Version 1.0.0 (September 11, 2015)
 
 No new functionality. This is the public release of v0.2.4.
@@ -19,8 +42,6 @@ No new functionality. This is the public release of v0.2.4.
 ### Miscellaneous
 
 * Facebook Service Gateway no longer provides author attributes for Users (to avoid recursive validation). Use the id attribute to verify the Facebook ID of a user. Other Facebook objects still provide author attributes.
-
-
 
 
 

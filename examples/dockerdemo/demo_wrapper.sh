@@ -6,8 +6,8 @@
 if [[ "$OSTYPE" == "darwin"* ]]; then
  echo "It looks like you're running OS X."
  echo "I'm going to try map some ports..."
- VBoxManage controlvm boot2docker-vm natpf1 "prisoner,tcp,127.0.0.1,5000,,5000"
- VBoxManage controlvm boot2docker-vm natpf1 "demo,tcp,127.0.0.1,9000,,9000"
+ VBoxManage controlvm default natpf1 "prisoner,tcp,127.0.0.1,5000,,5000"
+ VBoxManage controlvm default natpf1 "demo,tcp,127.0.0.1,9000,,9000"
 fi
 
 echo "PRISONER Demo: Getting image (this may take a while...)"

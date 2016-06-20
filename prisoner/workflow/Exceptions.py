@@ -26,7 +26,7 @@ class DisallowedByPrivacyPolicyError(Exception):
 	def __init__(self, error):
 		self.error = error
 	def __str__(self):
-		return self.error
+		return "The privacy policy does not allow %s" % self.error
 
 class ServiceGatewayNotFoundError(Exception):
 	""" Raised if a participation client attempts to connect to a service
