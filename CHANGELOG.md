@@ -1,4 +1,4 @@
-## PRISONER Version 1.0.1 (indev)
+## PRISONER Version 1.1.0 (June 20, 2016)
 
 ### New features
 
