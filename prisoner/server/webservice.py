@@ -514,11 +514,19 @@ class PRISONER(object):
 
 
 	def on_consent(self, request):
-		"""
-		This is a stub for a future consent generator framework.
-		This does not do anything, do not use it!
-		"""
-		raise Exception("No consent provider")
+		builder = self.get_builder_reference(request)
+		token = request.args["pctoken"]
+		#token = builder.token
+		resp = "Stand back. We're doing science.<br />"
+		if(token != builder.token):
+			resp += "Token %s is not %s" % (token, builder.token)
+			return Response(resp)
+		else:
+			confirm_url = "%s/confirm?pctoken=%s&PRISession=%s" % (SERVER_URL,
+			builder.token, request.args["PRISession"])
+
+			return self.render_template("start.html",next_link = confirm_url,
+			exp_contact=builder.contact, exp_name=builder.title)
 
 
 	def on_confirm(self, request):
