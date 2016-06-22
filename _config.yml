@@ -6,16 +6,15 @@
 # 'jekyll serve'. If you change this file, please restart the server process.
 
 # Site settings
-title: Your awesome title
-email: your-email@domain.com
+title: PRISONER
+email: luke.hutton@open.ac.uk
 description: > # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
+  PRISONER is a framework for running ethical and privacy-preserving
+  social network experiments.
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "http://yourdomain.com" # the base hostname & protocol for your site
-twitter_username: jekyllrb
-github_username:  jekyll
+url: "http://uoscompsci.github.io/PRISONER/" # the base hostname & protocol for your site
+twitter_username: EthicsPRISONER
+github_username:  barneyboo
 
 # Build settings
 markdown: kramdown
