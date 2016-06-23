@@ -1,4 +1,4 @@
-# PRISONER [![Documentation Status](https://readthedocs.org/projects/prisoner/badge/?version=latest)](https://readthedocs.org/projects/prisoner/?badge=latest)
+# PRISONER [![Documentation Status](https://readthedocs.org/projects/prisoner/badge/?version=master)](https://readthedocs.org/projects/prisoner/?badge=master)
 
 PRISONER is a framework for running ethical and reproducible social network experiments.
 
