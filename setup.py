@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='PRISONER',
-      version='0.2.4',
+      version='1.1.0',
       description="Framework for ethical and reproducible social network experiments",
       long_description="",
       author='Luke Hutton',
