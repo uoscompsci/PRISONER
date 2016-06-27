@@ -1,38 +1,23 @@
-<footer class="site-footer">
-
-  <div class="wrapper">
-
-    <h2 class="footer-heading">{{ site.title }}</h2>
-
-    <div class="footer-col-wrapper">
-      <div class="footer-col footer-col-1">
-        <ul class="contact-list">
-          <li>{{ site.title }}</li>
-          <li><a href="mailto:{{ site.email }}">{{ site.email }}</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-col footer-col-2">
-        <ul class="social-media-list">
-          {% if site.github_username %}
-          <li>
-            {% include icon-github.html username=site.github_username %}
-          </li>
-          {% endif %}
-
-          {% if site.twitter_username %}
-          <li>
-            {% include icon-twitter.html username=site.twitter_username %}
-          </li>
-          {% endif %}
-        </ul>
-      </div>
-
-      <div class="footer-col footer-col-3">
-        <p>{{ site.description }}</p>
+<div id="footer">
+  <div class="container">
+    <div class="col-md-3  hidden-print hidden-sm">
+      <div id="footer_logo">
+        <img src="blackLogo.png" width="150px" alt="PRISONER">
       </div>
     </div>
 
-  </div>
+    <div class="col-md-9">
+      <div id="footer_copy">
+        <p>PRISONER is a project of researchers at the <br>
+        School of Computer Science at the University of St Andrews, <br>
+        supported by the EPSRC.</p>
 
-</footer>
+        <p>To discuss PRISONER, please contact <a href="mailto:lh49@st-andrews.ac.uk">Luke Hutton</a>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="{{ "js/bootstrap.js" | prepend: site.baseurl }}"></script>2

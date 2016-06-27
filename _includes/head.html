@@ -6,7 +6,57 @@
   <title>{% if page.title %}{{ page.title | escape }}{% else %}{{ site.title | escape }}{% endif %}</title>
   <meta name="description" content="{% if page.excerpt %}{{ page.excerpt | strip_html | strip_newlines | truncate: 160 }}{% else %}{{ site.description }}{% endif %}">
 
+  <link rel="stylesheet" href="{{ "/css/bootstrap.min.css" | prepend: site.baseurl }}">
+  <link rel="stylesheet" href="{{ "/css/index.css" | prepend: site.baseurl }}">
   <link rel="stylesheet" href="{{ "/css/main.css" | prepend: site.baseurl }}">
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,900' rel='stylesheet' type='text/css'>
+  <script src="//use.typekit.net/adi7wwi.js"></script>
+  <script>try{Typekit.load();}catch(e){}</script>
+  
   <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.url }}">
   <link rel="alternate" type="application/rss+xml" title="{{ site.title }}" href="{{ "/feed.xml" | prepend: site.baseurl | prepend: site.url }}">
 </head>
+
+<body>
+
+<div id="header">
+	<header class="navbar navbar-static-top" role="banner">
+  	<div class="container">
+
+  	<div id="header_logo">
+		<img src="weblogo.png" width="167px" alt="PRISONER">
+	</div>
+
+	<div class="nav-contain">
+	<div class="navbar-header">
+	      <button type="button" class="navbar-toggle collapsed"
+	      data-toggle="collapse" data-target="#main-nav">
+	        <span class="sr-only">Toggle navigation</span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	      </button>
+	    </div>
+
+	<div class="collapse navbar-collapse" id="main-nav">
+		<ul class="nav navbar-nav navbar-left">
+			<li><a href="{{ "getprisoner.html" | prepend: site.baseurl }}">Get PRISONER</a></li>
+			<li><a href="http://prisoner.readthedocs.org/en/latest">Documentation</a></li>
+			<li><a href="http://ethicsprisoner.tumblr.com">Blog</a></li>
+		</ul>
+
+		<ul class="nav navbar-nav navbar-right">
+			<li><a href="https://twitter.com/EthicsPRISONER" target="_blank">Twitter</a></li>
+			<li><a href="https://www.facebook.com/groups/848295018572351"
+			target="_blank">Facebook</a></li>
+			<li><a href="http://github.com/uoscompsci/PRISONER"
+			target="_blank">GitHub</a></li>
+		</ul>
+	</div>
+	</div>
+	</div>
+	</header>
+</div>
+
+
+<div class="clear"></div>
