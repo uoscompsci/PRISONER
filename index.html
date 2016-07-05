@@ -53,12 +53,12 @@ layout: default
 
     <div id="news" class="splash-content">
 
-    {% for post in site.posts %}
+    {% for post in site.posts limit:3 %}
       <div class="col-md-4">
         <div class="blog-tease">
           <h3>{{ post.title }}</h2>
           <p>{{ post.excerpt }}</p>
-          <p class="readmore">Read more</p>
+          <p class="readmore"><a href="{{ post.url }}">Read more</a></p>
         </div>
       </div>
     {% endfor %}
