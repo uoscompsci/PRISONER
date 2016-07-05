@@ -303,3 +303,7 @@ header {
 .get-block h1 a {
 	color: #fff !important;
 }
+
+.blog-tease {
+	box-shadow: 60px -16px teal;
+}
