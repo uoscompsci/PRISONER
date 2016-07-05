@@ -47,7 +47,7 @@ layout: default
   </div>
   </div>
 
-  <hr>
+  <hr class="news-hr">
   <h1>Latest news</h1>
   <div class="row">
 
@@ -56,8 +56,8 @@ layout: default
     {% for post in site.posts %}
       <div class="col-md-4">
         <div class="blog-tease">
-          <h2>{{ post.title }}</h2>
-          <p>{{ post.long_description }}</p>
+          <h3>{{ post.title }}</h2>
+          <p>{{ post.excerpt }}</p>
         </div>
       </div>
     {% endfor %}
