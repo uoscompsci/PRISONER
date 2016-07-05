@@ -317,3 +317,12 @@ hr.news-hr {
 .blog-tease h4 {
 	font-size: 0.6em;
 }
+
+.news-block {
+	margin-bottom: 20px;
+}
+
+.readmore {
+	text-align: right;
+	font-weight: bold;
+}
