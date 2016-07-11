@@ -30,7 +30,8 @@ h1 {
   text-transform: uppercase;
   font-family: "HWT Artz";
   font-size: 3em;
-  margin: 0;
+  position: relative;
+  top: 10px;
   letter-spacing: 0.1em;
 }
 
