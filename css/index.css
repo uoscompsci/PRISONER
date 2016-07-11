@@ -35,10 +35,11 @@ h1 {
 }
 
 .jumbotron time {
-	background-color: rgba(50,50,50,0.8);
+	background-color: rgba(50,50,50,0.5);
+	margin-top: 20px;
 	color: #fff;
 	padding: 10px;
-	
+
 }
 
 #header {
