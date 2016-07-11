@@ -30,14 +30,14 @@ h1 {
   text-transform: uppercase;
   font-family: "HWT Artz";
   font-size: 3em;
-  position: relative;
-  top: 10px;
+  margin: 0;
   letter-spacing: 0.1em;
 }
 
 .jumbotron time {
 	background-color: rgba(50,50,50,0.5);
-	margin-top: 30px;
+	position: relative;
+	top: 10px;
 	color: #fff;
 	padding: 10px;
 
