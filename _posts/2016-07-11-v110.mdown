@@ -1,0 +1,41 @@
+---
+layout: post
+title:  "PRISONER v1.1.0 has been released"
+date:   2016-07-11 14:00:00 +0000
+categories: prisoner
+---
+
+PRISONER's first minor update, v1.1.0 has been released. This fixes a critical authentication bug and is considered essential.
+
+In addition, this update adds support for cascading policies which function much like CSS.
+Policies for service-specific objects will now inherit any policies for base Social Objects, unless explicitly overriden, or if a "none" attribute-policy is applied to nullify any inherited policies. 
+
+Finally, there have been some minor improvements to the Twitter gateway to expose more properties.
+
+The PRISONER Docker image and Docker demo have been updated to this version.
+
+## Changelog
+
+### New features
+
+* In addition to "store" and "retrieve", a "none" attribute-policy or
+object-policy can be set to
+explicitly prohibit any processing of this attribute. This is implied if there
+is no policy set, so only required to invalidate an inherited policy.
+
+* Support for "expression-match" in object criteria allowing a request to be
+approved if some object-scoped expression matches a given value.
+
+* TwitterGateway now exposes the number of likes and retweets on a Note, and
+lists of followers/following People for each Person.
+
+### Bug fixes
+
+* Critical bug preventing authentication has been fixed.
+
+* Privacy policies now cascade correctly. A policy for a specific service will
+inherit policies for a base object, if there are any. Use the new
+attribute-policy type "none" to invalidate an inherited attribute policy.
+
+
+
