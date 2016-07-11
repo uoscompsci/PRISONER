@@ -43,6 +43,10 @@ h1 {
 
 }
 
+article {
+	margin-top: 10px;
+}
+
 #header {
 	color: #fff;
 }
