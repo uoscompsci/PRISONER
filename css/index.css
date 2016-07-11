@@ -323,8 +323,8 @@ header {
 	padding: 5px;
 }
 
-hr.news-hr {
-	border-bottom: 5px #ca1f4a;
+hr {
+	border-top: 3px solid #ca1f4a;
 }
 
 .blog-tease h4 {
