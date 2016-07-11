@@ -1,11 +1,11 @@
 ---
 layout: post
 title:  "PRISONER v1.1.0 has been released"
-date:   2016-07-11 14:00:00 +0000
+date:   2016-07-11 14:00:00 +0100
 categories: prisoner
 ---
 
-PRISONER's first minor update, v1.1.0 has been released. This fixes a critical authentication bug and is considered essential.
+PRISONER's first minor update, [v1.1.0 has been released](https://github.com/uoscompsci/PRISONER/releases/tag/v1.1.0). This fixes a critical authentication bug and is considered essential.
 
 In addition, this update adds support for cascading policies which function much like CSS.
 Policies for service-specific objects will now inherit any policies for base Social Objects, unless explicitly overriden, or if a "none" attribute-policy is applied to nullify any inherited policies. 
@@ -13,6 +13,8 @@ Policies for service-specific objects will now inherit any policies for base Soc
 Finally, there have been some minor improvements to the Twitter gateway to expose more properties.
 
 The PRISONER Docker image and Docker demo have been updated to this version.
+
+To download 
 
 ## Changelog
 
