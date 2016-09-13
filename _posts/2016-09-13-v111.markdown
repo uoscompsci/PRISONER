@@ -1,0 +1,24 @@
+---
+layout: post
+title:  "PRISONER v1.1.1 has been released"
+date:   2016-09-13 14:00:00 +0100
+categories: prisoner
+---
+
+A minor bug release, [PRISONER v1.1.1 has been released]
+(https://github.com/uoscompsci/PRISONER/releases/tag/v1.1.1). This fixes an
+issue with deprecated Facebook permissions, and a small bug in the Docker demo.
+Updating is highly recommended if using Facebook.
+
+The PRISONER Docker image and Docker demo have been updated to this version.
+
+## Changelog
+
+### Bug fixes
+
+* Deprecated Facebook permission read_stream has been replaced with user_posts.
+The Facebook Gateway now targets version 2.4 of the Graph API and future
+experiments should request at least this in the "api_version" prop.
+
+* Docker demo template had a syntax error in its conditionals.
+
