@@ -31,7 +31,7 @@
 		<p>This experiment displays the last ten
 		{% if provider == "Facebook" %}
 			status updates
-		{% elseif provider == "Twitter" %}
+		{% elif provider == "Twitter" %}
 			tweets
 		{% endif %}
 		from your profile
@@ -57,7 +57,7 @@
 		<div class="status">
 			{% if provider == "Facebook" %}
 			<span class="status_content"><a href="https://www.facebook.com/{{ post._id}}" target="_blank">
-			{% elseif provider == "Twitter" %}
+			{% elif provider == "Twitter" %}
 			<span class="status_content"><a href="https://www.twitter.com/{
 			{me._displayName}}/statuses/{{post._id}}"target="_blank">
 			{% endif %}
