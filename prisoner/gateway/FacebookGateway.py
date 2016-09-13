@@ -63,7 +63,7 @@ class FacebookServiceGateway(ServiceGateway):
 			"Like": ["user_likes"],
 			"Movie": ["user_likes"],
 			"Book": ["user_likes"],
-			"Note": ["user_status", "user_posts", "read_stream", "publish_actions"],
+			"Note": ["user_status", "user_posts", "publish_actions"],
 			"Friends": ["user_friends"],
 			"Album": ["user_photos"],
 			"Image": ["user_photos"],

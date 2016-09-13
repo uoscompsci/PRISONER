@@ -1,3 +1,11 @@
+## PRISONER Version 1.1.1 (September 13, 2016)
+
+### Bug fixes
+
+* Deprecated Facebook permission read_stream has been replaced with user_posts.
+The Facebook Gateway now targets version 2.4 of the Graph API and future
+experiments should request at least this in the "api_version" prop.
+
 ## PRISONER Version 1.1.0 (June 20, 2016)
 
 ### New features
