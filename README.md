@@ -33,3 +33,7 @@ works.
 
 ## License
 PRISONER is [BSD licensed](./LICENSE).
+
+## Acknowledgements
+PRISONER is supported by the Engineering and Physical Sciences Research Council 
+[grant numbers EP/J500549/1 and EP/L021285/1].
