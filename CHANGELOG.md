@@ -1,3 +1,14 @@
+## PRISONER Version 1.1.2 (January 12, 2017)
+
+### Bug fixes
+
+* The Docker demo has been updated to match the latest version of the Facebook
+service gateway
+
+### Documentation
+
+* License text updated for 2017
+
 ## PRISONER Version 1.1.1 (September 13, 2016)
 
 ### Bug fixes

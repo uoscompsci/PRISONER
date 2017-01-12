@@ -9,7 +9,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http:/
 
 			<table name="response" type="response">
 				<column name="participant_id" type="string" />
-				<column name="user" mapTo="Facebook:User" />
+				<column name="user" mapTo="Facebook:Person" />
 			</table>
 		</tables>
 		<props>
